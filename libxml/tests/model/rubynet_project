@@ -1,0 +1,13 @@
+# $Id$
+
+copyright:	2001-2003, rubynet.org
+description:	Ruby bindings for the libxml2 library.  The API for this
+		module is hopefully similar to REXML, which is based on
+		the Electric XML library (some java lib???).
+download:	http://www.rubynet.org/modules/xml/libxml/
+full_name:	libxml
+homepage:	http://www.rubynet.org/modules/xml/libxml/
+license:	BSD style license
+pkgname:	libxml
+rubynet_url:	http://www.rubynet.org/modules/xml/libxml/
+status:		stable
