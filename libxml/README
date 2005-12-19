@@ -1,27 +1,3 @@
-== NOTICE
-
-This documentation is by no means complete, and in any event the
-LibXML-Ruby API is likely to change slightly in the future. 
-This is merely an interim measure intended to provide some 
-documentation for those who wish to process XML in Ruby with 
-LibXML, but don't necessarily have any experience with that 
-library in C or another language.
-
-This documentation pertains to Libxml-ruby version 0.3.4.
-
-As a work in progress, this documentation skips past or ignores
-a lot of things, and doesn't include as much background on each
-method as I would like. In cases where there is confusion, you
-should consult the LibXML documentation, or alternatively a
-reference for someone else's binding, such as:
-
-* http://www.annocpan.org/~PHISH/XML-LibXML-1.54/LibXML.pm
-
-For the background information. Hopefully this document will
-be improved over time (any contributions are welcome!)
-
-Ross Bamford (rosco <at> roscopeco <dot> co <dot> uk) - 2005-12-18
-
 == INSTALLATION
 
 Installation is simple.  Follow the following steps:
