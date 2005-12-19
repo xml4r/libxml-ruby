@@ -1,0 +1,11 @@
+Makefile
+mkmf.log
+extconf.h
+*.core
+.memdump
+PATCHES
+.cdtproject
+.cvsrc
+.gdb
+.project
+*.so

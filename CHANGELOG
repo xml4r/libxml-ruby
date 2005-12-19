@@ -1,0 +1,39 @@
+===== 18.12.2005 Ross Bamford <rosco@roscopeco.co.uk>
+* Updated for GCC 4.0 (community patches)
+* Fixed default validation bug
+* Refactored project, removed outdated files, cleaned up tests.
+* Added RDoc documentation across .c files.
+* Fixed up a few strings.
+
+===== 14.4.2004 Mangler Jurgen <et@wkv.at>
+* ruby_xml_node.cz: fixed ruby_xml_node_property_set. The ill-behaviour
+	was, that there was added a second attribute of the same
+	name, when you were setting the value of an already existing
+	attribute.
+
+===== 17.3.2004 Lukas Svoboda <luks@fi.muni.cz>
+* ruby_xml_node.c: ruby_xml_node_to_s now returns XML subtree dump.
+
+===== 27.2.2004 Martin Povolny <martin@solnet.cz>
+* ruby_xml_node.c: added XML::Node.copy, this makes possible building
+	of xml documents from nodes taken from other xml documents
+	without making ruby SIGSEGV (see tests/copy_bug.rb).
+
+===== 26.2.2004 Martin Povolny <martin@solnet.cz>
+* ruby_xml_dtd.c, ruby_xml_dtd.h, ruby_xml_schema.c, ruby_xml_schema.h:
+	more work on validation, now you can actually validate
+	document using dtd or xml schema, also solved warning and
+	error propagation (see tests/{dtd|schema}-test.rb).
+
+===== 30.12.2003 Martin Povolny <martin@solnet.cz>
+* ruby_xml_dtd.c, ruby_xml_dtd.h, ruby_xml_schema.c, ruby_xml_schema.h:
+	prelimitary support for dtd and schema validation
+
+===== 15.9.2003 Martin Povolny <martin@solnet.cz>
+* ruby_xml_input_cbg.c, libxml.c: added class InputCallbacks to make
+	possible registering custom input callbacks
+	handlers (xmlRegisterInputCallbacks) written in ruby
+
+===== 1.8.2003 Martin Povolny <martin@solnet.cz>
+* ruby_xml_document.c: corrected argument handling in ruby_xml_document_find
+* ruby_xml_node.c: corrected argument handling in ruby_xml_node_find
