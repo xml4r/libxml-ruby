@@ -9,3 +9,4 @@ PATCHES
 .gdb
 .project
 *.so
+*.o
