@@ -58,6 +58,7 @@ task :alltests => 'libxml.so'
 
 # RDoc Tasks ---------------------------------------------------------
 # Create a task to build the RDOC documentation tree.
+CLEAN.include 'doc'
 Rake::RDocTask.new(:doc) do |rdoc|
   rdoc.rdoc_dir = 'doc'
   rdoc.title    = "Libxml-Ruby API"
@@ -65,4 +66,16 @@ Rake::RDocTask.new(:doc) do |rdoc|
   rdoc.rdoc_files.include('README', 'LICENSE', 'TODO')
   rdoc.rdoc_files.include('ruby_xml*.c', '*.rdoc')
 end
-                
+
+desc "Publish the RDoc documentation to project web site"
+task :pubdoc => [ :doc ] do
+  unless ENV['RUBYFORGE_ACCT']
+    raise "Need to set RUBYFORGE_ACCT to your rubyforge.org user name (e.g. 'fred')"
+  end
+  require 'rake/contrib/sshpublisher'
+  Rake::SshDirPublisher.new(
+    "#{ENV['RUBYFORGE_ACCT']}@rubyforge.org",
+    "/var/www/gforge-projects/libxml/doc",
+    "doc"
+  ).upload
+end
