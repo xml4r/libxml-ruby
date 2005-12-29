@@ -10,3 +10,4 @@ PATCHES
 .project
 *.so
 *.o
+doc
