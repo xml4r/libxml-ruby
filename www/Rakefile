@@ -1,0 +1,85 @@
+# Standard Rakefile for custom Rote build
+#
+# Generated from:
+# $Id$
+# 
+begin 
+  require 'rubygems'
+rescue LoadError
+  nil # optional
+end
+
+require 'rake'
+require 'rake/clean'
+require 'rote'
+require 'rote/filters/redcloth'
+require 'rote/filters/rdoc'
+require 'rote/format/html'
+
+include Rote
+
+# Create a set of tasks with the prefix 'doc' to  build the
+# documentation set. The directory layout is as for the
+# command-line wrapper (but can be changed of course).
+#
+# This creates the following tasks:
+#
+#   * doc           - transform/copy all modified pages / resources
+#   * doc_pages     - transform all modified pages
+#   * doc_res       - copy all modified resources
+#   * doc_monitor   - Start monitor mode, transform changed files automatically
+#
+#   * [html/**/*]   - Transform single page / resource unconditionally
+#
+#   * clobber_doc   - Remove output (hooks into main 'clobber' task)
+#
+# In addition to these tasks, you may also wish to define a 'doc_refresh' task
+# to be run whenever modified resources are processed in monitor mode.
+ws = Rote::DocTask.new(:doc) do |site| 
+  site.output_dir = 'html'
+  site.layout_dir = 'doc/layouts'
+  
+  site.pages.dir = 'doc/pages'
+  site.pages.include('**/*')   
+   
+  site.res.dir = 'doc/res'
+  site.res.include('**/*')
+  
+  site.ext_mapping(/thtml|textile/, 'html') do |page|
+    page.extend Format::HTML
+    page.page_filter Filters::RedCloth.new(:textile)
+  end    
+  
+  site.ext_mapping(/mhtml|markdown/, 'html') do |page|
+    page.extend Format::HTML
+    page.page_filter Filters::RedCloth.new(:markdown)
+  end      
+  
+  site.ext_mapping(/rdhtml|rdoc/, 'html') do |page|
+    page.extend Format::HTML
+    page.page_filter Filters::RDoc.new
+  end      
+  
+  site.ext_mapping(/html/, 'html') do |page|
+    page.extend Format::HTML
+  end    
+end
+
+task :default => [:doc]
+
+# import user-level tasks
+import "#{ENV['HOME']}/.rotetasks.rf" if File.exists?("#{ENV['HOME']}/.rotetasks.rf")
+import 'local.rf' if File.exists?('local.rf')
+
+desc "Publish the documentation"
+task :pubdoc => [ :doc ] do
+  unless ENV['RUBYFORGE_ACCT']
+    raise "Need to set RUBYFORGE_ACCT to your rubyforge.org user name (e.g. 'fred')"
+  end
+  require 'rake/contrib/sshpublisher'
+  Rake::SshDirPublisher.new(
+    "#{ENV['RUBYFORGE_ACCT']}@rubyforge.org",
+    "/var/www/gforge-projects/libxml",
+    "html" ).upload
+end
+

@@ -1,0 +1,15 @@
+h1. Ruby <span style="color: brown">libxml</span> Project
+
+The Ruby <span style="color: brown">libxml</span> project provides Ruby
+language bindings for the "GNOME Libxml2":http://xmlsoft.org XML toolkit.
+It is free software, released under the "MIT License":doc/files/LICENSE.html
+
+h2. Project Status
+
+Currently, we are working toward an initial 'ground zero' release that
+compiles against the current libxml2 libraries and passes most tests. After
+that, we will establish a project Roadmap for future development work. Several
+"TODO" items have been identified already.
+
+If you want to play with the code, you can access the SCM repository from
+the "Project Page":http://rubyforge.org/projects/libxml
