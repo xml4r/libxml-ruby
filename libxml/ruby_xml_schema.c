@@ -36,7 +36,7 @@ ruby_xml_schema_init_from_uri(int argc, VALUE *argv, VALUE class) {
 
     Check_Type(uri, T_STRING);
 
- 	parser = xmlSchemaNewParserCtxt(STR2CSTR(uri));
+ 	parser = xmlSchemaNewParserCtxt(StringValuePtr(uri));
  	sptr = xmlSchemaParse(parser);
  	xmlSchemaFreeParserCtxt(parser);
     break;
@@ -66,7 +66,7 @@ ruby_xml_schema_init_from_str(int argc, VALUE *argv, VALUE class) {
 
     Check_Type(schema_str, T_STRING);
 
-    parser = xmlSchemaNewMemParserCtxt(STR2CSTR(schema_str), strlen(STR2CSTR(schema_str)));
+    parser = xmlSchemaNewMemParserCtxt(StringValuePtr(schema_str), strlen(StringValuePtr(schema_str)));
     rxschema = ALLOC(ruby_xml_schema);
     rxschema->schema = xmlSchemaParse(parser);
  	xmlSchemaFreeParserCtxt(parser);

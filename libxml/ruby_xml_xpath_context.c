@@ -96,7 +96,10 @@ ruby_xml_xpath_context_register_namespace(VALUE self, VALUE prefix, VALUE uri) {
   ruby_xml_xpath_context *rxxpc;
 
   Data_Get_Struct(self, ruby_xml_xpath_context, rxxpc);
-  if (xmlXPathRegisterNs(rxxpc->ctxt, STR2CSTR(prefix), STR2CSTR(uri)) == 0) {
+  if (xmlXPathRegisterNs(rxxpc->ctxt, 
+                         (xmlChar*)StringValuePtr(prefix), 
+                         (xmlChar*)StringValuePtr(uri)) 
+                         == 0) {
     return(Qtrue);
   } else {
     /* Should raise an exception, IMHO */

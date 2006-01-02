@@ -35,7 +35,7 @@ ruby_xml_parser_catalog_dump(VALUE self) {
 VALUE
 ruby_xml_parser_catalog_remove(VALUE self, VALUE cat) {
   Check_Type(cat, T_STRING);
-  xmlCatalogRemove((xmlChar *)STR2CSTR(cat));
+  xmlCatalogRemove((xmlChar *)StringValuePtr(cat));
   return(Qtrue);
 }
 
@@ -584,7 +584,7 @@ ruby_xml_parser_default_tree_indent_string_get(VALUE class) {
 VALUE
 ruby_xml_parser_default_tree_indent_string_set(VALUE class, VALUE string) {
   Check_Type(string, T_STRING);
-  xmlTreeIndentString = ruby_strdup(STR2CSTR(string));
+  xmlTreeIndentString = ruby_strdup(StringValuePtr(string));
   return(string);
 }
 
@@ -781,9 +781,9 @@ ruby_xml_parser_filename_set(VALUE self, VALUE filename) {
   data->filename = filename;
 
   Data_Get_Struct(rxp->ctxt, ruby_xml_parser_context, rxpc);
-  rxpc->ctxt = xmlCreateFileParserCtxt(STR2CSTR(filename));
+  rxpc->ctxt = xmlCreateFileParserCtxt(StringValuePtr(filename));
   if (rxpc->ctxt == NULL)
-    rb_sys_fail(STR2CSTR(filename));
+    rb_sys_fail(StringValuePtr(filename));
 
   return(data->filename);
 }
@@ -1211,15 +1211,15 @@ ruby_xml_parser_str_set(VALUE self, VALUE str) {
   data->str = str;
 
   Data_Get_Struct(rxp->ctxt, ruby_xml_parser_context, rxpc);
-  rxpc->ctxt = xmlCreateMemoryParserCtxt(STR2CSTR(data->str), RSTRING(data->str)->len);
+  rxpc->ctxt = xmlCreateMemoryParserCtxt(StringValuePtr(data->str), RSTRING(data->str)->len);
 
   return(data->str);
 }
 
 
-// #define RUBY_XML_PARSER_ENABLED_INIT(func, method) \
-// rb_define_singleton_method(cXMLParser, method, \
-//			   ruby_xml_parser_enabled_##func##_q, 0);
+/* #define RUBY_XML_PARSER_ENABLED_INIT(func, method) \
+ rb_define_singleton_method(cXMLParser, method, \
+			   ruby_xml_parser_enabled_##func##_q, 0); */
 
 ///#include "cbg.c"
 ///

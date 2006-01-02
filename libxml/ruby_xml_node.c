@@ -2,9 +2,6 @@
 
 /* Please see the LICENSE file for copyright and distribution information */
 
-// TODO replace all STR2CSTR with with StringValuePtr(href) ?
-// TODO intermittent doublefree - when copying nodes between docs?
-
 #include "libxml.h"
 #include "ruby_xml_node.h"
 
@@ -1098,12 +1095,12 @@ ruby_xml_node_namespace_set(int argc, VALUE *argv, VALUE self) {
   case 1:
     rns = argv[0];
     if (TYPE(rns) == T_STRING) {
-      cp = strchr(STR2CSTR(rns), (int)':');
+      cp = strchr(StringValuePtr(rns), (int)':');
       if (cp == NULL) {
 	rprefix = rns;
 	href = NULL;
       } else {
-	rprefix = rb_str_new(STR2CSTR(rns), (int)((long)cp - (long)STR2CSTR(rns)));
+	rprefix = rb_str_new(StringValuePtr(rns), (int)((long)cp - (long)StringValuePtr(rns)));
 	href = &cp[1]; /* skip the : */
       }
     } else if (rb_obj_is_kind_of(rns, cXMLNS) == Qtrue) {
@@ -1120,7 +1117,7 @@ ruby_xml_node_namespace_set(int argc, VALUE *argv, VALUE self) {
     /* Don't want this code run in the fall through case */
     if (argc == 2) {
       rprefix = argv[0];
-      href = STR2CSTR(argv[1]);
+      href = StringValuePtr(argv[1]);
     }
 
     ns = xmlNewNs(rxn->node, (xmlChar*)href, (xmlChar*)StringValuePtr(rprefix));

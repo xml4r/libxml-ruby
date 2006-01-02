@@ -146,12 +146,12 @@ ruby_xml_xpath_find(int argc, VALUE *argv, VALUE class) {
   if (argc == 3) {
     switch (TYPE(argv[2])) {
     case T_STRING:
-      cp = strchr(STR2CSTR(argv[2]), (int)':');
+      cp = strchr(StringValuePtr(argv[2]), (int)':');
       if (cp == NULL) {
 	rprefix = argv[2];
 	ruri = Qnil;
       } else {
-	rprefix = rb_str_new(STR2CSTR(argv[2]), (int)((long)cp - (long)STR2CSTR(argv[2])));
+	rprefix = rb_str_new(StringValuePtr(argv[2]), (int)((long)cp - (long)StringValuePtr(argv[2])));
 	ruri = rb_str_new2(&cp[1]);
       }
       /* Should test the results of this */
@@ -161,12 +161,12 @@ ruby_xml_xpath_find(int argc, VALUE *argv, VALUE class) {
       for (i = 0; i < RARRAY(argv[2])->len; i++) {
 	switch (TYPE(RARRAY(argv[2])->ptr[i])) {
 	case T_STRING:
-	  cp = strchr(STR2CSTR(RARRAY(argv[2])->ptr[i]), (int)':');
+	  cp = strchr(StringValuePtr(RARRAY(argv[2])->ptr[i]), (int)':');
 	  if (cp == NULL) {
 	    rprefix = RARRAY(argv[2])->ptr[i];
 	    ruri = Qnil;
 	  } else {
-	    rprefix = rb_str_new(STR2CSTR(RARRAY(argv[2])->ptr[i]), (int)((long)cp - (long)STR2CSTR(RARRAY(argv[2])->ptr[i])));
+	    rprefix = rb_str_new(StringValuePtr(RARRAY(argv[2])->ptr[i]), (int)((long)cp - (long)StringValuePtr(RARRAY(argv[2])->ptr[i])));
 	    ruri = rb_str_new2(&cp[1]);
 	  }
 	  /* Should test the results of this */
@@ -184,8 +184,8 @@ ruby_xml_xpath_find(int argc, VALUE *argv, VALUE class) {
 	default:
 	  if (rb_obj_is_kind_of(RARRAY(argv[2])->ptr[i], cXMLNS) == Qtrue) {
 	    Data_Get_Struct(argv[2], ruby_xml_ns, rxns);
-	    rprefix = rb_str_new2(rxns->ns->prefix);
-	    ruri = rb_str_new2(rxns->ns->href);
+	    rprefix = rb_str_new2((const char*)rxns->ns->prefix);
+	    ruri = rb_str_new2((const char*)rxns->ns->href);
 	    ruby_xml_xpath_context_register_namespace(xxpc, rprefix, ruri);
 	  } else
 	    rb_raise(rb_eArgError, "Invalid argument type, only accept string, array of strings, or an array of arrays");
@@ -195,14 +195,14 @@ ruby_xml_xpath_find(int argc, VALUE *argv, VALUE class) {
     default:
       if (rb_obj_is_kind_of(argv[2], cXMLNS) == Qtrue) {
 	Data_Get_Struct(argv[2], ruby_xml_ns, rxns);
-	rprefix = rb_str_new2(rxns->ns->prefix);
-	ruri = rb_str_new2(rxns->ns->href);
+	rprefix = rb_str_new2((const char*)rxns->ns->prefix);
+	ruri = rb_str_new2((const char*)rxns->ns->href);
 	ruby_xml_xpath_context_register_namespace(xxpc, rprefix, ruri);
       } else
 	rb_raise(rb_eArgError, "Invalid argument type, only accept string, array of strings, or an array of arrays");
     }
   }
-  comp = xmlXPathCompile(STR2CSTR(xpath_expr));
+  comp = xmlXPathCompile((xmlChar*)StringValuePtr(xpath_expr));
 
   if (comp == NULL) {
     xmlXPathFreeCompExpr(comp);
@@ -319,7 +319,7 @@ ruby_xml_xpath_string(VALUE self) {
   if (rxxp->xpop->stringval == NULL)
     return(Qnil);
   else
-    return(rb_str_new2(rxxp->xpop->stringval));
+    return(rb_str_new2((const char*)rxxp->xpop->stringval));
 }
 
 // Rdoc needs to know 

@@ -39,7 +39,7 @@ ruby_xml_attribute_default_get(VALUE self) {
   if (rxa->attribute->defaultValue == NULL)
     return(Qnil);
   else
-    return(rb_str_new2(rxa->attribute->defaultValue));
+    return(rb_str_new2((const char*)rxa->attribute->defaultValue));
 }
 
 
@@ -51,7 +51,7 @@ ruby_xml_attribute_element_get(VALUE self) {
   if (rxa->attribute->elem == NULL)
     return(Qnil);
   else
-    return(rb_str_new2(rxa->attribute->elem));
+    return(rb_str_new2((const char*)rxa->attribute->elem));
 }
 
 
@@ -104,7 +104,7 @@ ruby_xml_attribute_name_get(VALUE self) {
   if (rxa->attribute->name == NULL)
     return(Qnil);
   else
-    return(rb_str_new2(rxa->attribute->name));
+    return(rb_str_new2((const char*)rxa->attribute->name));
 }
 
 
@@ -176,7 +176,7 @@ ruby_xml_attribute_prefix_get(VALUE self) {
   if (rxa->attribute->prefix == NULL)
     return(Qnil);
   else
-    return(rb_str_new2(rxa->attribute->prefix));
+    return(rb_str_new2((const char*)rxa->attribute->prefix));
 }
 
 
