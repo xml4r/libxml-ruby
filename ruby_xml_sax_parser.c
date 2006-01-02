@@ -112,7 +112,7 @@ ruby_xml_sax_parser_parse(VALUE self) {
   Data_Get_Struct(self, ruby_xml_sax_parser, rxsp);
 
   if (rxsp->filename != Qnil) {
-    status = xmlSAXUserParseFile(rxsp->xsh, NULL, STR2CSTR(rxsp->filename));
+    status = xmlSAXUserParseFile(rxsp->xsh, NULL, StringValuePtr(rxsp->filename));
 
     /* XXX This should return an exception for the various error codes
      * that can come back in status, but I'm too lazy to do that right
@@ -122,7 +122,7 @@ ruby_xml_sax_parser_parse(VALUE self) {
     else
       docobj = Qtrue;
   } else if (rxsp->str != Qnil) {
-    str = STR2CSTR(rxsp->str);
+    str = StringValuePtr(rxsp->str);
     docobj = ruby_xml_document_new(cXMLDocument,
 				   xmlSAXParseMemory(rxsp->xsh, str,
 						     strlen(str), 0));

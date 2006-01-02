@@ -28,7 +28,7 @@ ruby_xml_xpointer_point(VALUE class, VALUE rnode, VALUE xptr_str) {
     return(Qnil);
   Data_Get_Struct(rxptr_xpth_ctxt, ruby_xml_xpath_context, xxpc);
 
-  xpath = xmlXPtrEval(STR2CSTR(xptr_str), xxpc->ctxt);
+  xpath = xmlXPtrEval((xmlChar*)StringValuePtr(xptr_str), xxpc->ctxt);
   if (xpath == NULL)
     rb_raise(eXMLXPointerInvalidExpression, "invalid xpointer expression");
 

@@ -24,7 +24,7 @@ ruby_xml_node_set_to_a(VALUE self) {
 
   Data_Get_Struct(self, ruby_xml_node_set, rxnset);
 
-  if (rxnset->node_set == NULL || rxnset->node_set->nodeNr == NULL)
+  if ((rxnset->node_set == NULL) || (rxnset->node_set->nodeNr == 0))
     return(Qnil);
 
   set_ary = rb_ary_new();
@@ -76,7 +76,7 @@ ruby_xml_node_set_free(ruby_xml_node_set *rxnset) {
   case RUBY_LIBXML_SRC_TYPE_NULL:
     break;
   case RUBY_LIBXML_SRC_TYPE_XPATH:
-    data = (void*)(rx_file_data *)rxnset->data;
+    data = (void*)(rx_xpath_data *)rxnset->data;
     free((rx_xpath_data *)data);
   default:
     rb_fatal("Unknown data type, %d", rxnset->data_type);

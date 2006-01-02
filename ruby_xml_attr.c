@@ -144,7 +144,7 @@ ruby_xml_attr_name_get(VALUE self) {
   if (rxa->attr->name == NULL)
     return(Qnil);
   else
-    return(rb_str_new2(rxa->attr->name));
+    return(rb_str_new2((const char*)rxa->attr->name));
 }
 
 
@@ -333,13 +333,13 @@ ruby_xml_attr_prev_q(VALUE self) {
 VALUE
 ruby_xml_attr_value(VALUE self) {
   ruby_xml_attr *rxa;
-  char *value;
+  xmlChar *value;
 
   Data_Get_Struct(self, ruby_xml_attr, rxa);
   if (ruby_xml_attr_parent_q(self) == Qtrue) {
     value = xmlGetProp(rxa->attr->parent, rxa->attr->name);
     if (value != NULL)
-      return(rb_str_new2(value));
+      return(rb_str_new2((const char*)value));
   }
   return(Qnil);
 }

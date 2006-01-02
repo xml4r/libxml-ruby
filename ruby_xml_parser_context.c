@@ -119,7 +119,7 @@ ruby_xml_parser_context_encoding_get(VALUE self) {
   if (rxpc->ctxt->encoding == NULL)
     return(Qnil);
   else
-    return(rb_str_new2(rxpc->ctxt->encoding));
+    return(rb_str_new2((const char*)rxpc->ctxt->encoding));
 }
 
 
@@ -267,7 +267,7 @@ ruby_xml_parser_context_name_node_get(VALUE self) {
   if (rxpc->ctxt->name == NULL)
     return(Qnil);
   else
-    return(rb_str_new2(rxpc->ctxt->name));
+    return(rb_str_new2((const char*)rxpc->ctxt->name));
 }
 
 
@@ -294,7 +294,7 @@ ruby_xml_parser_context_name_tab_get(VALUE self) {
     if (rxpc->ctxt->nameTab[i] == NULL)
       continue;
     else
-      rb_ary_push(tab_ary, rb_str_new2(rxpc->ctxt->nameTab[i]));
+      rb_ary_push(tab_ary, rb_str_new2((const char*)rxpc->ctxt->nameTab[i]));
   }
 
   return(tab_ary);
@@ -516,7 +516,7 @@ ruby_xml_parser_context_subset_name_get(VALUE self) {
   if (rxpc->ctxt->intSubName == NULL)
     return(Qnil);
   else
-    return(rb_str_new2(rxpc->ctxt->intSubName));
+    return(rb_str_new2((const char*)rxpc->ctxt->intSubName));
 }
 
 
@@ -536,7 +536,7 @@ ruby_xml_parser_context_subset_external_uri_get(VALUE self) {
   if (rxpc->ctxt->extSubURI == NULL)
     return(Qnil);
   else
-    return(rb_str_new2(rxpc->ctxt->extSubURI));
+    return(rb_str_new2((const char*)rxpc->ctxt->extSubURI));
 }
 
 
@@ -556,7 +556,7 @@ ruby_xml_parser_context_subset_external_system_id_get(VALUE self) {
   if (rxpc->ctxt->extSubSystem == NULL)
     return(Qnil);
   else
-    return(rb_str_new2(rxpc->ctxt->extSubSystem));
+    return(rb_str_new2((const char*)rxpc->ctxt->extSubSystem));
 }
 
 
@@ -646,7 +646,7 @@ ruby_xml_parser_context_version_get(VALUE self) {
   if (rxpc->ctxt->version == NULL)
     return(Qnil);
   else
-    return(rb_str_new2(rxpc->ctxt->version));
+    return(rb_str_new2((const char*)rxpc->ctxt->version));
 }
 
 

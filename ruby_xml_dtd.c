@@ -45,8 +45,8 @@ ruby_xml_dtd_initialize(int argc, VALUE *argv, VALUE class) {
     Check_Type(external, T_STRING);
     Check_Type(system,   T_STRING);
     rxdtd = ALLOC(ruby_xml_dtd);
-    rxdtd->dtd = xmlParseDTD( (const xmlChar*)STR2CSTR(external),
-                              (const xmlChar*)STR2CSTR(system) );
+    rxdtd->dtd = xmlParseDTD( (xmlChar*)StringValuePtr(external),
+                              (xmlChar*)StringValuePtr(system) );
     if (rxdtd->dtd == NULL) {
       free(rxdtd);
       return(Qfalse);
@@ -83,7 +83,7 @@ new(CLASS, external, system)
     rb_scan_args(argc, argv, "10", &dtd_string);
     buffer = xmlAllocParserInputBuffer(enc);
     //if ( !buffer) return Qnil
-    new_string = xmlStrdup((const xmlChar*)STR2CSTR(dtd_string));
+    new_string = xmlStrdup((xmlChar*)StringValuePtr(dtd_string));
     xmlParserInputBufferPush(buffer, xmlStrlen(new_string), (const char*)new_string);
 
     rxdtd = ALLOC(ruby_xml_dtd);

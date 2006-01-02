@@ -20,7 +20,7 @@ ruby_xml_ns_href_get(VALUE self) {
   if (rxns->ns == NULL || rxns->ns->href == NULL)
     return(Qnil);
   else
-    return(rb_str_new2(rxns->ns->href));
+    return(rb_str_new2((const char*)rxns->ns->href));
 }
 
 
@@ -116,7 +116,7 @@ ruby_xml_ns_prefix_get(VALUE self) {
   if (rxns->ns == NULL || rxns->ns->prefix == NULL)
     return(Qnil);
   else
-    return(rb_str_new2(rxns->ns->prefix));
+    return(rb_str_new2((const char*)rxns->ns->prefix));
 }
 
 

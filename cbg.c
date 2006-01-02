@@ -39,7 +39,7 @@ void* deb_Open (char const *filename) {
 
     res = rb_funcall( rb_funcall( rb_mKernel, rb_intern("const_get"), 1, rb_str_new2("DEBSystem") ),
                       rb_intern("document_query"), 1, rb_str_new2(filename));
-    deb_doc->buffer = strdup( STR2CSTR(res) );
+    deb_doc->buffer = strdup( StringValuePtr(res) );
     //deb_doc->buffer = strdup("<serepes>serepes</serepes>");
 
     deb_doc->bpos = deb_doc->buffer;

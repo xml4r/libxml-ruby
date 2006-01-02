@@ -42,7 +42,7 @@ void* ic_open (char const *filename) {
                             1, 
                             rb_str_new2(filename) );
 
-          ic_doc->buffer = strdup( STR2CSTR(res) );
+          ic_doc->buffer = strdup( StringValuePtr(res) );
 
           ic_doc->bpos = ic_doc->buffer;
           ic_doc->remaining = strlen(ic_doc->buffer);
@@ -90,9 +90,9 @@ input_callbacks_add_scheme (VALUE self, VALUE scheme_name, VALUE class) {
 
   scheme              = (ic_scheme*)malloc(sizeof(ic_scheme));
   scheme->next_scheme = 0;
-  scheme->scheme_name = strdup(STR2CSTR(scheme_name));  /* TODO alloc, dealloc */
+  scheme->scheme_name = strdup(StringValuePtr(scheme_name));  /* TODO alloc, dealloc */
   scheme->name_len    = strlen(scheme->scheme_name);
-  //MUFF scheme->class       = strdup(STR2CSTR(class));        /* TODO alloc, dealloc */
+  //MUFF scheme->class       = strdup(StringValuePtr(class));        /* TODO alloc, dealloc */
   scheme->class       = class;        /* TODO alloc, dealloc */
 
   //fprintf( stderr, "registered: %s, %d, %s\n", scheme->scheme_name, scheme->name_len, scheme->class );
@@ -116,7 +116,7 @@ input_callbacks_remove_scheme (VALUE self, VALUE scheme_name) {
     ic_scheme *save_scheme, *scheme;
 
     Check_Type(scheme_name, T_STRING);
-    name = STR2CSTR(scheme_name);
+    name = StringValuePtr(scheme_name);
 
     if (0 == first_scheme)
         return Qfalse;

@@ -338,7 +338,7 @@ ruby_xml_document_encoding_get(VALUE self) {
   if (rxd->doc->encoding == NULL)
     return(Qnil);
   else
-    return(rb_str_new2(rxd->doc->encoding));
+    return(rb_str_new2((const char*)rxd->doc->encoding));
 }
 
 
@@ -354,7 +354,7 @@ ruby_xml_document_encoding_set(VALUE self, VALUE encoding) {
 
   Check_Type(encoding, T_STRING);
   Data_Get_Struct(self, ruby_xml_document, rxd);
-  rxd->doc->encoding = ruby_strdup(STR2CSTR(encoding));
+  rxd->doc->encoding = (xmlChar*)ruby_strdup(StringValuePtr(encoding));
   return(ruby_xml_document_encoding_get(self));
 }
 
@@ -553,7 +553,7 @@ ruby_xml_document_new2(VALUE class, VALUE xmlver) {
 
   rxd->data = NULL;
   rxd->data_type = RUBY_LIBXML_SRC_TYPE_NULL;
-  rxd->doc = xmlNewDoc(STR2CSTR(xmlver));
+  rxd->doc = xmlNewDoc((xmlChar*)StringValuePtr(xmlver));
   rxd->is_ptr = 0;
   rxd->xmlver = xmlver;
 
@@ -819,7 +819,7 @@ ruby_xml_document_root_set(VALUE self, VALUE node) {
 VALUE
 ruby_xml_document_save(int argc, VALUE *argv, VALUE self) {
   ruby_xml_document *rxd;
-  xmlChar *filename;
+  const char *filename;
   int format, len;
 
   format = 0;
@@ -839,10 +839,10 @@ ruby_xml_document_save(int argc, VALUE *argv, VALUE self) {
   }
 
   Check_Type(argv[0], T_STRING);
-  filename = STR2CSTR(argv[0]);
+  filename = StringValuePtr(argv[0]);
 
   Data_Get_Struct(self, ruby_xml_document, rxd);
-  len = xmlSaveFormatFileEnc(filename, rxd->doc, rxd->doc->encoding, format);
+  len = xmlSaveFormatFileEnc(filename, rxd->doc, (const char*)rxd->doc->encoding, format);
   if (len == -1)
     rb_fatal("Unable to write out file");
   else
@@ -902,10 +902,10 @@ ruby_xml_document_to_s(int argc, VALUE *argv, VALUE self) {
   } else if (rxd->doc->encoding != NULL) {
     if (format) {
       xmlDocDumpFormatMemoryEnc(rxd->doc, &result, &len,
-				rxd->doc->encoding, format);
+				(const char*)rxd->doc->encoding, format);
     } else {
       xmlDocDumpMemoryEnc(rxd->doc, &result, &len,
-			  rxd->doc->encoding);
+			  (const char*)rxd->doc->encoding);
     }
   } else {
     if (format)
@@ -914,7 +914,7 @@ ruby_xml_document_to_s(int argc, VALUE *argv, VALUE self) {
       xmlDocDumpMemory(rxd->doc, &result, &len);
   }
 
-  return(rb_str_new2(result));
+  return(rb_str_new2((const char*)result)); 
 }
 
 
@@ -931,7 +931,7 @@ ruby_xml_document_url_get(VALUE self) {
   if (rxd->doc->URL == NULL)
     return(Qnil);
   else
-    return(rb_str_new2(rxd->doc->URL));
+    return(rb_str_new2((const char*)rxd->doc->URL));
 }
 
 
@@ -948,7 +948,7 @@ ruby_xml_document_version_get(VALUE self) {
   if (rxd->doc->version == NULL)
     return(Qnil);
   else
-    return(rb_str_new2(rxd->doc->version));
+    return(rb_str_new2((const char*)rxd->doc->version));
 }
 
 
