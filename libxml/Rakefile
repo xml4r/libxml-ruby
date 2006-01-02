@@ -22,10 +22,9 @@ end
 
 # Let make handle dependencies between c/o/so - we'll just run it. 
 file 'libxml.so' => 'Makefile' do
-  result = IO.popen("#{MAKECMD} #{MAKEOPTS}","r+") do |fp|
-    puts fp.read
-  end    
-
+  pid = fork { exec "#{MAKECMD} #{MAKEOPTS}" }
+  Process.waitpid pid
+  
   fail "Make failed (status #{$?.exitstatus})" unless $?.exitstatus == 0
 end
 
