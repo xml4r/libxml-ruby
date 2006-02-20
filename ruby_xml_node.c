@@ -1568,16 +1568,21 @@ VALUE
 ruby_xml_node_property_get(VALUE self, VALUE prop) {
   ruby_xml_node *rxn;
   xmlChar *p;
-
+  VALUE r;
+  
   Check_Type(prop, T_STRING);
 
   Data_Get_Struct(self, ruby_xml_node, rxn);
   p = xmlGetProp(rxn->node, (xmlChar*)StringValuePtr(prop));
 
   if (p == NULL)
-    return(Qnil);
-  else
-    return(rb_str_new2((const char*)p));
+    r = Qnil;
+  else {
+    r = rb_str_new2((const char*)p);
+    xmlFree(p);
+  }
+  
+  return r;
 }
 
 
@@ -1626,7 +1631,7 @@ ruby_xml_node_properties_get(VALUE self) {
 
   if (node->node->type == XML_ELEMENT_NODE) {
     attr = node->node->properties;
-    return(ruby_xml_attr_new(cXMLAttr, node->xd, attr));
+    return(ruby_xml_attr_new2(cXMLAttr, node->xd, attr));
   } else {
     return(Qnil);
   }
