@@ -201,7 +201,7 @@ ruby_xml_parser_enabled_iconv_q(VALUE class) {
 
 /*
  * call-seq:
- * 		XML::Parser.enabled_memory_debug_location? => (true|false)  
+ * 		XML::Parser.enabled_memory_debug? => (true|false)  
  * 
  * Determine whether libxml memory location debugging support
  * is enabled.

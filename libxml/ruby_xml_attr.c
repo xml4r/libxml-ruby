@@ -166,9 +166,9 @@ ruby_xml_attr_new2(VALUE class, VALUE xd, xmlAttrPtr attr) {
   ruby_xml_attr *rxa;
 
   rxa = ALLOC(ruby_xml_attr);
-  rxa->attr = attr;
+  rxa->attr = xmlCopyProp(attr->parent, attr);
   rxa->xd = xd;
-  rxa->is_ptr = 1;
+  rxa->is_ptr = 0;
   return(Data_Wrap_Struct(class, ruby_xml_attr_mark,
 			  ruby_xml_attr_free, rxa));
 }
