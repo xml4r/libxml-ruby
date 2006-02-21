@@ -2,30 +2,66 @@ require 'net/ftp'
 require 'rake/clean'
 require 'rake/testtask'
 require 'rake/rdoctask'
+require 'rake/gempackagetask'
 
-CLEAN.include '*.o'
-CLEAN.include '*.so'
-CLOBBER.include '*.log'
-CLOBBER.include 'Makefile'
-CLOBBER.include 'extconf.h'
+CLEAN.include '**/*.o'
+CLEAN.include '**/*.so'
+CLEAN.include 'html'
+CLOBBER.include '**/*.log'
+CLOBBER.include '**/Makefile'
+CLOBBER.include '**/extconf.h'
 
-desc "Default Task (All tests)"
-task :default => :alltests
+desc "Default Task (Build release)"
+task :default => :release
 
-# Compile tasks -----------------------------------------------------
+# Determine the current version of the software
+if File.read('ext/xml/libxml.h') =~ /\s*RUBY_LIBXML_VERSION\s*['"](\d.+)['"]/
+  CURRENT_VERSION = $1
+else
+  CURRENT_VERSION = "0.0.0"
+end
+
+if ENV['REL']
+  PKG_VERSION = ENV['REL']
+else
+  PKG_VERSION = CURRENT_VERSION
+end
+
+task :test_ver do
+  puts PKG_VERSION
+end
+
+# Make tasks -----------------------------------------------------
 MAKECMD = ENV['MAKE_CMD'] || 'make'
 MAKEOPTS = ENV['MAKE_OPTS'] || ''
 
-file 'Makefile' => 'extconf.rb' do
-  ruby 'extconf.rb'
+file 'ext/xml/Makefile' => 'ext/xml/extconf.rb' do
+  Dir.chdir('ext/xml') do
+    ruby 'extconf.rb'
+  end
+end
+
+def make(target = '')
+  Dir.chdir('ext/xml') do
+    pid = fork { exec "#{MAKECMD} #{MAKEOPTS} #{target}" }
+    Process.waitpid pid
+  end
+  $?.exitstatus
 end
 
 # Let make handle dependencies between c/o/so - we'll just run it. 
-file 'libxml.so' => 'Makefile' do
-  pid = fork { exec "#{MAKECMD} #{MAKEOPTS}" }
-  Process.waitpid pid
-  
-  fail "Make failed (status #{$?.exitstatus})" unless $?.exitstatus == 0
+file 'ext/xml/libxml.so' => 'ext/xml/Makefile' do
+  m = make
+  fail "Make failed (status #{m})" unless m == 0
+end
+
+desc "Compile the shared object"
+task :compile => 'ext/xml/libxml.so'
+
+desc "Install to your site_ruby directory"
+task :install => :compile do
+  m = make 'install' 
+  fail "Make install failed (status #{m})" unless m == 0
 end
 
 # Test Tasks ---------------------------------------------------------
@@ -35,7 +71,7 @@ task :test => :unittests
 
 Rake::TestTask.new(:alltests) do |t|
   t.test_files = FileList[
-    'tests/*.rb',
+    'tests/tc_*.rb',
     'tests/contrib/*.rb',
   ]
   t.verbose = true
@@ -52,18 +88,17 @@ end
   #t.warning = true
 #end
 
-task :unittests => 'libxml.so'
-task :alltests => 'libxml.so'
+task :unittests => :compile
+task :alltests => :compile
 
 # RDoc Tasks ---------------------------------------------------------
-# Create a task to build the RDOC documentation tree.
-CLEAN.include 'doc'
-Rake::RDocTask.new(:doc) do |rdoc|
-  rdoc.rdoc_dir = 'doc'
+desc "Create the RDOC documentation tree"
+rd = Rake::RDocTask.new(:doc) do |rdoc|
+  rdoc.rdoc_dir = 'html'
   rdoc.title    = "Libxml-Ruby API"
   rdoc.options << '--main' << 'README'
   rdoc.rdoc_files.include('README', 'LICENSE', 'TODO')
-  rdoc.rdoc_files.include('ruby_xml*.c', '*.rdoc')
+  rdoc.rdoc_files.include('ext/xml/ruby_xml*.c', '*.rdoc')
 end
 
 desc "Publish the RDoc documentation to project web site"
@@ -75,6 +110,88 @@ task :pubdoc => [ :doc ] do
   Rake::SshDirPublisher.new(
     "#{ENV['RUBYFORGE_ACCT']}@rubyforge.org",
     "/var/www/gforge-projects/libxml/doc",
-    "doc"
+    "html"
   ).upload
+end
+
+# Packaging / Version number tasks -----------------------------------
+# Used during release packaging if a REL is supplied
+task :update_version do
+  unless PKG_VERSION == CURRENT_VERSION
+    File.open('ext/xml/libxml.h.new','w+') do |f|      
+      f << File.read('ext/xml/libxml.h').
+           gsub(/RUBY_LIBXML_VERSION\s+"(\d.+)"/) { "RUBY_LIBXML_VERSION  \"#{PKG_VERSION}\"" }.
+           gsub(/RUBY_LIBXML_VERNUM\s+\d+/) { "RUBY_LIBXML_VERNUM   #{PKG_VERSION.tr('.','')}" }
+    end
+    mv('ext/xml/libxml.h.new', 'ext/xml/libxml.h')     
+  end
+end
+
+PKG_FILES = FileList[
+  'ext/xml/extconf.rb',
+  '[A-Z]*',
+  'ext/xml/*.c', 
+  'ext/xml/ruby_xml*.h',
+  'ext/xml/libxml.h',
+  'tests/**/*',
+]
+
+if ! defined?(Gem)
+  warn "Package Target requires RubyGEMs"
+else
+  spec = Gem::Specification.new do |s|
+    
+    #### Basic information.
+
+    s.name = 'libxml-ruby'
+    s.version = PKG_VERSION
+    s.summary = "LibXML2 bindings for Ruby"
+    s.description = <<-EOF
+      C-language bindings for Gnome LibXML2 and Ruby. Supports
+      high-speed, feature rich XML processing in Ruby apps.
+    EOF
+    s.extensions = 'ext/xml/extconf.rb'    
+
+    #### Which files are to be included in this gem? 
+
+    s.files = PKG_FILES.to_a
+
+    #### Load-time details
+    s.require_path = 'ext'
+    
+    #### Documentation and testing.
+    s.has_rdoc = true
+    s.extra_rdoc_files = rd.rdoc_files.reject { |fn| fn =~ /\.rb$/ }.to_a
+    s.rdoc_options <<
+      '--title' <<  'Libxml-Ruby API' <<
+      '--main' << 'README' <<
+      '-o' << 'rdoc'      
+
+    s.test_files = Dir.glob('tests/*runner.rb')
+    
+    #### Author and project details.
+
+    s.author = "Sean Chittenden"
+    s.email = "libxml-devel@rubyforge.org"
+    s.homepage = "http://libxml.rubyforge.org"
+    s.rubyforge_project = "libxml"
+  end
+  
+  # Quick fix for Ruby 1.8.3 / YAML bug
+  if (RUBY_VERSION == '1.8.3')
+    def spec.to_yaml
+      out = super
+      out = '--- ' + out unless out =~ /^---/
+      out
+    end  
+  end
+
+  package_task = Rake::GemPackageTask.new(spec) do |pkg|
+    pkg.need_zip = true
+    pkg.need_tar_gz = true
+    pkg.package_dir = 'pkg'    
+  end
+      
+  desc "Build a full release"
+  task :release => [:clobber, :update_version, :compile, :test, :package]
 end

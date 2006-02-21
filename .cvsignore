@@ -11,3 +11,4 @@ PATCHES
 *.so
 *.o
 doc
+pkg

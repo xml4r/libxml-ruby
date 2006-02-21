@@ -23,7 +23,6 @@ dir_config('iconv')
 dir_config('xml2')
 dir_config('zlib')
 
-
 have_library('socket','socket')
 have_library('nsl','gethostbyname')
 
