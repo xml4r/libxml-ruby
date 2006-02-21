@@ -1,5 +1,5 @@
 # $Id$
-require 'libxml' unless defined?(XML)
+require "#{File.dirname(__FILE__)}/../ext/xml/libxml" unless defined?(XML)
 
 class TC_XML_XPath < Test::Unit::TestCase
   def setup()

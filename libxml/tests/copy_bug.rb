@@ -1,6 +1,6 @@
 #!/usr/bin/ruby -w -I.
 
-require 'libxml' unless defined?(XML)
+require "#{File.dirname(__FILE__)}/../ext/xml/libxml" unless defined?(XML)
 
 def test( doc2 )
   doc = XML::Document.new('1.0')
