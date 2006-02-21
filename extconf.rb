@@ -84,6 +84,13 @@ $CFLAGS << ' ' + `xslt-config --cflags`.chomp
 $CFLAGS << ' ' + `xml2-config --cflags`.chomp
 $CFLAGS = '-g -Wall ' + $CFLAGS
 
-
 create_header()
 create_makefile('xml/libxml')
+
+# Quick hack around a problem building on OSX
+if RUBY_PLATFORM =~ /darwin/
+   mf = File.read('Makefile')
+   File.open('Makefile','w+') do |f|
+     f << mf.gsub(/^CFLAGS\s+=\s+(.*)/) { "CFLAGS = #{$1.gsub('-fno-common','')}" }
+   end
+end
