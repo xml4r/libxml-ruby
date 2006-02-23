@@ -6,8 +6,8 @@
 /* Don't nuke this block!  It is used for automatically updating the
  * versions below. VERSION = string formatting, VERNUM = numbered
  * version for inline testing: increment both or none at all. */
-#define RUBY_LIBXML_VERSION  "0.3.4"
-#define RUBY_LIBXML_VERNUM   034
+#define RUBY_LIBXML_VERSION  "0.3.6"
+#define RUBY_LIBXML_VERNUM   036
 
 #include <ruby.h>
 #include <rubyio.h>
