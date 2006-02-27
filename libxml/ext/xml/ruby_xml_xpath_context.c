@@ -5,6 +5,7 @@
 #include "libxml.h"
 #include "ruby_xml_xpath_context.h"
 
+VALUE cXMLXPathContext;
 
 /*
  * call-seq:

@@ -4,7 +4,7 @@
 #include <libxml/schemasInternals.h>
 #include <libxml/xmlschemas.h>
 
-extern VALUE cXMLDtd;
+extern VALUE cXMLSchema;
 
 typedef struct rxp_schema {
   xmlSchemaPtr schema;   /* Schema interface */

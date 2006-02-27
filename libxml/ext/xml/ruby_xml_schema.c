@@ -20,7 +20,7 @@ ruby_xml_schema_free(ruby_xml_schema *rxschema) {
 
 /*
  * call-seq:
- *    XML::Scheme.new(schema_uri) => schema
+ *    XML::Schema.new(schema_uri) => schema
  * 
  * Create a new schema from the specified URI.
  */
