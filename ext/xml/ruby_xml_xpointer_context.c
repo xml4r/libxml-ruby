@@ -6,7 +6,6 @@
 #include "ruby_xml_xpointer_context.h"
 
 VALUE cXMLXPointerContext;
-VALUE eXMLXPointehContextInvalidPath;
 VALUE eXMLXPointerContextInvalidPath;
 
 // Rdoc needs to know 

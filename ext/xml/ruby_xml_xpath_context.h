@@ -5,7 +5,7 @@
 #ifndef __RUBY_XML_XPATH_CONTEXT__
 #define __RUBY_XML_XPATH_CONTEXT__
 
-VALUE cXMLXPathContext;
+extern VALUE cXMLXPathContext;
 
 typedef struct ruby_xml_xpath_context {
   VALUE xd;

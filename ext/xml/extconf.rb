@@ -42,8 +42,10 @@ else
   $defs.push('-DHAVE_ZLIB_H')
 end
 
-unless have_library('iconv','iconv_open') or have_library('c','iconv_open') or
-  have_library('recode','iconv_open')
+unless have_library('iconv','iconv_open') or 
+       have_library('c','iconv_open') or
+       have_library('recode','iconv_open') or
+       have_library('iconv')
   crash(<<EOL)
 need libiconv.
 
@@ -56,7 +58,13 @@ need libiconv.
 EOL
 end
 
-unless have_library('xml2', 'xmlParseDoc')
+unless (have_library('xml2', 'xmlParseDoc') or
+        find_library('xml2', '/opt/lib', '/usr/local/lib', '/usr/lib')) and 
+       (have_header('libxml/xmlversion.h') or
+        find_header('libxml/xmlversion.h', 
+                    '/opt/include/libxml2', 
+                    '/usr/local/include/libxml2', 
+                    '/usr/include/libxml2'))
   crash(<<EOL)
 need libxml2.
 
@@ -76,20 +84,7 @@ unless have_func('docbCreateFileParserCtxt')
   crash('Need docbCreateFileParserCtxt')
 end
 
-$LDFLAGS << ' ' + `xslt-config --libs`.chomp
-$LDFLAGS << ' ' + `xml2-config --libs`.chomp
-
-$CFLAGS << ' ' + `xslt-config --cflags`.chomp
-$CFLAGS << ' ' + `xml2-config --cflags`.chomp
-$CFLAGS = '-g -Wall ' + $CFLAGS
+$CFLAGS = '-g -Wall ' + $CFLAGS + ' ' + $INCFLAGS
 
 create_header()
 create_makefile('xml/libxml')
-
-# Quick hack around a problem building on OSX
-if RUBY_PLATFORM =~ /darwin/
-   mf = File.read('Makefile')
-   File.open('Makefile','w+') do |f|
-     f << mf.gsub(/^CFLAGS\s+=\s+(.*)/) { "CFLAGS = #{$1.gsub('-fno-common','')}" }
-   end
-end
