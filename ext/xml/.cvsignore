@@ -4,3 +4,4 @@ extconf.h
 *.so
 *.o
 
+*.swp

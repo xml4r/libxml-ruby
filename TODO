@@ -2,18 +2,9 @@ $Id$
 
 ==== BUGS
 
-* Hunt down a 4-8KB/s leak while running rubytest -i0 -F on the library.
-
-* Also some other C-side problems:
-  * doublefree at Ruby exit when copying nodes between documents,
-	  and using node sets, sample trace in node_set_bug.txt
-  * XML::Attr.name gives [BUG] segfault line.
-
 * Some C funcs need more NULL checking, they're throwing wierd 
   ArgumentErrors into RubyLand. See TODOs in source.
   
-* Get libxml to compile and build with OS-X.
-
 ==== ENHANCEMENTS
 
 * Add warnings to each of the xpath functions if xpath isn't compiled
