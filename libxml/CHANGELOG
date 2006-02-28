@@ -1,14 +1,18 @@
-===== 21.2.2006 Ross Bamford <rosco@roscopeco.co.uk>
+===== 27.2.2006 Ross Bamford <rosco at roscopeco.co.uk>
+* Fixed all multiple symbol definitions for -fno-common.
+* Removed OSX -fno-common workaround.
+
+===== 21.2.2006 Ross Bamford <rosco at roscopeco.co.uk>
 * Patched extconf.rb with OSX -fno-common workaround
 * Added gem and packaging support to Rakefile
 * Moved version update to Rakefile
 * Removed legacy project utility scripts
 
-===== 19.2.2006 Ross Bamford <rosco@roscopeco.co.uk>
+===== 19.2.2006 Ross Bamford <rosco at roscopeco.co.uk>
 * Fixed doublefree bug in ruby_xml_attr.
 * Fixed small leak in parser
 
-===== 18.12.2005 Ross Bamford <rosco@roscopeco.co.uk>
+===== 18.12.2005 Ross Bamford <rosco at roscopeco.co.uk>
 * Updated for GCC 4.0 (community patches)
 * Fixed default validation bug
 * Refactored project, removed outdated files, cleaned up tests.
