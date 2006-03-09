@@ -69,6 +69,8 @@ $Id$
 
 * Add ability to append hashes and arrays via the XML::Node#<< method.
 
+* Node (etc.) #[] should support symbol keys.
+
 ==== Data Serialization
 
 * Need to define DTD for basic ruby types that have been XML serialized
