@@ -1,15 +1,21 @@
 Make sure you have libxml2, ruby-libxml, and libxslt installed!
 
-$ ln -s ../libxml-[version] ../libxml
-$ ruby extconf.rb
-$ make
-$ cd test && ruby fuzface.rb
-# make install
+$ rake
+$ cd tests && ruby fuzface.rb
+# rake install
 
 See tests/fuzface.rb or utils/document_self.rb for details.
 
 To use libxslt, you have to require 'xml/libxslt'
 
+If you checked out the source from CVS, you must install a copy of
+the current (or matching) libxml-ruby headers in:
+
+	ext/xml/libxml-ruby
+	
+prior to running the above. This can be done via rake, and will
+happen automatically if ../libxml/ext/xml is found, or the
+LIBXMLH=/path/to/headers commandline option is supplied.
 
 # $Id$
 
