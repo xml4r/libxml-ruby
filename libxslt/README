@@ -1,0 +1,16 @@
+Make sure you have libxml2, ruby-libxml, and libxslt installed!
+
+$ ln -s ../libxml-[version] ../libxml
+$ ruby extconf.rb
+$ make
+$ cd test && ruby fuzface.rb
+# make install
+
+See tests/fuzface.rb or utils/document_self.rb for details.
+
+To use libxslt, you have to require 'xml/libxslt'
+
+
+# $Id$
+
+# See the LICENSE file for copyright and distribution information
