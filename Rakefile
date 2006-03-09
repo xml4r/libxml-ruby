@@ -119,9 +119,13 @@ end
 task :update_version do
   unless PKG_VERSION == CURRENT_VERSION
     File.open('ext/xml/libxml.h.new','w+') do |f|      
+    maj, min, mic = /(\d+)\.(\d+)(?:\.(\d+))?/.match(PKG_VERSION).captures
       f << File.read('ext/xml/libxml.h').
            gsub(/RUBY_LIBXML_VERSION\s+"(\d.+)"/) { "RUBY_LIBXML_VERSION  \"#{PKG_VERSION}\"" }.
-           gsub(/RUBY_LIBXML_VERNUM\s+\d+/) { "RUBY_LIBXML_VERNUM   #{PKG_VERSION.tr('.','')}" }
+           gsub(/RUBY_LIBXML_VERNUM\s+\d+/) { "RUBY_LIBXML_VERNUM   #{PKG_VERSION.tr('.','')}" }.
+           gsub(/RUBY_LIBXML_VER_MAJ\s+\d+/) { "RUBY_LIBXML_VER_MAJ   #{maj}" }.
+           gsub(/RUBY_LIBXML_VER_MIN\s+\d+/) { "RUBY_LIBXML_VER_MIN   #{min}" }.
+           gsub(/RUBY_LIBXML_VER_MIC\s+\d+/) { "RUBY_LIBXML_VER_MIC   #{mic || 0}" }           
     end
     mv('ext/xml/libxml.h.new', 'ext/xml/libxml.h')     
   end
