@@ -23,6 +23,9 @@
 
 #define RUBY_LIBXSLT_VERSION  "0.3.6"
 #define RUBY_LIBXSLT_VERNUM   036
+#define RUBY_LIBXSLT_VER_MAJ  0
+#define RUBY_LIBXSLT_VER_MIN  3
+#define RUBY_LIBXSLT_VER_MIC  6
 
 #define RUBY_LIBXSLT_SRC_TYPE_NULL    0
 #define RUBY_LIBXSLT_SRC_TYPE_FILE    1
@@ -42,8 +45,8 @@ typedef struct ruby_xslt {
   xsltStylesheetPtr xsp;
 } ruby_xslt;
 
-#if (RUBY_LIBXML_VERNUM != RUBY_LIBXSLT_VERNUM)
-#error "Incompatible LibXML-Ruby headers - please install matching version"
+#if ((RUBY_LIBXML_VER_MAJ != RUBY_LIBXSLT_VER_MAJ) || (RUBY_LIBXML_VER_MIN != RUBY_LIBXSLT_VER_MIN))
+#error "Incompatible LibXML-Ruby headers - please install same major/micro version"
 #endif
 
 #endif

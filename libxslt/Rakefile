@@ -35,7 +35,7 @@ MAKEOPTS = ENV['MAKE_OPTS'] || ''
 
 # Copy libxml headers in if needed or official release
 task :copy_libxml_headers do  
-  rm_rf 'ext/xml/libxml-ruby' if ENV['REL']  
+  rm_rf 'ext/xml/libxml-ruby' if ENV['REL'] || ENV['ALLCLEAN']
 
   unless File.exist?('ext/xml/libxml-ruby')
     unless File.exist?(LIBXMLH)
@@ -159,10 +159,14 @@ end
 # Used during release packaging if a REL is supplied
 task :update_version do
   unless PKG_VERSION == CURRENT_VERSION
-    File.open('ext/xml/libxslt.h.new','w+') do |f|      
+    maj, min, mic = /(\d+)\.(\d+)(?:\.(\d+))?/.match(PKG_VERSION).captures
+    File.open('ext/xml/libxslt.h.new','w+') do |f|
       f << File.read('ext/xml/libxslt.h').
            gsub(/RUBY_LIBXSLT_VERSION\s+"(\d.+)"/) { "RUBY_LIBXSLT_VERSION  \"#{PKG_VERSION}\"" }.
-           gsub(/RUBY_LIBXSLT_VERNUM\s+\d+/) { "RUBY_LIBXSLT_VERNUM   #{PKG_VERSION.tr('.','')}" }
+           gsub(/RUBY_LIBXSLT_VERNUM\s+\d+/) { "RUBY_LIBXSLT_VERNUM   #{PKG_VERSION.tr('.','')}" }.
+           gsub(/RUBY_LIBXSLT_VER_MAJ\s+\d+/) { "RUBY_LIBXSLT_VER_MAJ   #{maj}" }.
+           gsub(/RUBY_LIBXSLT_VER_MIN\s+\d+/) { "RUBY_LIBXSLT_VER_MIN   #{min}" }.
+           gsub(/RUBY_LIBXSLT_VER_MIC\s+\d+/) { "RUBY_LIBXSLT_VER_MIC   #{mic || 0}" }           
     end
     mv('ext/xml/libxslt.h.new', 'ext/xml/libxslt.h')     
   end
@@ -235,5 +239,5 @@ else
   end
       
   desc "Build a full release"
-  task :release => [:clobber, :prerelease, :update_version, :compile, :test, :package]  
+  task :release => [:clobber, :update_version, :compile, :test, :package]  
 end
