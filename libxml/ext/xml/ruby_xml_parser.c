@@ -218,7 +218,7 @@ ruby_xml_parser_enabled_memory_debug_location_q(VALUE class) {
 
 /*
  * call-seq:
- * 		XML::Parser.enabled_catalog? => (true|false)  
+ * 		XML::Parser.enabled_regexp? => (true|false)  
  * 
  * Determine whether libxml regular expression support is enabled.
  */
@@ -267,7 +267,7 @@ ruby_xml_parser_enabled_thread_q(VALUE class) {
 
 /*
  * call-seq:
- * 		XML::Parser.enabled_catalog? => (true|false)  
+ * 		XML::Parser.enabled_unicode? => (true|false)  
  * 
  * Determine whether libxml unicode support is enabled.
  */
@@ -283,7 +283,7 @@ ruby_xml_parser_enabled_unicode_q(VALUE class) {
 
 /*
  * call-seq:
- * 		XML::Parser.enabled_catalog? => (true|false)  
+ * 		XML::Parser.enabled_xinclude? => (true|false)  
  * 
  * Determine whether libxml xinclude support is enabled.
  */
@@ -299,7 +299,7 @@ ruby_xml_parser_enabled_xinclude_q(VALUE class) {
 
 /*
  * call-seq:
- * 		XML::Parser.enabled_catalog? => (true|false)  
+ * 		XML::Parser.enabled_xpath? => (true|false)  
  * 
  * Determine whether libxml xpath support is enabled.
  */
@@ -315,7 +315,7 @@ ruby_xml_parser_enabled_xpath_q(VALUE class) {
 
 /*
  * call-seq:
- * 		XML::Parser.enabled_catalog? => (true|false)  
+ * 		XML::Parser.enabled_xpointer? => (true|false)  
  * 
  * Determine whether libxml xpointer support is enabled.
  */
@@ -331,7 +331,7 @@ ruby_xml_parser_enabled_xpointer_q(VALUE class) {
 
 /*
  * call-seq:
- * 		XML::Parser.enabled_catalog? => (true|false)  
+ * 		XML::Parser.enabled_zlib? => (true|false)  
  * 
  * Determine whether libxml zlib support is enabled.
  */
