@@ -2,13 +2,29 @@
 
 Installation is simple.  Follow the following steps:
 
-	$ ruby extconf.rb
-	$ make
-	# make install
+=== Rubygems
+
+  gem install libxml-ruby
+	
+=== Tarball/zip	
+
+  $ rake test
+  $ rake install
 
 If extconf yacks up an error, follow the instructions it provides.
-Once installed, look at the test scripts (*.rb, not extconf.rb) and
-make sure you run document_self.rb to see what's available.
+You will need to chdir to ext/xml and run 'ruby extconf.rb' to provide
+options, after which you can either use Rake for everything or 
+do with make (make && make install).
+
+Once installed, look at the test scripts (tests/*.rb), and run 
+'rake doc' to generate API documentation.
+
+== DOCUMENTATION
+
+RDoc comments are included - run 'rake doc' to generate documentation.
+You can find the latest documentation at:
+
+* http://libxml.rubyforge.org/doc
 
 == DEPENDENCIES
 
