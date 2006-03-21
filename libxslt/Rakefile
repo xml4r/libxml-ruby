@@ -129,7 +129,7 @@ rd = Rake::RDocTask.new(:doc) do |rdoc|
   rdoc.title    = "Libxslt-Ruby API"
   rdoc.options << '--main' << 'README'
   rdoc.rdoc_files.include('README', 'LICENSE', 'TODO')
-  rdoc.rdoc_files.include('ext/xml/ruby_xslt*.c', '*.rdoc')
+  rdoc.rdoc_files.include('ext/xml/ruby_xslt*.c', 'ext/xml/libxslt.c', '*.rdoc')
 end
 
 desc "Publish the RDoc documentation to project web site"
@@ -140,7 +140,7 @@ task :pubdoc => [ :doc ] do
   require 'rake/contrib/sshpublisher'
   Rake::SshDirPublisher.new(
     "#{ENV['RUBYFORGE_ACCT']}@rubyforge.org",
-    "/var/www/gforge-projects/libxml/xslt/doc",
+    "/var/www/gforge-projects/libxml/doc/xslt",
     "html"
   ).upload
 end
@@ -199,8 +199,10 @@ else
     s.extensions = 'ext/xml/extconf.rb'    
 
     #### Which files are to be included in this gem? 
-
     s.files = PKG_FILES.to_a
+    
+    #### dependencies
+    s.add_dependency('libxml-ruby', '>= 0.3.6')    
 
     #### Load-time details
     s.require_path = 'ext'

@@ -8,6 +8,11 @@
 VALUE cXSLT;
 VALUE eXMLXSLTStylesheetRequireParsedDoc;
 
+/* call-seq:
+ *    xslt.doc => #&lt;XML::Document...&gt;
+ * 
+ * Obtain the source XML::Document.
+ */
 VALUE
 ruby_xslt_doc_get(VALUE self) {
   ruby_xslt *rxslt;
@@ -15,7 +20,11 @@ ruby_xslt_doc_get(VALUE self) {
   return(rxslt->xml_doc_obj);
 }
 
-
+/* call-seq:
+ *    xslt.doc = some_xml_document
+ * 
+ * Set the source XML::Document.
+ */
 VALUE
 ruby_xslt_doc_set(VALUE self, VALUE xml_doc_obj) {
   ruby_xslt *rxslt;
@@ -43,7 +52,11 @@ ruby_xslt_doc_set(VALUE self, VALUE xml_doc_obj) {
   return(rxslt->xml_doc_obj);
 }
 
-
+/* call-seq:
+ *    xslt.filename => "filename.xsl"
+ * 
+ * Obtain the stylesheet filename.
+ */
 VALUE
 ruby_xslt_filename_get(VALUE self) {
   ruby_xslt *rxslt;
@@ -56,6 +69,11 @@ ruby_xslt_filename_get(VALUE self) {
 }
 
 
+/* call-seq:
+ *    xslt.filename = "filename.xsl"
+ * 
+ * Set the stylesheet filename.
+ */
 VALUE
 ruby_xslt_filename_set(VALUE self, VALUE filename) {
   ruby_xslt *rxslt;
@@ -94,6 +112,13 @@ ruby_xslt_mark(ruby_xslt *rxslt) {
 }
 
 
+/* call-seq:
+ *    XML::XSLT.new => #&lt;XML::XSLT...&gt;
+ * 
+ * Create a new XSLT instance. You will need to specify
+ * a filename and document for the instance after it is
+ * created.
+ */
 VALUE
 ruby_xslt_new(VALUE class) {
   ruby_xslt *rxslt;
@@ -112,7 +137,11 @@ ruby_xslt_new(VALUE class) {
   return(Data_Wrap_Struct(class, ruby_xslt_mark, ruby_xslt_free, rxslt));
 }
 
-
+/* call-seq:
+ *    XML::XSLT.file("filename.xsl") => #&lt;XML::XSLT...&gt;
+ * 
+ * Create a new XSLT instance with the supplied stylesheet filename.
+ */
 VALUE
 ruby_xslt_new_file(VALUE class, VALUE filename) {
   VALUE xslt;
@@ -122,7 +151,15 @@ ruby_xslt_new_file(VALUE class, VALUE filename) {
   return(xslt);
 }
 
-
+/* call-seq:
+ *    xslt.parse => #&lt;XML::XSLT::Stylesheet...&gt;
+ * 
+ * Parse the xsl source (specified by +filename+) and create
+ * a +Stylesheet+ instance that will apply it against the
+ * source document. If a parsed XML::Document isn't associated
+ * with this +XSLT+ instance (via #doc=) then a 
+ * Stylesheet::RequireParsedDoc exception is raised.
+ */
 VALUE
 ruby_xslt_parse(VALUE self) {
   ruby_xml_document *rxd;
@@ -166,6 +203,9 @@ ruby_xslt_parse(VALUE self) {
   return(xssobj);
 }
 
+#ifdef RDOC_NEVER_DEFINED
+  mXML = rb_define_module("XML");
+#endif
 
 void
 Init_libxslt(void) {

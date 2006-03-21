@@ -8,7 +8,10 @@
 VALUE cXSLTStylesheet;
 
 /* call-seq: 
- *   sheet.apply
+ *   sheet.apply => (true|false)
+ * 
+ * Apply this stylesheet transformation to the source
+ * document.
  */
 VALUE
 ruby_xslt_stylesheet_apply(int argc, VALUE *argv, VALUE self) {
@@ -80,7 +83,13 @@ ruby_xslt_stylesheet_apply(int argc, VALUE *argv, VALUE self) {
 
 
 /* call-seq: 
- *   sheet.debug
+ *   sheet.debug(to = $stdout) => (true|false)
+ * 
+ * Output a debug dump of this stylesheet to the specified output
+ * stream (an instance of IO, defaults to $stdout). Requires
+ * libxml/libxslt be compiled with debugging enabled. If this
+ * is not the case, a warning is triggered and the method returns
+ * false.
  */
 VALUE
 ruby_xslt_stylesheet_debug(int argc, VALUE *argv, VALUE self) {
@@ -164,9 +173,15 @@ ruby_xslt_stylesheet_new(VALUE class, xsltStylesheetPtr xsp) {
 			  ruby_xslt_stylesheet_free, xss));
 }
 
+// TODO should this automatically apply the sheet if not already,
+//      given that we're unlikely to do much else with it?
 
 /* call-seq: 
- *   sheet.print
+ *   sheet.print(to = $stdout) => number_of_bytes
+ * 
+ * Output the result of the transform to the specified output
+ * stream (an IO instance, defaults to $stdout). You *must* call
+ * +apply+ before this method or an exception will be raised.
  */
 VALUE
 ruby_xslt_stylesheet_print(int argc, VALUE *argv, VALUE self) {
@@ -206,8 +221,14 @@ ruby_xslt_stylesheet_print(int argc, VALUE *argv, VALUE self) {
   return(INT2NUM(bytes));
 }
 
+// TODO this, too. Either way, to_s probably should have prereqs
+//      like this, for one thing it makes IRB use tricky...
+
 /* call-seq: 
- *   sheet.to_s
+ *   sheet.to_s => "result"
+ * 
+ * Obtain the result of the transform as a string. You *must* call
+ * +apply+ before this method or an exception will be raised.
  */
 VALUE
 ruby_xslt_stylesheet_to_s(VALUE self) {
@@ -230,8 +251,14 @@ ruby_xslt_stylesheet_to_s(VALUE self) {
     return(rb_str_new((const char*)str,len));
 }
 
+
+
 /* call-seq: 
- *   sheet.save
+ *   sheet.save(io) => true
+ * 
+ * Save the result of the transform to the supplied open
+ * file (an IO instance). You *must* call +apply+ before 
+ * this method or an exception will be raised.
  */
 VALUE
 ruby_xslt_stylesheet_save(VALUE self, VALUE io) {
