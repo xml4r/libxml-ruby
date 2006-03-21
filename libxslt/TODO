@@ -1,0 +1,32 @@
+$Id$
+
+XML::XSLT needs a class method that'll let it use a stylesheet that's
+already in memory.  Something like: xsl = XML::XSLT.string(stylesheet)
+
+Need version constants to be available for both LIBXML and LIBXSLT
+
+Need a way of changing the IO stream used for printing the output
+
+Should have some way of turning on more debugging that what's there
+
+Need to add the ability to save to a file
+
+Ability to dump the tree instead of the result to a given IO stream (partially completed, iirc)
+
+Ability to dump the registered extension elements and functions to a given IO stream
+
+Ability to turn on and off the DTD loading phase
+
+Ability to increase the maximum depth of applying templates
+
+Some way of specifying that the incoming document is xhtml and not xml
+
+Some way of specifying that the incoming document is SGML docbook
+
+A way of setting parameters (key/value pairs) before the stylesheet gets processed
+
+A way of not telling the XSL engine to not fetch DTDs over a network
+
+A way of specifying the SGML catalogs to use
+
+A way of turning on XInclude processing of the document input
