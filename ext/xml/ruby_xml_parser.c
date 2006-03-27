@@ -4,6 +4,9 @@
 
 #include "libxml.h"
 
+static VALUE libxml_xmlRubyErrorProc = Qnil;
+static int id_call;
+
 int ruby_xml_parser_count = 0;
 VALUE cXMLParser;
 VALUE eXMLParserParseError;
@@ -1216,6 +1219,52 @@ ruby_xml_parser_str_set(VALUE self, VALUE str) {
   return(data->str);
 }
 
+/*
+ * call-seq:
+ *    XML::Parser.register_error_handler(lambda { |msg| ... }) => old_handler
+ *    XML::Parser.register_error_handler(nil) => old_handler
+ * 
+ * Register the attached block as the handler for parser errors.
+ * A message describing parse errors is passed to the block.
+ * Libxml passes error messages to the handler in parts, one per call.
+ * A typical error results in six calls to this proc, with arguments:
+ * 
+ *   "Entity: line 1: ", 
+ *   "parser ", 
+ *   "error : ", 
+ *   "Opening and ending tag mismatch: foo line 1 and foz\n",
+ *   "<foo><bar/></foz>\n",
+ *   "                 ^\n"
+ * 
+ * Note that the error handler is shared by all threads.
+ */
+VALUE
+ruby_xml_parser_registerErrorHandler(VALUE self, VALUE proc) {
+  VALUE old_block = libxml_xmlRubyErrorProc;
+  libxml_xmlRubyErrorProc = proc;
+  return(old_block);
+}
+
+static void
+libxml_xmlErrorFuncHandler(ATTRIBUTE_UNUSED void *ctx, const char *msg, ...)
+{
+  va_list ap;
+  char str[1000];
+  VALUE rstr;
+
+  if (libxml_xmlRubyErrorProc == Qnil) {
+    va_start(ap, msg);
+    vfprintf(stderr, msg, ap);
+    va_end(ap);
+  } else {
+    va_start(ap, msg);
+    if (vsnprintf(str, 999, msg, ap) >= 998) str[999] = 0;
+    va_end(ap);
+
+    rstr = rb_str_new2(str);
+    rb_funcall2(libxml_xmlRubyErrorProc, id_call, 1, &rstr);
+  }
+}
 
 /* #define RUBY_XML_PARSER_ENABLED_INIT(func, method) \
  rb_define_singleton_method(cXMLParser, method, \
@@ -1351,7 +1400,7 @@ ruby_init_parser(void) {
 			     ruby_xml_parser_memory_used, 0);
   rb_define_singleton_method(cXMLParser, "new", ruby_xml_parser_new, 0);
   rb_define_singleton_method(cXMLParser, "string", ruby_xml_parser_new_string, 1);
-
+  rb_define_singleton_method(cXMLParser, "register_error_handler", ruby_xml_parser_registerErrorHandler, 1);
   rb_define_method(cXMLParser, "filename", ruby_xml_parser_filename_get, 0);
   rb_define_method(cXMLParser, "filename=", ruby_xml_parser_filename_set, 1);
   rb_define_method(cXMLParser, "io", ruby_xml_parser_io_get, 0);
@@ -1360,4 +1409,9 @@ ruby_init_parser(void) {
   rb_define_method(cXMLParser, "parser_context", ruby_xml_parser_parser_context_get, 0);
   rb_define_method(cXMLParser, "string", ruby_xml_parser_str_get, 0);
   rb_define_method(cXMLParser, "string=", ruby_xml_parser_str_set, 1);
+  
+  // set up error handling
+  xmlSetGenericErrorFunc(NULL, libxml_xmlErrorFuncHandler);
+  xmlThrDefSetGenericErrorFunc(NULL, libxml_xmlErrorFuncHandler);
+  id_call = rb_intern("call");
 }
