@@ -12,3 +12,4 @@ PATCHES
 *.o
 doc
 pkg
+html
