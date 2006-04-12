@@ -141,7 +141,7 @@ ruby_xml_node_content_add(VALUE self, VALUE obj) {
   } else {
     str = rb_obj_as_string(obj);
     if (NIL_P(str) || TYPE(str) != T_STRING)
-      rb_raise(rb_eTypeError, "invalid argumnt: must be string or XML::Node");
+      rb_raise(rb_eTypeError, "invalid argument: must be string or XML::Node");
 
     xmlNodeAddContent(node->node, (xmlChar*)StringValuePtr(str));
     return(obj);
@@ -158,23 +158,16 @@ ruby_xml_node_content_add(VALUE self, VALUE obj) {
 VALUE
 ruby_xml_node_content_get(VALUE self) {
   ruby_xml_node *rxn;
-
+  xmlChar *content;
+  VALUE out;
+  
   Data_Get_Struct(self, ruby_xml_node, rxn);
-  if (rxn->node->type == XML_ELEMENT_NODE || rxn->node->content == NULL)
-    return(Qnil);
-  else {
-    return(rb_str_new2((const char*)rxn->node->content));
-  }
+  content = xmlNodeGetContent(rxn->node);
+  out = rb_str_new2((const char *) content);
+  xmlFree(content);
+ 
+  return out;
 }
-
-/////////////////////////////////////////////
-// TODO may be bugged:
-//
-//    node.content = "123"
-//    node.content          => nil
-//    node.content_stripped => nil
-//    node.to_s             => "<head xml:base=\"123\">wow</head>"
-
 
 /*
  * call-seq:
