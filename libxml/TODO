@@ -42,8 +42,6 @@ $Id$
   'return(Qnil)' with exceptions if 'return(Qnil)' is being used for
   signaling an error or inability to process the document.
   
-* Pointer target signedness warnings (GCC 4.0)  
-
 * Need to add the ability to create namespace objects and modify them
   accordingly.
 
@@ -70,6 +68,8 @@ $Id$
 * Add ability to append hashes and arrays via the XML::Node#<< method.
 
 * Node (etc.) #[] should support symbol keys.
+
+* Make nodes comparable (on qualified name?)
 
 ==== Data Serialization
 
