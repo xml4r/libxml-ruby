@@ -1,6 +1,6 @@
-h1. Ruby <span style="color: #b02424">libxml</span> Project
+h1.  <span style="color: #901414">Libxml</span>-Ruby Project
 
-The <span style="color: #b02424">Libxml-Ruby</span> project provides Ruby
+The <span style="color: #901414">Libxml-Ruby</span> project provides Ruby
 language bindings for the "GNOME Libxml2":http://xmlsoft.org XML toolkit.
 It is free software, released under the "MIT License":<%= link_rel '/license.html' %>
 
