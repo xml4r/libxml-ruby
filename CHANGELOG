@@ -1,3 +1,21 @@
+===== 12.4.2006 Ross Bamford <rosco at roscopeco.co.uk>
+* Integrated / tested community patches
+* Defined XML::Node (hash) equality in terms of XML representation
+
+===== 12.4.2006 Tim Yamin <plasmaroo at gentoo.org> (patches)
+* Fixed XML::Node#content inoperable bug
+* Fixed memory leak in same
+
+===== 12.4.2006 Mark Van Holstyn <mvette13 at gmail.com> (patches)
+* Added XML::Node::Set#first
+* Added XML::Node::Set#empty?
+* Fixes to XML::Node::Set#to_a
+* Added XML::Node#find_first
+* Added XML::Node#remove!
+
+===== 27.3.2006 Ross Bamford <rosco at roscopeco.co.uk>
+* Integrated contributed XML::Parser.register_error_handler patch
+
 ===== 27.2.2006 Ross Bamford <rosco at roscopeco.co.uk>
 * Fixed all multiple symbol definitions for -fno-common.
 * Removed OSX -fno-common workaround.

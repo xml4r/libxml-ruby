@@ -186,15 +186,14 @@ ruby_xml_node_content_set(VALUE self, VALUE content) {
 }
 
 
-/////////////////////////////////////////////////////
-// TODO may be bugged: see above
-//
-
 /*
  * call-seq:
  *    node.content_stripped => "string"
  * 
  * Obtain this node's stripped content.
+ * 
+ * *Deprecated*: Stripped content can be obtained via the
+ * +content+ method.
  */
 VALUE
 ruby_xml_node_content_stripped_get(VALUE self) {
@@ -577,6 +576,28 @@ ruby_xml_node_entity_ref_q(VALUE self) {
     return(Qfalse);
 }
 
+VALUE ruby_xml_node_to_s(VALUE self);
+
+/*
+ * call-seq:
+ *    node.eql?(other_node) => (true|false)
+ * 
+ * Test equality between the two nodes. Equality is determined based
+ * on the XML representation of the nodes.
+ */
+VALUE
+ruby_xml_node_eql_q(VALUE self, VALUE other) {
+  // TODO this isn't the best way to handle this
+  ruby_xml_node *rxn, *orxn;  
+  VALUE thisxml, otherxml;
+  Data_Get_Struct(self, ruby_xml_node, rxn);
+  Data_Get_Struct(other, ruby_xml_node, orxn);
+  thisxml = ruby_xml_node_to_s(self);
+  otherxml = ruby_xml_node_to_s(other);
+  
+  return(rb_funcall(thisxml, rb_intern("=="), 1, otherxml));
+}
+
 
 /*
  * call-seq:
@@ -600,6 +621,34 @@ ruby_xml_node_find(int argc, VALUE *argv, VALUE self) {
     vargv[i + 1] = argv[i];
 
   return(ruby_xml_xpath_find2(vargc, vargv));
+}
+
+/*
+ * call-seq:
+ *    node.find_first(xpath_expr, namespace = [any]) => nodeset
+ *
+ * Find the first node matching the specified xpath expression, optionally
+ * using the specified namespaces. Returns an XML::Node.
+ */
+VALUE
+ruby_xml_node_find_first(int argc, VALUE *argv, VALUE self) {
+  VALUE ns = ruby_xml_node_find(argc, argv, self);
+  ruby_xml_node_set *rxnset;
+
+  Data_Get_Struct(ns, ruby_xml_node_set, rxnset);
+  if (rxnset->node_set == NULL || rxnset->node_set->nodeNr < 1)
+    return(Qnil);
+
+  VALUE nodeobj;
+  switch(rxnset->node_set->nodeTab[0]->type) {
+    case XML_ATTRIBUTE_NODE:
+      nodeobj = ruby_xml_attr_new2(cXMLAttr, rxnset->xd, (xmlAttrPtr)rxnset->node_set->nodeTab[0]);
+      break;
+    default:
+      nodeobj = ruby_xml_node_new2(cXMLNode, rxnset->xd, rxnset->node_set->nodeTab[0]);
+  }
+
+  return(nodeobj);
 }
 
 
@@ -628,6 +677,24 @@ void ruby_xml_node_free(ruby_xml_node *rxn) {
   }
 
   free(rxn);
+}
+
+
+/*
+ * call-seq:
+ *    node.hash => fixnum
+ * 
+ * Returns the hash-code for this node. This is the hash of the XML
+ * representation in order to be consistent with eql.
+ */
+VALUE
+ruby_xml_node_hash(VALUE self) {
+  ruby_xml_node *rxn;
+  VALUE thisxml;
+  Data_Get_Struct(self, ruby_xml_node, rxn);
+  thisxml = ruby_xml_node_to_s(self);
+  
+  return(rb_funcall(thisxml, rb_intern("hash"), 0));
 }
 
 
@@ -1592,10 +1659,17 @@ ruby_xml_node_property_set(VALUE self, VALUE key, VALUE val) {
   xmlAttrPtr attr;
   VALUE rattr;
 
-  Check_Type(key, T_STRING);
-  Check_Type(val, T_STRING);
   Data_Get_Struct(self, ruby_xml_node, node);
-
+  Check_Type(key, T_STRING);
+  
+  if( val == Qnil ) {
+    attr = xmlSetProp(node->node, (xmlChar*)StringValuePtr(key), NULL);
+    xmlRemoveProp( attr );
+    return Qnil;
+  } else {
+    Check_Type(val, T_STRING);
+  }
+  
   attr = xmlSetProp(node->node, (xmlChar*)StringValuePtr(key), (xmlChar*)StringValuePtr(val));
   if (attr == NULL) {
     attr = xmlNewProp(node->node, (xmlChar*)StringValuePtr(key), (xmlChar*)StringValuePtr(val));
@@ -1646,6 +1720,21 @@ ruby_xml_node_properties_q(VALUE self) {
     return(Qtrue);
   else
     return(Qfalse);
+}
+
+
+/*
+ * call-seq:
+*    node.remove! => nil
+*
+* Removes this node from it's parent.
+*/
+VALUE
+ruby_xml_node_remove_ex(VALUE self) {
+  ruby_xml_node *rxn;
+  Data_Get_Struct(self, ruby_xml_node, rxn);
+  xmlUnlinkNode(rxn->node);
+    return(Qnil);
 }
 
 
@@ -1793,7 +1882,6 @@ ruby_xml_node_to_s(VALUE self) {
   buf = xmlBufferCreate();
   xmlNodeDump(buf, rxn->node->doc, rxn->node, 0, 1);
   result = rb_str_new2((const char*)buf->content);
-  // TODO result = rb_str_new2((const char*)buf->content); ?
   
   xmlBufferFree(buf);
   return result;
@@ -1997,8 +2085,11 @@ ruby_init_xml_node(void) {
   rb_define_method(cXMLNode, "empty?", ruby_xml_node_empty_q, 0);
   rb_define_method(cXMLNode, "entity?", ruby_xml_node_entity_q, 0);
   rb_define_method(cXMLNode, "entity_ref?", ruby_xml_node_entity_ref_q, 0);
+  rb_define_method(cXMLNode, "eql?", ruby_xml_node_eql_q, 1);
   rb_define_method(cXMLNode, "find", ruby_xml_node_find, -1);
+  rb_define_method(cXMLNode, "find_first", ruby_xml_node_find_first, -1);
   rb_define_method(cXMLNode, "fragment?", ruby_xml_node_fragment_q, 0);
+  rb_define_method(cXMLNode, "hash", ruby_xml_node_hash, 0);
   rb_define_method(cXMLNode, "html_doc?", ruby_xml_node_html_doc_q, 0);
   rb_define_method(cXMLNode, "lang", ruby_xml_node_lang_get, 0);
   rb_define_method(cXMLNode, "lang=", ruby_xml_node_lang_set, 1);
@@ -2030,6 +2121,7 @@ ruby_init_xml_node(void) {
   rb_define_method(cXMLNode, "property", ruby_xml_node_property_get, 1);
   rb_define_method(cXMLNode, "properties", ruby_xml_node_properties_get, 0);
   rb_define_method(cXMLNode, "properties?", ruby_xml_node_properties_q, 0);
+  rb_define_method(cXMLNode, "remove!", ruby_xml_node_remove_ex, 0);
   rb_define_method(cXMLNode, "search_ns", ruby_xml_node_search_ns, 1);
   rb_define_method(cXMLNode, "search_href", ruby_xml_node_search_href, 1);
   rb_define_method(cXMLNode, "sibling=", ruby_xml_node_sibling_set, 1);
@@ -2042,4 +2134,6 @@ ruby_init_xml_node(void) {
   rb_define_method(cXMLNode, "xlink?", ruby_xml_node_xlink_q, 0);
   rb_define_method(cXMLNode, "xlink_type", ruby_xml_node_xlink_type, 0);
   rb_define_method(cXMLNode, "xlink_type_name", ruby_xml_node_xlink_type_name, 0);
+
+  rb_define_alias(cXMLNode, "==", "eql?");
 }

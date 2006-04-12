@@ -4,6 +4,7 @@ require 'test/unit'
 
 class TC_XML_Parser8 < Test::Unit::TestCase
   def test_ruby_xml_parser_error_handler  
+    $stderr.puts "\nEXPECTING: TWO ERRORS:"
     # this will send message to stderr
     assert_raise(XML::Parser::ParseError) {
       d = XML::Parser.string('<foo><bar/></foz>').parse    
