@@ -44,7 +44,9 @@ Basic usage for reading and writing documents.
 
 Writing a simple document:
 
+  # require 'rubygems' # if installed via Gems
 	require 'xml/libxml'
+	
 	doc = XML::Document.new()
 	doc.root = XML::Node.new('root_node')
 	root = doc.root
