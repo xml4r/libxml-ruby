@@ -24,6 +24,18 @@ class TC_XML_Parser < Test::Unit::TestCase
     @xp = nil
   end
   
+  def test_string_without_callbacks
+    xp = XML::SaxParser.new
+    xp.string = File.read(File.join(File.dirname(__FILE__), 'model/saxtest.xml'))
+    assert_equal true, xp.parse
+  end
+  
+  def test_file_without_callbacks
+    xp = XML::SaxParser.new
+    xp.filename = File.join(File.dirname(__FILE__), 'model/saxtest.xml')
+    assert_equal true, xp.parse
+  end
+  
   def test_callbacks_with_string
     @xp.string = File.read(File.join(File.dirname(__FILE__), 'model/saxtest.xml'))
     do_test

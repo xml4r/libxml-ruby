@@ -54,6 +54,7 @@ ruby_xml_sax_parser_new(VALUE class) {
   
   rxsp = ALLOC(ruby_xml_sax_parser);
   rxsp->cbp = ALLOC(ruby_xml_sax_parser_callbacks);
+  memset(rxsp->cbp, 0, sizeof(ruby_xml_sax_parser_callbacks));
   rxsp->xsh = &rubySAXHandlerStruct;
   
   rxsp->xpc = NULL;

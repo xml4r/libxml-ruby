@@ -134,7 +134,8 @@ end
 PKG_FILES = FileList[
   'ext/xml/extconf.rb',
   '[A-Z]*',
-  'ext/xml/*.c', 
+  'ext/xml/*.c',
+  'ext/xml/*.inc', 
   'ext/xml/ruby_xml*.h',
   'ext/xml/libxml.h',
   'tests/**/*',
