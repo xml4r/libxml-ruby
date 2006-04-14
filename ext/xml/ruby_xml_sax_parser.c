@@ -8,7 +8,7 @@
 VALUE cXMLSaxParser;
 VALUE callsym;
 
-#include "sax_parser_callbacks.c"
+#include "sax_parser_callbacks.inc"
 
 void
 ruby_xml_sax_parser_free(ruby_xml_sax_parser *rxsp) {
