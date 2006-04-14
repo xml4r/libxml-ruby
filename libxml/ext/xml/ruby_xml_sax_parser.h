@@ -7,9 +7,40 @@
 
 extern VALUE cXMLSaxParser;
 
+typedef struct ruby_xml_sax_parser_callbacks {
+    VALUE internalSubset;
+    VALUE isStandalone;
+    VALUE hasInternalSubset;
+    VALUE hasExternalSubset;
+    VALUE resolveEntity;
+    VALUE getEntity;
+    VALUE entityDecl;
+    VALUE notationDecl;
+    VALUE attributeDecl;
+    VALUE elementDecl;
+    VALUE unparsedEntityDecl;
+    VALUE setDocumentLocator;
+    VALUE startDocument;
+    VALUE endDocument;
+    VALUE startElement;
+    VALUE endElement;
+    VALUE reference;
+    VALUE characters;
+    VALUE ignorableWhitespace;
+    VALUE processingInstruction;
+    VALUE comment;
+    VALUE xmlParserWarning;
+    VALUE xmlParserError;
+    VALUE xmlParserFatalError;
+    VALUE getParameterEntity;
+    VALUE cdataBlock;
+    VALUE externalSubset;  
+} ruby_xml_sax_parser_callbacks;
+
 typedef struct ruby_xml_sax_parser {
   xmlParserCtxtPtr xpc;
   xmlSAXHandlerPtr xsh;
+  ruby_xml_sax_parser_callbacks *cbp;
   VALUE filename;
   VALUE str;
 } ruby_xml_sax_parser;

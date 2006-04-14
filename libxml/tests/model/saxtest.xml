@@ -1,0 +1,5 @@
+<test uga="booga" foo="bar"><fixnum>one</fixnum><fixnum>two</fixnum>
+  <!-- msg -->
+  <?custom foo="bar"?>
+  <![CDATA[here it goes]]>
+</test>
