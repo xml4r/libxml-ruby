@@ -5,6 +5,11 @@
 #include "libxml.h"
 #include "ruby_xml_xpath.h"
 
+/*
+ * Document-class: XML::XPath
+ * 
+ * Includes Enumerable.
+ */
 VALUE cXMLXPath;
 VALUE eXMLXPathInvalidPath;
 
@@ -330,6 +335,7 @@ ruby_xml_xpath_string(VALUE self) {
 void
 ruby_init_xml_xpath(void) {
   cXMLXPath = rb_define_class_under(mXML, "XPath", rb_cObject);
+  rb_include_module(cXMLNode, rb_const_get(rb_cObject, rb_intern("Enumerable")));
 
   eXMLXPathInvalidPath = rb_define_class_under(cXMLXPath,
 					       "InvalidPath", rb_eException);
