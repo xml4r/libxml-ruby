@@ -1,5 +1,5 @@
 # $Id$
-require "#{File.dirname(__FILE__)}/../ext/xml/libxml" unless defined?(XML)
+require "libxml_test"
 require 'test/unit'
 
 class TC_XML_Parser3 < Test::Unit::TestCase

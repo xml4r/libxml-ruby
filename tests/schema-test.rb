@@ -1,4 +1,4 @@
-require "#{File.dirname(__FILE__)}/../ext/xml/libxml" unless defined?(XML)
+require "libxml_test"
 
 xp = XML::Parser.new
 xp.string = '<?xml version="1.0" encoding="utf-8"?>

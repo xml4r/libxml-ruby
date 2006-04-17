@@ -1,4 +1,5 @@
-require "#{File.dirname(__FILE__)}/../ext/xml/libxml" unless defined?(XML)
+# $Id$
+require "libxml_test"
 require 'test/unit'
 
 # TODO this is woefully inadequate
