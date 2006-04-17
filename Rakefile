@@ -169,8 +169,7 @@ else
     s.extra_rdoc_files = rd.rdoc_files.reject { |fn| fn =~ /\.rb$/ }.to_a
     s.rdoc_options <<
       '--title' <<  'Libxml-Ruby API' <<
-      '--main' << 'README' <<
-      '-o' << 'rdoc'      
+      '--main' << 'README'
 
     s.test_files = Dir.glob('tests/*runner.rb')
     
