@@ -1,6 +1,6 @@
 # $Id$
 require 'test/unit'
-require "#{File.dirname(__FILE__)}/../ext/xml/libxml" unless defined?(XML)
+require "libxml_test"
 
 class TC_XML_Document < Test::Unit::TestCase
   def setup()

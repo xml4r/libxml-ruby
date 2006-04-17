@@ -87,4 +87,4 @@ end
 $CFLAGS = '-g -Wall ' + $CFLAGS + ' ' + $INCFLAGS
 
 create_header()
-create_makefile('xml/libxml')
+create_makefile('xml/libxml_so')

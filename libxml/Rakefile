@@ -98,7 +98,8 @@ rd = Rake::RDocTask.new(:doc) do |rdoc|
   rdoc.title    = "Libxml-Ruby API"
   rdoc.options << '--main' << 'README'
   rdoc.rdoc_files.include('README', 'LICENSE', 'TODO')
-  rdoc.rdoc_files.include('ext/xml/ruby_xml*.c', '*.rdoc')
+  rdoc.rdoc_files.include('ext/xml/ruby_xml*.c', 'ext/xml/*.rb')
+  rdoc.rdoc_files.include('*.rdoc')
 end
 
 desc "Publish the RDoc documentation to project web site"
@@ -166,7 +167,7 @@ else
     
     #### Documentation and testing.
     s.has_rdoc = true
-    s.extra_rdoc_files = rd.rdoc_files.reject { |fn| fn =~ /\.rb$/ }.to_a
+    s.extra_rdoc_files = rd.rdoc_files.to_a
     s.rdoc_options <<
       '--title' <<  'Libxml-Ruby API' <<
       '--main' << 'README'

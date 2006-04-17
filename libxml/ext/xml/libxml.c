@@ -46,7 +46,7 @@ static xmlReallocFunc reallocFunc = NULL;
 static xmlStrdupFunc strdupFunc = NULL;
 
 void
-Init_libxml(void) {
+Init_libxml_so(void) {
   /* Some libxml memory goo that should be done before anything else */
   xmlMemGet((xmlFreeFunc *) & freeFunc,
             (xmlMallocFunc *) & mallocFunc,
