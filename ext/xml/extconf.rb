@@ -84,7 +84,11 @@ unless have_func('docbCreateFileParserCtxt')
   crash('Need docbCreateFileParserCtxt')
 end
 
-$CFLAGS = '-g -Wall ' + $CFLAGS + ' ' + $INCFLAGS
+if try_compile('int main() { return 0; }','-Wall')
+  $CFLAGS << ' -Wall'
+end
+
+$CFLAGS << ' ' << $INCFLAGS
 
 create_header()
 create_makefile('xml/libxml_so')
