@@ -18,10 +18,6 @@ do with make (make && make install).
 
 Once installed, look at the test scripts (tests/*.rb), and run 
 'rake doc' to generate API documentation.
-
-== DOCUMENTATION
-
-RDoc comments are included - run 'rake doc' to generate documentation.
 You can find the latest documentation at:
 
 * http://libxml.rubyforge.org/doc
@@ -112,6 +108,7 @@ perform this operation.  This reads in and processes the above
 generated XML document, output.xml. This script assumes that the
 structure of the document is already known.
 
+  # require 'rubygems' # if installed via Gems
 	require 'xml/libxml'
 	doc = XML::Document.file('output.xml')
 	root = doc.root

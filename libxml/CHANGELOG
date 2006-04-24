@@ -1,3 +1,6 @@
+===== 15.4.2006 Ross Bamford <rosco at roscopeco.co.uk>
+* Implemented SAX parser callback handling
+
 ===== 12.4.2006 Ross Bamford <rosco at roscopeco.co.uk>
 * Integrated / tested community patches
 * Defined XML::Node (hash) equality in terms of XML representation
