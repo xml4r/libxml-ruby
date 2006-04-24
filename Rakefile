@@ -71,14 +71,14 @@ task :test => :unittests
 
 Rake::TestTask.new(:alltests) do |t|
   t.test_files = FileList[
-    'tests/tc_*.rb',
+    'tests/runner.rb',
     'tests/contrib/*.rb',
   ]
   t.verbose = true
 end
                     
 Rake::TestTask.new(:unittests) do |t|
-  t.test_files = FileList['tests/tc_*.rb']
+  t.test_files = FileList['tests/runner.rb']
   t.verbose = false
 end
                           
