@@ -2,16 +2,6 @@
 # Please see the LICENSE file for copyright and distribution information 
 require 'xml/libxml_so'
 
-class XML::Node::Set
-  def empty? #:nodoc:
-  	self.length <= 0
-  end
-  
-  def first #:nodoc:
-  	self.each { |n| return n }
-  end
-end
-
 class XML::Document
   include Enumerable
 
