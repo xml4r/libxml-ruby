@@ -2,7 +2,7 @@
 require "libxml_test"
 require 'test/unit'
 
-class TC_XML_Node2 < Test::Unit::TestCase
+class TC_XML_Node4 < Test::Unit::TestCase
   def setup()
     xp = XML::Parser.new()
     str = '<ruby_array uga="booga" foo="bar"><fixnum>one</fixnum><fixnum>two</fixnum></ruby_array>'
