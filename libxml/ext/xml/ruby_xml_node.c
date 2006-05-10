@@ -1333,6 +1333,32 @@ ruby_xml_node_next_q(VALUE self) {
 
 /*
  * call-seq:
+ *    node.next = node
+ * 
+ * Insert the specified node as this node's next sibling.
+ */
+VALUE
+ruby_xml_node_next_set(VALUE self, VALUE rnode) {
+  ruby_xml_node *cnode, *pnode;
+  xmlNodePtr ret;
+
+  if (rb_obj_is_kind_of(rnode, cXMLNode) == Qfalse)
+    rb_raise(rb_eTypeError, "Must pass an XML::Node object");
+
+  Data_Get_Struct(self,  ruby_xml_node, pnode);
+  Data_Get_Struct(rnode, ruby_xml_node, cnode);
+
+  ret = xmlAddNextSibling(pnode->node, cnode->node);
+  if (ret == NULL)
+    rb_raise(eXMLNodeFailedModify, "unable to add a sibling to the document");
+
+  cnode->is_ptr = 1;
+  return(ruby_xml_node_new2(cXMLNode, pnode->xd, ret));
+}
+
+
+/*
+ * call-seq:
  *    node.notation? => (true|false)
  * 
  * Determine whether this is a notation node
@@ -1614,6 +1640,32 @@ ruby_xml_node_prev_q(VALUE self) {
     return(Qfalse);
   else
     return(Qtrue);
+}
+
+
+/*
+ * call-seq:
+ *    node.prev = node
+ * 
+ * Insert the specified node as this node's previous sibling.
+ */
+VALUE
+ruby_xml_node_prev_set(VALUE self, VALUE rnode) {
+  ruby_xml_node *cnode, *pnode;
+  xmlNodePtr ret;
+
+  if (rb_obj_is_kind_of(rnode, cXMLNode) == Qfalse)
+    rb_raise(rb_eTypeError, "Must pass an XML::Node object");
+
+  Data_Get_Struct(self,  ruby_xml_node, pnode);
+  Data_Get_Struct(rnode, ruby_xml_node, cnode);
+
+  ret = xmlAddPrevSibling(pnode->node, cnode->node);
+  if (ret == NULL)
+    rb_raise(eXMLNodeFailedModify, "unable to add a sibling to the document");
+
+  cnode->is_ptr = 1;
+  return(ruby_xml_node_new2(cXMLNode, pnode->xd, ret));
 }
 
 
@@ -2104,6 +2156,7 @@ ruby_init_xml_node(void) {
   rb_define_method(cXMLNode, "namespace=", ruby_xml_node_namespace_set, -1);  
   rb_define_method(cXMLNode, "next", ruby_xml_node_next_get, 0);
   rb_define_method(cXMLNode, "next?", ruby_xml_node_next_q, 0);
+  rb_define_method(cXMLNode, "next=", ruby_xml_node_next_set, 1);
   rb_define_method(cXMLNode, "node_type", ruby_xml_node_type, 0);
   rb_define_method(cXMLNode, "node_type_name", ruby_xml_node_type_name, 0);
   rb_define_method(cXMLNode, "notation?", ruby_xml_node_notation_q, 0);
@@ -2118,6 +2171,7 @@ ruby_init_xml_node(void) {
   rb_define_method(cXMLNode, "pointer", ruby_xml_node_pointer, 1);
   rb_define_method(cXMLNode, "prev", ruby_xml_node_prev_get, 0);
   rb_define_method(cXMLNode, "prev?", ruby_xml_node_prev_q, 0);
+  rb_define_method(cXMLNode, "prev=", ruby_xml_node_prev_set, 1);
   rb_define_method(cXMLNode, "property", ruby_xml_node_property_get, 1);
   rb_define_method(cXMLNode, "properties", ruby_xml_node_properties_get, 0);
   rb_define_method(cXMLNode, "properties?", ruby_xml_node_properties_q, 0);
