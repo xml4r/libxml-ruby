@@ -1588,11 +1588,11 @@ ruby_xml_node_prev_get(VALUE self) {
   case XML_ATTRIBUTE_NODE:
     {
       xmlAttrPtr attr = (xmlAttrPtr) rxn->node;
-      node = (xmlNodePtr) attr->next;
+      node = (xmlNodePtr) attr->prev;
     }
     break;
   default:
-    node = rxn->node->next;
+    node = rxn->node->prev;
     break;
   }
 
@@ -1628,11 +1628,11 @@ ruby_xml_node_prev_q(VALUE self) {
   case XML_ATTRIBUTE_NODE:
     {
       xmlAttrPtr attr = (xmlAttrPtr) rxn->node;
-      node = (xmlNodePtr) attr->next;
+      node = (xmlNodePtr) attr->prev;
     }
     break;
   default:
-    node = rxn->node->next;
+    node = rxn->node->prev;
     break;
   }
 
