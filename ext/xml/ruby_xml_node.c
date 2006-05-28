@@ -10,6 +10,15 @@ VALUE eXMLNodeSetNamespace;
 VALUE eXMLNodeFailedModify;
 VALUE eXMLNodeUnknownType;
 
+static VALUE
+check_string_or_symbol( VALUE val ) {
+  if( TYPE(val) != T_STRING && TYPE(val) != T_SYMBOL ) {
+    rb_raise(rb_eTypeError, "wrong argument type %s (expected String or Symbol)", 
+    rb_obj_classname(val) );
+  }
+  return rb_obj_as_string( val );
+}
+
 /*
  * call-seq:
  *    node.attribute? => (true|false)
@@ -746,8 +755,7 @@ ruby_xml_node_initialize(int argc, VALUE *argv, VALUE class) {
      * the object.  Sneaky, but effective.  Probably should use a goto
      * instead. */
   case 1:
-    name = argv[0];
-    Check_Type(name, T_STRING);
+    name = check_string_or_symbol( argv[0] );
     node = ruby_xml_node_new(class, NULL);
     Data_Get_Struct(node, ruby_xml_node, rxn);
     rxn->node = xmlNewNode(NULL, (xmlChar*)StringValuePtr(name));
@@ -1682,8 +1690,8 @@ ruby_xml_node_property_get(VALUE self, VALUE prop) {
   xmlChar *p;
   VALUE r;
   
-  Check_Type(prop, T_STRING);
-
+  prop = check_string_or_symbol( prop );
+  
   Data_Get_Struct(self, ruby_xml_node, rxn);
   p = xmlGetProp(rxn->node, (xmlChar*)StringValuePtr(prop));
 
@@ -1711,8 +1719,8 @@ ruby_xml_node_property_set(VALUE self, VALUE key, VALUE val) {
   xmlAttrPtr attr;
   VALUE rattr;
 
-  Data_Get_Struct(self, ruby_xml_node, node);
-  Check_Type(key, T_STRING);
+  key = check_string_or_symbol( key );
+  Data_Get_Struct(self, ruby_xml_node, node); 
   
   if( val == Qnil ) {
     attr = xmlSetProp(node->node, (xmlChar*)StringValuePtr(key), NULL);
