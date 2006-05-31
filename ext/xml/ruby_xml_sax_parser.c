@@ -39,6 +39,14 @@ ruby_xml_sax_parser_mark(ruby_xml_sax_parser *rxsp) {
   mark_handler(rxsp, xmlParserError);
   mark_handler(rxsp, xmlParserFatalError);
   mark_handler(rxsp, cdataBlock);
+  
+  if (rxsp->filename && (rxsp->filename != Qnil)) {
+    rb_gc_mark(rxsp->filename);    
+  }
+  
+  if (rxsp->str && (rxsp->str != Qnil)) {
+    rb_gc_mark(rxsp->str);    
+  }
 }
 
 
