@@ -4,10 +4,10 @@ require 'test/unit'
 
 class TC_XML_Node6 < Test::Unit::TestCase
   def setup()
-    xp = XML::Parser.new()
-    str = '<ruby_array uga="booga" foo="bar"><fixnum>one</fixnum><fixnum>two</fixnum></ruby_array>'
+    xp = XML::Parser.string('<ruby_array uga="booga" foo="bar"><fixnum>one</fixnum><fixnum>two</fixnum></ruby_array>')
     doc = xp.parse
     @root = doc.root
+    assert_equal 'bar', @root['foo']
   end
 
   def teardown()
