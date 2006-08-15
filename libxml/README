@@ -119,7 +119,7 @@ structure of the document is already known.
 	puts "Elem3: #{elem3['attr']}"
 	
 	doc.find('//root_node/foo/bar').each do |node|
-	  puts "Node path: #{node.path} \t Contents: #{node}"
+	  puts "Node path: #{node.path} \t Contents: #{node.content}"
 	end
 
 And your terminal should look like:
