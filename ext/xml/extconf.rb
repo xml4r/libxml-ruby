@@ -36,13 +36,15 @@ unless have_library('m', 'atan')
   $CFLAGS = saveflags
 end
 
-unless have_library('z', 'inflate')
+unless have_library('z', 'inflate') or
+       have_library('zlib1', 'inflate')
   crash('need zlib')
 else
   $defs.push('-DHAVE_ZLIB_H')
 end
 
 unless have_library('iconv','iconv_open') or 
+       have_library('iconv','libiconv_open') or
        have_library('c','iconv_open') or
        have_library('recode','iconv_open') or
        have_library('iconv')
@@ -59,9 +61,11 @@ EOL
 end
 
 unless (have_library('xml2', 'xmlParseDoc') or
+        have_library('libxml2', 'xmlParseDoc') or
         find_library('xml2', '/opt/lib', '/usr/local/lib', '/usr/lib')) and 
        (have_header('libxml/xmlversion.h') or
-        find_header('libxml/xmlversion.h', 
+        find_header('libxml/xmlversion.h',
+        						"#{CONFIG['prefix']}/include", 
                     '/opt/include/libxml2', 
                     '/usr/local/include/libxml2', 
                     '/usr/include/libxml2'))

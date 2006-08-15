@@ -105,8 +105,8 @@ ruby_xml_sax_parser_filename_set(VALUE self, VALUE filename) {
 
 #define set_handler(self, argc, argv, handler)      \
   VALUE proc;                                       \
-  rb_scan_args(argc, argv, "0&", &proc);            \
   ruby_xml_sax_parser *rxsp;                        \
+  rb_scan_args(argc, argv, "0&", &proc);            \
   Data_Get_Struct(self, ruby_xml_sax_parser, rxsp); \
   rxsp->cbp->handler = proc;                        \
   return(Qnil);
