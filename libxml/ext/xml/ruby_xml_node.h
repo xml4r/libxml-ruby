@@ -21,6 +21,7 @@ void ruby_init_xml_node(void);
 VALUE ruby_xml_node_child_set(VALUE self, VALUE obj);
 VALUE ruby_xml_node_new(VALUE class, xmlNodePtr node);
 VALUE ruby_xml_node_new2(VALUE class, VALUE xd, xmlNodePtr node);
+VALUE ruby_xml_node_new3(VALUE class, VALUE xd, xmlNodePtr node, int ptr);
 VALUE ruby_xml_node_name_get(VALUE self);
 VALUE ruby_xml_node_property_get(VALUE self, VALUE key);
 VALUE ruby_xml_node_property_set(VALUE self, VALUE key, VALUE val);

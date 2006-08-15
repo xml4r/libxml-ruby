@@ -309,6 +309,7 @@ ruby_xml_node_child_q(VALUE self) {
 }
 
 
+// TODO Fixes below should be applied to sibling, prev, etc ?
 /*
  * call-seq:
  *    node.child = node
@@ -318,20 +319,34 @@ ruby_xml_node_child_q(VALUE self) {
 VALUE
 ruby_xml_node_child_set(VALUE self, VALUE rnode) {
   ruby_xml_node *cnode, *pnode;
-  xmlNodePtr ret;
+  xmlNodePtr chld, ret;
+  ruby_xml_document *pdoc;
+  int ptr;
 
   if (rb_obj_is_kind_of(rnode, cXMLNode) == Qfalse)
     rb_raise(rb_eTypeError, "Must pass an XML::Node object");
 
   Data_Get_Struct(self,  ruby_xml_node, pnode);
   Data_Get_Struct(rnode, ruby_xml_node, cnode);
-
-  ret = xmlAddChild(pnode->node, cnode->node);
+  
+  ptr = 1;
+  chld = cnode->node;
+    
+  // Only copy if both nodes are in documents, which are different.
+  if (pnode->xd && pnode->xd != Qnil && 
+      cnode->xd && cnode->xd != Qnil && 
+      pnode->xd != cnode->xd) {
+    Data_Get_Struct(pnode->xd, ruby_xml_document, pdoc);
+    chld = xmlDocCopyNodeList(pdoc->doc, cnode->node); //, pdoc->doc, 1);
+    printf("Copied %x to %x\n", cnode->node, chld);
+    ptr = 0;
+  }
+  
+  ret = xmlAddChild(pnode->node, chld);
   if (ret == NULL)
     rb_raise(eXMLNodeFailedModify, "unable to add a child to the document");
-
-  ruby_xml_node_set_ptr(rnode, 1);
-  return(ruby_xml_node_new2(cXMLNode, pnode->xd, ret));
+    
+  return(ruby_xml_node_new3(cXMLNode, pnode->xd, ret, ptr));
 }
 
 ////////////////////////////////////////////////
@@ -643,12 +658,12 @@ VALUE
 ruby_xml_node_find_first(int argc, VALUE *argv, VALUE self) {
   VALUE ns = ruby_xml_node_find(argc, argv, self);
   ruby_xml_node_set *rxnset;
+  VALUE nodeobj;
 
   Data_Get_Struct(ns, ruby_xml_node_set, rxnset);
   if (rxnset->node_set == NULL || rxnset->node_set->nodeNr < 1)
     return(Qnil);
 
-  VALUE nodeobj;
   switch(rxnset->node_set->nodeTab[0]->type) {
     case XML_ATTRIBUTE_NODE:
       nodeobj = ruby_xml_attr_new2(cXMLAttr, rxnset->xd, (xmlAttrPtr)rxnset->node_set->nodeTab[0]);
@@ -1237,17 +1252,23 @@ ruby_xml_node_new(VALUE class, xmlNodePtr node) {
 
 VALUE
 ruby_xml_node_new2(VALUE class, VALUE xd, xmlNodePtr node) {
+  return ruby_xml_node_new3(class, xd, node, 1);
+}
+
+
+VALUE
+ruby_xml_node_new3(VALUE class, VALUE xd, xmlNodePtr node, int ptr) {
   ruby_xml_node *rxn;
 
   rxn = ALLOC(ruby_xml_node);
-  rxn->is_ptr = 1;
+  rxn->is_ptr = ptr;
   rxn->node = node;
   if (NIL_P(xd))
     rxn->xd = Qnil;
   else
     rxn->xd = xd;
   return(Data_Wrap_Struct(class, ruby_xml_node_mark,
-			  ruby_xml_node_free, rxn));
+                         ruby_xml_node_free, rxn));
 }
 
 
@@ -2077,7 +2098,7 @@ ruby_xml_node_copy(VALUE self, VALUE deep) {   /* MUFF */
   n_node = ruby_xml_node_new(cXMLNode, NULL); // class??
   Data_Get_Struct(n_node, ruby_xml_node, n_rxn);
 
-  n_rxn->node = xmlCopyNode( rxn->node, ((deep==Qnil)||(deep==Qfalse))?0:1 );
+  n_rxn->node = xmlCopyNodeList( rxn->node ); //, ((deep==Qnil)||(deep==Qfalse))?0:1 );
   if (rxn->node == NULL)
     return(Qnil);
 
