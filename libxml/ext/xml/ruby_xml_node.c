@@ -338,7 +338,6 @@ ruby_xml_node_child_set(VALUE self, VALUE rnode) {
       pnode->xd != cnode->xd) {
     Data_Get_Struct(pnode->xd, ruby_xml_document, pdoc);
     chld = xmlDocCopyNodeList(pdoc->doc, cnode->node); //, pdoc->doc, 1);
-    printf("Copied %x to %x\n", cnode->node, chld);
     ptr = 0;
   }
   
