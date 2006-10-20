@@ -98,7 +98,7 @@ rd = Rake::RDocTask.new(:doc) do |rdoc|
   rdoc.title    = "Libxml-Ruby API"
   rdoc.options << '--main' << 'README'
   rdoc.rdoc_files.include('README', 'LICENSE', 'TODO')
-  rdoc.rdoc_files.include('ext/xml/ruby_xml*.c', 'ext/xml/*.rb')
+  rdoc.rdoc_files.include('ext/xml/ruby_xml*.c', 'lib/xml/*.rb')
   rdoc.rdoc_files.include('*.rdoc')
 end
 
@@ -133,6 +133,7 @@ task :update_version do
 end
 
 PKG_FILES = FileList[
+  'lib/xml/*.rb',
   'ext/xml/extconf.rb',
   '[A-Z]*',
   'ext/xml/*.c',
@@ -163,7 +164,7 @@ else
     s.files = PKG_FILES.to_a
 
     #### Load-time details
-    s.require_path = 'ext'
+    s.require_path = 'lib'
     
     #### Documentation and testing.
     s.has_rdoc = true
