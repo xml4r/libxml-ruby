@@ -93,7 +93,7 @@ if try_compile('int main() { return 0; }','-Wall')
 end
 
 $CFLAGS << ' ' << $INCFLAGS
-$INSTALLFILES = [["../xml/libxml.rb", "$(RUBYLIBDIR)", "../xml"]]
+$INSTALLFILES = [["libxml.rb", "$(RUBYLIBDIR)", "../xml"]]
 
 create_header()
 create_makefile('xml/libxml_so')
