@@ -133,7 +133,7 @@ task :update_version do
 end
 
 PKG_FILES = FileList[
-  'lib/xml/*.rb',
+  'ext/xml/*.rb',
   'ext/xml/extconf.rb',
   '[A-Z]*',
   'ext/xml/*.c',
