@@ -3,11 +3,11 @@
 require 'xml/libxml_so'
 
 class XML::Node::Set
-  def empty? #:nodoc:
+  def empty?
   	self.length <= 0
   end
   
-  def first #:nodoc:
+  def first 
   	self.each { |n| return n }
   end
 end
@@ -16,7 +16,7 @@ class XML::Document
   include Enumerable
 
   # maybe, maybe not...
-  def each(&blk) #:nodoc:
+  def each(&blk)
     find('//*').each(&blk)
   end
 end
@@ -24,7 +24,7 @@ end
 class XML::Node::Set 
   # inefficient, but maybe can find a way to cache the
   # ary and dump on change?
-  def [](i, count = nil) #:nodoc:
+  def [](i, count = nil) 
     if count
       to_a[i,count]
     else
@@ -37,7 +37,7 @@ class XML::Node::Set
   end
 end
 
-module XML::SiblingEnum #:nodoc:all
+module XML::SiblingEnum
   private 
   
   # Iterates nodes and attributes
@@ -57,27 +57,27 @@ class XML::Node
   include Comparable
   
   # maybe these don't belong on all nodes...
-  def each_child(&blk) #:nodoc:
+  def each_child(&blk)
     siblings(child, &blk)   
   end
 
-  def each_attr(&blk) #:nodoc:
+  def each_attr(&blk)
     siblings(properties, &blk)
   end
 
   # all siblings INCLUDING self
-  def each_sibling(&blk) #:nodoc:
+  def each_sibling(&blk)
     siblings(self, &blk)
   end
   
   # I guess this is what you'd expect?
   alias :each :each_child
 
-  def to_a #:nodoc:
+  def to_a
     inject([]) { |ary,n| ary << n }
   end
   
-  def <=>(other) #:nodoc:
+  def <=>(other)
     to_s <=> other.to_s
   end  
 end
@@ -86,22 +86,22 @@ class XML::Attr
   include XML::SiblingEnum
   include Enumerable
 
-  def each_sibling(&blk) #:nodoc:
+  def each_sibling(&blk)
     siblings(self,&blk)
   end
   
   alias :each_attr :each_sibling
   alias :each :each_sibling
   
-  def to_h #:nodoc:
+  def to_h
     inject({}) do |h,a| h[a.name] = a.value end
   end
 
-  def to_a #:nodoc:
+  def to_a
     inject([]) do |ary,a| ary << [a.name, a.value] end
   end
   
-  def to_s #:nodoc:
+  def to_s
     "#{name} = #{value}"
   end
 end
