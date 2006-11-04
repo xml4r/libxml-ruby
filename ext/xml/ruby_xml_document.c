@@ -2,6 +2,7 @@
 
 /* Please see the LICENSE file for copyright and distribution information */
 
+#include <stdarg.h>
 #include "libxml.h"
 #include "ruby_xml_document.h"
 

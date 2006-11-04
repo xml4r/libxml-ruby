@@ -2,6 +2,7 @@
 
 /* Please see the LICENSE file for copyright and distribution information */
 
+#include <stdarg.h>
 #include "libxml.h"
 
 static VALUE libxml_xmlRubyErrorProc = Qnil;
