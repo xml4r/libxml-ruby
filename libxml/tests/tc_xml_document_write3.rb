@@ -30,7 +30,7 @@ class TC_XML_Document_Write3 < Test::Unit::TestCase
     xml << "</rubynet>\n"
     pkg = @doc.root.child = XML::Node.new('pkg')
     meta = pkg.child = XML::Node.new('meta')
-    pkgname = meta << XML::Node.new('pkgname')
+    assert_equal meta, meta << (pkgname = XML::Node.new('pkgname'))
     pkgname << 'libxml'
     assert_equal(xml, @doc.to_s)
   end

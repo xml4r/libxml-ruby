@@ -9,12 +9,19 @@ VALUE cXMLAttr;
 
 void
 ruby_xml_attr_free(ruby_xml_attr *rxa) {
-  if (rxa->attr != NULL && !rxa->is_ptr) {
-    xmlUnlinkNode((xmlNodePtr)rxa->attr);
-    xmlFreeNode((xmlNodePtr)rxa->attr);
-    rxa->attr = NULL;
+  if (rxa->attr != NULL &&            // got an attr?
+      rxa->attr->parent == NULL &&    // unparented (otherwise, it gets freed with parent)
+      rxa->attr->doc == NULL) {       // No document? (otherwise, freed with doc)
+    if ((int)rxa->attr->_private <= 1) {
+      // is null or last reference, 
+      xmlFreeNode((xmlNodePtr)rxa->attr);  
+    } else {
+      // other pointers remain
+      rxa->attr->_private--;    
+    }    
   }
 
+  rxa->attr = NULL;
   free(rxa);
 }
 
@@ -32,7 +39,7 @@ ruby_xml_attr_child_get(VALUE self) {
   if (rxa->attr->children == NULL)
     return(Qnil);
   else
-    return(ruby_xml_node_new2(cXMLNode, rxa->xd, rxa->attr->children));
+    return(ruby_xml_node_new_ptr(cXMLNode, rxa->xd, rxa->attr->children));
 }
 
 
@@ -102,7 +109,7 @@ ruby_xml_attr_last_get(VALUE self) {
   if (rxa->attr->last == NULL)
     return(Qnil);
   else
-    return(ruby_xml_node_new2(cXMLNode, rxa->xd, rxa->attr->last));
+    return(ruby_xml_node_new_ptr(cXMLNode, rxa->xd, rxa->attr->last));
 }
 
 
@@ -150,14 +157,7 @@ ruby_xml_attr_name_get(VALUE self) {
 
 VALUE
 ruby_xml_attr_new(VALUE class, VALUE xd, xmlAttrPtr attr) {
-  ruby_xml_attr *rxa;
-
-  rxa = ALLOC(ruby_xml_attr);
-  rxa->attr = attr;
-  rxa->xd = xd;
-  rxa->is_ptr = 0;
-  return(Data_Wrap_Struct(class, ruby_xml_attr_mark,
-			  ruby_xml_attr_free, rxa));
+  return(ruby_xml_attr_new2(class, xd, attr));
 }
 
 
@@ -166,9 +166,26 @@ ruby_xml_attr_new2(VALUE class, VALUE xd, xmlAttrPtr attr) {
   ruby_xml_attr *rxa;
 
   rxa = ALLOC(ruby_xml_attr);
-  rxa->attr = xmlCopyProp(attr->parent, attr);
-  rxa->xd = xd;
-  rxa->is_ptr = 0;
+
+  rxa->attr = attr;
+  if (attr->_private) {
+    attr->_private++;            
+  } else {
+    attr->_private = (void*)1;
+  }
+    
+  if (NIL_P(xd)) {
+    rxa->xd = Qnil;
+    rxa->attr->doc = NULL;
+  } else {
+    /* Have to set node->doc too so we don't doublefree this node */
+    ruby_xml_document *xdoc;
+    Data_Get_Struct(xd, ruby_xml_document, xdoc);
+      
+    rxa->xd = xd;
+    rxa->attr->doc = xdoc->doc;
+  }
+
   return(Data_Wrap_Struct(class, ruby_xml_attr_mark,
 			  ruby_xml_attr_free, rxa));
 }
@@ -216,7 +233,6 @@ ruby_xml_attr_next_q(VALUE self) {
  */
 VALUE
 ruby_xml_attr_node_type_name(VALUE self) {
-  /* I think libxml2's naming convention blows monkey ass */
   return(rb_str_new2("attribute"));
 }
 
@@ -269,7 +285,7 @@ ruby_xml_attr_parent_get(VALUE self) {
   if (rxa->attr->parent == NULL)
     return(Qnil);
   else
-    return(ruby_xml_node_new2(cXMLNode, rxa->xd, rxa->attr->parent));
+    return(ruby_xml_node_new_ptr(cXMLNode, rxa->xd, rxa->attr->parent));
 }
 
 

@@ -330,7 +330,7 @@ ruby_xml_parser_context_node_get(VALUE self) {
   if (rxpc->ctxt->node == NULL)
     return(Qnil);
   else
-    return(ruby_xml_node_new2(cXMLNode,
+    return(ruby_xml_node_new_ptr(cXMLNode,
 			      ruby_xml_document_new(cXMLDocument, rxpc->ctxt->myDoc),
 			      rxpc->ctxt->node));
 }

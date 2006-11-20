@@ -105,7 +105,7 @@ ruby_xml_document_child_get(VALUE self) {
   if (rxd->doc->children == NULL)
     return(Qnil);
 
-  node = ruby_xml_node_new2(cXMLNode, self, rxd->doc->children);
+  node = ruby_xml_node_new_ptr(cXMLNode, self, rxd->doc->children);
   Data_Get_Struct(node, ruby_xml_node, rxn);
   rxn->xd = self;
   return(node);
@@ -494,7 +494,7 @@ ruby_xml_document_last_get(VALUE self) {
   if (rxd->doc->last == NULL)
     return(Qnil);
 
-  node = ruby_xml_node_new2(cXMLNode, self, rxd->doc->last);
+  node = ruby_xml_node_new_ptr(cXMLNode, self, rxd->doc->last);
   Data_Get_Struct(node, ruby_xml_node, rxn);
   rxn->xd = self;
   return(node);
@@ -623,7 +623,7 @@ ruby_xml_document_next_get(VALUE self) {
   if (rxd->doc->next == NULL)
     return(Qnil);
 
-  node = ruby_xml_node_new2(cXMLNode, self, rxd->doc->next);
+  node = ruby_xml_node_new_ptr(cXMLNode, self, rxd->doc->next);
   Data_Get_Struct(node, ruby_xml_node, rxn);
   rxn->xd = self;
   return(node);
@@ -665,7 +665,7 @@ ruby_xml_document_parent_get(VALUE self) {
   if (rxd->doc->parent == NULL)
     return(Qnil);
 
-  node = ruby_xml_node_new2(cXMLNode, self, rxd->doc->parent);
+  node = ruby_xml_node_new_ptr(cXMLNode, self, rxd->doc->parent);
   Data_Get_Struct(node, ruby_xml_node, rxn);
   rxn->xd = self;
   return(node);
@@ -707,7 +707,7 @@ ruby_xml_document_prev_get(VALUE self) {
   if (rxd->doc->prev == NULL)
     return(Qnil);
 
-  node = ruby_xml_node_new2(cXMLNode, self, rxd->doc->prev);
+  node = ruby_xml_node_new_ptr(cXMLNode, self, rxd->doc->prev);
   Data_Get_Struct(node, ruby_xml_node, rxn);
   rxn->xd = self;
   return(node);
@@ -765,7 +765,6 @@ ruby_xml_document_property_set(VALUE self, VALUE key, VALUE val) {
 VALUE
 ruby_xml_document_root_get(VALUE self) {
   ruby_xml_document *rxd;
-  ruby_xml_node *rxn;
   VALUE node;
   xmlNodePtr root;
 
@@ -775,9 +774,7 @@ ruby_xml_document_root_get(VALUE self) {
   if (root == NULL)
     return(Qnil);
 
-  node = ruby_xml_node_new2(cXMLNode, self, root);
-  Data_Get_Struct(node, ruby_xml_node, rxn);
-  rxn->xd = self;
+  node = ruby_xml_node_new_ptr(cXMLNode, self, root);
   return(node);
 }
 
@@ -805,7 +802,7 @@ ruby_xml_document_root_set(VALUE self, VALUE node) {
   if (root == NULL)
     return(Qnil);
 
-  retnode = ruby_xml_node_new2(cXMLNode, self, root);
+  retnode = ruby_xml_node_new_ptr(cXMLNode, self, root);
   return(retnode);
 }
 

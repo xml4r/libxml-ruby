@@ -62,7 +62,7 @@ Init_libxml_so(void) {
 
   rb_define_const(mXML, "XML_NAMESPACE", rb_str_new2((const char*)XML_XML_NAMESPACE));
 
-  ruby_init_parser();
+  ruby_init_parser();  
   ruby_init_xml_parser_context();
   ruby_init_xml_attr();
   ruby_init_xml_attribute();
