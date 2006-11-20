@@ -131,7 +131,7 @@ ruby_xml_node_comment_q(VALUE self) {
 
 /*
  * call-seq:
- *    node << ("string" | node)
+ *    node << ("string" | node) => node
  * 
  * Add the specified string or XML::Node to this node's
  * content.
@@ -143,17 +143,18 @@ ruby_xml_node_content_add(VALUE self, VALUE obj) {
 
   Data_Get_Struct(self, ruby_xml_node, node);
   if (rb_obj_is_kind_of(obj, cXMLNode)) {
-    return(ruby_xml_node_child_set(self, obj));
+    ruby_xml_node_child_set(self, obj);
+    return(self);
   } else if (TYPE(obj) == T_STRING) {
     xmlNodeAddContent(node->node, (xmlChar*)StringValuePtr(obj));
-    return(obj);
+    return(self);
   } else {
     str = rb_obj_as_string(obj);
     if (NIL_P(str) || TYPE(str) != T_STRING)
       rb_raise(rb_eTypeError, "invalid argument: must be string or XML::Node");
 
     xmlNodeAddContent(node->node, (xmlChar*)StringValuePtr(str));
-    return(obj);
+    return(self);
   }
 }
 
@@ -215,11 +216,6 @@ ruby_xml_node_content_stripped_get(VALUE self) {
     return(rb_str_new2((const char*)xmlNodeGetContent(rxn->node)));
 }
 
-////////////////////////////////////////////////////
-// TODO This whole child thing seems to work in some odd ways.
-//      Try setting child= to a node with multiple children,
-//      then get it back through child= .
-      
 /*
  * call-seq:
  *    node.child => node
@@ -261,7 +257,7 @@ ruby_xml_node_child_get(VALUE self) {
   if (tmp == NULL)
     return(Qnil);
   else
-    return(ruby_xml_node_new2(cXMLNode, node->xd, tmp));
+    return(ruby_xml_node_new_ptr(cXMLNode, node->xd, tmp));
 }
 
 
@@ -320,7 +316,7 @@ VALUE
 ruby_xml_node_child_set(VALUE self, VALUE rnode) {
   ruby_xml_node *cnode, *pnode;
   xmlNodePtr chld, ret;
-  ruby_xml_document *pdoc;
+  ruby_xml_document *pdoc, *cdoc;
   int ptr;
 
   if (rb_obj_is_kind_of(rnode, cXMLNode) == Qfalse)
@@ -329,23 +325,35 @@ ruby_xml_node_child_set(VALUE self, VALUE rnode) {
   Data_Get_Struct(self,  ruby_xml_node, pnode);
   Data_Get_Struct(rnode, ruby_xml_node, cnode);
   
-  ptr = 1;
   chld = cnode->node;
-    
+  
   // Only copy if both nodes are in documents, which are different.
-  if (pnode->xd && pnode->xd != Qnil && 
-      cnode->xd && cnode->xd != Qnil && 
-      pnode->xd != cnode->xd) {
+  if (pnode->xd && pnode->xd != Qnil) {
     Data_Get_Struct(pnode->xd, ruby_xml_document, pdoc);
-    chld = xmlDocCopyNodeList(pdoc->doc, cnode->node); //, pdoc->doc, 1);
-    ptr = 0;
+    if (cnode->xd && cnode->xd != Qnil) {
+      Data_Get_Struct(cnode->xd, ruby_xml_document, cdoc);
+      if (cdoc->doc != pdoc->doc) {
+        chld = xmlDocCopyNode(chld, pdoc->doc, 1);
+        chld->_private = 0;
+        ptr = 1;
+      }
+    } else {
+      chld = xmlDocCopyNode(chld, pdoc->doc, 1);
+      chld->_private = 0;
+      ptr = 1;
+    }
+  } else {
+    chld->doc = NULL;
   }
   
   ret = xmlAddChild(pnode->node, chld);
   if (ret == NULL)
     rb_raise(eXMLNodeFailedModify, "unable to add a child to the document");
     
-  return(ruby_xml_node_new3(cXMLNode, pnode->xd, ret, ptr));
+  cnode->node = ret;
+  cnode->xd = pnode->xd;
+
+  return(rnode);
 }
 
 ////////////////////////////////////////////////
@@ -365,6 +373,9 @@ ruby_xml_node_doc(VALUE self) {
   VALUE docobj;
 
   Data_Get_Struct(self, ruby_xml_node, rxn);
+  
+  if (rxn->xd)
+    return(rxn->xd);
 
   switch (rxn->node->type) {
   case XML_DOCUMENT_NODE:
@@ -668,7 +679,7 @@ ruby_xml_node_find_first(int argc, VALUE *argv, VALUE self) {
       nodeobj = ruby_xml_attr_new2(cXMLAttr, rxnset->xd, (xmlAttrPtr)rxnset->node_set->nodeTab[0]);
       break;
     default:
-      nodeobj = ruby_xml_node_new2(cXMLNode, rxnset->xd, rxnset->node_set->nodeTab[0]);
+      nodeobj = ruby_xml_node_new_ptr(cXMLNode, rxnset->xd, rxnset->node_set->nodeTab[0]);
   }
 
   return(nodeobj);
@@ -693,12 +704,19 @@ ruby_xml_node_fragment_q(VALUE self) {
 
 
 void ruby_xml_node_free(ruby_xml_node *rxn) {
-  if (rxn->node != NULL && !rxn->is_ptr) {
-    xmlUnlinkNode(rxn->node);
-    xmlFreeNode(rxn->node);
-    rxn->node = NULL;
+  if (rxn->node != NULL &&            // got a node?
+      rxn->node->parent == NULL &&    // unparented (otherwise, it gets freed with parent)
+      rxn->node->doc == NULL) {       // No document? (otherwise, freed with doc)
+    if ((int)rxn->node->_private <= 1) {
+      // is null or last reference, 
+      xmlFreeNode(rxn->node);  
+    } else {
+      // other pointers remain
+      rxn->node->_private--;    
+    }    
   }
 
+  rxn->node = NULL;
   free(rxn);
 }
 
@@ -741,14 +759,16 @@ ruby_xml_node_html_doc_q(VALUE self) {
 /*
  * call-seq:
  *    XML::Node.new(name, content = nil) => node
+ *    XML::Node.new_element(name, content = nil) => node
  * 
- * Create a new node with the specified name, optionally setting
+ * Create a new element node with the specified name, optionally setting
  * the node's content.
  */
 VALUE
 ruby_xml_node_initialize(int argc, VALUE *argv, VALUE class) {
   ruby_xml_node *rxn;
   VALUE name, node, str;
+  xmlNodePtr newxn;
 
   str = Qnil;
 
@@ -770,9 +790,12 @@ ruby_xml_node_initialize(int argc, VALUE *argv, VALUE class) {
      * instead. */
   case 1:
     name = check_string_or_symbol( argv[0] );
-    node = ruby_xml_node_new(class, NULL);
+    newxn = xmlNewNode(NULL, (xmlChar*)StringValuePtr(name));
+    node = ruby_xml_node_new(class, newxn);
+    
     Data_Get_Struct(node, ruby_xml_node, rxn);
-    rxn->node = xmlNewNode(NULL, (xmlChar*)StringValuePtr(name));
+
+    /* TODO How would this happen? Shouldn't we raise on it anyway? */    
     if (rxn->node == NULL)
       return(Qnil);
 
@@ -788,7 +811,86 @@ ruby_xml_node_initialize(int argc, VALUE *argv, VALUE class) {
   return(node);
 }
 
+/*
+ * call-seq:
+ *    XML::Node.new_cdata(content = nil) => node
+ * 
+ * Create a new #CDATA node, optionally setting
+ * the node's content.
+ */
+VALUE
+ruby_xml_node_cdata_initialize(int argc, VALUE *argv, VALUE class) {
+  xmlNode *xnode;
+  VALUE node, str;
 
+  str = Qnil;
+
+  switch(argc) {
+  case 1:
+    str = argv[0];
+    Check_Type(str, T_STRING);
+    if (!NIL_P(str)) {
+      xnode = xmlNewCDataBlock(NULL, (xmlChar*)StringValuePtr(str), xmlStrlen((xmlChar*)StringValuePtr(str)));
+    } else {
+      xnode = xmlNewCDataBlock(NULL, NULL , 0);
+    }
+
+    if (xnode == NULL)
+      return(Qnil);
+      
+    node = ruby_xml_node_new(class, xnode);
+
+    break;
+
+  default:
+    rb_raise(rb_eArgError, "wrong number of arguments (1)");
+  }
+
+  return(node);
+}
+
+
+/*
+ * call-seq:
+ *    XML::Node.new_comment(content = nil) => node
+ * 
+ * Create a new comment node, optionally setting
+ * the node's content.
+ * 
+ */
+VALUE
+ruby_xml_node_comment_initialize(int argc, VALUE *argv, VALUE class) {
+  xmlNode *xnode;
+  VALUE node, str;
+
+  str = Qnil;
+
+  switch(argc) {
+  case 1:
+    str = argv[0];
+    Check_Type(str, T_STRING);
+// TODO  xmlNewComment wrongly? adds \n before and after the comment
+    if (!NIL_P(str)) {
+      xnode = xmlNewComment((xmlChar*)StringValuePtr(str));
+    } else {
+      xnode = xmlNewComment(NULL);
+    }
+
+    if (xnode == NULL)
+      return(Qnil);
+
+    node = ruby_xml_node_new(class, xnode);
+
+    break;
+
+  default:
+    rb_raise(rb_eArgError, "wrong number of arguments (1)");
+  }
+
+  return(node);
+}
+
+ 
 /*
  * call-seq:
  *    node.lang => "string"
@@ -872,7 +974,7 @@ ruby_xml_node_last_get(VALUE self) {
   if (node == NULL)
     return(Qnil);
   else
-    return(ruby_xml_node_new2(cXMLNode, rxn->xd, node));
+    return(ruby_xml_node_new_ptr(cXMLNode, rxn->xd, node));
 }
 
 
@@ -1235,37 +1337,83 @@ ruby_xml_node_namespace_q(VALUE self) {
     return(Qfalse);
 }
 
-
+/* TODO new_ptr and new3 are obsolete, should be consolidated */
 VALUE
 ruby_xml_node_new(VALUE class, xmlNodePtr node) {
-  ruby_xml_node *rxn;
-
-  rxn = ALLOC(ruby_xml_node);
-  rxn->is_ptr = 0;
-  rxn->node = node;
-  rxn->xd = Qnil;
-  return(Data_Wrap_Struct(class, ruby_xml_node_mark,
-			  ruby_xml_node_free, rxn));
+  return ruby_xml_node_new_ptr(class, Qnil, node);    
 }
 
 
 VALUE
-ruby_xml_node_new2(VALUE class, VALUE xd, xmlNodePtr node) {
+ruby_xml_node_new_ptr(VALUE class, VALUE xd, xmlNodePtr node) {
   return ruby_xml_node_new3(class, xd, node, 1);
 }
 
 
+/* TODO ptr arg is obsolete, should be removed */
+
+/* Here's how this works:
+ * 
+ *    All nodes are 'pointer' nodes, but no node owns the xmlNode 
+ *    structure they're associated with. Instead, we maintain a 
+ *    count of the number of VALUEs out there wrapping a given
+ *    node, in the nodes _private member. When we wrap a node,
+ *    this is incremented.
+ * 
+ *    In ruby_xml_node_free , the count is checked and if it's 
+ *    either NULL or 1 (indicating non-wrapped, or that this is
+ *    the last reference) then the node is freed along with the
+ *    ruby_xml_node that points to it. Otherwise, just the
+ *    ruby struct is freed and the node is retained.
+ * 
+ *    This fixes a problem with the old setup whereby ruby_xml_nodes
+ *    with is_ptr = 1 could remain after the node they were pointing
+ *    to had been collected. It also helps to ensure we're 
+ *    threadsafe (according to the libxml2 threadsafety rules).
+ * 
+ *    N.B. The XD document pointer is very important - when time 
+ *    comes to free a node, we *must* not free nodes that belong
+ *    to a document, or have a parent - they will be freed either
+ *    with the document or with the parent (xmlFreeNode calls
+ *    xmlFreeNodeList on the kids). You need to make sure that 
+ *    you keep the XD up to date with the node->doc.
+ * 
+ *    TODO there should be a func that does that.
+ * 
+ *    N.B. You can't do this any more:
+ * 
+ *        node = ruby_xml_node_new3(class, NULL);
+ *        Data_Get_Struct(node, ruby_xml_node, rxn);
+ *        rxn->node = someXmlNode;
+ * 
+ *    You *must* pass in the node when your making the new rxn.
+ *    This saves confusion about who owns what node, and lets the
+ *    refcounts stay consistent.
+ */
 VALUE
 ruby_xml_node_new3(VALUE class, VALUE xd, xmlNodePtr node, int ptr) {
   ruby_xml_node *rxn;
-
   rxn = ALLOC(ruby_xml_node);
-  rxn->is_ptr = ptr;
+
   rxn->node = node;
-  if (NIL_P(xd))
+  if (node->_private) {
+    node->_private++;            
+  } else {
+    node->_private = (void*)1;
+  }
+    
+  if (NIL_P(xd)) {
     rxn->xd = Qnil;
-  else
+    rxn->node->doc = NULL;
+  } else {
+    /* Have to set node->doc too so we don't doublefree this node */
+    ruby_xml_document *xdoc;
+    Data_Get_Struct(xd, ruby_xml_document, xdoc);
+      
     rxn->xd = xd;
+    rxn->node->doc = xdoc->doc;
+  }
+
   return(Data_Wrap_Struct(class, ruby_xml_node_mark,
                          ruby_xml_node_free, rxn));
 }
@@ -1308,10 +1456,11 @@ ruby_xml_node_next_get(VALUE self) {
     break;
   }
 
-  if (node == NULL)
+  if (node == NULL) {
     return(Qnil);
-  else
-    return(ruby_xml_node_new2(cXMLNode, rxn->xd, node));
+  } else {
+    return(ruby_xml_node_new_ptr(cXMLNode, rxn->xd, node));
+  }
 }
 
 
@@ -1380,8 +1529,7 @@ ruby_xml_node_next_set(VALUE self, VALUE rnode) {
   if (ret == NULL)
     rb_raise(eXMLNodeFailedModify, "unable to add a sibling to the document");
 
-  cnode->is_ptr = 1;
-  return(ruby_xml_node_new2(cXMLNode, pnode->xd, ret));
+  return(ruby_xml_node_new_ptr(cXMLNode, pnode->xd, ret));
 }
 
 
@@ -1494,7 +1642,7 @@ ruby_xml_node_parent_get(VALUE self) {
   if (node == NULL)
     return(Qnil);
   else
-    return(ruby_xml_node_new2(cXMLNode, rxn->xd, node));
+    return(ruby_xml_node_new_ptr(cXMLNode, rxn->xd, node));
 }
 
 
@@ -1627,7 +1775,7 @@ ruby_xml_node_prev_get(VALUE self) {
   if (node == NULL)
     return(Qnil);
   else
-    return(ruby_xml_node_new2(cXMLNode, rxn->xd, node));
+    return(ruby_xml_node_new_ptr(cXMLNode, rxn->xd, node));
 }
 
 
@@ -1692,8 +1840,7 @@ ruby_xml_node_prev_set(VALUE self, VALUE rnode) {
   if (ret == NULL)
     rb_raise(eXMLNodeFailedModify, "unable to add a sibling to the document");
 
-  cnode->is_ptr = 1;
-  return(ruby_xml_node_new2(cXMLNode, pnode->xd, ret));
+  return(ruby_xml_node_new_ptr(cXMLNode, pnode->xd, ret));
 }
 
 
@@ -1735,9 +1882,7 @@ ruby_xml_node_property_get(VALUE self, VALUE prop) {
 VALUE
 ruby_xml_node_property_set(VALUE self, VALUE key, VALUE val) {
   ruby_xml_node *node;
-  ruby_xml_attr *rxa;
   xmlAttrPtr attr;
-  VALUE rattr;
 
   key = check_string_or_symbol( key );
   Data_Get_Struct(self, ruby_xml_node, node); 
@@ -1756,10 +1901,7 @@ ruby_xml_node_property_set(VALUE self, VALUE key, VALUE val) {
     if (attr == NULL)
       return(Qnil);
   }
-  rattr = ruby_xml_attr_new(cXMLAttr, node->xd, attr);
-  Data_Get_Struct(rattr, ruby_xml_attr, rxa);
-  rxa->is_ptr = 1;
-  return(rattr);
+  return(ruby_xml_attr_new(cXMLAttr, node->xd, attr));
 }
 
 
@@ -1858,11 +2000,14 @@ ruby_xml_node_search_ns(VALUE self, VALUE ns) {
 }
 
 
+/* TODO Obsolete, remove */
 VALUE
 ruby_xml_node_set_ptr(VALUE node, int is_ptr) {
+  /*
   ruby_xml_node *rxn;
   Data_Get_Struct(node, ruby_xml_node, rxn);
   rxn->is_ptr = is_ptr;
+  */
   return(Qtrue);
 }
 
@@ -1888,8 +2033,7 @@ ruby_xml_node_sibling_set(VALUE self, VALUE rnode) {
   if (ret == NULL)
     rb_raise(eXMLNodeFailedModify, "unable to add a sibling to the document");
 
-  cnode->is_ptr = 1;
-  return(ruby_xml_node_new2(cXMLNode, pnode->xd, ret));
+  return(ruby_xml_node_new_ptr(cXMLNode, pnode->xd, ret));
 }
 
 
@@ -2079,8 +2223,6 @@ ruby_xml_node_xinclude_start_q(VALUE self) {
 }
 
 
-// TODO my gut tells me this is where our sigseg etc. problems start...      
-
 /*
  * call-seq:
  *    node.copy => node
@@ -2089,19 +2231,18 @@ ruby_xml_node_xinclude_start_q(VALUE self) {
  */
 VALUE
 ruby_xml_node_copy(VALUE self, VALUE deep) {   /* MUFF */
-  ruby_xml_node *rxn, *n_rxn;
-  VALUE n_node;
+  ruby_xml_node *rxn;
+  xmlNode *copy;
   
   Data_Get_Struct(self, ruby_xml_node, rxn);
-
-  n_node = ruby_xml_node_new(cXMLNode, NULL); // class??
-  Data_Get_Struct(n_node, ruby_xml_node, n_rxn);
-
-  n_rxn->node = xmlCopyNodeList( rxn->node ); //, ((deep==Qnil)||(deep==Qfalse))?0:1 );
-  if (rxn->node == NULL)
-    return(Qnil);
-
-  return n_node;
+  copy = xmlCopyNode( rxn->node, ((deep==Qnil)||(deep==Qfalse))?0:1 );
+  copy->_private = (void*)0;
+  
+  if (copy == NULL) {
+    return Qnil;
+  } else {    
+    return(ruby_xml_node_new(cXMLNode, copy));
+  }
 }
 
 
@@ -2133,7 +2274,12 @@ ruby_init_xml_node(void) {
   rb_define_const(cXMLNode, "XLINK_TYPE_SIMPLE", INT2NUM(1));
 
   rb_define_singleton_method(cXMLNode, "new", ruby_xml_node_initialize, -1);
-
+  rb_define_singleton_method(cXMLNode, "new_cdata", ruby_xml_node_cdata_initialize, -1);
+  rb_define_singleton_method(cXMLNode, "new_comment", ruby_xml_node_comment_initialize, -1); 
+  
+  VALUE singleton = rb_singleton_class(cXMLNode);
+  rb_define_alias(singleton, "new_element", "new");
+  
   rb_define_method(cXMLNode, "<<", ruby_xml_node_content_add, 1);
   rb_define_method(cXMLNode, "[]", ruby_xml_node_property_get, 1);
   rb_define_method(cXMLNode, "[]=", ruby_xml_node_property_set, 2);

@@ -2,7 +2,7 @@
 require "libxml_test"
 require 'test/unit'
 
-class TC_XML_Node3 < Test::Unit::TestCase
+class TC_XML_Node_XLink < Test::Unit::TestCase
   def setup()
     xp = XML::Parser.new()
     str = '<ruby_array xmlns:xlink="http://www.w3.org/1999/xlink/namespace/"><fixnum xlink:type="simple">one</fixnum></ruby_array>'

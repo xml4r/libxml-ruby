@@ -16,7 +16,7 @@ ruby_xml_attribute_child_get(VALUE self) {
   if (rxa->attribute->children == NULL)
     return(Qnil);
   else
-    return(ruby_xml_node_new2(cXMLNode, rxa->xd, rxa->attribute->children));
+    return(ruby_xml_node_new_ptr(cXMLNode, rxa->xd, rxa->attribute->children));
 }
 
 
@@ -74,7 +74,7 @@ ruby_xml_attribute_last_get(VALUE self) {
   if (rxa->attribute->last == NULL)
     return(Qnil);
   else
-    return(ruby_xml_node_new2(cXMLNode, rxa->xd, rxa->attribute->last));
+    return(ruby_xml_node_new_ptr(cXMLNode, rxa->xd, rxa->attribute->last));
 }
 
 
@@ -147,7 +147,7 @@ ruby_xml_attribute_next_get(VALUE self) {
   if (rxa->attribute->next == NULL)
     return(Qnil);
   else
-    return(ruby_xml_node_new2(cXMLNode, rxa->xd, rxa->attribute->next));
+    return(ruby_xml_node_new_ptr(cXMLNode, rxa->xd, rxa->attribute->next));
 }
 
 
@@ -187,7 +187,7 @@ ruby_xml_attribute_prev_get(VALUE self) {
   if (rxa->attribute->prev == NULL)
     return(Qnil);
   else
-    return(ruby_xml_node_new2(cXMLNode, rxa->xd, rxa->attribute->prev));
+    return(ruby_xml_node_new_ptr(cXMLNode, rxa->xd, rxa->attribute->prev));
 }
 
 VALUE

@@ -7,7 +7,7 @@ def test( doc, doc2, iter )
   doc.root = XML::Node.new("ccc")
   iter.times { |i|
     doc.root << doc2.root
-    #doc.root << doc2.root.copy(true)
+    doc.root << doc2.root.copy(true)
   }
   return doc
 end

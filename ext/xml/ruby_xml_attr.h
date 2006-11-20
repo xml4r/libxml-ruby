@@ -10,7 +10,7 @@ extern VALUE cXMLAttr;
 typedef struct ruby_xml_attr {
   xmlAttrPtr attr;
   VALUE xd;
-  int is_ptr;
+  //int is_ptr;
 } ruby_xml_attr;
 
 void ruby_xml_attr_free(ruby_xml_attr *rxn);

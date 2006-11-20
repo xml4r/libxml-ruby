@@ -98,7 +98,7 @@ rd = Rake::RDocTask.new(:doc) do |rdoc|
   rdoc.title    = "Libxml-Ruby API"
   rdoc.options << '--main' << 'README'
   rdoc.rdoc_files.include('README', 'LICENSE', 'TODO')
-  rdoc.rdoc_files.include('ext/xml/ruby_xml*.c', 'lib/xml/*.rb')
+  rdoc.rdoc_files.include('ext/xml/ruby_xml*.c', 'ext/xml/libxml.rb')
   rdoc.rdoc_files.include('*.rdoc')
 end
 

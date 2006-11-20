@@ -32,7 +32,7 @@ ruby_xml_node_set_to_a(VALUE self) {
   set_ary = rb_ary_new();
   if (!((rxnset->node_set == NULL) || (rxnset->node_set->nodeNr == 0))) {
     for (i = 0; i < rxnset->node_set->nodeNr; i++) {
-      nodeobj = ruby_xml_node_new2(cXMLNode, rxnset->xd, rxnset->node_set->nodeTab[i]);
+      nodeobj = ruby_xml_node_new_ptr(cXMLNode, rxnset->xd, rxnset->node_set->nodeTab[i]);
       rb_ary_push(set_ary, nodeobj);
     }
   }
@@ -64,7 +64,7 @@ ruby_xml_node_set_each(VALUE self) {
       nodeobj = ruby_xml_attr_new2(cXMLAttr, rxnset->xd, (xmlAttrPtr)rxnset->node_set->nodeTab[i]);
       break;
     default:
-      nodeobj = ruby_xml_node_new2(cXMLNode, rxnset->xd, rxnset->node_set->nodeTab[i]);
+      nodeobj = ruby_xml_node_new_ptr(cXMLNode, rxnset->xd, rxnset->node_set->nodeTab[i]);
     }
 
     rb_yield(nodeobj);
@@ -108,7 +108,7 @@ ruby_xml_node_set_first(VALUE self) {
       nodeobj = ruby_xml_attr_new2(cXMLAttr, rxnset->xd, (xmlAttrPtr)rxnset->node_set->nodeTab[0]);
       break;
     default:
-      nodeobj = ruby_xml_node_new2(cXMLNode, rxnset->xd, rxnset->node_set->nodeTab[0]);
+      nodeobj = ruby_xml_node_new_ptr(cXMLNode, rxnset->xd, rxnset->node_set->nodeTab[0]);
   }
 
   return(nodeobj);
