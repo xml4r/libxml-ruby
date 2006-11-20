@@ -77,6 +77,7 @@ Init_libxml_so(void) {
   ruby_init_xml_xpath_context();
   ruby_init_xml_xpointer();
   ruby_init_xml_xpointer_context();
+  ruby_init_html_parser();
   ruby_init_input_callbacks(); /* MUFF */
   ruby_init_xml_dtd();         /* MUFF */
   ruby_init_xml_schema();      /* MUFF */

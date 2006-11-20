@@ -23,6 +23,8 @@
 #include <libxml/xpath.h>
 #include <libxml/valid.h>
 #include <libxml/catalog.h>
+#include <libxml/HTMLparser.h>
+
 #ifdef LIBXML_DEBUG_ENABLED
 #include <libxml/xpathInternals.h>
 #endif
@@ -73,6 +75,7 @@ typedef struct rx_xpath_data {
 #include "ruby_xml_input_cbg.h"
 #include "ruby_xml_dtd.h"
 #include "ruby_xml_schema.h"
+#include "ruby_xml_html_parser.h"
 
 extern VALUE mXML;
 

@@ -6,7 +6,9 @@
 #define __RUBY_XML_SAX_PARSER__
 
 extern VALUE cXMLSaxParser;
+extern VALUE mXMLSaxParserCallbacks;
 
+/*
 typedef struct ruby_xml_sax_parser_callbacks {
     VALUE internalSubset;
     VALUE isStandalone;
@@ -36,11 +38,13 @@ typedef struct ruby_xml_sax_parser_callbacks {
     VALUE cdataBlock;
     VALUE externalSubset;  
 } ruby_xml_sax_parser_callbacks;
+*/
 
 typedef struct ruby_xml_sax_parser {
   xmlParserCtxtPtr xpc;
   xmlSAXHandlerPtr xsh;
-  ruby_xml_sax_parser_callbacks *cbp;
+  //ruby_xml_sax_parser_callbacks *cbp;
+  VALUE callbackHandler;
   VALUE filename;
   VALUE str;
 } ruby_xml_sax_parser;
