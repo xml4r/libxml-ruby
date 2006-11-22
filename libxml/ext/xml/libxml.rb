@@ -2,16 +2,6 @@
 # Please see the LICENSE file for copyright and distribution information 
 require 'xml/libxml_so'
 
-class XML::Node::Set
-  def empty?
-  	self.length <= 0
-  end
-  
-  def first 
-  	self.each { |n| return n }
-  end
-end
-
 class XML::Document
   include Enumerable
 
@@ -22,6 +12,16 @@ class XML::Document
 end
 
 class XML::Node::Set 
+  include Enumerable 
+  
+  def empty?
+  	self.length <= 0
+  end
+  
+  def first 
+  	self.each { |n| return n }
+  end
+  
   # inefficient, but maybe can find a way to cache the
   # ary and dump on change?
   def [](i, count = nil) 
