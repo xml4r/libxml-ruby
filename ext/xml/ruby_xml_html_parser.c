@@ -334,19 +334,13 @@ ruby_xml_html_parser_parse(VALUE self) {
   //case RUBY_LIBXML_SRC_TYPE_FILE:
   //case RUBY_LIBXML_SRC_TYPE_IO:
     Data_Get_Struct(rxp->ctxt, ruby_xml_parser_context, rxpc);
-    if (htmlParseDocument(rxpc->ctxt) == -1) {
-      xmlFreeDoc(rxpc->ctxt->myDoc);
-      rb_raise(eXMLParserParseError, "Document didn't parse");
-    }
-
+    
+    /* don't check return values here, the HTML parser returns errors
+     * but still allows the resulting tree to be used.
+     */
+    htmlParseDocument(rxpc->ctxt);
     xdp = rxpc->ctxt->myDoc;
-    if (!rxpc->ctxt->wellFormed) {
-      xmlFreeDoc(xdp);
-      xdp = NULL;
-      rb_raise(eXMLParserParseError, "Document did not contain HTML");
-    } else {
-      rxp->parsed = 1;
-    }
+    rxp->parsed = 1;
 
     doc = ruby_xml_document_new(cXMLDocument, xdp);
     Data_Get_Struct(doc, ruby_xml_document, rxd);
