@@ -121,13 +121,24 @@ static void comment_func(ruby_xml_sax_parser *cbp,
   }    
 }
 
+#define FORMAT_AND_CALL(callsym) \
+  do { \
+    va_list args; \
+    char buf[1024]; \
+    va_start(args, msg); \
+    vsnprintf(buf, sizeof buf, msg, args); \
+    rb_funcall(handler,callsym,1,rb_str_new2(buf)); \
+    va_end(args); \
+  } \
+  while (0)
+  
 // TODO these next three should actually be formatting messages.
 static void warning_func(ruby_xml_sax_parser *cbp, 
        const char *msg, ...) {
   VALUE handler = cbp->callbackHandler;
   
   if (handler && handler != Qnil) {
-    rb_funcall(handler,cbidOnXmlParserWarning,1,rb_str_new2(msg));
+    FORMAT_AND_CALL(cbidOnXmlParserWarning);
   }    
 }
 
@@ -136,7 +147,7 @@ static void error_func(ruby_xml_sax_parser *cbp,
   VALUE handler = cbp->callbackHandler;
   
   if (handler && handler != Qnil) {
-    rb_funcall(handler,cbidOnXmlParserError,1,rb_str_new2(msg));
+    FORMAT_AND_CALL(cbidOnXmlParserError);
   }    
 }
 
@@ -145,7 +156,7 @@ static void fatal_error_func(ruby_xml_sax_parser *cbp,
   VALUE handler = cbp->callbackHandler;
   
   if (handler && handler != Qnil) {
-    rb_funcall(handler,cbidOnXmlParserFatalError,1,rb_str_new2(msg));
+    FORMAT_AND_CALL(cbidOnXmlParserFatalError);
   }    
 }
 

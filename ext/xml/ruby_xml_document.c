@@ -1118,8 +1118,8 @@ ruby_init_xml_document(void) {
   rb_define_singleton_method(cXMLDocument, "new", ruby_xml_document_initialize, -1);
 
   //rb_raise(eXMLNodeFailedModify, "unable to add a child to the document");
-  //eDTDValidityWarning = rb_define_class_under(cXMLNode, "ValidityWarning", rb_eException);
-  //eDTDValidityError   = rb_define_class_under(cXMLNode, "ValidityWarning", rb_eException);
+  //eDTDValidityWarning = rb_define_class_under(cXMLNode, "ValidityWarning", eXMLError);
+  //eDTDValidityError   = rb_define_class_under(cXMLNode, "ValidityWarning", eXMLError);
   rb_define_method(cXMLDocument, "[]", ruby_xml_document_property_get, 1);
   rb_define_method(cXMLDocument, "[]=", ruby_xml_document_property_set, 2);
   rb_define_method(cXMLDocument, "child", ruby_xml_document_child_get, 0);
