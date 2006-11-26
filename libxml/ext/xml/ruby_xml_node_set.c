@@ -150,7 +150,7 @@ ruby_xml_node_set_length(VALUE self) {
   ruby_xml_node_set *rxnset;
   Data_Get_Struct(self, ruby_xml_node_set, rxnset);
   if (rxnset->node_set == NULL)
-    return(Qnil);
+    return(INT2FIX(0));
   else
     return(INT2NUM(rxnset->node_set->nodeNr));
 }
@@ -240,6 +240,7 @@ ruby_init_xml_node_set(void) {
   rb_define_method(cXMLNodeSet, "empty?", ruby_xml_node_set_empty_q, 0);
   rb_define_method(cXMLNodeSet, "first", ruby_xml_node_set_first, 0);
   rb_define_method(cXMLNodeSet, "length", ruby_xml_node_set_length, 0);
+  rb_define_method(cXMLNodeSet, "size", ruby_xml_node_set_length, 0);
   rb_define_method(cXMLNodeSet, "to_a", ruby_xml_node_set_to_a, 0);
   rb_define_method(cXMLNodeSet, "xpath", ruby_xml_node_set_xpath_get, 0);
   rb_define_method(cXMLNodeSet, "xpath_ctxt",

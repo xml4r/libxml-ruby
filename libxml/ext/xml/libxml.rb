@@ -13,15 +13,7 @@ end
 
 class XML::Node::Set 
   include Enumerable 
-  
-  def empty?
-  	self.length <= 0
-  end
-  
-  def first 
-  	self.each { |n| return n }
-  end
-  
+
   # inefficient, but maybe can find a way to cache the
   # ary and dump on change?
   def [](i, count = nil) 

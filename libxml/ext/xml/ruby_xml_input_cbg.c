@@ -32,11 +32,6 @@ void* ic_open (char const *filename) {
         if (!xmlStrncasecmp(BAD_CAST filename, BAD_CAST scheme->scheme_name, scheme->name_len)) {
           ic_doc = (ic_doc_context*)malloc( sizeof(ic_doc_context) );
 
-// MUFF         res = rb_funcall( 
-//                  rb_funcall( rb_mKernel, 
-//                              rb_intern("const_get"), 1, 
-//                              rb_str_new2(scheme->class) ),
-//                  rb_intern("document_query"), 1, rb_str_new2(filename) );
           res = rb_funcall( scheme->class,
                             rb_intern("document_query"), 
                             1, 
@@ -86,13 +81,11 @@ input_callbacks_add_scheme (VALUE self, VALUE scheme_name, VALUE class) {
   ic_scheme *scheme;
 
   Check_Type(scheme_name, T_STRING);
-  //MUFF Check_Type(class, T_STRING);
 
   scheme              = (ic_scheme*)malloc(sizeof(ic_scheme));
   scheme->next_scheme = 0;
   scheme->scheme_name = strdup(StringValuePtr(scheme_name));  /* TODO alloc, dealloc */
   scheme->name_len    = strlen(scheme->scheme_name);
-  //MUFF scheme->class       = strdup(StringValuePtr(class));        /* TODO alloc, dealloc */
   scheme->class       = class;        /* TODO alloc, dealloc */
 
   //fprintf( stderr, "registered: %s, %d, %s\n", scheme->scheme_name, scheme->name_len, scheme->class );
@@ -126,7 +119,6 @@ input_callbacks_remove_scheme (VALUE self, VALUE scheme_name) {
         save_scheme = first_scheme->next_scheme;
 
         free(first_scheme->scheme_name);
-        //MUFF free(first_scheme->class);
         free(first_scheme);
 
         first_scheme = save_scheme;
@@ -139,7 +131,6 @@ input_callbacks_remove_scheme (VALUE self, VALUE scheme_name) {
             save_scheme = scheme->next_scheme->next_scheme;
             
             free(scheme->next_scheme->scheme_name);
-            //MUFF free(scheme->next_scheme->class);
             free(scheme->next_scheme);
 
             scheme->next_scheme = save_scheme;

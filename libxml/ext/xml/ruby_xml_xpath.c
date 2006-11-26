@@ -337,8 +337,7 @@ ruby_init_xml_xpath(void) {
   cXMLXPath = rb_define_class_under(mXML, "XPath", rb_cObject);
   rb_include_module(cXMLNode, rb_const_get(rb_cObject, rb_intern("Enumerable")));
 
-  eXMLXPathInvalidPath = rb_define_class_under(cXMLXPath,
-					       "InvalidPath", rb_eException);
+  eXMLXPathInvalidPath = rb_define_class_under(cXMLXPath, "InvalidPath", eXMLError);
 
   rb_define_const(cXMLXPath, "UNDEFINED", INT2NUM(XPATH_UNDEFINED));
   rb_define_const(cXMLXPath, "NODESET", INT2NUM(XPATH_NODESET));

@@ -12,7 +12,7 @@ ruby_xml_attr_free(ruby_xml_attr *rxa) {
   if (rxa->attr != NULL &&            // got an attr?
       rxa->attr->parent == NULL &&    // unparented (otherwise, it gets freed with parent)
       rxa->attr->doc == NULL) {       // No document? (otherwise, freed with doc)
-    if ((int)rxa->attr->_private <= 1) {
+    if (rxa->attr->_private <= (void*)1) {
       // is null or last reference, 
       xmlFreeNode((xmlNodePtr)rxa->attr);  
     } else {
@@ -169,7 +169,7 @@ ruby_xml_attr_new2(VALUE class, VALUE xd, xmlAttrPtr attr) {
 
   rxa->attr = attr;
   if (attr->_private) {
-    attr->_private++;            
+    attr->_private++;
   } else {
     attr->_private = (void*)1;
   }
