@@ -1920,7 +1920,12 @@ ruby_xml_node_properties_get(VALUE self) {
 
   if (node->node->type == XML_ELEMENT_NODE) {
     attr = node->node->properties;
-    return(ruby_xml_attr_new2(cXMLAttr, node->xd, attr));
+    
+  	if (attr == NULL) {
+	    return(Qnil);
+    } else {
+      return(ruby_xml_attr_new2(cXMLAttr, node->xd, attr));
+    }
   } else {
     return(Qnil);
   }

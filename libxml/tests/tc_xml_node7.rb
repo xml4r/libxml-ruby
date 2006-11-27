@@ -25,4 +25,12 @@ class TC_XML_Node7 < Test::Unit::TestCase
     assert_equal 'foo', prop.name
     assert_equal 'bar', prop.value    
   end
+  
+  def test_xml_node_properties_when_no_attributes
+    xp = XML::Parser.string("<root></root>")
+    doc = xp.parse
+    root = doc.root
+    
+    assert_nil root.properties
+  end
 end
