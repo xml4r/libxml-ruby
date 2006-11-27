@@ -7,10 +7,11 @@
  * versions below. VERSION = string formatting, VERNUM = numbered
  * version for inline testing: increment both or none at all. */
 #define RUBY_LIBXML_VERSION  "0.3.9"
-#define RUBY_LIBXML_VERNUM   39
+#define RUBY_LIBXML_VERNUM   390
 #define RUBY_LIBXML_VER_MAJ   0
 #define RUBY_LIBXML_VER_MIN   3
 #define RUBY_LIBXML_VER_MIC   9
+#define RUBY_LIBXML_VER_PATCH 0
 
 #include <ruby.h>
 #include <rubyio.h>
