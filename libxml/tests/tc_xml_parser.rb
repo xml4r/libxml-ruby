@@ -70,6 +70,10 @@ class TC_XML_Parser < Test::Unit::TestCase
 
     XML::Parser::default_keep_blanks = false
     assert(!XML::Parser::default_keep_blanks)
+    
+    # other tests depend on keeping blanks by default,
+    # which is the default default behaviour anyway.
+    XML::Parser::default_keep_blanks = true    
   end
 
   def test_ruby_xml_parser_default_line_numbers()
