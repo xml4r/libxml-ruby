@@ -11,7 +11,6 @@ typedef struct ic_doc_context {
 
 typedef struct ic_scheme {
     char *scheme_name;
-    //MUFF char *class;
     VALUE class;
     int name_len;
 

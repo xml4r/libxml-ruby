@@ -707,12 +707,12 @@ void ruby_xml_node_free(ruby_xml_node *rxn) {
   if (rxn->node != NULL &&            // got a node?
       rxn->node->parent == NULL &&    // unparented (otherwise, it gets freed with parent)
       rxn->node->doc == NULL) {       // No document? (otherwise, freed with doc)
-    if ((int)rxn->node->_private <= 1) {
+    if (rxn->node->_private <= (void*)1) {
       // is null or last reference, 
       xmlFreeNode(rxn->node);  
     } else {
       // other pointers remain
-      rxn->node->_private--;    
+      rxn->node->_private--;
     }    
   }
 
@@ -1907,9 +1907,12 @@ ruby_xml_node_property_set(VALUE self, VALUE key, VALUE val) {
 
 /*
  * call-seq:
- *    node.properties => attributes
+ *    node.properties => attributes or nil
  * 
- * Returns the +XML::Attr+ for this node. 
+ * Returns the first +XML::Attr+ for this node. Use the
+ * +name+ and +value+ methods to obtain the attribute's
+ * data, and the +prev+ and +next+ methods to 
+ * navigate the property list.
  */
 VALUE
 ruby_xml_node_properties_get(VALUE self) {
@@ -1920,7 +1923,12 @@ ruby_xml_node_properties_get(VALUE self) {
 
   if (node->node->type == XML_ELEMENT_NODE) {
     attr = node->node->properties;
-    return(ruby_xml_attr_new2(cXMLAttr, node->xd, attr));
+    
+  	if (attr == NULL) {
+	    return(Qnil);
+    } else {
+      return(ruby_xml_attr_new2(cXMLAttr, node->xd, attr));
+    }
   } else {
     return(Qnil);
   }
@@ -2230,7 +2238,7 @@ ruby_xml_node_xinclude_start_q(VALUE self) {
  * Create a copy of this node.
  */
 VALUE
-ruby_xml_node_copy(VALUE self, VALUE deep) {   /* MUFF */
+ruby_xml_node_copy(VALUE self, VALUE deep) {
   ruby_xml_node *rxn;
   xmlNode *copy;
   
@@ -2254,9 +2262,9 @@ ruby_xml_node_copy(VALUE self, VALUE deep) {   /* MUFF */
 void
 ruby_init_xml_node(void) {
   cXMLNode = rb_define_class_under(mXML, "Node", rb_cObject);
-  eXMLNodeSetNamespace = rb_define_class_under(cXMLNode, "SetNamespace", rb_eException);
-  eXMLNodeFailedModify = rb_define_class_under(cXMLNode, "FailedModify", rb_eException);
-  eXMLNodeUnknownType = rb_define_class_under(cXMLNode, "UnknownType", rb_eException);
+  eXMLNodeSetNamespace = rb_define_class_under(cXMLNode, "SetNamespace", eXMLError);
+  eXMLNodeFailedModify = rb_define_class_under(cXMLNode, "FailedModify", eXMLError);
+  eXMLNodeUnknownType = rb_define_class_under(cXMLNode, "UnknownType", eXMLError);
 
   rb_define_const(cXMLNode, "SPACE_DEFAULT", INT2NUM(0));
   rb_define_const(cXMLNode, "SPACE_PRESERVE", INT2NUM(1));

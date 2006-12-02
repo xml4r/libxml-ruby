@@ -6,11 +6,12 @@
 /* Don't nuke this block!  It is used for automatically updating the
  * versions below. VERSION = string formatting, VERNUM = numbered
  * version for inline testing: increment both or none at all. */
-#define RUBY_LIBXML_VERSION  "0.3.9"
-#define RUBY_LIBXML_VERNUM   39
-#define RUBY_LIBXML_VER_MAJ   0
-#define RUBY_LIBXML_VER_MIN   3
-#define RUBY_LIBXML_VER_MIC   9
+#define RUBY_LIBXML_VERSION  "0.3.8.4"
+#define RUBY_LIBXML_VERNUM   384
+#define RUBY_LIBXML_VER_MAJ     0
+#define RUBY_LIBXML_VER_MIN     3
+#define RUBY_LIBXML_VER_MIC     8
+#define RUBY_LIBXML_VER_PATCH   4
 
 #include <ruby.h>
 #include <rubyio.h>
@@ -75,6 +76,7 @@ typedef struct rx_xpath_data {
 #include "ruby_xml_schema.h"
 
 extern VALUE mXML;
+extern VALUE eXMLError;
 
 void ruby_init_parser(void);
 void ruby_xml_parser_free(ruby_xml_parser *rxp);

@@ -94,7 +94,7 @@ ruby_xml_xpointer_range(VALUE class, VALUE rstart, VALUE rend) {
 void
 ruby_init_xml_xpointer(void) {
   cXMLXPointer = rb_define_class_under(mXML, "XPointer", rb_cObject);
-  eXMLXPointerInvalidExpression = rb_define_class_under(cXMLXPointer, "InvalidExpression", rb_eException);
+  eXMLXPointerInvalidExpression = rb_define_class_under(cXMLXPointer, "InvalidExpression", eXMLError);
 
   rb_define_singleton_method(cXMLXPointer, "range", ruby_xml_xpointer_range, 2);
 }

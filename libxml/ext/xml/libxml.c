@@ -39,6 +39,7 @@
 #define RubyMemStrdup   ruby_strdup
 
 VALUE mXML;
+VALUE eXMLError;
 
 static xmlFreeFunc freeFunc = NULL;
 static xmlMallocFunc mallocFunc = NULL;
@@ -59,6 +60,7 @@ Init_libxml_so(void) {
   xmlInitParser();
 
   mXML = rb_define_module("XML");
+  eXMLError = rb_define_class_under(mXML, "Error", rb_eRuntimeError);
 
   rb_define_const(mXML, "XML_NAMESPACE", rb_str_new2((const char*)XML_XML_NAMESPACE));
 
@@ -77,9 +79,9 @@ Init_libxml_so(void) {
   ruby_init_xml_xpath_context();
   ruby_init_xml_xpointer();
   ruby_init_xml_xpointer_context();
-  ruby_init_input_callbacks(); /* MUFF */
-  ruby_init_xml_dtd();         /* MUFF */
-  ruby_init_xml_schema();      /* MUFF */
+  ruby_init_input_callbacks(); 
+  ruby_init_xml_dtd();         
+  ruby_init_xml_schema();      
 
   ruby_xml_parser_default_substitute_entities_set(cXMLParser, Qtrue);
   ruby_xml_parser_default_load_external_dtd_set(cXMLParser, Qtrue);
