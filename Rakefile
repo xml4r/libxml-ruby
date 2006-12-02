@@ -129,7 +129,7 @@ task :update_version do
            gsub(/RUBY_LIBXML_VERNUM\s+\d+/) { "RUBY_LIBXML_VERNUM   #{pkg_vernum}" }.
            gsub(/RUBY_LIBXML_VER_MAJ\s+\d+/) { "RUBY_LIBXML_VER_MAJ   #{maj}" }.
            gsub(/RUBY_LIBXML_VER_MIN\s+\d+/) { "RUBY_LIBXML_VER_MIN   #{min}" }.
-           gsub(/RUBY_LIBXML_VER_MIC\s+\d+/) { "RUBY_LIBXML_VER_MIC   #{mic || 0}" }           
+           gsub(/RUBY_LIBXML_VER_MIC\s+\d+/) { "RUBY_LIBXML_VER_MIC   #{mic || 0}" }.
            gsub(/RUBY_LIBXML_VER_PATCH\s+\d+/) { "RUBY_LIBXML_VER_PATCH #{patch || 0}" }           
     end
     mv('ext/xml/libxml.h.new', 'ext/xml/libxml.h')     
