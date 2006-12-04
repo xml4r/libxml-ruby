@@ -25,6 +25,7 @@
 #include <libxml/valid.h>
 #include <libxml/catalog.h>
 #include <libxml/HTMLparser.h>
+#include <libxml/xmlreader.h>
 
 #ifdef LIBXML_DEBUG_ENABLED
 #include <libxml/xpathInternals.h>
@@ -77,6 +78,7 @@ typedef struct rx_xpath_data {
 #include "ruby_xml_dtd.h"
 #include "ruby_xml_schema.h"
 #include "ruby_xml_html_parser.h"
+#include "ruby_xml_reader.h"
 
 extern VALUE mXML;
 extern VALUE eXMLError;
