@@ -1106,6 +1106,19 @@ validate(self, ...)
 */
 }
 
+/*
+ * call-seq:
+ *    document.reader => reader
+ * 
+ * Create a XML::Reader from the document. This is a shortcut to
+ * XML::Reader.walker().
+ */
+static VALUE
+ruby_xml_document_reader(VALUE self)
+{
+  return ruby_xml_reader_new_walker(cXMLReader, self);
+}
+
 // Rdoc needs to know 
 #ifdef RDOC_NEVER_DEFINED
   mXML = rb_define_module("XML");
@@ -1154,4 +1167,5 @@ ruby_init_xml_document(void) {
   rb_define_method(cXMLDocument, "xinclude", ruby_xml_document_xinclude, 0);
   rb_define_method(cXMLDocument, "validate", ruby_xml_document_validate_dtd, 1);
   rb_define_method(cXMLDocument, "validate_schema", ruby_xml_document_validate_schema, 1);
+  rb_define_method(cXMLDocument, "reader", ruby_xml_document_reader, 0);
 }

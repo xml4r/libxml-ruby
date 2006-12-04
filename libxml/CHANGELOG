@@ -1,3 +1,6 @@
+===== 5.12.2006 Laurent Sansonetti <lrz at chopine.be>
+* Added XML::Reader, a set of bindings to the xmlTextReader API.
+
 ===== 15.4.2006 Ross Bamford <rosco at roscopeco.co.uk>
 * Implemented SAX parser callback handling
 
