@@ -37,6 +37,7 @@ unless have_library('m', 'atan')
 end
 
 unless have_library('z', 'inflate') or
+       have_library('zlib', 'inflate') or
        have_library('zlib1', 'inflate')
   crash('need zlib')
 else
@@ -45,6 +46,8 @@ end
 
 unless have_library('iconv','iconv_open') or 
        have_library('iconv','libiconv_open') or
+       have_library('libiconv', 'libiconv_open') or
+       have_library('libiconv', 'iconv_open') or
        have_library('c','iconv_open') or
        have_library('recode','iconv_open') or
        have_library('iconv')
@@ -80,16 +83,12 @@ need libxml2.
 EOL
 end
 
-unless have_library('xml2', 'xmlDocFormatDump')
+unless have_func('xmlDocFormatDump')
   crash('Your version of libxml2 is too old.  Please upgrade.')
 end
 
 unless have_func('docbCreateFileParserCtxt')
   crash('Need docbCreateFileParserCtxt')
-end
-
-if try_compile('int main() { return 0; }','-Wall')
-  $CFLAGS << ' -Wall'
 end
 
 $CFLAGS << ' ' << $INCFLAGS
