@@ -712,7 +712,7 @@ void ruby_xml_node_free(ruby_xml_node *rxn) {
       xmlFreeNode(rxn->node);  
     } else {
       // other pointers remain
-      rxn->node->_private--;
+      rxn->node->_private = (char*)rxn->node->_private - 1;
     }    
   }
 
@@ -1397,7 +1397,7 @@ ruby_xml_node_new3(VALUE class, VALUE xd, xmlNodePtr node, int ptr) {
 
   rxn->node = node;
   if (node->_private) {
-    node->_private++;            
+    node->_private = (char*)node->_private + 1;            
   } else {
     node->_private = (void*)1;
   }
@@ -2258,10 +2258,14 @@ ruby_xml_node_copy(VALUE self, VALUE deep) {
 
 void
 ruby_init_xml_node(void) {
+  VALUE singleton;
+  
   cXMLNode = rb_define_class_under(mXML, "Node", rb_cObject);
   eXMLNodeSetNamespace = rb_define_class_under(cXMLNode, "SetNamespace", eXMLError);
   eXMLNodeFailedModify = rb_define_class_under(cXMLNode, "FailedModify", eXMLError);
   eXMLNodeUnknownType = rb_define_class_under(cXMLNode, "UnknownType", eXMLError);
+  
+  singleton = rb_singleton_class(cXMLNode);
 
   rb_define_const(cXMLNode, "SPACE_DEFAULT", INT2NUM(0));
   rb_define_const(cXMLNode, "SPACE_PRESERVE", INT2NUM(1));
@@ -2282,7 +2286,6 @@ ruby_init_xml_node(void) {
   rb_define_singleton_method(cXMLNode, "new_cdata", ruby_xml_node_cdata_initialize, -1);
   rb_define_singleton_method(cXMLNode, "new_comment", ruby_xml_node_comment_initialize, -1); 
   
-  VALUE singleton = rb_singleton_class(cXMLNode);
   rb_define_alias(singleton, "new_element", "new");
   
   rb_define_method(cXMLNode, "<<", ruby_xml_node_content_add, 1);

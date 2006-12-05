@@ -17,7 +17,7 @@ ruby_xml_attr_free(ruby_xml_attr *rxa) {
       xmlFreeNode((xmlNodePtr)rxa->attr);  
     } else {
       // other pointers remain
-      rxa->attr->_private--;    
+      rxa->attr->_private = (char*)rxa->attr->_private - 1;
     }    
   }
 
@@ -169,7 +169,7 @@ ruby_xml_attr_new2(VALUE class, VALUE xd, xmlAttrPtr attr) {
 
   rxa->attr = attr;
   if (attr->_private) {
-    attr->_private++;
+    attr->_private = (char*)attr->_private + 1;
   } else {
     attr->_private = (void*)1;
   }
