@@ -27,6 +27,11 @@
 #include <libxml/HTMLparser.h>
 #include <libxml/xmlreader.h>
 
+// Maybe not yet defined in ruby
+#ifndef RSTRING_LEN
+#define RSTRING_LEN(x) RSTRING(x)->len
+#endif
+
 #ifdef LIBXML_DEBUG_ENABLED
 #include <libxml/xpathInternals.h>
 #endif

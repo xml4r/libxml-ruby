@@ -1216,7 +1216,7 @@ ruby_xml_parser_str_set(VALUE self, VALUE str) {
   data->str = str;
 
   Data_Get_Struct(rxp->ctxt, ruby_xml_parser_context, rxpc);
-  rxpc->ctxt = xmlCreateMemoryParserCtxt(StringValuePtr(data->str), RSTRING(data->str)->len);
+  rxpc->ctxt = xmlCreateMemoryParserCtxt(StringValuePtr(data->str), RSTRING_LEN(data->str));
 
   return(data->str);
 }
