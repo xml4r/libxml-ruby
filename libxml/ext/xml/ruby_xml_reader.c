@@ -1,4 +1,4 @@
-/* Copyright (c) 2006 Apple Computer Inc.
+/* Copyright (c) 2006-2007 Apple Inc.
  * Please see the LICENSE file for copyright and distribution information. */
 
 #include "libxml.h"
@@ -42,6 +42,13 @@ __ruby_xml_parser_get(VALUE obj)
 #endif
 #define _SELF(x) (__ruby_xml_parser_get(x))
 
+/*
+ * call-seq:
+ *    XML::Reader.file(path, encoding=nil, options=0) -> reader
+ *
+ * Parse an XML file from the filesystem or the network. The parsing flags 
+ * options are a combination of xmlParserOption. 
+ */
 static VALUE
 ruby_xml_reader_new_file(int argc, VALUE *argv, VALUE self)
 {
@@ -61,6 +68,13 @@ ruby_xml_reader_new_file(int argc, VALUE *argv, VALUE self)
   return ruby_xml_reader_new(self, reader); 
 }
 
+/*
+ * call-seq:
+ *    XML::Reader.walker(doc) -> reader
+ *    XML::Reader.document(doc) -> reader
+ *
+ * Create an XML text reader for a preparsed document.
+ */
 VALUE
 ruby_xml_reader_new_walker(VALUE self, VALUE doc)
 {
@@ -76,6 +90,14 @@ ruby_xml_reader_new_walker(VALUE self, VALUE doc)
   return ruby_xml_reader_new(self, reader); 
 }
 
+/*
+ * call-seq:
+ *    XML::Reader.new(data, url=nil, encoding=nil, options=0) -> reader
+ *    XML::Reader.string(data, url=nil, encoding=nil, options=0) -> reader
+ *
+ * Create an XML text reader for an XML in-memory document. The parsing flags
+ * options are a combination of xmlParserOption.
+ */
 static VALUE
 ruby_xml_reader_new_data(int argc, VALUE *argv, VALUE self)
 {
@@ -97,12 +119,27 @@ ruby_xml_reader_new_data(int argc, VALUE *argv, VALUE self)
   return ruby_xml_reader_new(self, reader); 
 }
 
+/*
+ * call-seq:
+ *    parser.close -> code
+ *
+ * This method releases any resources allocated by the current instance 
+ * changes the state to Closed and close any underlying input.
+ */
 static VALUE
 ruby_xml_reader_close(VALUE self)
 {
   return INT2FIX(xmlTextReaderClose(_SELF(self)));
 }
 
+/*
+ * call-seq:
+ *   parser.move_to_attribute(val) -> code
+ *
+ * Move the position of the current instance to the attribute with the 
+ * specified index (if +val+ is an integer) or name (if +val+ is a string) 
+ * relative to the containing element.
+ */
 static VALUE
 ruby_xml_reader_move_to_attr(VALUE self, VALUE val)
 {
@@ -121,78 +158,186 @@ ruby_xml_reader_move_to_attr(VALUE self, VALUE val)
   return INT2FIX(ret);
 }
 
+/*
+ * call-seq:
+ *    reader.move_to_first_attribute -> code
+ *
+ * Move the position of the current instance to the first attribute associated
+ * with the current node.
+ */
 static VALUE
 ruby_xml_reader_move_to_first_attr(VALUE self)
 {
   return INT2FIX(xmlTextReaderMoveToFirstAttribute(_SELF(self)));
 }
 
+/*
+ * call-seq:
+ *    reader.move_to_next_attribute -> code
+ *
+ * Move the position of the current instance to the next attribute associated 
+ * with the current node.
+ */
 static VALUE
 ruby_xml_reader_move_to_next_attr(VALUE self)
 {
   return INT2FIX(xmlTextReaderMoveToNextAttribute(_SELF(self)));
 }
 
+/*
+ * call-seq:
+ *    reader.move_to_element -> code
+ *
+ * Move the position of the current instance to the node that contains the 
+ * current attribute node.
+ */
 static VALUE
 ruby_xml_reader_move_to_element(VALUE self)
 {
   return INT2FIX(xmlTextReaderMoveToElement(_SELF(self)));
 }
 
+/*
+ * call-seq:
+ *    reader.next -> code
+ *
+ * Skip to the node following the current one in document order while avoiding 
+ * the subtree if any.
+ */
 static VALUE
 ruby_xml_reader_next(VALUE self)
 {
   return INT2FIX(xmlTextReaderNext(_SELF(self)));
 }
 
+/*
+ * call-seq:
+ *    reader.next_sibling -> code
+ *
+ * Skip to the node following the current one in document order while avoiding 
+ * the subtree if any. Currently implemented only for Readers built on a 
+ * document.
+ */
 static VALUE
 ruby_xml_reader_next_sibling(VALUE self)
 {
   return INT2FIX(xmlTextReaderNextSibling(_SELF(self)));
 }
 
+/*
+ * call-seq:
+ *    reader.node_type -> type
+ *
+ * Get the node type of the current node. Reference: 
+ * http://dotgnu.org/pnetlib-doc/System/Xml/XmlNodeType.html
+ */
 static VALUE
 ruby_xml_reader_node_type(VALUE self)
 {
   return INT2FIX(xmlTextReaderNodeType(_SELF(self)));
 }
 
+/*
+ * call-seq:
+ *    reader.normalization -> value
+ *
+ * The value indicating whether to normalize white space and attribute values. 
+ * Since attribute value and end of line normalizations are a MUST in the XML 
+ * specification only the value true is accepted. The broken bahaviour of 
+ * accepting out of range character entities like &#0; is of course not 
+ * supported either.
+ *
+ * Return 1 or -1 in case of error.
+ */
 static VALUE
 ruby_xml_reader_normalization(VALUE self)
 {
   return INT2FIX(xmlTextReaderNormalization(_SELF(self)));
 }
 
+/*
+ * call-seq:
+ *    reader.read -> code
+ *
+ * Move the position of the current instance to the next node in the stream, 
+ * exposing its properties.
+ *
+ * Return 1 if the node was read successfully, 0 if there is no more nodes to 
+ * read, or -1 in case of error.
+ */
 static VALUE
 ruby_xml_reader_read(VALUE self)
 {
   return INT2FIX(xmlTextReaderRead(_SELF(self)));
 }
 
+/*
+ * call-seq:
+ *    reader.read_attribute_value -> code
+ *
+ * Parse an attribute value into one or more Text and EntityReference nodes.
+ *
+ * Return 1 in case of success, 0 if the reader was not positionned on an 
+ * attribute node or all the attribute values have been read, or -1 in case of 
+ * error.
+ */
 static VALUE
 ruby_xml_reader_read_attr_value(VALUE self)
 {
   return INT2FIX(xmlTextReaderReadAttributeValue(_SELF(self)));
 }
 
+/*
+ * call-seq:
+ *    reader.read_inner_xml -> data
+ *
+ * Read the contents of the current node, including child nodes and markup.
+ *
+ * Return a string containing the XML content, or nil if the current node is 
+ * neither an element nor attribute, or has no child nodes. 
+ */
 static VALUE
 ruby_xml_reader_read_inner_xml(VALUE self)
 {
   return CSTR2RVAL2(xmlTextReaderReadInnerXml(_SELF(self)));
 }
 
+/*
+ * call-seq:
+ *    reader.read_outer_xml -> data
+ *
+ * Read the contents of the current node, including child nodes and markup.
+ *
+ * Return a string containing the XML content, or nil if the current node is 
+ * neither an element nor attribute, or has no child nodes. 
+ */
 static VALUE
 ruby_xml_reader_read_outer_xml(VALUE self)
 {
   return CSTR2RVAL2(xmlTextReaderReadOuterXml(_SELF(self)));
 }
 
+/*
+ * call-seq:
+ *    reader.read_state -> state
+ *
+ * Get the read state of the reader.
+ */
 static VALUE
 ruby_xml_reader_read_state(VALUE self)
 {
   return INT2FIX(xmlTextReaderReadState(_SELF(self)));
 }
 
+/*
+ * call-seq:
+ *    reader.read_string -> string
+ *
+ * Read the contents of an element or a text node as a string.
+ *
+ * Return a string containing the contents of the Element or Text node, or nil 
+ * if the reader is positioned on any other type of node.
+ */
 static VALUE
 ruby_xml_reader_read_string(VALUE self)
 {
@@ -222,6 +367,14 @@ __xml_reader_error_cb(void *arg,
              INT2FIX(xmlTextReaderLocatorLineNumber(locator))); 
 }
 
+/*
+ * call-seq:
+ *    reader.set_error_handler { ... }
+ *
+ * Register a callback block that will be called on error and warnings. The
+ * block will be called with 5 parameters: the reader, the error message, the 
+ * severity, the base URI and the line number.
+ */
 static VALUE
 ruby_xml_reader_set_error_handler(VALUE self)
 {
@@ -243,6 +396,12 @@ ruby_xml_reader_set_error_handler(VALUE self)
   return self;
 }
 
+/*
+ * call-seq:
+ *    reader.reset_error_handler
+ *
+ * Restore the default error and warning handlers.
+ */
 static VALUE
 ruby_xml_reader_reset_error_handler(VALUE self)
 {
@@ -250,6 +409,17 @@ ruby_xml_reader_reset_error_handler(VALUE self)
   return self;
 }
 
+/*
+ * call-seq:
+ *    reader.relax_ng_validate(rng) -> code
+ *
+ * Use RelaxNG to validate the document as it is processed. Activation is only 
+ * possible before the first read. If +rng+ is nil, the RelaxNG validation is
+ * desactivated.
+ *
+ * Return 0 in case the RelaxNG validation could be (des)activated and -1 in 
+ * case of error.
+ */ 
 static VALUE
 ruby_xml_reader_relax_ng_validate(VALUE self, VALUE rng)
 {
@@ -257,6 +427,17 @@ ruby_xml_reader_relax_ng_validate(VALUE self, VALUE rng)
 }
 
 #if LIBXML_VERSION >= 20620
+/*
+ * call-seq:
+ *    reader.schema_validate(schema) -> code
+ * 
+ * Use W3C XSD schema to validate the document as it is processed. Activation 
+ * is only possible before the first read. If +schema+ is nil, then XML Schema
+ * validation is desactivated.
+ *
+ * Return 0 in case the schemas validation could be (de)activated and -1 in 
+ * case of error.
+ */
 static VALUE
 ruby_xml_reader_schema_validate(VALUE self, VALUE xsd)
 {
@@ -264,96 +445,199 @@ ruby_xml_reader_schema_validate(VALUE self, VALUE xsd)
 }
 #endif
 
+/* 
+ * call-seq:
+ *    reader.name -> name
+ *
+ * Return the qualified name of the node.
+ */
 static VALUE
 ruby_xml_reader_name(VALUE self)
 {
   return CSTR2RVAL(xmlTextReaderConstName(_SELF(self)));
 }
 
+/* 
+ * call-seq:
+ *    reader.local_name -> name
+ *
+ * Return the local name of the node.
+ */
 static VALUE
 ruby_xml_reader_local_name(VALUE self)
 {
   return CSTR2RVAL(xmlTextReaderConstLocalName(_SELF(self)));
 }
 
+/*
+ * call-seq:
+ *    reader.attribute_count -> count
+ *
+ * Provide the number of attributes of the current node.
+ */
 static VALUE
 ruby_xml_reader_attr_count(VALUE self)
 {
   return INT2FIX(xmlTextReaderAttributeCount(_SELF(self)));
 }
 
+/*
+ * call-seq:
+ *    reader.encoding -> encoding
+ *
+ * Determine the encoding of the document being read.
+ */
 static VALUE
 ruby_xml_reader_encoding(VALUE self)
 {
   return CSTR2RVAL(xmlTextReaderConstEncoding(_SELF(self)));
 }
 
+/*
+ * call-seq:
+ *    reader.base_uri -> URI
+ *
+ * Determine the base URI of the node.
+ */
 static VALUE
 ruby_xml_reader_base_uri(VALUE self)
 {
   return CSTR2RVAL(xmlTextReaderConstBaseUri(_SELF(self)));
 }
 
+/*
+ * call-seq:
+ *    reader.namespace_uri -> URI
+ *
+ * Determine the namespace URI of the node.
+ */
 static VALUE
 ruby_xml_reader_namespace_uri(VALUE self)
 {
   return CSTR2RVAL(xmlTextReaderConstNamespaceUri(_SELF(self)));
 }
 
+/*
+ * call-seq:
+ *    reader.value -> text
+ *
+ * Provide the text value of the node if present.
+ */
 static VALUE
 ruby_xml_reader_value(VALUE self)
 {
   return CSTR2RVAL(xmlTextReaderConstValue(_SELF(self)));
 }
 
+/* 
+ * call-seq:
+ *    reader.prefix -> prefix
+ *
+ * Get a shorthand reference to the namespace associated with the node.
+ */
 static VALUE
 ruby_xml_reader_prefix(VALUE self)
 {
   return CSTR2RVAL(xmlTextReaderConstPrefix(_SELF(self)));
 }
 
+/*
+ * call-seq:
+ *    reader.depth -> depth
+ *
+ * Get the depth of the node in the tree.
+ */
 static VALUE
 ruby_xml_reader_depth(VALUE self)
 {
   return INT2FIX(xmlTextReaderDepth(_SELF(self)));
 }
 
+/*
+ * call-seq:
+ *    reader.quote_char -> char
+ *
+ * Get the quotation mark character used to enclose the value of an attribute,
+ * as an integer value (and -1 in case of error).
+ */
 static VALUE
 ruby_xml_reader_quote_char(VALUE self)
 {
   return INT2FIX(xmlTextReaderQuoteChar(_SELF(self)));
 }
 
+/*
+ * call-seq:
+ *    reader.standalone -> code
+ *
+ * Determine the standalone status of the document being read.
+ *
+ * Return 1 if the document was declared to be standalone, 0 if it was 
+ * declared to be not standalone, or -1 if the document did not specify its 
+ * standalone status or in case of error.
+ */
 static VALUE
 ruby_xml_reader_standalone(VALUE self)
 {
   return INT2FIX(xmlTextReaderStandalone(_SELF(self)));
 }
 
+/*
+ * call-seq:
+ *    reader.xml_lang -> value
+ *
+ * Get the xml:lang scope within which the node resides.
+ */
 static VALUE
 ruby_xml_reader_xml_lang(VALUE self)
 {
   return CSTR2RVAL(xmlTextReaderConstXmlLang(_SELF(self)));
 }
 
+/*
+ * call-seq:
+ *    reader.xml_version -> version
+ *
+ * Determine the XML version of the document being read.
+ */
 static VALUE
 ruby_xml_reader_xml_version(VALUE self)
 {
   return CSTR2RVAL(xmlTextReaderConstXmlVersion(_SELF(self)));
 }
 
+/*
+ * call-seq:
+ *    reader.has_attributes? -> bool
+ *
+ * Get whether the node has attributes.
+ */
 static VALUE
 ruby_xml_reader_has_attributes(VALUE self)
 {
   return xmlTextReaderHasAttributes(_SELF(self)) ? Qtrue : Qfalse;
 }
 
+/*
+ * call-seq:
+ *    reader.has_value? -> bool
+ *
+ * Get whether the node can have a text value.
+ */
 static VALUE
 ruby_xml_reader_has_value(VALUE self)
 {
   return xmlTextReaderHasValue(_SELF(self)) ? Qtrue : Qfalse;
 }
 
+/*
+ * call-seq:
+ *    reader[key] -> value
+ *
+ * Provide the value of the attribute with the specified index (if +key+ is an 
+ * integer) or with the specified name (if +key+ is a string) relative to the 
+ * containing element, as a string.
+ */
 static VALUE
 ruby_xml_reader_attribute(VALUE self, VALUE key)
 {
@@ -371,12 +655,28 @@ ruby_xml_reader_attribute(VALUE self, VALUE key)
   return CSTR2RVAL2(attr);
 }
 
+/*
+ * call-seq:
+ *    reader.lookup_namespace(prefix) -> value
+ *
+ * Resolve a namespace prefix in the scope of the current element.
+ * To return the default namespace, specify nil as +prefix+.
+ */
 static VALUE
 ruby_xml_reader_lookup_namespace(VALUE self, VALUE prefix)
 {
   return CSTR2RVAL2(xmlTextReaderLookupNamespace(_SELF(self), (const xmlChar *)RVAL2CSTR(prefix)));
 }
 
+/*
+ * call-seq:
+ *    reader.expand -> node
+ *
+ * Read the contents of the current node and the full subtree. It then makes 
+ * the subtree available until the next read call.
+ *
+ * Return an XML::Node object, or nil in case of error.
+ */
 static VALUE
 ruby_xml_reader_expand(VALUE self)
 {
@@ -390,6 +690,13 @@ ruby_xml_reader_expand(VALUE self)
 }
 
 #if LIBXML_VERSION >= 20618
+/*
+ * call-seq:
+ *    reader.byte_consumed -> value
+ *
+ * This method provides the current index of the parser used by the reader, 
+ * relative to the start of the current entity. 
+ */
 static VALUE
 ruby_xml_reader_byte_consumed(VALUE self)
 {
@@ -398,12 +705,24 @@ ruby_xml_reader_byte_consumed(VALUE self)
 #endif
 
 #if LIBXML_VERSION >= 20617
+/*
+ * call-seq:
+ *    reader.column_number -> number
+ *
+ * Provide the column number of the current parsing point.
+ */
 static VALUE
 ruby_xml_reader_column_number(VALUE self)
 {
   return INT2NUM(xmlTextReaderGetParserColumnNumber(_SELF(self)));
 }
 
+/*
+ * call-seq:
+ *    reader.line_number -> number
+ *
+ * Provide the line number of the current parsing point.
+ */
 static VALUE
 ruby_xml_reader_line_number(VALUE self)
 {
@@ -411,29 +730,60 @@ ruby_xml_reader_line_number(VALUE self)
 }
 #endif
 
+/*
+ * call-seq:
+ *    reader.default? -> bool
+ *
+ * Return whether an Attribute node was generated from the default value 
+ * defined in the DTD or schema.
+ */
 static VALUE
 ruby_xml_reader_default(VALUE self)
 {
   return xmlTextReaderIsDefault(_SELF(self)) ? Qtrue : Qfalse;
 }
 
+/*
+ * call-seq:
+ *    reader.namespace_declaration? -> bool
+ *
+ * Determine whether the current node is a namespace declaration rather than a 
+ * regular attribute.
+ */
 static VALUE
 ruby_xml_reader_namespace_declaration(VALUE self)
 {
   return xmlTextReaderIsNamespaceDecl(_SELF(self)) ? Qtrue : Qfalse;
 }
 
+/*
+ * call-seq:
+ *    reader.empty_element? -> bool
+ *
+ * Check if the current node is empty.
+ */
 static VALUE
 ruby_xml_reader_empty_element(VALUE self)
 {
   return xmlTextReaderIsEmptyElement(_SELF(self)) ? Qtrue : Qfalse;
 }
 
+/*
+ * call-seq:
+ *    reader.valid? -> bool
+ *
+ * Retrieve the validity status from the parser context.
+ */
 static VALUE
 ruby_xml_reader_valid(VALUE self)
 {
   return xmlTextReaderIsValid(_SELF(self)) ? Qtrue : Qfalse;
 }
+
+/* Rdoc needs to know. */ 
+#ifdef RDOC_NEVER_DEFINED
+  mXML = rb_define_module("XML");
+#endif
 
 void
 ruby_init_xml_reader(void)

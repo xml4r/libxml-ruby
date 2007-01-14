@@ -1,3 +1,6 @@
+===== 14.1.2007 Laurent Sansonetti <lrz at chopine.be>
+* Added some preliminary RDoc comments for XML::Reader.
+
 ===== 5.12.2006 Laurent Sansonetti <lrz at chopine.be>
 * Added XML::Reader, a set of bindings to the xmlTextReader API.
 
