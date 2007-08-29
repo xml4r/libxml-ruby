@@ -1,6 +1,0 @@
-libxml-ruby
-
-extconf.h
-Makefile
-*.log
-*.so
