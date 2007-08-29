@@ -822,6 +822,7 @@ ruby_xml_document_to_s(int argc, VALUE *argv, VALUE self) {
   ruby_xml_document_t *rxd;
   xmlChar *result;
   int format, len;
+  VALUE rresult;
 
   switch (argc) {
   case 0:
@@ -856,8 +857,9 @@ ruby_xml_document_to_s(int argc, VALUE *argv, VALUE self) {
     else
       xmlDocDumpMemory(rxd->doc, &result, &len);
   }
-
-  return(rb_str_new2((const char*)result)); 
+  rresult=rb_str_new2((const char*)result);
+  xmlFree(result);
+  return rresult;
 }
 
 
