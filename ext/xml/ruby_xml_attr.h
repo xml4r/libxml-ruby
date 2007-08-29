@@ -9,13 +9,10 @@ extern VALUE cXMLAttr;
 
 typedef struct ruby_xml_attr {
   xmlAttrPtr attr;
-  VALUE xd;
-  //int is_ptr;
-} ruby_xml_attr;
+} ruby_xml_attr_t;
 
-void ruby_xml_attr_free(ruby_xml_attr *rxn);
+void ruby_xml_attr_free(ruby_xml_attr_t *rxn);
+VALUE ruby_xml_attr_wrap(VALUE class, xmlAttrPtr xnode);
 void ruby_init_xml_attr(void);
-VALUE ruby_xml_attr_new(VALUE class, VALUE xd, xmlAttrPtr attr);
-VALUE ruby_xml_attr_new2(VALUE class, VALUE xd, xmlAttrPtr attr);
 VALUE ruby_xml_attr_name_get(VALUE self);
 #endif

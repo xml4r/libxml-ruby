@@ -226,7 +226,8 @@ ruby_xml_xpath_find(int argc, VALUE *argv, VALUE class) {
   if (rxxp->xpop->type != XPATH_NODESET)
     return(Qnil);
 
-  return(ruby_xml_node_set_new2(node->xd, xpath,
+  return(ruby_xml_node_set_new2(ruby_xml_document_wrap(cXMLDocument,node->node->doc),
+				xpath,
 				rxxp->xpop->nodesetval));
 #else
   rb_warn("libxml was compiled without XPath support");

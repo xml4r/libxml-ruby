@@ -319,7 +319,7 @@ ruby_xml_html_parser_new_string(VALUE class, VALUE str) {
  */
 VALUE
 ruby_xml_html_parser_parse(VALUE self) {
-  ruby_xml_document *rxd;
+  ruby_xml_document_t *rxd;
   ruby_xml_html_parser *rxp;
   ruby_xml_parser_context *rxpc;
   htmlDocPtr xdp;
@@ -342,10 +342,7 @@ ruby_xml_html_parser_parse(VALUE self) {
     xdp = rxpc->ctxt->myDoc;
     rxp->parsed = 1;
 
-    doc = ruby_xml_document_new(cXMLDocument, xdp);
-    Data_Get_Struct(doc, ruby_xml_document, rxd);
-    rxd->is_ptr = 0;
-    rxd->doc = xdp;
+    doc = ruby_xml_document_wrap(cXMLDocument, xdp);
     break;
   default:
     rb_fatal("Unknown data type, %d", rxp->data_type);

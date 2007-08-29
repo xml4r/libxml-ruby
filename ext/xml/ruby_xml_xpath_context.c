@@ -61,10 +61,10 @@ ruby_xml_xpath_context_new2(VALUE xd, xmlXPathContextPtr xxpc) {
 
 VALUE
 ruby_xml_xpath_context_new3(VALUE xd) {
-  ruby_xml_document *rxd;
+  ruby_xml_document_t *rxd;
   xmlXPathContextPtr ctxt;
 
-  Data_Get_Struct(xd, ruby_xml_document, rxd);
+  Data_Get_Struct(xd, ruby_xml_document_t, rxd);
   if (rxd->doc == NULL)
     return(Qnil);
 
@@ -81,7 +81,7 @@ ruby_xml_xpath_context_new4(VALUE rnode) {
   ruby_xml_node *node;
 
   Data_Get_Struct(rnode, ruby_xml_node, node);
-  return(ruby_xml_xpath_context_new3(node->xd));
+  return ruby_xml_xpath_context_new3(ruby_xml_document_wrap(cXMLDocument,node->node->doc));
 }
 
 

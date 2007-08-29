@@ -22,7 +22,8 @@ ruby_xml_xpointer_point(VALUE class, VALUE rnode, VALUE xptr_str) {
 
   Data_Get_Struct(rnode, ruby_xml_node, node);
 
-  rxptr_xpth_ctxt = ruby_xml_xpath_context_new(cXMLXPathContext, node->xd,
+  rxptr_xpth_ctxt = ruby_xml_xpath_context_new(cXMLXPathContext,
+					       ruby_xml_document_wrap(cXMLDocument,node->node->doc),
 					       xmlXPtrNewContext(node->node->doc, node->node, NULL));
   if (NIL_P(rxptr_xpth_ctxt))
     return(Qnil);
@@ -32,7 +33,10 @@ ruby_xml_xpointer_point(VALUE class, VALUE rnode, VALUE xptr_str) {
   if (xpath == NULL)
     rb_raise(eXMLXPointerInvalidExpression, "invalid xpointer expression");
 
-  rxxp = ruby_xml_xpath_new(cXMLXPath, node->xd, rxptr_xpth_ctxt, xpath);
+  rxxp = ruby_xml_xpath_new(cXMLXPath,
+			    ruby_xml_document_wrap(cXMLDocument,node->node->doc),
+			    rxptr_xpth_ctxt
+			    , xpath);
   return(rxxp);
 #else
   rb_warn("libxml was compiled without XPointer support");
@@ -78,7 +82,9 @@ ruby_xml_xpointer_range(VALUE class, VALUE rstart, VALUE rend) {
   if (xpath == NULL)
     rb_fatal("You shouldn't be able to have this happen");
 
-  rxxp = ruby_xml_xpath_new(cXMLXPath, start->xd, Qnil, xpath);
+  rxxp = ruby_xml_xpath_new(cXMLXPath,
+			    ruby_xml_document_wrap(cXMLDocument,start->node->doc),
+			    Qnil, xpath);
   return(rxxp);
 #else
   rb_warn("libxml was compiled without XPointer support");
