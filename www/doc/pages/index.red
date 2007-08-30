@@ -1,10 +1,8 @@
-h1.  <span style="color: #901414">Libxml</span>-Ruby Project
-
 The <span style="color: #901414">Libxml-Ruby</span> project provides Ruby
 language bindings for the "GNOME Libxml2":http://xmlsoft.org XML toolkit.
 It is free software, released under the "MIT License":<%= link_rel '/license.html' %>
 
-Libxml-ruby's primary advantage over REXML is performance - if speed is your need, 
+Libxml-ruby's primary advantage over REXML is performance - if speed is your need,
 these are good libraries to consider, as demonstrated by the informal benchmark below.
 
 table{border: 1px solid black}.
@@ -21,7 +19,7 @@ h2. Download
 You can find the latest release at:
 
 	* "http://rubyforge.org/frs/?group_id=494":http://rubyforge.org/frs/?group_id=494
-	
+
 Libxml-Ruby is also available for installation via "Rubygems":http://rubygems.rubyforge.org - see
 the "installation page":<%= link_rel '/install.html' %>	for details.
 
@@ -29,5 +27,5 @@ h2. Project Status
 
 The code has now been updated to work with Ruby 1.8, and is compiling cleanly
 and working well with GCC 4.x. We still have a number of open bugs to address,
-which is being done as we work toward a 0.4.0 release and the library is 
-generally fairly stable in use. 
+which is being done as we work toward a 0.4.0 release and the library is
+generally fairly stable in use.
