@@ -12,3 +12,7 @@ license.html:
   main: layouts/normal.rhtml
   body: pages/license.html
 
+images*: images*
+
+stylesheets*: stylesheets*
+
