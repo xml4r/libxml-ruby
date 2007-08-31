@@ -2215,6 +2215,11 @@ ruby_xml_node_copy(VALUE self, VALUE deep) {
   return obj;
 }
 
+void
+ruby_xml_node_registerNode(xmlNodePtr node)
+{
+  node->_private=NULL;
+}
 
 // Rdoc needs to know 
 #ifdef RDOC_NEVER_DEFINED
@@ -2224,7 +2229,9 @@ ruby_xml_node_copy(VALUE self, VALUE deep) {
 void
 ruby_init_xml_node(void) {
   VALUE singleton;
-  
+
+  xmlRegisterNodeDefault(ruby_xml_node_registerNode);
+
   cXMLNode = rb_define_class_under(mXML, "Node", rb_cObject);
   eXMLNodeSetNamespace = rb_define_class_under(cXMLNode, "SetNamespace", eXMLError);
   eXMLNodeFailedModify = rb_define_class_under(cXMLNode, "FailedModify", eXMLError);
