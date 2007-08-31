@@ -68,6 +68,7 @@ end
 task :ta => :alltests
 task :tu => :unittests
 task :test => :unittests
+task :tm => :memtests
 
 Rake::TestTask.new(:alltests) do |t|
   t.test_files = FileList[
@@ -81,6 +82,13 @@ Rake::TestTask.new(:unittests) do |t|
   t.test_files = FileList['tests/runner.rb']
   t.verbose = false
 end
+
+Rake::TestTask.new(:memtests) do |t|
+  t.test_files = FileList[
+                          'rwtest/runner.rb'
+                         ]
+  t.verbose = true
+end
                           
 #Rake::TestTask.new(:funtests) do |t|
   #  t.test_files = FileList['test/fun*.rb']
@@ -90,6 +98,7 @@ end
 
 task :unittests => :compile
 task :alltests => :compile
+task :memtests => :compile
 
 # RDoc Tasks ---------------------------------------------------------
 desc "Create the RDOC documentation tree"

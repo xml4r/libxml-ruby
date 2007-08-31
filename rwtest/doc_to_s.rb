@@ -1,7 +1,6 @@
 require 'xml/libxml'
 
-count = 0
-1000.times do
+1000.times do |count|
   
   xml_doc = XML::Document.new()
   xml_doc.encoding = "UTF-8"
@@ -16,6 +15,7 @@ count = 0
   end
   
   xml_str = xml_doc.to_s
-  count += 1
-  puts count
+  print "\r#{count}"
+  $stdout.flush
 end
+puts "\n"
