@@ -1,5 +1,4 @@
 #!/usr/bin/ruby -w -I.
-require "libxml_test"
 
 def test( doc2 )
   doc = XML::Document.new('1.0')
@@ -16,5 +15,7 @@ def test2
   test( doc2 )
 end
 
-1000.times { |i| puts i.to_s
-                test2 }
+1000.times { |i|
+  print "\r#{i}"; $stdout.flush
+  test2
+}

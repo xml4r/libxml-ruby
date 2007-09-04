@@ -7,7 +7,13 @@ require "tests/libxml_test"
 ALL_TESTS = true
 TESTS = File.expand_path(File.dirname(__FILE__))
 
-glob = File.join(TESTS, ENV['TESTS'] || '*.rb')
+puts ARGV[0]
+if ARGV[0].nil? or ARGV[0]=="rwtest/runner.rb"
+  glob = File.join(TESTS, ENV['TESTS'] || '*.rb')
+else
+  glob = ARGV[0] 
+end
+
 Dir[glob].each { |fn|
   next if fn =~ %r{runner.rb$}
   puts "test #{fn}"
@@ -23,5 +29,5 @@ Dir[glob].each { |fn|
     rss_k=(rss_k2>rss_k) ? rss_k2 : rss_k
   end
   pid,status=px
-  puts "Process #{pid} exited status #{status.exitstatus}, max rss(k) #{rss_k}"
+  puts "\nProcess #{pid} exited status #{status.exitstatus}, max rss(k) #{rss_k}"
 }

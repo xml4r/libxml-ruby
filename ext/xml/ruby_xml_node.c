@@ -353,10 +353,11 @@ ruby_xml_node_child_set(VALUE self, VALUE rnode) {
   }
 #endif
   
-  ret = xmlAddChild(pnode->node, chld);
+  ret = xmlAddChild(pnode->node, xmlCopyNode(chld,1));
   if (ret == NULL)
     rb_raise(eXMLNodeFailedModify, "unable to add a child to the document");
     
+  return rnode;
   return ruby_xml_node2_wrap(cXMLNode,ret);
 }
 
