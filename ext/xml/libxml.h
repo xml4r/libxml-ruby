@@ -6,12 +6,12 @@
 /* Don't nuke this block!  It is used for automatically updating the
  * versions below. VERSION = string formatting, VERNUM = numbered
  * version for inline testing: increment both or none at all. */
-#define RUBY_LIBXML_VERSION  "0.5.0.1"
-#define RUBY_LIBXML_VERNUM   500
+#define RUBY_LIBXML_VERSION  "0.5.1.0"
+#define RUBY_LIBXML_VERNUM   510
 #define RUBY_LIBXML_VER_MAJ   0
 #define RUBY_LIBXML_VER_MIN   5
-#define RUBY_LIBXML_VER_MIC   0
-#define RUBY_LIBXML_VER_PATCH 1
+#define RUBY_LIBXML_VER_MIC   1
+#define RUBY_LIBXML_VER_PATCH 0
 
 #include <ruby.h>
 #include <rubyio.h>
