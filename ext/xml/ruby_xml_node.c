@@ -321,8 +321,7 @@ VALUE
 ruby_xml_node_child_set(VALUE self, VALUE rnode) {
   ruby_xml_node *cnode, *pnode;
   xmlNodePtr chld, ret;
-  ruby_xml_document_t *pdoc, *cdoc;
-  int ptr;
+  int copied=0;
 
   if (rb_obj_is_kind_of(rnode, cXMLNode) == Qfalse)
     rb_raise(rb_eTypeError, "Must pass an XML::Node object");
@@ -332,33 +331,21 @@ ruby_xml_node_child_set(VALUE self, VALUE rnode) {
   
   chld = cnode->node;
 
-#ifdef IGNORE  
-  // Only copy if both nodes are in documents, which are different.
-  if (pnode->xd && pnode->xd != Qnil) {
-    Data_Get_Struct(pnode->xd, ruby_xml_document_t, pdoc);
-    if (cnode->xd && cnode->xd != Qnil) {
-      Data_Get_Struct(cnode->xd, ruby_xml_document_t, cdoc);
-      if (cdoc->doc != pdoc->doc) {
-        chld = xmlDocCopyNode(chld, pdoc->doc, 1);
-        chld->_private = 0;
-        ptr = 1;
-      }
-    } else {
-      chld = xmlDocCopyNode(chld, pdoc->doc, 1);
-      chld->_private = 0;
-      ptr = 1;
-    }
-  } else {
-    chld->doc = NULL;
+  if ( chld->parent != NULL || chld->doc != NULL ) {
+    chld=xmlCopyNode(chld,1);
+    copied=1;
+    rb_warning("implicit copy of %s",chld->name);
   }
-#endif
-  
-  ret = xmlAddChild(pnode->node, chld=xmlCopyNode(chld,1));
-  if (ret == NULL)
+
+  ret = xmlAddChild(pnode->node, chld);
+  if (ret == NULL) {
+    if ( copied == 1 )
+      xmlFreeNode(chld);
     rb_raise(eXMLNodeFailedModify, "unable to add a child to the document");
+  }
     
   // wish I could return a new wrapped chld, but ruby only returns the rhs
-  return self;
+  return ruby_xml_node2_wrap(cXMLNode,chld);
 }
 
 /*
@@ -2276,6 +2263,7 @@ ruby_init_xml_node(void) {
   rb_define_method(cXMLNode, "child", ruby_xml_node_child_get, 0);
   rb_define_method(cXMLNode, "child?", ruby_xml_node_child_q, 0);
   rb_define_method(cXMLNode, "child=", ruby_xml_node_child_set, 1);
+  rb_define_method(cXMLNode, "child_add", ruby_xml_node_child_set, 1);
   rb_define_method(cXMLNode, "children", ruby_xml_node_child_get, 0);
   rb_define_method(cXMLNode, "children?", ruby_xml_node_child_q, 0);
   rb_define_method(cXMLNode, "content", ruby_xml_node_content_get, 0);
