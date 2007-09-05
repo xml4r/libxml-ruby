@@ -1,3 +1,5 @@
+See ChangeLog for more recent changes derived directly from svn.
+
 ===== 14.1.2007 Laurent Sansonetti <lrz at chopine.be>
 * Added some preliminary RDoc comments for XML::Reader.
 
