@@ -17,7 +17,7 @@ class TC_XML_HTMLParser < Test::Unit::TestCase
 
   def test_libxml_html_parser_parse()
     doc = @xp.parse
-    
+
     assert_instance_of XML::Document, doc
     
     root = doc.root
@@ -38,7 +38,8 @@ class TC_XML_HTMLParser < Test::Unit::TestCase
     assert_instance_of XML::Node, body
     assert_equal 'body', body.name
     
-    hello = body.child
+    hello = body.child.child
+    puts hello.next.to_s
     assert_instance_of XML::Node, hello
     assert_equal 'Hello', hello.content
     
