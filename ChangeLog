@@ -1,3 +1,11 @@
+2007-09-05 15:43  danj
+
+	* ChangeLog: svn cannot checkout the file, unknown why.
+
+2007-09-05 15:27  danj
+
+	* ChangeLog: VERSION 0.5.1
+
 2007-09-05 15:23  danj
 
 	* ext/xml/libxml.h: VERSION 0.5.1
