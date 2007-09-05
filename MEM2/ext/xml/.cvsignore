@@ -1,0 +1,7 @@
+Makefile
+extconf.h
+*.log
+*.so
+*.o
+
+*.swp

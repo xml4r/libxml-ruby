@@ -1,0 +1,77 @@
+$Id$
+
+==== BUGS
+
+* Some C funcs need more NULL checking, they're throwing wierd 
+  ArgumentErrors into RubyLand. See TODOs in source.
+  
+==== ENHANCEMENTS
+
+* Add warnings to each of the xpath functions if xpath isn't compiled
+  in.
+
+* Flush out XML::XPath::Context to more closely mirror the
+  _xmlXPathContext(libxml/xpath.h) structure.
+
+* Add XML::Node#sibling= to add siblings to an XML document
+
+* Cleanup the variable naming schemes and standardize on one.  Ideas:
+
+  * All VALUE encapsulated objects are prefixed with the character
+    'r'.  rnode, rdoc, rctxt, rxpath, rxnset, rxns.
+
+  * Their unwrapped C equiv drops the 'r'.  Since operating with
+    libxml isn't context less, this should help catch the cases
+    where having routines that are libxml derived (ex: xmlNodePtr)
+    and ruby-libxml derived (ex: ruby_xml_node) should collide in
+    the same name space convention.  This will act as a reminder
+    and deterrant against haphazardly returning and using libxml
+    objects when they should be passed in.  ruby-libxml is a set
+    of tools, not and end result.  Put the power and options in
+    the hands of the user and don't confine or constrain anything
+    within reason.  Just because someone can't think of a use for
+    it doesn't mean it's not possible or useful to someone.  It's
+    the weird shit that makes a library powerful. 
+
+	      rnode  -> node
+	      rdoc   -> doc
+	      rctxt  -> ctxt
+	      rxpath -> xpath
+
+* Should sweep through the code and remove all instances of
+  'return(Qnil)' with exceptions if 'return(Qnil)' is being used for
+  signaling an error or inability to process the document.
+  
+* Need to add the ability to create namespace objects and modify them
+  accordingly.
+
+* Need to figure out how to easily apply a namespace object to either a
+  document or a node.
+
+* Add an XML::DTD class.
+
+* Add ability to dynamically create DTD's.
+
+* Add ability to set auto-parse on XML::Parser classes.
+
+* Add ability to set auto-set on XML::XPath classes.
+
+* What's the counter part to XML::Node#sibling= ?  XML::Node#next ??
+  There's a certain degree of othogonality that I'm missing in the API
+  at the moment and it's picking away at my brain like a bad Dan Quale
+  quote.
+
+* Add a way of inspecting an XML::Node so that it can be serialized.
+
+* Have XML::Node#child= accept ChildNodeLists.
+
+* Add ability to append hashes and arrays via the XML::Node#<< method.
+
+* Node (etc.) #[] should support symbol keys.
+
+* Make nodes comparable (on qualified name?)
+
+==== Data Serialization
+
+* Need to define DTD for basic ruby types that have been XML serialized
+  and deserialized.

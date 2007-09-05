@@ -1,0 +1,144 @@
+== INSTALLATION
+
+Installation is simple.  Follow the following steps:
+
+=== Rubygems
+
+  gem install libxml-ruby
+	
+=== Tarball/zip	
+
+  $ rake test
+  $ rake install
+
+If extconf yacks up an error, follow the instructions it provides.
+You will need to chdir to ext/xml and run 'ruby extconf.rb' to provide
+options, after which you can either use Rake for everything or 
+do with make (make && make install).
+
+Once installed, look at the test scripts (tests/*.rb), and run 
+'rake doc' to generate API documentation.
+You can find the latest documentation at:
+
+* http://libxml.rubyforge.org/doc
+
+== DEPENDENCIES
+
+libxml requires a few other libraries to be installed inorder to
+function properly.
+
+* libm      (math routines: very standard)
+* libz      (zlib)
+* libiconv
+* libxml2
+
+== USAGE
+
+Basic usage for reading and writing documents.
+
+=== WRITING
+
+Writing a simple document:
+
+  # require 'rubygems' # if installed via Gems
+	require 'xml/libxml'
+	
+	doc = XML::Document.new()
+	doc.root = XML::Node.new('root_node')
+	root = doc.root
+	
+	root << elem1 = XML::Node.new('elem1')
+	elem1['attr1'] = 'val1'
+	elem1['attr2'] = 'val2'
+	
+	root << elem2 = XML::Node.new('elem2')
+	elem2['attr1'] = 'val1'
+	elem2['attr2'] = 'val2'
+	
+	root << elem3 = XML::Node.new('elem3')
+	elem3 << elem4 = XML::Node.new('elem4')
+	elem3 << elem5 = XML::Node.new('elem5')
+	
+	elem5 << elem6 = XML::Node.new('elem6')
+	elem6 << 'Content for element 6'
+	
+	elem3['attr'] = 'baz'
+	
+	# Namespace hack to reduce the numer of times XML:: is typed
+	include XML
+	root << elem7 = Node.new('foo')
+	1.upto(10) do |i|
+	  elem7 << n = Node.new('bar')
+	  n << i
+	end
+	
+	format = true
+	doc.save('output.xml', format)
+
+The file output.xml contains:
+
+	<?xml version="1.0"?>
+	<root_node>
+	  <elem1 attr1="val1" attr2="val2"/>
+	  <elem2 attr1="val1" attr2="val2"/>
+	  <elem3 attr="baz">
+	    <elem4/>
+	    <elem5>
+	      <elem6>Content for element 6</elem6>
+	    </elem5>
+	  </elem3>
+	  <foo>
+	    <bar>1</bar>
+	    <bar>2</bar>
+	    <bar>3</bar>
+	    <bar>4</bar>
+	    <bar>5</bar>
+	    <bar>6</bar>
+	    <bar>7</bar>
+	    <bar>8</bar>
+	    <bar>9</bar>
+	    <bar>10</bar>
+	  </foo>
+	</root_node>
+
+=== READING
+
+Reading XML is slightly more complex and there are many more ways to
+perform this operation.  This reads in and processes the above
+generated XML document, output.xml. This script assumes that the
+structure of the document is already known.
+
+  # require 'rubygems' # if installed via Gems
+	require 'xml/libxml'
+	doc = XML::Document.file('output.xml')
+	root = doc.root
+	
+	puts "Root element name: #{root.name}"
+	
+	elem3 = root.find('elem3').to_a.first
+	puts "Elem3: #{elem3['attr']}"
+	
+	doc.find('//root_node/foo/bar').each do |node|
+	  puts "Node path: #{node.path} \t Contents: #{node.content}"
+	end
+
+And your terminal should look like:
+
+	Root element name: root_node
+	Elem3: baz
+	Node path: /root_node/foo/bar[1]         Contents: 1
+	Node path: /root_node/foo/bar[2]         Contents: 2
+	Node path: /root_node/foo/bar[3]         Contents: 3
+	Node path: /root_node/foo/bar[4]         Contents: 4
+	Node path: /root_node/foo/bar[5]         Contents: 5
+	Node path: /root_node/foo/bar[6]         Contents: 6
+	Node path: /root_node/foo/bar[7]         Contents: 7
+	Node path: /root_node/foo/bar[8]         Contents: 8
+	Node path: /root_node/foo/bar[9]         Contents: 9
+	Node path: /root_node/foo/bar[10]        Contents: 10
+
+== MORE INFORMATION
+
+If you have any questions, please send email to libxml-devel@rubyforge.org.
+
+# $Id$
