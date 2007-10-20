@@ -6,64 +6,48 @@
 body {
 	background: #ffffff;
 	color: #000000;
-	font-family: arial, helvetica, sans-serif;
-	font-size: 10px;
+	font-family: Microsoft sans-serif, sans-serif, arial, helvetica;
+	font-size: 12px;
 	padding: 0px;
 	margin: 0px 0px 0px 0px;
 }
 
-/* * linky links *** */
-a:link {
-	color: #cc3030;
+.container {
+  width: 800px;
+  margin: 0 auto;
+}
+
+/* ** links ** */
+a {
+	color: red;
 	text-decoration: none;
 }
 
 a:hover {
-	color: #df3b3b;
+	color: red;
 	text-decoration: underline;
 }
 
 a:active {
-	color: #df3b3b;
+	color: red;
 	text-decoration: underline;
 }
 
-a:visited {
-	color: #b02424;
-	text-decoration: none;
-}
-
-a.nav:link {
-	color: #cc3030;
+.navlinks a {
+	color: red;
 	text-decoration: none;
 	font-weight: bold;
-	background: auto;
 }
 
-a.nav:hover {
-	color: #df3b3b;
+.navlinks a:hover {
+	color: red;
 	text-decoration: underline;
 	font-weight: bold;
-	background: #c3c3c3;
 }
 
-a.nav:active {
-	color: #df3b3b;
-	text-decoration: underline;
-	font-weight: bold;
-	background: #c3c3c3;
-}
-
-a.nav:visited {
-	color: #b02424;
-	text-decoration: none;
-	font-weight: bold;
-	background: auto;
-}
-
-td.navlinks {
+.navlinks {
 	padding: 10px; 
-	background: #f5fcf5; /* FFDDBB;  */
+	background: white;
 	white-space: nowrap
 }
 
@@ -78,6 +62,10 @@ div.copyright {
 }
 
 /* * page styles *** */
+
+h1 {
+  padding: 10px;
+}
 
 h2 {
 	border-bottom: thin #959595 solid;
