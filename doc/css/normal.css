@@ -63,6 +63,11 @@ div.copyright {
 
 /* * page styles *** */
 
+h1.title {
+  font-size: 48px;
+  padding-left: 0;
+}
+
 h1 {
   padding: 10px;
 }

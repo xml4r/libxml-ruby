@@ -8,31 +8,40 @@
     <html>
       <head>
         <title>Libxml</title>
-        <link rel="stylesheet" href="styles/normal.css" />
-        <link REL='SHORTCUT ICON' HREF="images/xml-ruby.png" />
+        <link rel="stylesheet" href="css/normal.css" />
+        <link REL='SHORTCUT ICON' HREF="img/xml-ruby.png" />
       </head>
       <body>
       <div class="container">
-        
+
         <table>
           <tr valign="top">
             <td class='navlinks'>
-              <img src="images/red-cube.jpg" align="top" style="margin-left: -100px;"/>
+              <img src="img/red-cube.jpg" align="top" style="margin-left: -100px;"/>
 
               <br/><br/>
 
               <strong>Navigation</strong><br/>
               <li><a href="index.xml">Home</a></li>
               <li><a href="install.xml">Installation</a></li>
-              <li><a href="rdoc/">Documentation</a></li>
-              <li><a href="http://rubyforge.org/projects/libxml">Project Page</a></li>
               <li><a href="license.xml">License</a></li>
+              <li><a href="rdoc/">API Docs</a></li>
+              <br/>
+              <strong>Development</strong><br/>
+              <li><a href="http://rubyforge.org/projects/libxml">Rubyforge</a></li>
+              <li><a href="http://rubyforge.org/tracker/?group_id=494">Tickets</a></li>
+              <li><a href="http://rubyforge.org/mail/?group_id=494">Mail Lists</a></li>
+              <li><a href="http://rubyforge.org/forum/?group_id=494">Forums</a></li>
+              <li><a href="http://rubyforge.org/news/?group_id=494">News</a></li>
+              <li><a href="http://rubyforge.org/scm/?group_id=494">Source</a></li>
+              <li><a href="http://rubyforge.org/frs/?group_id=494">Files</a></li>
               <br/>
               <strong>External</strong><br/>
+              <li><a href="http://groups.google.com/group/libxml-devel">List on Google</a></li>         
               <li><a href="http://xmlsoft.org/">Libxml2 project</a></li>
             </td>
             <td style="padding: 10px;">
-              <h1><span style="color: red;">Libxml</span>-Ruby Project</h1>
+              <h1 class="title"><span style="color: red;">LibXml</span> Ruby Project</h1>
 
               <xsl:apply-templates />
             </td>
