@@ -70,6 +70,14 @@ class TC_XML_Reader < Test::Unit::TestCase
     end
   end
 
+  def test_expand
+    reader = XML::Reader.file(SIMPLE_XML)
+    reader.read
+    reader.expand
+    GC.start
+    reader.close
+  end
+
   def do_test_simple(reader)
     node_types = []
     19.times do 

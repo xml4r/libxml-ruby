@@ -85,7 +85,7 @@ end
 
 Rake::TestTask.new(:memtests) do |t|
   t.test_files = FileList[
-                          'rwtest/runner.rb'
+                          'tests/runner_ets.rb'
                          ]
   t.verbose = true
 end
