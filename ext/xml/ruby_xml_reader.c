@@ -686,6 +686,9 @@ ruby_xml_reader_expand(VALUE self)
   if (NIL_P(node))
     return Qnil;
 
+  if ( node->doc != NULL )
+    ruby_xml_document_wrap2(node->doc);
+
   return ruby_xml_node2_wrap(cXMLNode, node);
 }
 
