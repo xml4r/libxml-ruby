@@ -21,7 +21,7 @@ class TC_XML_XPointer < Test::Unit::TestCase
 
   def test_libxml_xpointer_id()
     @xptr = @root.pointer('xpointer(id("two"))')
-    assert_instance_of(XML::XPath, @xptr)
+    assert_instance_of(XML::XPath::Object, @xptr)
     set = @xptr.set
     assert_instance_of(XML::Node::Set, set)
     for n in set

@@ -49,6 +49,7 @@ static xmlStrdupFunc strdupFunc = NULL;
 void
 Init_libxml_so(void) {
   /* Some libxml memory goo that should be done before anything else */
+#ifdef NONE
   xmlMemGet((xmlFreeFunc *) & freeFunc,
             (xmlMallocFunc *) & mallocFunc,
             (xmlReallocFunc *) & reallocFunc,
@@ -57,6 +58,7 @@ Init_libxml_so(void) {
   if (xmlMemSetup((xmlFreeFunc)RubyMemFree, (xmlMallocFunc)RubyMemMalloc,
                   (xmlReallocFunc)RubyMemRealloc, (xmlStrdupFunc)RubyMemStrdup) != 0)
     rb_fatal("could not install the memory handlers for libxml");
+#endif
   xmlInitParser();
 
   mXML = rb_define_module("XML");
@@ -64,10 +66,10 @@ Init_libxml_so(void) {
 
   rb_define_const(mXML, "XML_NAMESPACE", rb_str_new2((const char*)XML_XML_NAMESPACE));
 
+  ruby_init_state();
   ruby_init_parser();  
   ruby_init_xml_parser_context();
   ruby_init_xml_attr();
-  ruby_init_xml_attribute();
   ruby_init_xml_document();
   ruby_init_xml_node();
   ruby_init_xml_node_set();

@@ -82,7 +82,7 @@ ruby_xml_parser_context_doc_get(VALUE self) {
   if (rxpc->ctxt->myDoc == NULL)
     return(Qnil);
 
-  return(ruby_xml_document_new4(cXMLDocument, rxpc->ctxt->myDoc));
+  return(ruby_xml_document_wrap(cXMLDocument, rxpc->ctxt->myDoc));
 }
 
 
@@ -140,18 +140,19 @@ ruby_xml_parser_context_errno_get(VALUE self) {
 
 void
 ruby_xml_parser_context_free(ruby_xml_parser_context *rxpc) {
-  if (rxpc->ctxt != NULL && !rxpc->is_ptr) {
+  if (rxpc->ctxt != NULL) {
     xmlFreeParserCtxt(rxpc->ctxt);
-    ruby_xml_parser_count--;
     rxpc->ctxt = NULL;
   }
-
-  if (ruby_xml_parser_count == 0)
-    xmlCleanupParser();
 
   free(rxpc);
 }
 
+void
+ruby_xml_parser_context_mark(void *v) {
+  if ( v == NULL ) return;
+  ruby_xml_state_marker();
+}
 
 /*
  * call-seq:
@@ -330,8 +331,7 @@ ruby_xml_parser_context_node_get(VALUE self) {
   if (rxpc->ctxt->node == NULL)
     return(Qnil);
   else
-    return(ruby_xml_node_new_ptr(cXMLNode,
-			      ruby_xml_document_new(cXMLDocument, rxpc->ctxt->myDoc),
+    return(ruby_xml_node2_wrap(cXMLNode,
 			      rxpc->ctxt->node));
 }
 
@@ -371,11 +371,12 @@ ruby_xml_parser_context_new(VALUE class, xmlParserCtxtPtr ctxt) {
   ruby_xml_parser_context *rxpc;
 
   rxpc = ALLOC(ruby_xml_parser_context);
-  ruby_xml_parser_count++;
 
   rxpc->ctxt = ctxt;
-  rxpc->is_ptr = 0;
-  return(Data_Wrap_Struct(class, 0, ruby_xml_parser_context_free, rxpc));
+  return Data_Wrap_Struct(class,
+			  ruby_xml_parser_context_mark,
+			  ruby_xml_parser_context_free,
+			  rxpc);
 }
 
 

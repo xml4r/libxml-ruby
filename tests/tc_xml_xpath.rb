@@ -9,8 +9,8 @@ class TC_XML_XPath < Test::Unit::TestCase
     assert_equal(str, xp.string = str)
     doc = xp.parse
     assert_instance_of(XML::Document, doc)
-    @xpt = doc.find('/ruby_array/fixnum').xpath
-    assert_instance_of(XML::XPath, @xpt)
+    @xpt = doc.find('/ruby_array/fixnum')
+    assert_instance_of(XML::XPath::Object, @xpt)
   end
 
   def teardown()

@@ -15,75 +15,67 @@ VALUE cXMLXPathContext;
  */
 VALUE
 ruby_xml_xpath_context_doc_get(VALUE self) {
-  ruby_xml_xpath_context *rxxpc;
-  Data_Get_Struct(self, ruby_xml_xpath_context, rxxpc);
+  xmlXPathContextPtr ctxt;
+  Data_Get_Struct(self, xmlXPathContext, ctxt);
 
-  return(rxxpc->xd);
+  return ruby_xml_document_wrap2(ctxt->doc);
 }
 
 
 void
-ruby_xml_xpath_context_free(ruby_xml_xpath_context *rxxpc) {
-  if (rxxpc->ctxt != NULL) {
-    xmlXPathFreeContext(rxxpc->ctxt);
-    rxxpc->ctxt = NULL;
+ruby_xml_xpath_context_free(xmlXPathContextPtr ctxt) {
+  if (ctxt != NULL) {
+    xmlXPathFreeContext(ctxt);
+    ctxt = NULL;
+  }
+}
+
+
+void
+ruby_xml_xpath_context_mark(xmlXPathContextPtr ctxt) {
+  if (ctxt == NULL ) return;
+  if (ctxt->doc != NULL && ctxt->doc->_private != NULL)
+    rb_gc_mark((VALUE)ctxt->doc->_private);
+}
+
+
+VALUE
+ruby_xml_xpath_context_wrap(xmlXPathContextPtr ctxt) {
+  return Data_Wrap_Struct(cXMLXPathContext,
+			  ruby_xml_xpath_context_mark,
+			  ruby_xml_xpath_context_free,
+			  ctxt);
+}
+
+
+VALUE
+ruby_xml_xpath_context_new(VALUE anode) {
+  ruby_xml_document_t *rxd;
+  ruby_xml_node *node;
+  xmlXPathContextPtr ctxt;
+  
+  if (rb_obj_is_kind_of(anode,cXMLDocument) == Qtrue ) {
+    Data_Get_Struct(anode,ruby_xml_document_t,rxd);
+    if (rxd->doc == NULL) return(Qnil);
+
+    ctxt = xmlXPathNewContext(rxd->doc);
+    if (ctxt == NULL) return(Qnil);
+
+  } else if (rb_obj_is_kind_of(anode,cXMLNode) == Qtrue ) {
+    Data_Get_Struct(anode, ruby_xml_node, node);
+    if (node->node->doc == NULL)
+      rb_raise(rb_eTypeError,"Supplied node must be part of a document");
+
+    ctxt = xmlXPathNewContext(node->node->doc);
+    if (ctxt == NULL) return(Qnil);
+
+  } else {
+    rb_raise(rb_eTypeError,"create context requires a document or node. Supplied a %s?",
+	     rb_obj_as_string(anode));
   }
 
-  free(rxxpc);
+  return ruby_xml_xpath_context_wrap(ctxt);
 }
-
-
-void
-ruby_xml_xpath_context_mark(ruby_xml_xpath_context *rxxpc) {
-  if (rxxpc == NULL) return;
-  if (!NIL_P(rxxpc->xd)) rb_gc_mark(rxxpc->xd);
-}
-
-
-VALUE
-ruby_xml_xpath_context_new(VALUE class, VALUE xd,
-				 xmlXPathContextPtr xxpc) {
-  ruby_xml_xpath_context *rxxpc;
-
-  rxxpc = ALLOC(ruby_xml_xpath_context);
-  rxxpc->ctxt = xxpc;
-  rxxpc->xd = xd;
-  return(Data_Wrap_Struct(class, ruby_xml_xpath_context_mark,
-			  ruby_xml_xpath_context_free, rxxpc));
-}
-
-
-VALUE
-ruby_xml_xpath_context_new2(VALUE xd, xmlXPathContextPtr xxpc) {
-  return(ruby_xml_xpath_context_new(cXMLXPathContext, xd, xxpc));
-}
-
-
-VALUE
-ruby_xml_xpath_context_new3(VALUE xd) {
-  ruby_xml_document *rxd;
-  xmlXPathContextPtr ctxt;
-
-  Data_Get_Struct(xd, ruby_xml_document, rxd);
-  if (rxd->doc == NULL)
-    return(Qnil);
-
-  ctxt = xmlXPathNewContext(rxd->doc);
-  if (ctxt == NULL)
-    return(Qnil);
-
-  return(ruby_xml_xpath_context_new2(xd, ctxt));
-}
-
-
-VALUE
-ruby_xml_xpath_context_new4(VALUE rnode) {
-  ruby_xml_node *node;
-
-  Data_Get_Struct(rnode, ruby_xml_node, node);
-  return(ruby_xml_xpath_context_new3(node->xd));
-}
-
 
 /*
  * call-seq:
@@ -94,16 +86,17 @@ ruby_xml_xpath_context_new4(VALUE rnode) {
  */
 VALUE
 ruby_xml_xpath_context_register_namespace(VALUE self, VALUE prefix, VALUE uri) {
-  ruby_xml_xpath_context *rxxpc;
+  xmlXPathContextPtr ctxt;
 
-  Data_Get_Struct(self, ruby_xml_xpath_context, rxxpc);
-  if (xmlXPathRegisterNs(rxxpc->ctxt, 
+  Data_Get_Struct(self, xmlXPathContext, ctxt);
+  if (xmlXPathRegisterNs(ctxt, 
                          (xmlChar*)StringValuePtr(prefix), 
-                         (xmlChar*)StringValuePtr(uri)) 
-                         == 0) {
+                         (xmlChar*)StringValuePtr(uri))
+      == 0) {
     return(Qtrue);
   } else {
-    /* Should raise an exception, IMHO */
+    /* Should raise an exception, IMHO (whose?, why shouldnt it? -danj)*/
+    rb_warning("register namespace failed");
     return(Qfalse);
   }
 }

@@ -6,12 +6,12 @@
 /* Don't nuke this block!  It is used for automatically updating the
  * versions below. VERSION = string formatting, VERNUM = numbered
  * version for inline testing: increment both or none at all. */
-#define RUBY_LIBXML_VERSION  "0.3.9"
-#define RUBY_LIBXML_VERNUM   390
+#define RUBY_LIBXML_VERSION  "0.5.2.1"
+#define RUBY_LIBXML_VERNUM   521
 #define RUBY_LIBXML_VER_MAJ   0
-#define RUBY_LIBXML_VER_MIN   3
-#define RUBY_LIBXML_VER_MIC   9
-#define RUBY_LIBXML_VER_PATCH 0
+#define RUBY_LIBXML_VER_MIN   5
+#define RUBY_LIBXML_VER_MIC   2
+#define RUBY_LIBXML_VER_PATCH 1
 
 #include <ruby.h>
 #include <rubyio.h>
@@ -64,8 +64,8 @@ typedef struct rx_xpath_data {
   VALUE ctxt;
 } rx_xpath_data;
 
+#include "ruby_xml_state.h"
 #include "ruby_xml_attr.h"
-#include "ruby_xml_attribute.h"
 #include "ruby_xml_document.h"
 #include "ruby_xml_node.h"
 #include "ruby_xml_node_set.h"
@@ -77,6 +77,7 @@ typedef struct rx_xpath_data {
 #include "ruby_xml_xinclude.h"
 #include "ruby_xml_xpath.h"
 #include "ruby_xml_xpath_context.h"
+#include "ruby_xml_xpath_object.h"
 #include "ruby_xml_xpointer.h"
 #include "ruby_xml_xpointer_context.h"
 #include "ruby_xml_input_cbg.h"

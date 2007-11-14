@@ -11,8 +11,8 @@ class TC_XML_Node_Set2 < Test::Unit::TestCase
     assert_instance_of(XML::Document, doc)
     @one = doc.root.child
     @two = @one.next    
-    @set = doc.find('/ruby_array/fixnum')
-    @emptyset = doc.find('/fixnum')
+    @set = doc.find('/ruby_array/fixnum').set
+    @emptyset = doc.find('/fixnum').set
     assert_instance_of(XML::Node::Set, @set)    
   end
 

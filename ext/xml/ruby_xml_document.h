@@ -11,16 +11,13 @@ typedef struct rxp_document {
   xmlDocPtr doc;   /* Tree/DOM interface */
   int data_type;   /* The data type referenced by *data */
   void *data;      /* Pointer to an external structure of options */
-  int is_ptr;      /* Determines if this object owns its data or points to it someplace else */
-  VALUE xmlver;    /* T_STRING with the xml version */
-} ruby_xml_document;
+} ruby_xml_document_t;
 
 VALUE ruby_xml_document_filename_get(VALUE self);
-void  ruby_xml_document_free(ruby_xml_document *rxd);
-VALUE ruby_xml_document_new(VALUE class, xmlDocPtr doc);
-VALUE ruby_xml_document_new2(VALUE class, VALUE xmlver);
-VALUE ruby_xml_document_new3(VALUE class);
-VALUE ruby_xml_document_new4(VALUE class, xmlDocPtr doc);
+VALUE ruby_xml_document_new_native(VALUE class, VALUE xmlver);
+VALUE ruby_xml_document_wrap(VALUE class, xmlDocPtr xnode);
+VALUE ruby_xml_document_wrap2(xmlDocPtr xnode);
+void  ruby_xml_document_free(ruby_xml_document_t *rxd);
 VALUE ruby_xml_document_root_get(VALUE self);
 void  ruby_init_xml_document(void);
 

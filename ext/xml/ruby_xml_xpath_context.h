@@ -12,12 +12,8 @@ typedef struct ruby_xml_xpath_context {
   xmlXPathContextPtr ctxt;
 } ruby_xml_xpath_context;
 
-void ruby_xml_xpath_context_free(ruby_xml_xpath_context *rxxpc);
-VALUE ruby_xml_xpath_context_new(VALUE class, VALUE xd,
-				 xmlXPathContextPtr ctxt);
-VALUE ruby_xml_xpath_context_new2(VALUE xd, xmlXPathContextPtr ctxt);
-VALUE ruby_xml_xpath_context_new3(VALUE xd);
-VALUE ruby_xml_xpath_context_new4(VALUE rnode);
+VALUE ruby_xml_xpath_context_wrap(xmlXPathContextPtr ctxt);
+VALUE ruby_xml_xpath_context_new(VALUE anode);
 VALUE ruby_xml_xpath_context_register_namespace(VALUE self, VALUE prefix, VALUE uri);
 void ruby_init_xml_xpath_context(void);
 

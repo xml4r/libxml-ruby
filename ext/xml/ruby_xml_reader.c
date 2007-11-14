@@ -78,10 +78,10 @@ ruby_xml_reader_new_file(int argc, VALUE *argv, VALUE self)
 VALUE
 ruby_xml_reader_new_walker(VALUE self, VALUE doc)
 {
-  ruby_xml_document *rxd;
+  ruby_xml_document_t *rxd;
   xmlTextReaderPtr reader;
   
-  Data_Get_Struct(doc, ruby_xml_document, rxd);
+  Data_Get_Struct(doc, ruby_xml_document_t, rxd);
  
   reader = xmlReaderWalker(rxd->doc);  
   if (reader == NULL)
@@ -686,7 +686,7 @@ ruby_xml_reader_expand(VALUE self)
   if (NIL_P(node))
     return Qnil;
 
-  return ruby_xml_node_new(cXMLNode, node);
+  return ruby_xml_node2_wrap(cXMLNode, node);
 }
 
 #if LIBXML_VERSION >= 20618

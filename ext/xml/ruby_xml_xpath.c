@@ -40,37 +40,61 @@ ruby_xml_xpath_debug(VALUE self) {
 #endif
 }
 
-// TODO Maybe we should support [] or some other kind of access if poss.
-
-/*
- * call-seq:
- *    xpath.each { |node| ... } => self
- * 
- * Call the supplied block for each matching node.
- */
-VALUE
-ruby_xml_xpath_each(VALUE self) {
-  ruby_xml_xpath *rxxp;
-  VALUE rxnset;
-
-  Data_Get_Struct(self, ruby_xml_xpath, rxxp);
-
-  if (rxxp->xpop == NULL || rxxp->xpop->type != XPATH_NODESET)
-    return(Qnil);
-
-  rxnset = ruby_xml_node_set_new(cXMLNodeSet, rxxp->xd, self,
-				 rxxp->xpop->nodesetval);
-  ruby_xml_node_set_each(rxnset);
-  return(rxnset);
-}
-
 ///////////////////////////////////////////////////
 // TODO xpath_find is throwing TypeError:
 //
 //    TypeError: can't convert nil into String
 //
 // When given a namespace when non exist.
+void
+ruby_xml_xpath_register_namespaces(VALUE nslist, VALUE xxpc, int level) {
+  char *cp;
+  long i;
+  VALUE rprefix, ruri;
+  ruby_xml_ns *rxns;
 
+  /* Need to loop through the 2nd argument and iterate through the
+   * list of namespaces that we want to allow */
+  switch (TYPE(nslist)) {
+  case T_STRING:
+    cp = strchr(StringValuePtr(nslist), (int)':');
+    if (cp == NULL) {
+      rprefix = nslist;
+      ruri = Qnil;
+    } else {
+      rprefix = rb_str_new(StringValuePtr(nslist), (int)((long)cp - (long)StringValuePtr(nslist)));
+      ruri = rb_str_new2(&cp[1]);
+    }
+    /* Should test the results of this */
+    ruby_xml_xpath_context_register_namespace(xxpc, rprefix, ruri);
+    break;
+  case T_ARRAY:
+    if ( level == 0 ) {
+      for (i = 0; i < RARRAY(nslist)->len; i++) {
+	ruby_xml_xpath_register_namespaces(RARRAY(nslist)->ptr[i],xxpc,1);
+      }
+    }
+    else {
+      // tuples of prefix/uri
+      if (RARRAY(RARRAY(nslist)->ptr[i])->len == 2) {
+	rprefix = RARRAY(RARRAY(nslist)->ptr[i])->ptr[0];
+	ruri = RARRAY(RARRAY(nslist)->ptr[i])->ptr[1];
+	ruby_xml_xpath_context_register_namespace(xxpc, rprefix, ruri);
+      } else {
+	rb_raise(rb_eArgError, "nested array must be an array of strings, prefix and href/uri");
+      }
+    }
+    break;
+  default:
+    if (rb_obj_is_kind_of(nslist, cXMLNS) == Qtrue) {
+      Data_Get_Struct(nslist, ruby_xml_ns, rxns);
+      rprefix = rb_str_new2((const char*)rxns->ns->prefix);
+      ruri = rb_str_new2((const char*)rxns->ns->href);
+      ruby_xml_xpath_context_register_namespace(xxpc, rprefix, ruri);
+    } else
+      rb_raise(rb_eArgError, "Invalid argument type, only accept string, array of strings, or an array of arrays");
+  }
+}
 /*
  * call-seq:
  *    XML::XPath.find(path, namespaces = [any]) => xpath
@@ -90,144 +114,91 @@ ruby_xml_xpath_each(VALUE self) {
  * will be included.
  */
 VALUE
-ruby_xml_xpath_find(int argc, VALUE *argv, VALUE class) {
+ruby_xml_xpath_find(VALUE class, VALUE anode, VALUE xpath_expr, VALUE nslist) {
 #ifdef LIBXML_XPATH_ENABLED
   xmlXPathCompExprPtr comp;
+  xmlXPathObjectPtr xxpop;
   ruby_xml_node *node;
   ruby_xml_xpath *rxxp;
-  ruby_xml_xpath_context *rxxpc;
-  ruby_xml_ns *rxns;
-  VALUE rnode, rprefix, ruri, xxpc, xpath, xpath_expr;
-  char *cp;
-  long i;
+  xmlXPathContextPtr ctxt;
+  ruby_xml_document_t *rdocp;
+  VALUE rnode, xxpc;
+  VALUE rxpop;
 
-  switch(argc) {
-  case 3:
-    /* array of namespaces we allow.
-     *
-     * Accept either:
-     *   A string in the form of: "prefix:uri", or
-     *   An array of:
-     *     *) strings in the form like above
-     *     *) arrays in the form of ['prefix','uri']
-     */
-
-    /* Intentionally fall through, we deal with the last arg below
-     * after the XPathContext object has been setup */
-  case 2:
-    rnode = argv[0];
-    xpath_expr = argv[1];
-    break;
-  default:
-    rb_raise(rb_eArgError, "wrong number of arguments (1 or 2)");
-  }
-
-  Data_Get_Struct(rnode, ruby_xml_node, node);
-
-  xxpc = ruby_xml_xpath_context_new4(rnode);
+  if (rb_obj_is_kind_of(anode, cXMLDocument) == Qtrue) {
+    xxpc = ruby_xml_xpath_context_new(anode);
+    Data_Get_Struct(anode, ruby_xml_document_t, rdocp);
+#ifdef DEBUG
+    fprintf(stderr,"rdocp=0x%x root=0x%x\n",rdocp,xmlDocGetRootElement(rdocp->doc));
+#endif
+    rnode=ruby_xml_node2_wrap(cXMLNode,xmlDocGetRootElement(rdocp->doc));
+#ifdef DEBUG
+    fprintf(stderr,"rnode 0x%x 0x%x\n",rnode,xmlDocGetRootElement(rdocp->doc)->_private);
+#endif
+    Data_Get_Struct(rnode, ruby_xml_node, node);
+  } else if ( rb_obj_is_kind_of(anode, cXMLNode) == Qtrue) {
+    xxpc = ruby_xml_xpath_context_new(anode);
+    Data_Get_Struct(anode, ruby_xml_node, node);
+  } else
+    rb_raise(rb_eTypeError, "arg 1 must be XML::Document or XML::Node within a document %s", rb_obj_as_string(anode));
+  
   if (NIL_P(xxpc))
     return(Qnil);
-  Data_Get_Struct(xxpc, ruby_xml_xpath_context, rxxpc);
 
-  xpath = ruby_xml_xpath_new(cXMLXPath, rnode, xxpc, NULL);
-  Data_Get_Struct(xpath, ruby_xml_xpath, rxxp);
+  Data_Get_Struct(xxpc,xmlXPathContext,ctxt);
+  // XXX Is this legal? Set a subtree to apply xpath?
+  ctxt->node = node->node;
 
-  rxxpc->ctxt->node = node->node;
+  // XXX is setting ->namespaces used?
   if (node->node->type == XML_DOCUMENT_NODE) {
-    rxxpc->ctxt->namespaces = xmlGetNsList(node->node->doc,
-					   xmlDocGetRootElement(node->node->doc));
+    ctxt->namespaces = xmlGetNsList(node->node->doc,
+				    xmlDocGetRootElement(node->node->doc));
   } else {
-    rxxpc->ctxt->namespaces = xmlGetNsList(node->node->doc, node->node);
+    ctxt->namespaces = xmlGetNsList(node->node->doc, node->node);
   }
 
-  rxxpc->ctxt->nsNr = 0;
-  if (rxxpc->ctxt->namespaces != NULL) {
-    while (rxxpc->ctxt->namespaces[rxxpc->ctxt->nsNr] != NULL)
-      rxxpc->ctxt->nsNr++;
+  ctxt->nsNr = 0;
+  if (ctxt->namespaces != NULL) {
+    while (ctxt->namespaces[ctxt->nsNr] != NULL)
+      ctxt->nsNr++;
   }
 
-  /* Need to loop through the 2nd argument and iterate through the
-   * list of namespaces that we want to allow */
-  if (argc == 3) {
-    switch (TYPE(argv[2])) {
-    case T_STRING:
-      cp = strchr(StringValuePtr(argv[2]), (int)':');
-      if (cp == NULL) {
-	rprefix = argv[2];
-	ruri = Qnil;
-      } else {
-	rprefix = rb_str_new(StringValuePtr(argv[2]), (int)((long)cp - (long)StringValuePtr(argv[2])));
-	ruri = rb_str_new2(&cp[1]);
-      }
-      /* Should test the results of this */
-      ruby_xml_xpath_context_register_namespace(xxpc, rprefix, ruri);
-      break;
-    case T_ARRAY:
-      for (i = 0; i < RARRAY(argv[2])->len; i++) {
-	switch (TYPE(RARRAY(argv[2])->ptr[i])) {
-	case T_STRING:
-	  cp = strchr(StringValuePtr(RARRAY(argv[2])->ptr[i]), (int)':');
-	  if (cp == NULL) {
-	    rprefix = RARRAY(argv[2])->ptr[i];
-	    ruri = Qnil;
-	  } else {
-	    rprefix = rb_str_new(StringValuePtr(RARRAY(argv[2])->ptr[i]), (int)((long)cp - (long)StringValuePtr(RARRAY(argv[2])->ptr[i])));
-	    ruri = rb_str_new2(&cp[1]);
-	  }
-	  /* Should test the results of this */
-	  ruby_xml_xpath_context_register_namespace(xxpc, rprefix, ruri);
-	  break;
-	case T_ARRAY:
-	  if (RARRAY(RARRAY(argv[2])->ptr[i])->len == 2) {
-	    rprefix = RARRAY(RARRAY(argv[2])->ptr[i])->ptr[0];
-	    ruri = RARRAY(RARRAY(argv[2])->ptr[i])->ptr[1];
-	    ruby_xml_xpath_context_register_namespace(xxpc, rprefix, ruri);
-	  } else {
-	    rb_raise(rb_eArgError, "nested array must be an array of strings, prefix and href/uri");
-	  }
-	  break;
-	default:
-	  if (rb_obj_is_kind_of(RARRAY(argv[2])->ptr[i], cXMLNS) == Qtrue) {
-	    Data_Get_Struct(argv[2], ruby_xml_ns, rxns);
-	    rprefix = rb_str_new2((const char*)rxns->ns->prefix);
-	    ruri = rb_str_new2((const char*)rxns->ns->href);
-	    ruby_xml_xpath_context_register_namespace(xxpc, rprefix, ruri);
-	  } else
-	    rb_raise(rb_eArgError, "Invalid argument type, only accept string, array of strings, or an array of arrays");
-	}
-      }
-      break;
-    default:
-      if (rb_obj_is_kind_of(argv[2], cXMLNS) == Qtrue) {
-	Data_Get_Struct(argv[2], ruby_xml_ns, rxns);
-	rprefix = rb_str_new2((const char*)rxns->ns->prefix);
-	ruri = rb_str_new2((const char*)rxns->ns->href);
-	ruby_xml_xpath_context_register_namespace(xxpc, rprefix, ruri);
-      } else
-	rb_raise(rb_eArgError, "Invalid argument type, only accept string, array of strings, or an array of arrays");
-    }
-  }
+  if ( ! NIL_P(nslist) )
+    ruby_xml_xpath_register_namespaces(nslist,xxpc,0);
+
   comp = xmlXPathCompile((xmlChar*)StringValuePtr(xpath_expr));
 
   if (comp == NULL) {
-    xmlXPathFreeCompExpr(comp);
-    rb_raise(eXMLXPathInvalidPath, "Invalid XPath expression");
+    rb_raise(eXMLXPathInvalidPath,
+	     "Invalid XPath expression (expr does not compile)");
   }
-  rxxp->xpop = xmlXPathCompiledEval(comp, rxxpc->ctxt);
+  xxpop=xmlXPathCompiledEval(comp, ctxt);
+  if ( xxpop == NULL )
+    return Qnil;
+
+#define ALT
+#ifdef ALT
+  rxpop = ruby_xml_xpath_object_wrap(xxpop);
+#else
+  rxpop = Data_Wrap_Struct(cXMLXPathObject,
+			   ruby_xml_xpath_object_mark,
+			   ruby_xml_xpath_object_free,
+			   xxpop);
+#endif
+
+#ifdef NODE_DEBUG
+  fprintf(stderr,"xpo 0x%x class=%s\n",
+	  rxpop,
+	  rb_class2name(rb_obj_class(rxpop)));
+#endif
+
   xmlXPathFreeCompExpr(comp);
 
-  if (rxxpc->ctxt->namespaces != NULL)
-    xmlFree(rxxpc->ctxt->namespaces);
-
-  if (rxxp->xpop == NULL)
+  if (rxpop == Qnil)
     rb_raise(eXMLXPathInvalidPath,
 	     "Invalid XPath expression for this document");
 
-  if (rxxp->xpop->type != XPATH_NODESET)
-    return(Qnil);
-
-  return(ruby_xml_node_set_new2(node->xd, xpath,
-				rxxp->xpop->nodesetval));
+  return rxpop;
 #else
   rb_warn("libxml was compiled without XPath support");
   return(Qfalse);
@@ -236,95 +207,16 @@ ruby_xml_xpath_find(int argc, VALUE *argv, VALUE class) {
 
 
 VALUE
-ruby_xml_xpath_find2(int argc, VALUE *argv) {
-  return(ruby_xml_xpath_find(argc, argv, cXMLXPath));
+ruby_xml_xpath_findva(int argc, VALUE *argv, VALUE class) {
+  if ( argc < 2 || argc > 3 )
+    rb_raise(rb_eArgError, "wrong number of arguments (1 or 2)");
+
+  return ruby_xml_xpath_find(class,argv[0],argv[1],(argc==3)?argv[2]:Qnil);
 }
-
-
-void
-ruby_xml_xpath_free(ruby_xml_xpath *rxxp) {
-  if (rxxp->xpop != NULL) {
-    xmlXPathFreeObject(rxxp->xpop);
-    rxxp->xpop = NULL;
-  }
-
-  free(rxxp);
-}
-
-
-void
-ruby_xml_xpath_mark(ruby_xml_xpath *rxxp) {
-  if (rxxp == NULL) return;
-  if (!NIL_P(rxxp->ctxt)) rb_gc_mark(rxxp->ctxt);
-  if (!NIL_P(rxxp->xd)) rb_gc_mark(rxxp->xd);
-}
-
 
 VALUE
-ruby_xml_xpath_new(VALUE class, VALUE xd, VALUE ctxt,
-			 xmlXPathObjectPtr xpop) {
-  ruby_xml_xpath *rxxp;
-
-  rxxp = ALLOC(ruby_xml_xpath);
-  rxxp->ctxt = ctxt;
-  rxxp->xd = xd;
-  rxxp->xpop = xpop;
-  return(Data_Wrap_Struct(class, ruby_xml_xpath_mark,
-			  ruby_xml_xpath_free, rxxp));
-}
-
-
-/*
- * call-seq:
- *    xpath.set => nodeset
- * 
- * Obtain an XML::Node::Set with nodes matching this xpath.
- */
-VALUE
-ruby_xml_xpath_set(VALUE self) {
-  ruby_xml_xpath *rxxp;
-  Data_Get_Struct(self, ruby_xml_xpath, rxxp);
-
-  if (rxxp->xpop == NULL || rxxp->xpop->type != XPATH_NODESET)
-    return(Qnil);
-
-  return(ruby_xml_node_set_new(cXMLNodeSet, rxxp->xd, self,
-			       rxxp->xpop->nodesetval));
-}
-
-
-/*
- * call-seq:
- *    xpath.set_type => num
- * 
- * Obtains the type identifier of this xpath
- * set.
- */
-VALUE
-ruby_xml_xpath_set_type(VALUE self) {
-  ruby_xml_xpath *rxxp;
-  Data_Get_Struct(self, ruby_xml_xpath, rxxp);
-
-  return(INT2FIX(rxxp->xpop->type));
-}
-
-// TODO maybe 'string' should alias as 'to_s'?
-
-/*
- * call-seq:
- *    xpath.string => "xpath" 
- * 
- * Obtain a string representation of this xpath.
- */
-VALUE
-ruby_xml_xpath_string(VALUE self) {
-  ruby_xml_xpath *rxxp;
-  Data_Get_Struct(self, ruby_xml_xpath, rxxp);
-
-  if (rxxp->xpop->stringval == NULL)
-    return(Qnil);
-  else
-    return(rb_str_new2((const char*)rxxp->xpop->stringval));
+ruby_xml_xpath_find2(VALUE anode, VALUE xpath_expr, VALUE nslist) {
+  return ruby_xml_xpath_find(cXMLXPath, anode, xpath_expr, nslist);
 }
 
 // Rdoc needs to know 
@@ -350,13 +242,11 @@ ruby_init_xml_xpath(void) {
   rb_define_const(cXMLXPath, "USERS", INT2NUM(XPATH_USERS));
   rb_define_const(cXMLXPath, "XSLT_TREE", INT2NUM(XPATH_XSLT_TREE));
 
-  rb_define_singleton_method(cXMLXPath, "find", ruby_xml_xpath_find, 2);
+  rb_define_singleton_method(cXMLXPath, "find", ruby_xml_xpath_findva, -1);
 
   rb_define_method(cXMLXPath, "debug", ruby_xml_xpath_debug, 0);
-  rb_define_method(cXMLXPath, "each", ruby_xml_xpath_each, 0);
-  rb_define_method(cXMLXPath, "set", ruby_xml_xpath_set, 0);
-  rb_define_method(cXMLXPath, "set_type", ruby_xml_xpath_set_type, 0);
-  rb_define_method(cXMLXPath, "string", ruby_xml_xpath_string, 0);
+
+  ruby_init_xml_xpath_object();
 }
 
 #endif /* ifdef LIBXML_XPATH_ENABLED */

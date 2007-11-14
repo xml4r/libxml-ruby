@@ -8,19 +8,13 @@
 extern VALUE cXMLNodeSet;
 
 typedef struct ruby_xml_node_set {
-  xmlNodeSetPtr node_set;
-  VALUE xd;
-  VALUE xpath;
-  int data_type;
-  void *data;
+  VALUE rxpop;
 } ruby_xml_node_set;
 
-void ruby_xml_node_set_free(ruby_xml_node_set *rxnset);
 void ruby_init_xml_node_set(void);
-VALUE ruby_xml_node_set_new(VALUE class, VALUE xd, VALUE xpath,
-			    xmlNodeSetPtr node_set);
-VALUE ruby_xml_node_set_new2(VALUE xd, VALUE xpath,
-			     xmlNodeSetPtr node_set);
+VALUE ruby_xml_node_set_new(VALUE class, VALUE xpop);
+VALUE ruby_xml_node_set_new2(VALUE xpop);
 VALUE ruby_xml_node_set_each(VALUE self);
+VALUE ruby_xml_node_set_first(VALUE self);
 
 #endif

@@ -1,5 +1,4 @@
 /* $Id$ */
-/* $Id$ */
 
 /* Please see the LICENSE file for copyright and distribution information */
 
@@ -9,7 +8,6 @@
 static VALUE libxml_xmlRubyErrorProc = Qnil;
 static int id_call;
 
-int ruby_xml_parser_count = 0;
 VALUE cXMLParser;
 VALUE eXMLParserParseError;
 
@@ -798,10 +796,6 @@ void
 ruby_xml_parser_free(ruby_xml_parser *rxp) {
   void *data;
 
-  ruby_xml_parser_count--;
-  if (ruby_xml_parser_count == 0)
-    xmlCleanupParser();
-
   switch(rxp->data_type) {
   case RUBY_LIBXML_SRC_TYPE_NULL:
     break;
@@ -940,6 +934,8 @@ ruby_xml_parser_mark(ruby_xml_parser *rxp) {
   if (rxp == NULL) return;
   if (!NIL_P(rxp->ctxt)) rb_gc_mark(rxp->ctxt);
 
+  ruby_xml_state_marker();
+
   switch(rxp->data_type) {
   case RUBY_LIBXML_SRC_TYPE_NULL:
     break;
@@ -1007,16 +1003,20 @@ ruby_xml_parser_memory_used(VALUE self) {
 VALUE
 ruby_xml_parser_new(VALUE class) {
   ruby_xml_parser *rxp;
+  VALUE r;
 
-  ruby_xml_parser_count++;
-  rxp = ALLOC(ruby_xml_parser);
+  r=Data_Make_Struct(class,
+		     ruby_xml_parser,
+		     ruby_xml_parser_mark,
+		     ruby_xml_parser_free,
+		     rxp);
+
   rxp->ctxt = Qnil;
   rxp->data_type = RUBY_LIBXML_SRC_TYPE_NULL;
   rxp->data = NULL;
   rxp->parsed = 0;
 
-  return(Data_Wrap_Struct(class, ruby_xml_parser_mark,
-			  ruby_xml_parser_free, rxp));
+  return r;
 }
 
 
@@ -1107,7 +1107,7 @@ ruby_xml_parser_new_string(VALUE class, VALUE str) {
  */
 VALUE
 ruby_xml_parser_parse(VALUE self) {
-  ruby_xml_document *rxd;
+  ruby_xml_document_t *rxd;
   ruby_xml_parser *rxp;
   ruby_xml_parser_context *rxpc;
   xmlDocPtr xdp;
@@ -1136,10 +1136,7 @@ ruby_xml_parser_parse(VALUE self) {
       rxp->parsed = 1;
     }
 
-    doc = ruby_xml_document_new(cXMLDocument, xdp);
-    Data_Get_Struct(doc, ruby_xml_document, rxd);
-    rxd->is_ptr = 0;
-    rxd->doc = xdp;
+    doc = ruby_xml_document_wrap(cXMLDocument, xdp);
     break;
   default:
     rb_fatal("Unknown data type, %d", rxp->data_type);

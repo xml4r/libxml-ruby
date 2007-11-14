@@ -5,9 +5,12 @@ require 'test/unit'
 class TC_XML_Node4 < Test::Unit::TestCase
   def setup()
     xp = XML::Parser.new()
-    str = '<ruby_array uga="booga" foo="bar"><fixnum>one</fixnum><fixnum>two</fixnum></ruby_array>'
-    assert_equal(str, xp.string = str)
+    @str = '<ruby_array uga="booga" foo="bar"><fixnum>one</fixnum><fixnum>two</fixnum></ruby_array>'
+    assert_equal(@str, xp.string = @str)
     doc = xp.parse
+    xp2=XML::Parser.new()
+    xp2.string=@str
+    @doc2 = xp2.parse
     assert_instance_of(XML::Document, doc)
     assert_instance_of(XML::Node, doc.root)
     @root = doc.root
@@ -20,7 +23,7 @@ class TC_XML_Node4 < Test::Unit::TestCase
   
   def test_xml_node_eql?()
     first1 = @root.child
-    first2 = @root.child
+    first2 = @doc2.root.child
     
     assert_not_equal first1.object_id, first2.object_id
     assert first1.eql?(first2)
@@ -31,7 +34,7 @@ class TC_XML_Node4 < Test::Unit::TestCase
 
   def test_xml_node_hash()
     first1 = @root.child
-    first2 = @root.child
+    first2 = @doc2.root.child
     
     assert_not_equal first1.object_id, first2.object_id
     assert_equal first1.hash, first2.hash

@@ -80,10 +80,6 @@ void
 ruby_xml_html_parser_free(ruby_xml_html_parser *rxp) {
   void *data;
 
-  ruby_xml_parser_count--;
-  if (ruby_xml_parser_count == 0)
-    xmlCleanupParser();  
-
   switch(rxp->data_type) {
   case RUBY_LIBXML_SRC_TYPE_NULL:
     break;
@@ -187,6 +183,8 @@ ruby_xml_html_parser_mark(ruby_xml_html_parser *rxp) {
   if (rxp == NULL) return;
   if (!NIL_P(rxp->ctxt)) rb_gc_mark(rxp->ctxt);
 
+  ruby_xml_state_marker();
+
   switch(rxp->data_type) {
   case RUBY_LIBXML_SRC_TYPE_NULL:
     break;
@@ -218,7 +216,6 @@ VALUE
 ruby_xml_html_parser_new(VALUE class) {
   ruby_xml_html_parser *rxp;
 
-  ruby_xml_parser_count++;
   rxp = ALLOC(ruby_xml_html_parser);
   rxp->ctxt = Qnil;
   rxp->data_type = RUBY_LIBXML_SRC_TYPE_NULL;
@@ -319,7 +316,7 @@ ruby_xml_html_parser_new_string(VALUE class, VALUE str) {
  */
 VALUE
 ruby_xml_html_parser_parse(VALUE self) {
-  ruby_xml_document *rxd;
+  ruby_xml_document_t *rxd;
   ruby_xml_html_parser *rxp;
   ruby_xml_parser_context *rxpc;
   htmlDocPtr xdp;
@@ -342,10 +339,7 @@ ruby_xml_html_parser_parse(VALUE self) {
     xdp = rxpc->ctxt->myDoc;
     rxp->parsed = 1;
 
-    doc = ruby_xml_document_new(cXMLDocument, xdp);
-    Data_Get_Struct(doc, ruby_xml_document, rxd);
-    rxd->is_ptr = 0;
-    rxd->doc = xdp;
+    doc = ruby_xml_document_wrap(cXMLDocument, xdp);
     break;
   default:
     rb_fatal("Unknown data type, %d", rxp->data_type);

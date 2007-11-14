@@ -17,7 +17,7 @@ class TC_XML_HTMLParser < Test::Unit::TestCase
 
   def test_libxml_html_parser_parse()
     doc = @xp.parse
-    
+
     assert_instance_of XML::Document, doc
     
     root = doc.root
@@ -33,12 +33,16 @@ class TC_XML_HTMLParser < Test::Unit::TestCase
     assert_equal 'meta', meta.name
     assert_equal 'keywords', meta[:name]
     assert_equal 'nasty', meta[:content]
-    
+
     body = head.next
     assert_instance_of XML::Node, body
     assert_equal 'body', body.name
     
     hello = body.child
+    # It appears that some versions of libxml2 add a layer of <p>
+    # cant figure our why or how, so this skips it if there
+    hello = hello.child if hello.name == "p"
+
     assert_instance_of XML::Node, hello
     assert_equal 'Hello', hello.content
     

@@ -9,7 +9,7 @@ class TC_XML_Node_Set < Test::Unit::TestCase
     assert_equal(str, xp.string = str)
     doc = xp.parse
     assert_instance_of(XML::Document, doc)
-    @set = doc.find('/ruby_array/fixnum')
+    @set = doc.find('/ruby_array/fixnum').set
     assert_instance_of(XML::Node::Set, @set)    
   end
 
