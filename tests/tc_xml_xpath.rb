@@ -21,4 +21,19 @@ class TC_XML_XPath < Test::Unit::TestCase
     set = @xpt.set
     assert_instance_of(XML::Node::Set, set)    
   end
+
+  def test_ary()
+    assert_equal(2,@xpt.length)
+    assert_equal("one",@xpt.first.content)
+    assert_equal("one",@xpt[0].content)
+    assert_equal("two",@xpt[1].content)
+    assert_equal("two",@xpt[-1].content)
+    assert_equal(nil,@xpt[-3])
+    assert_equal(nil,@xpt[2])
+
+    @xpt.inject(%w(one two).reverse) {|m,v|
+      assert_equal(m.pop,v.content)
+      m
+    }
+  end
 end # TC_XML_Document
