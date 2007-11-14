@@ -2210,6 +2210,35 @@ ruby_xml_node_copy(VALUE self, VALUE deep) {
   return obj;
 }
 
+ /*
+ * call-seq: 
+ *    XML::Node.new_text(content = nil) => node
+ * 
+ * Create a new text node, optionally setting
+ * the node's content.
+ * 
+ */
+VALUE
+ruby_xml_node_new_text(VALUE class, VALUE text)
+{
+  VALUE obj;
+  xmlNodePtr xnode;
+  
+  if ( NIL_P(text) )
+    return Qnil;
+
+  if (TYPE(text) != T_STRING )
+    rb_raise(rb_eTypeError, "requires string argument");
+  
+  xnode=xmlNewText((xmlChar*)STR2CSTR(text));
+  if ( xnode == NULL )
+    return Qnil;
+  
+  obj=ruby_xml_node2_wrap(class,xnode);
+  rb_obj_call_init(obj,0,NULL);
+  return obj;
+}
+
 void
 ruby_xml_node_registerNode(xmlNodePtr node)
 {
@@ -2263,6 +2292,7 @@ ruby_init_xml_node(void) {
   rb_define_singleton_method(cXMLNode, "new", ruby_xml_node2_new_string_bc, -1);
   rb_define_singleton_method(cXMLNode, "new_cdata", ruby_xml_node_new_cdata, -1);
   rb_define_singleton_method(cXMLNode, "new_comment", ruby_xml_node_new_comment, -1); 
+  rb_define_singleton_method(cXMLNode, "new_text", ruby_xml_node_new_text, 1); 
   
   rb_define_alias(singleton, "new_element", "new");
   
