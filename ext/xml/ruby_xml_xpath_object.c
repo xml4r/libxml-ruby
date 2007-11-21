@@ -36,13 +36,35 @@ ruby_xml_xpath_object_free(xmlXPathObjectPtr xpop)
 VALUE
 ruby_xml_xpath_object_wrap(xmlXPathObjectPtr xpop)
 {
+  VALUE rval;
+
   if ( xpop==NULL )
     return Qnil;
 
-  return Data_Wrap_Struct(cXMLXPathObject,
-			  ruby_xml_xpath_object_mark,
-			  ruby_xml_xpath_object_free,
-			  xpop);
+  switch(xpop->type) {
+  case XPATH_NODESET:
+    return Data_Wrap_Struct(cXMLXPathObject,
+			    ruby_xml_xpath_object_mark,
+			    ruby_xml_xpath_object_free,
+			    xpop);
+    break;
+  case XPATH_BOOLEAN:
+    if (xpop->boolval != 0)
+      rval=Qtrue;
+    else
+      rval=Qfalse;
+    break;
+  case XPATH_NUMBER:
+    rval=rb_float_new(xpop->floatval);
+    break;
+  case XPATH_STRING:
+    rval=rb_str_new2(xpop->stringval);
+    break;
+  default:
+    rval=Qnil;
+  }
+  xmlXPathFreeObject(xpop);
+  return rval;
 }
 
 /*
