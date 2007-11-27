@@ -76,9 +76,9 @@ ruby_xml_xpath_register_namespaces(VALUE nslist, VALUE xxpc, int level) {
     }
     else {
       // tuples of prefix/uri
-      if (RARRAY(RARRAY(nslist)->ptr[i])->len == 2) {
-	rprefix = RARRAY(RARRAY(nslist)->ptr[i])->ptr[0];
-	ruri = RARRAY(RARRAY(nslist)->ptr[i])->ptr[1];
+      if (RARRAY(nslist)->len == 2) {
+	rprefix = RARRAY(nslist)->ptr[0];
+	ruri = RARRAY(nslist)->ptr[1];
 	ruby_xml_xpath_context_register_namespace(xxpc, rprefix, ruri);
       } else {
 	rb_raise(rb_eArgError, "nested array must be an array of strings, prefix and href/uri");
