@@ -435,7 +435,7 @@ ruby_xml_parser_default_keep_blanks_set(VALUE class, VALUE bool) {
  */
 VALUE
 ruby_xml_parser_default_load_external_dtd_get(VALUE class) {
-  if (xmlSubstituteEntitiesDefaultValue)
+  if (xmlLoadExtDtdDefaultValue)
     return(Qtrue);
   else
     return(Qfalse);
