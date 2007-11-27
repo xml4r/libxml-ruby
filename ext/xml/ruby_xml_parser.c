@@ -1359,9 +1359,9 @@ ruby_init_parser(void) {
   rb_define_singleton_method(cXMLParser, "default_keep_blanks=",
 			     ruby_xml_parser_default_keep_blanks_set, 1);
   rb_define_singleton_method(cXMLParser, "default_load_external_dtd",
-			     ruby_xml_parser_default_load_external_dtd_set, 0);
+			     ruby_xml_parser_default_load_external_dtd_get, 0);
   rb_define_singleton_method(cXMLParser, "default_load_external_dtd=",
-			     ruby_xml_parser_default_load_external_dtd_get, 1);
+			     ruby_xml_parser_default_load_external_dtd_set, 1);
   rb_define_singleton_method(cXMLParser, "default_line_numbers",
 			     ruby_xml_parser_default_line_numbers_get, 0);
   rb_define_singleton_method(cXMLParser, "default_line_numbers=",
