@@ -809,7 +809,7 @@ ruby_xml_document_standalone_q(VALUE self) {
 VALUE
 ruby_xml_document_to_s(int argc, VALUE *argv, VALUE self) {
   ruby_xml_document_t *rxd;
-  xmlChar *result;
+  xmlChar *result, *encoding=NULL;
   int format, len;
   VALUE rresult;
 
@@ -817,6 +817,9 @@ ruby_xml_document_to_s(int argc, VALUE *argv, VALUE self) {
   case 0:
     format = 1;
     break;
+  case 2:
+    if (TYPE(argv[1]) == T_STRING)
+      encoding=(xmlChar *)StringValuePtr(argv[1]);
   case 1:
     if (TYPE(argv[0]) == T_TRUE)
       format = 1;
@@ -832,13 +835,13 @@ ruby_xml_document_to_s(int argc, VALUE *argv, VALUE self) {
   Data_Get_Struct(self, ruby_xml_document_t, rxd);
   if (rxd->doc == NULL) {
     return(Qnil);
-  } else if (rxd->doc->encoding != NULL) {
+  } else if (encoding != NULL) {
     if (format) {
       xmlDocDumpFormatMemoryEnc(rxd->doc, &result, &len,
-				(const char*)rxd->doc->encoding, format);
+				(const char*)encoding, format);
     } else {
       xmlDocDumpMemoryEnc(rxd->doc, &result, &len,
-			  (const char*)rxd->doc->encoding);
+			  (const char *)encoding);
     }
   } else {
     if (format)
@@ -846,7 +849,7 @@ ruby_xml_document_to_s(int argc, VALUE *argv, VALUE self) {
     else
       xmlDocDumpMemory(rxd->doc, &result, &len);
   }
-  rresult=rb_str_new2((const char*)result);
+  rresult=rb_str_new((const char*)result,len);
   xmlFree(result);
   return rresult;
 }
