@@ -801,10 +801,15 @@ ruby_xml_document_standalone_q(VALUE self) {
 
 /*
  * call-seq:
- *    document.to_s => "xml"
+ *    document.to_s({format=true,encoding) => "xml"
  * 
  * Coerce this document to a string representation
- * of it's XML.
+ * of it's XML. The default is to pretty format, but this
+ * depends Parser#indent_tree_output==true or
+ * Parser#default_keep_blanks==false.
+ *
+ * The encoding is not applied to the document, but is
+ * encoding target of the resulting string.
  */
 VALUE
 ruby_xml_document_to_s(int argc, VALUE *argv, VALUE self) {
