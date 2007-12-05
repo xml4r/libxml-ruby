@@ -1,0 +1,25 @@
+---
+title       : LibXML-Ruby
+summary     : Bindings to LibXML2
+homepage    : "http://libxml.rubyforge.org"
+repository  : "http://libxml.rubyforge.org/svn/"
+
+maintainers :
+  - Dan Janwoski <danj at 3skel.com>
+  - Thomas Sawyer <transfire at gmail.com>
+
+authors     :
+  - Sean Chittenden
+  - Dan Janwoski <danj at 3skel.com>
+  - Ross Bamform
+
+creator     : Sean Chittenden
+created     : "2004-12-28"
+
+description :
+  LibXML-Ruby provides bindings to LibXML2.
+
+extensions  :
+  - ext/xml/extconf.rb
+
+formats     : [gem, tgz, zip]
