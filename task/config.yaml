@@ -1,0 +1,10 @@
+
+publish:
+  project: libxml
+  username: transami
+
+rdoc:
+  title   : LibXML-Ruby
+  main    : README
+  include : [ ext, README, LICENSE ]
+

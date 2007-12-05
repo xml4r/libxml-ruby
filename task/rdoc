@@ -1,0 +1,84 @@
+#!/usr/bin/env ratch
+
+# generate rdocs
+#
+# Generate Rdoc documentation. Settings are
+# the same as the rdoc command's options.
+
+main :rdoc do
+  config, output, input = *rdoc_configuration
+
+  file output => input do
+    rdoc_target(config)
+  end
+
+  build output
+end
+
+# Document target.
+
+def rdoc_target(config)
+  output = config['op']
+  input  = config.delete('include')
+
+  # Check for 'doc' directory.
+  # (Helps to ensure we're in the right place.)
+  #dir!(File.dirname(site))
+
+  # Remove old rdocs.
+  rm_r(output) if exist?(output) and safe?(output)
+
+  #input = input.collect{ |i| glob(i) }.flatten
+  vector = [input, config]
+  rdoc(vector.to_console)
+
+  insert_ads(output)
+end
+
+# Collect RDocs configuration.
+
+def rdoc_configuration
+  config = configuration['rdoc'] || {}
+
+  config = {
+    'template'       => 'html',
+    'op'             => 'doc/rdoc',
+    'merge'          => true,
+    'inline-source'  => true,
+    'exclude'        => [],
+    'include'        => ['lib', '[A-Z]*']
+  }.merge(config)
+
+  if config['output']
+    config['op'] = config.delete('output')
+  end
+
+  output = config['op']
+
+  input  = config['include'].collect do |i|
+    dir?(i) ? File.join(i,'**','*') : i
+  end
+
+  return config, output, input
+end
+
+# Insert an ad if available.
+
+def insert_ads(site)
+  adfile = configuration['ad_file'] || 'meta/site_ad.html'
+  return unless adfile && File.file?(adfile)
+  adtext = File.read(adfile)
+  #puts
+  dirs = Dir.glob(File.join(site,'*/'))
+  dirs.each do |dir|
+    files = Dir.glob(File.join(dir, '**/*.html'))
+    files.each do |file|
+      html = file_read(file)
+      bodi = html.index('<body>')
+      html[bodi + 7] = "\n" + adtext
+      #print "Augmenting #{file}..."
+      file_write(file, html) unless dryrun?
+      #puts "[done]"
+    end
+  end
+end

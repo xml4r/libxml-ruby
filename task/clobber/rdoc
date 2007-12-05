@@ -1,0 +1,10 @@
+#!/usr/bin/env ratch
+
+# remove rdocs products
+
+main :clobber_rdocs do
+  config = configuration['rdoc']
+  output = config['op'] || config['output'] || 'doc/rdoc'
+  rm_r(output) if File.directory?(output)
+end
+
