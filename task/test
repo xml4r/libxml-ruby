@@ -1,0 +1,6 @@
+#!/usr/bin/env ratch
+
+# run tests
+
+task :test => [ :compile, 'tests/general' ]
+

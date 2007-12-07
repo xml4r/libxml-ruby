@@ -1,0 +1,31 @@
+#!/usr/bin/env ratch
+
+# compile extensions
+
+task :compile do
+  build "ext/libxml/Makefile"
+  cd("ext/libxml") do
+    make
+  end
+end
+
+file "ext/libxml/Makefile" do
+  cd("ext/libxml") do
+    ruby "extconf.rb"
+  end
+end
+
+# Eric Hodel said NOT do this.
+#
+#task :copy_files do
+#  cp "ext/xml/*.#{dlext}", "lib/xml/#{arch}/"
+#end
+#
+#def dlext
+#  Config::CONFIG['DLEXT']
+#end
+#
+#def arch
+#  Config::CONFIG['arch']
+#end
+
