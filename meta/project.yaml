@@ -23,3 +23,7 @@ extensions  :
   - ext/xml/extconf.rb
 
 formats     : [gem, tgz, zip]
+
+gem_path:
+  - ext/xml
+

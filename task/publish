@@ -5,7 +5,7 @@
 # This task publishes the source dir (deafult 'doc')
 # to a rubyforge website.
 
-main :publish do
+task :publish do
   config = configuration['publish']
 
   project     = config['project']
