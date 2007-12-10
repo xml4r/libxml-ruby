@@ -20,10 +20,10 @@ description :
   LibXML-Ruby provides bindings to LibXML2.
 
 extensions  :
-  - ext/xml/extconf.rb
+  - ext/libxml/extconf.rb
 
-formats     : [gem, tgz, zip]
+#formats     : [gem, tgz, zip]
 
 gem_path:
-  - ext/xml
+  - ext
 
