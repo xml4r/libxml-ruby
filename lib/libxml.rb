@@ -1,6 +1,7 @@
 # $Id$ 
 # Please see the LICENSE file for copyright and distribution information 
-require 'xml/libxml_so'
+
+require 'libxml_so'
 
 class XML::Document
   include Enumerable
