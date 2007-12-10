@@ -2,5 +2,8 @@
 
 # run tests
 
-main :test => [ :compile, 'tests/general' ]
+# TODO Ensure compile first (but only if needed)
+#main :test => [ :compile, 'tests/general' ]
+
+main :test => [ 'tests/general' ]
 
