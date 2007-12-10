@@ -8,7 +8,7 @@ unless live
   $LOAD_PATH.unshift(File.expand_path('ext/libxslt'))
 end
 
-task 'tests/general' do
+main 'tests/general' do
   if find = commandline[0]
     unless file?(find)
       find = File.join(find, '**', '*.rb')

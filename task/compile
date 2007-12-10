@@ -2,7 +2,7 @@
 
 # compile extensions
 
-task :compile do
+main :compile do
   build "ext/libxml/Makefile"
   cd("ext/libxml") do
     make

@@ -2,7 +2,7 @@
 
 # remove rdocs products
 
-main :clobber_rdoc do
+main 'clobber/rdoc' do
   config = configuration['rdoc']
   output = config['op'] || config['output'] || 'doc/rdoc'
   rm_r(output) if File.directory?(output)

@@ -5,7 +5,7 @@
 # Generate Rdoc documentation. Settings are
 # the same as the rdoc command's options.
 
-task :rdoc do
+main :rdoc do
   config, output, input = *rdoc_configuration
 
   file output => input do

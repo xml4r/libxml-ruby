@@ -2,5 +2,5 @@
 
 # run tests
 
-task :test => [ :compile, 'tests/general' ]
+main :test => [ :compile, 'tests/general' ]
 
