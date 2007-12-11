@@ -326,12 +326,20 @@ ruby_xml_node_child_set_aux(VALUE self, VALUE rnode, int do_raise) {
   Data_Get_Struct(rnode, ruby_xml_node, cnode);
   
   chld = cnode->node;
+  /* Since an add operation may destroy a textnode by merging, we need to work
+   * with a copy, so that the ruby instance is not left with a dangling reference
+   */
+  if ( chld->type == XML_TEXT_NODE ) {
+    chld = xmlCopyNode(chld,1);
+    copied=1;
+  }
 
   if ( chld->parent != NULL || chld->doc != NULL ) {
-    chld=xmlCopyNode(chld,1);
-    copied=1;
+    /* raise before copying if applicable */
     if ( do_raise == 1 )
       rb_raise(rb_eRuntimeError, "implicit copy not legal for child= or <<");
+    chld=xmlCopyNode(chld,1);
+    copied=1;
   }
 
   ret = xmlAddChild(pnode->node, chld);
@@ -339,10 +347,13 @@ ruby_xml_node_child_set_aux(VALUE self, VALUE rnode, int do_raise) {
     if ( copied == 1 )
       xmlFreeNode(chld);
     rb_raise(eXMLNodeFailedModify, "unable to add a child to the document");
+  } else if ( ret==chld ) {
+    /* child was added whole to parent and we need to return it as a new object */
+    return ruby_xml_node2_wrap(cXMLNode,chld);
   }
-    
-  // wish I could return a new wrapped chld, but ruby only returns the rhs
-  return ruby_xml_node2_wrap(cXMLNode,chld);
+  /* else */
+  /* If it was a text node, then ret should be parent->last, so we will just return ret. */
+  return ruby_xml_node2_wrap(cXMLNode,ret);
 }
 
 /*

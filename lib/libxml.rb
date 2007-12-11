@@ -73,6 +73,10 @@ class XML::Node
   def <=>(other)
     to_s <=> other.to_s
   end  
+
+  def clone
+    copy(false)
+  end
 end
 
 class XML::Attr 
