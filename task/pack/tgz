@@ -1,0 +1,46 @@
+#!/usr/bin/env ratch
+
+# generate tar gzip package
+
+require 'ratch/extra/stage'
+require 'ratch/extra/zip'
+
+# Create a Tar'd Gzip package.
+
+main 'pack/tgz' do
+  status "Creating .tgz package"
+
+  config = configuration['pack'] || {}
+  config = config['tgz'] || {}
+
+  package = package.clone
+  package.update(config)
+
+  store = config[:store] || 'pkg'
+  templ = config[:template]
+
+  name  = package.stage_name(templ)
+  stage = File.join(store, name)
+  files = package.filelist
+
+  stage(stage, files)
+
+  if dryrun?
+    status "tar -cxf #{name}.tgz"
+  else
+    file = nil
+    cd(store) do
+      file = tgz(name)
+    end
+    transfer(file, store)
+  end
+end
+
+# Transfer package file to storage location.
+
+def transfer(file, store)
+  # move to store, unless already there
+  dest = File.join(store, File.basename(file))
+  dest = File.expand_path(dest)
+  mv(file, store) unless file == dest
+end

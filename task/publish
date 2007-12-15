@@ -13,11 +13,12 @@ main :publish do
   source      = config['source'] || "doc"
   username    = config['username']
   clear       = config['clear']
+
   if clear
-    protect   = config[protect].to_a
+    protect   = config['protect'].to_a
     exclude   = config['exclude'].to_a
   else
-    protect   = %w{usage statcvs statsvn robot.txt wiki} + config[protect].to_a
+    protect   = %w{usage statcvs statsvn robot.txt wiki} + config['protect'].to_a
     exclude   = %w{.svn} + config['exclude'].to_a
   end
 
@@ -38,13 +39,15 @@ main :publish do
   op = ['-rLvz', '--delete-after']  # maybe -p ?
 
   unless protect.empty? && exclude.empty?
+
     unless file?(rsync_file)
       File.open(rsync_file, 'w') do |f|
         exclude.each{|e| f << "- #{e}\n"}
         protect.each{|e| f << "P #{e}\n"}
       end
     end
-    op << "--filter='dir-merge #{source}/.rsync-filter'"
+
+    op << "--filter='dir-merge #{rsync_file}'"
   end
 
   args = op + [dir, url]

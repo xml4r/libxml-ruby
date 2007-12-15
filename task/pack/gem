@@ -1,0 +1,93 @@
+#!/usr/bin/env ratch
+
+# generate gem package
+
+# TODO: Should this use staging too, like zip/tgz?
+
+begin
+  require 'rubygems/specification'
+  Gem::manage_gems
+rescue LoadError
+  raise LoadError, "RubyGems is not installed?"
+end
+
+# Create a Gem package.
+
+main 'pack/gem' do
+  status "Creating .gem package"
+
+  config = configuration['pack'] || {}
+  config = config['gem'] || {}
+
+  package = package().clone
+  package.update(config)
+
+  store = config[:store] || 'pkg'
+
+  #dir  = Dir.pwd
+
+  file = nil
+  #cd(dir) do
+    #status "vi #{metadata.name}.gemspec"
+    builder = ::Gem::Builder.new(gemspec(package))
+    status "gem build #{package.name}"
+    unless dryrun?
+      file = builder.build
+      file = File.expand_path(file)
+    end
+  #end
+
+  transfer(file, store)
+end
+
+# Transfer package file to storage location.
+
+def transfer(file, store)
+  dest = File.join(store, File.basename(file))    # move to store, unless already there
+  dest = File.expand_path(dest)
+  mv(file, store) unless file == dest
+end
+
+# Create Gem::Specification.
+
+def gemspec(package)
+  distribute = package.filelist
+  #distribute = Dir.multiglob_with_default( '**/*', distribute )
+
+  ::Gem::Specification.new do |spec|
+    spec.name              = package.name
+    spec.version           = package.version
+    spec.summary           = package.brief
+    spec.description       = package.description
+    spec.author            = package.author
+    spec.email             = package.email
+    spec.rubyforge_project = package.development if /rubyforge.org/ =~ package.development
+    spec.homepage          = package.homepage
+
+    # Platform: ruby, mswin32, i586-linux, powerpc-darwin, current
+    spec.platform = 'ruby'  # TODO current support!
+
+    spec.require_paths = [package.gem_path].flatten.reverse
+
+    #if package.platform != 'ruby'
+    #  spec.require_paths.concat(spec.require_paths.collect{ |d| File.join(d, platform) })
+    #end
+
+    spec.bindir = "bin"
+    spec.executables  = package.executables
+    spec.requirements = package.requirements
+    spec.has_rdoc     = package.document
+
+    if package.dependencies
+      package.dependencies.each do |d,v|
+        spec.add_dependency(*[d,v].compact)
+      end
+    end
+
+    spec.extensions = package.compile
+
+    spec.files = distribute
+
+    spec.test_files = distribute.select{ |f| f =~ /^test\// }  # TODO make test_files configurable
+  end
+end
