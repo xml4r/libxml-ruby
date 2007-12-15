@@ -1,0 +1,93 @@
+#!/usr/bin/env ratch
+
+# Create a human readable changelog.
+
+config = configuration['log'] || {}
+txtlog = config['file'] || 'ChangeLog.txt'
+xmllog = config['xmlfile'] || 'doc/changelog.xml'
+
+#
+
+main :svn_log do
+  # build txtlog                # DO WE STILL WANT A TEXT LOG ?
+  build xmllog if xmllog
+end
+
+# XML-fromated changelog.
+
+file xmllog do
+  text = `svn log --xml`
+  i = text.index("?>\n")
+  text.insert(i+2, "\n" + '<?xml-stylesheet href="changelog.xsl" type="text/xsl" ?>')
+
+  if dryrun?
+    puts text
+  else
+    File.open(xmllog, 'w'){ |f| f << text }
+  end
+end if xmllog
+
+# Human readable changelog.
+
+file txtlog do
+  text = `svn log`
+  changes = svn_log_parse(text)
+  sorted  = svn_log_organize(changes)
+  string  = svn_log_format(sorted)
+
+  if dryrun?
+    puts string
+  else
+    File.open(txtlog, 'w'){|f| f << string }
+  end
+end
+
+#
+
+def svn_log_parse(text)
+  changes = []
+  entries = text.split(/^[-]+\n/)
+  entries.shift # get rid of emtpy first
+  entries.each do |entry|
+    lines = entry.split(/\n/)
+    data  = lines.shift
+    text  = lines.join("\n").strip
+
+    rev, who, date, *rest = *data.split('|')
+    rev.strip!
+    who.strip!
+    date = date.strip.split(/\s+/).first
+
+    changes << [ date, who, rev, text ]
+  end
+  changes
+end
+
+#
+
+def svn_log_organize(changes)
+  mapped = {}
+  changes.each do |date, who, rev, text|
+    mapped[[date, who]] ||= []
+    mapped[[date, who]] << [text, rev]
+  end
+  sorted = []
+  mapped.each do |(date, who), entries|
+    sorted << [ date, who, entries ]
+  end
+  sorted.sort{ |a,b| b[0] <=> a[0] }
+end
+
+#
+
+def svn_log_format(sorted)
+  string = "= ChangeLog\n\n"
+  sorted.each do |date, who, entries|
+    string << "== #{date}  #{who}\n\n"  # no email :(
+    entries.each do |entry|
+      string << "* #{entry.first} (#{entry.last})\n"
+    end
+    string << "\n"
+  end
+  string
+end
