@@ -1,0 +1,8 @@
+#!/usr/bin/env ratch
+
+main :distclean do
+  cd("ext/libxml") do
+    make 'distclean'
+  end
+end
+
