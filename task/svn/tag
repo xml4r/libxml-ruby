@@ -1,0 +1,25 @@
+#!/usr/bin/env ratch
+
+# tag current version
+
+main :tag do
+  rubyforge_username = ENV['RUBYFORGE_USERNAME']
+
+  abort "Need RUBYFORGE_USERNAME evironment setting." unless rubyforge_username
+
+  name, version = *File.basename(glob("meta/*.roll").first).chomp('.roll').split('-')
+
+  changes = /^===\s*#{version}(.*?)\n===/m.match(File.read('History.txt'))[0]
+  changes = changes.chomp('===').strip.sub(/^===\s+/, 'TAG ')
+
+  #puts "#{name}-#{version}"
+  puts changes
+  puts
+
+  case ask("Continue? [yN]").strip.downcase
+  when 'y', 'yes'
+    svn "copy", "svn+ssh://#{rubyforge_username}@rubyforge.org/var/svn/#{name}/trunk",
+                "svn+ssh://#{rubyforge_username}@rubyforge.org/var/svn/#{name}/tags/REL-#{version}"
+  end
+
+end

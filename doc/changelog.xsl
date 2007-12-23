@@ -10,7 +10,7 @@
         <title>Facets Changelog</title>
         <link REL='SHORTCUT ICON' HREF="img/xml-ruby.png" />
         <style>
-          td { font-family: sans-serif;  padding: 0px 10px; }
+          td { font-family: monospace; font-size: 8pt; padding: 0px 10px; }
         </style>
       </head>
       <body>
@@ -39,3 +39,4 @@
   </xsl:template>
 
 </xsl:stylesheet>
+

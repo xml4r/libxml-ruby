@@ -1,7 +1,6 @@
 
 publish:
   project: libxml
-  username: transami
 
 rdoc:
   title   : LibXML-Ruby
