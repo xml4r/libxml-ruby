@@ -15,7 +15,9 @@ created     : "2004-12-28"
 
 # Packaging Information
 
-extensions  :
+package    : libxml-ruby
+
+extensions :
   - ext/libxml/extconf.rb
 
 gem_path:
