@@ -1,7 +1,6 @@
 #!/usr/local/bin/ruby
 
-require 'libxml_test'
-require 'xml/libxml' # needs the ruby code too
+require 'libxml'
 
 class XML::Node
   def first_child_element
@@ -18,7 +17,7 @@ end
 #
 def merge(forms)
   starting_form = forms.shift
-  forms.inject(starting_form) do |master_form,form| 
+  forms.inject(starting_form) do |master_form,form|
     master_form.find("//body").first << form.find("//body").first.first_child_element
     master_form
   end
@@ -32,7 +31,7 @@ end
 #
 
 if (ARGV[0].to_i > 0)
-  count = ARGV[0].to_i 
+  count = ARGV[0].to_i
 else
   count = 500
 end
@@ -48,7 +47,7 @@ result = merge(merge_list)
 puts "Merged!"
 
 #File.open(File.join(File.dirname(__FILE__), 'model', '/generated_form.xml'), "w") do |f|
-#  puts "Trying to write to file" 
+#  puts "Trying to write to file"
 #  f << result
 #  puts "After trying to write to file"
 #end

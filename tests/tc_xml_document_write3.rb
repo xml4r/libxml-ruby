@@ -1,5 +1,4 @@
-# $Id$
-require "libxml_test"
+require "libxml"
 require 'test/unit'
 
 class TC_XML_Document_Write3 < Test::Unit::TestCase

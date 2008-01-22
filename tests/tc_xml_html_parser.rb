@@ -1,5 +1,4 @@
-# $Id$
-require "libxml_test"
+require "libxml"
 require 'test/unit'
 
 class TC_XML_HTMLParser < Test::Unit::TestCase
@@ -19,15 +18,15 @@ class TC_XML_HTMLParser < Test::Unit::TestCase
     doc = @xp.parse
 
     assert_instance_of XML::Document, doc
-    
+
     root = doc.root
     assert_instance_of XML::Node, root
     assert_equal 'html', root.name
-    
+
     head = root.child
     assert_instance_of XML::Node, head
     assert_equal 'head', head.name
-    
+
     meta = head.child
     assert_instance_of XML::Node, meta
     assert_equal 'meta', meta.name
@@ -37,7 +36,7 @@ class TC_XML_HTMLParser < Test::Unit::TestCase
     body = head.next
     assert_instance_of XML::Node, body
     assert_equal 'body', body.name
-    
+
     hello = body.child
     # It appears that some versions of libxml2 add a layer of <p>
     # cant figure our why or how, so this skips it if there
@@ -45,11 +44,11 @@ class TC_XML_HTMLParser < Test::Unit::TestCase
 
     assert_instance_of XML::Node, hello
     assert_equal 'Hello', hello.content
-    
+
     br = hello.next
     assert_instance_of XML::Node, br
     assert_equal 'br', br.name
-    
+
     world = br.next
     assert_instance_of XML::Node, world
     assert_equal 'World', world.content

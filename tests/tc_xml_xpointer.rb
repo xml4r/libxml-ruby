@@ -1,5 +1,4 @@
-# $Id$
-require "libxml_test"
+require "libxml"
 require "test/unit"
 
 class TC_XML_XPointer < Test::Unit::TestCase
@@ -27,11 +26,11 @@ class TC_XML_XPointer < Test::Unit::TestCase
     for n in set
       # It seems from the spec that the pointer should
       # be the whole node, rather than just the ID attr.
-    
+
       # assert_equal('two', n.to_s)
 
       assert_instance_of(XML::Node, n)
-      assert_equal('two', n['id'])      
+      assert_equal('two', n['id'])
     end
 
     # FIXME: Not sure at all about this kind of range
@@ -59,7 +58,7 @@ class TC_XML_XPointer < Test::Unit::TestCase
       range = XML::XPointer.range(nstart, nend)
       assert_instance_of(XML::XPath, range)
       assert_instance_of(XML::Node::Set, range.set)
-  
+
       for n in range.set
         assert_match(/one|two|three/, n.to_s)
       end

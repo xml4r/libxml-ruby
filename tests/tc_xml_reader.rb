@@ -1,8 +1,8 @@
-require 'libxml_test'
+require 'libxml'
 require 'test/unit'
 
 class TC_XML_Reader < Test::Unit::TestCase
-  
+
   SIMPLE_XML = File.join(File.dirname(__FILE__), 'model/simple.xml')
 
   def test_new_file
@@ -29,7 +29,7 @@ class TC_XML_Reader < Test::Unit::TestCase
     while reader.read > 0; end
     assert(!called)
     reader = XML::Reader.new('<foo blah')
-    reader.set_error_handler do |*a| 
+    reader.set_error_handler do |*a|
       assert_equal(5, a.size)
       assert_equal(reader, a[0])
       assert_equal(XML::Reader::SEVERITY_ERROR, a[2])
@@ -80,29 +80,29 @@ class TC_XML_Reader < Test::Unit::TestCase
 
   def do_test_simple(reader)
     node_types = []
-    19.times do 
+    19.times do
       assert_equal(1, reader.read)
-      node_types << reader.node_type  
+      node_types << reader.node_type
     end
     assert_equal(0, reader.read)
     assert_equal(node_types,
-      [XML::Reader::TYPE_ELEMENT, 
+      [XML::Reader::TYPE_ELEMENT,
        XML::Reader::TYPE_SIGNIFICANT_WHITESPACE,
-       XML::Reader::TYPE_ELEMENT, 
+       XML::Reader::TYPE_ELEMENT,
        XML::Reader::TYPE_TEXT,
-       XML::Reader::TYPE_END_ELEMENT, 
+       XML::Reader::TYPE_END_ELEMENT,
        XML::Reader::TYPE_SIGNIFICANT_WHITESPACE,
-       XML::Reader::TYPE_ELEMENT, 
+       XML::Reader::TYPE_ELEMENT,
        XML::Reader::TYPE_SIGNIFICANT_WHITESPACE,
-       XML::Reader::TYPE_ELEMENT, 
+       XML::Reader::TYPE_ELEMENT,
        XML::Reader::TYPE_TEXT,
-       XML::Reader::TYPE_END_ELEMENT, 
+       XML::Reader::TYPE_END_ELEMENT,
        XML::Reader::TYPE_SIGNIFICANT_WHITESPACE,
-       XML::Reader::TYPE_ELEMENT, 
+       XML::Reader::TYPE_ELEMENT,
        XML::Reader::TYPE_TEXT,
-       XML::Reader::TYPE_END_ELEMENT, 
+       XML::Reader::TYPE_END_ELEMENT,
        XML::Reader::TYPE_SIGNIFICANT_WHITESPACE,
-       XML::Reader::TYPE_END_ELEMENT, 
+       XML::Reader::TYPE_END_ELEMENT,
        XML::Reader::TYPE_SIGNIFICANT_WHITESPACE,
        XML::Reader::TYPE_END_ELEMENT])
   end

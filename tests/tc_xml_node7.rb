@@ -1,5 +1,4 @@
-# $Id$
-require "libxml_test"
+require "libxml"
 require 'test/unit'
 
 class TC_XML_Node7 < Test::Unit::TestCase
@@ -19,18 +18,18 @@ class TC_XML_Node7 < Test::Unit::TestCase
     assert_instance_of XML::Attr, prop
     assert_equal 'uga', prop.name
     assert_equal 'booga', prop.value
-    
+
     prop = prop.next
     assert_instance_of XML::Attr, prop
     assert_equal 'foo', prop.name
-    assert_equal 'bar', prop.value    
+    assert_equal 'bar', prop.value
   end
-  
+
   def test_xml_node_properties_when_no_attributes
     xp = XML::Parser.string("<root></root>")
     doc = xp.parse
     root = doc.root
-    
+
     assert_nil root.properties
   end
 end

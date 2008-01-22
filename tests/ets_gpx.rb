@@ -1,4 +1,4 @@
-require 'xml/libxml'
+require 'libxml'
 
 100.times do
   doc = XML::Document.new

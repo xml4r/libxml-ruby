@@ -1,4 +1,4 @@
-require "libxml_test"
+require "libxml"
 
 xp = XML::Parser.new
 xp.string = '<?xml version="1.0" encoding="utf-8"?>
@@ -66,7 +66,7 @@ schema = XML::Schema.from_string('<?xml version="1.0" encoding="ISO-8859-1" ?>
 
 p schema
 
-if doc.validate_schema(schema) { |message, error| puts "#{error ? 'error' : 'warning'} : #{message}" } 
+if doc.validate_schema(schema) { |message, error| puts "#{error ? 'error' : 'warning'} : #{message}" }
   puts "validation passed"
 else
   puts "validation failed"

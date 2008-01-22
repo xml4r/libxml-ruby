@@ -1,5 +1,4 @@
-# $Id$
-require "libxml_test"
+require "libxml"
 require 'test/unit'
 
 class TC_XML_Node3 < Test::Unit::TestCase
@@ -21,7 +20,7 @@ class TC_XML_Node3 < Test::Unit::TestCase
   def test_xml_node_doc_content()
     assert_equal 'onetwo', @root.content
     first = @root.child
-    
+
     assert_equal 'one', first.content
     assert_equal 'two', first.next.content
   end

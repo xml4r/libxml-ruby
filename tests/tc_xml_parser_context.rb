@@ -1,5 +1,4 @@
-# $Id$
-require "libxml_test"
+require "libxml"
 require 'test/unit'
 
 class TC_XML_Parser_Context < Test::Unit::TestCase

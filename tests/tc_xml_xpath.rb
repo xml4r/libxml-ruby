@@ -1,5 +1,4 @@
-# $Id$
-require "libxml_test"
+require "libxml"
 require "test/unit"
 
 class TC_XML_XPath < Test::Unit::TestCase
@@ -19,7 +18,7 @@ class TC_XML_XPath < Test::Unit::TestCase
 
   def test_libxml_xpath_set()
     set = @xpt.set
-    assert_instance_of(XML::Node::Set, set)    
+    assert_instance_of(XML::Node::Set, set)
   end
 
   def test_ary()

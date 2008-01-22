@@ -1,5 +1,4 @@
-# $Id$
-require "libxml_test"
+require "libxml"
 require 'test/unit'
 
 class TC_XML_Node_Set2 < Test::Unit::TestCase
@@ -10,10 +9,10 @@ class TC_XML_Node_Set2 < Test::Unit::TestCase
     doc = xp.parse
     assert_instance_of(XML::Document, doc)
     @one = doc.root.child
-    @two = @one.next    
+    @two = @one.next
     @set = doc.find('/ruby_array/fixnum').set
     @emptyset = doc.find('/fixnum').set
-    assert_instance_of(XML::Node::Set, @set)    
+    assert_instance_of(XML::Node::Set, @set)
   end
 
   def teardown()
@@ -34,5 +33,5 @@ class TC_XML_Node_Set2 < Test::Unit::TestCase
     assert_equal @one.to_s, @set.first.to_s
     assert_equal nil, @emptyset.first
   end
-  
+
 end # TC_XML_Document

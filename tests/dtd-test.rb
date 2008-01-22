@@ -1,4 +1,4 @@
-require "libxml_test"
+require "libxml"
 
 xp = XML::Parser.new
 xp.string = '<?xml version="1.0" encoding="utf-8"?>
@@ -16,7 +16,7 @@ dtd = XML::Dtd.new('
 <!ELEMENT descr (#PCDATA)>
 ')
 
-if doc.validate(dtd) { |message, error| puts "#{error ? 'error' : 'warning'} : #{message}" } 
+if doc.validate(dtd) { |message, error| puts "#{error ? 'error' : 'warning'} : #{message}" }
   puts "validation passed"
 else
   puts "validation failed"

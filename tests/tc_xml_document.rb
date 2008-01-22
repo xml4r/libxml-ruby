@@ -1,6 +1,6 @@
-# $Id$
+require "libxml"
 require 'test/unit'
-require "libxml_test"
+
 
 class TC_XML_Document < Test::Unit::TestCase
   def setup()
