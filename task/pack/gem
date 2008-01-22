@@ -52,7 +52,6 @@ end
 
 def gemspec(package)
   distribute = package.filelist
-  #distribute = Dir.multiglob_with_default( '**/*', distribute )
 
   ::Gem::Specification.new do |spec|
     spec.name              = package.name
