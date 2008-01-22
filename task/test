@@ -1,9 +1,31 @@
-#!/usr/bin/env ratch
+#!/usr/bin/env ruby
 
-# run tests
+# TODO: Ensure compile first (but only if needed)
+#
+# sh "task/compile"
 
-# TODO Ensure compile first (but only if needed)
-#main :test => [ :compile, 'tests/general' ]
+# Run unit tests
 
-main :test => [ 'tests/general' ]
+live = ARGV.include?('--live')
+
+unless live
+  $LOAD_PATH.unshift(File.expand_path('ext/libxslt'))
+end
+
+if find = ARGV.select{ |a| a !~ /^[-]/ }[0]
+  find = File.join(find, '**', '*.rb') unless file?(find)
+else
+  find = 'tests/**/*.rb'
+end
+
+Dir.glob(find).each do |file|
+  next if dir?(file)
+  begin
+    puts "Loading: #{file}" if $DEBUG
+    load(file)
+  rescue LoadError
+    puts "Error loading: #{file}"
+  end
+end
+
 
