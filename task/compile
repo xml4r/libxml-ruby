@@ -1,25 +1,20 @@
-#!/usr/bin/env ratch
+#!/usr/bin/env ruby
 
-# compile extensions
+Dir.chdir("ext/libxml") do
+  unless file?('Makefile')
+    sh "ruby extconf.rb"
+  end
 
-main :compile do
-  build "ext/libxml/Makefile"
-  cd("ext/libxml") do
-    make
+  unless ARGV[0] == 'setup'
+    sh "make #{ARGV.join(' ')}"
   end
 end
 
-file "ext/libxml/Makefile" do
-  cd("ext/libxml") do
-    ruby "extconf.rb"
-  end
-end
 
 # Eric Hodel said NOT do this.
 #
-#task :copy_files do
-#  cp "ext/xml/*.#{dlext}", "lib/xml/#{arch}/"
-#end
+#cp "ext/xml/*.#{dlext}", "lib/xml/#{arch}/"
+#
 #
 #def dlext
 #  Config::CONFIG['DLEXT']
