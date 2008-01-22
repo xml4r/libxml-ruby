@@ -1,31 +1,50 @@
 #!/usr/bin/env ruby
 
 # TODO: Ensure compile first (but only if needed)
-#
-# sh "task/compile"
+# system "task/make"
 
 # Run unit tests
 
 live = ARGV.include?('--live')
+ets  = ARGV.include?('--ets')
 
-unless live
-  $LOAD_PATH.unshift(File.expand_path('ext/libxslt'))
-end
+$LOAD_PATH.unshift(File.expand_path('ext/libxml')) unless live
+$LOAD_PATH.unshift('tests')  # NEEDED?
 
-if find = ARGV.select{ |a| a !~ /^[-]/ }[0]
-  find = File.join(find, '**', '*.rb') unless file?(find)
-else
-  find = 'tests/**/*.rb'
-end
-
-Dir.glob(find).each do |file|
-  next if dir?(file)
-  begin
-    puts "Loading: #{file}" if $DEBUG
-    load(file)
-  rescue LoadError
-    puts "Error loading: #{file}"
+unless glob = ARGV.select{ |a| a !~ /^[-]/ }[0]
+  if ets
+    glob = 'tests/ets_*.rb'
+  else
+    glob = 'tests/tc_*.rb'
   end
 end
 
-
+if ets
+  Dir[glob].each do |fn|
+    next if File.directory?(fn)
+    puts "test #{fn}"
+    f=Process.fork
+    if f.nil?
+      require fn
+      exit
+    end
+    rss_k=0
+    while (px=Process.wait2(f,Process::WNOHANG)).nil?
+      sleep 2
+      rss_k2=`ps -o rss= -p #{f}`.to_i
+      rss_k=(rss_k2>rss_k) ? rss_k2 : rss_k
+    end
+    pid,status=px
+    puts "\nProcess #{pid} exited status #{status.exitstatus}, max rss(k) #{rss_k}"
+  end
+else
+  Dir[glob].each do |file|
+    next if File.directory?(file)
+    begin
+      puts "Loading: #{file}" if $DEBUG
+      load(file)
+    rescue LoadError
+      puts "Error loading: #{file}"
+    end
+  end
+end

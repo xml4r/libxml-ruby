@@ -1,12 +1,12 @@
 #!/usr/bin/env ruby
 
 Dir.chdir("ext/libxml") do
-  unless file?('Makefile')
-    sh "ruby extconf.rb"
+  unless File.exist?('Makefile')
+    system "ruby extconf.rb"
   end
 
   unless ARGV[0] == 'setup'
-    sh "make #{ARGV.join(' ')}"
+    system "make #{ARGV.join(' ')}"
   end
 end
 
