@@ -12,25 +12,30 @@ CLOBBER.include '**/*.log'
 CLOBBER.include '**/Makefile'
 CLOBBER.include '**/extconf.h'
 
-desc "Default task (compile and test)"
-task :default => [:make, :test]
+desc "Default task (compile, test and memtest)"
+task :default => [:compile, :test, :memory]
 
-desc "Compile libxml.so"
-task :make do
+desc "Compile extensions."
+task :compile do
   sh "task/make"
 end
 
-desc "Run unit tests"
+desc "Run unit test suite."
 task :test do
   sh "task/test"
 end
 
-desc "Generate rdocs"
+desc "Run memory test suite."
+task :memory do
+  sh "task/memory"
+end
+
+desc "Generate rdoc documentation."
 task :rdoc do
   sh "task/rdoc"
 end
 
-desc "Install locally"
+desc "Install to local site directory."
 task :setup do
   sh "task/setup"
 end
@@ -38,7 +43,7 @@ end
 __END__
 
 # THIS IS THE OLD RAKEFILE. WE LEAVE IT HERE FOR THE TIME BEING
-# SO WE CAN REFERENCE IT TO IMPROVE THE NEW SCRIPTS.
+# SO WE CAN REFERENCE IT TO IMPROVE THE NEW SCRIPTS IF NEEDED.
 
 # Determine the current version of the software
 if File.read('ext/xml/libxml.h') =~ /\s*RUBY_LIBXML_VERSION\s*['"](\d.+)['"]/
