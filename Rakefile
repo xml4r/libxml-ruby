@@ -12,7 +12,7 @@ CLOBBER.include '**/*.log'
 CLOBBER.include '**/Makefile'
 CLOBBER.include '**/extconf.h'
 
-desc "Default task (compile, test and memtest)"
+desc "Default task (compile, test and memory test)"
 task :default => [:compile, :test, :memory]
 
 desc "Compile extensions."
