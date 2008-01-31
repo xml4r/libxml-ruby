@@ -6,13 +6,39 @@ require 'rake/gempackagetask'
 
 CLEAN.include '**/*.o'
 CLEAN.include '**/*.so'
-CLEAN.include 'html'
+
+CLOBBER.include 'doc/rdoc'
 CLOBBER.include '**/*.log'
 CLOBBER.include '**/Makefile'
 CLOBBER.include '**/extconf.h'
 
-desc "Default Task (Build release)"
-task :default => :release
+desc "Default task (compile and test)"
+task :default => [:make, :test]
+
+desc "Compile libxml.so"
+task :make do
+  sh "task/make"
+end
+
+desc "Run unit tests"
+task :test do
+  sh "task/test"
+end
+
+desc "Generate rdocs"
+task :rdoc do
+  sh "task/rdoc"
+end
+
+desc "Install locally"
+task :setup do
+  sh "task/setup"
+end
+
+__END__
+
+# THIS IS THE OLD RAKEFILE. WE LEAVE IT HERE FOR THE TIME BEING
+# SO WE CAN REFERENCE IT TO IMPROVE THE NEW SCRIPTS.
 
 # Determine the current version of the software
 if File.read('ext/xml/libxml.h') =~ /\s*RUBY_LIBXML_VERSION\s*['"](\d.+)['"]/

@@ -1,4 +1,5 @@
 ---
+project     : libxml
 title       : LibXML-Ruby
 summary     : Ruby Bindings for GNU/LibXML2
 description :
@@ -12,6 +13,11 @@ authors:
   - Sean Chittenden
 creator     : Sean Chittenden
 created     : "2004-12-28"
+
+loadpath    : 
+  - ext
+  - ext/libxml
+default     : libxml.rb
 
 # Packaging Information
 

@@ -1,72 +1,22 @@
-#!/usr/bin/env ratch
+#!/usr/bin/env ruby
+
+require 'fileutils'
 
 # generate rdocs
-#
-# Generate Rdoc documentation. Settings are
-# the same as the rdoc command's options.
 
-main :rdoc do
-  config, output, input = *rdoc_configuration
-
-  file output => input do
-    rdoc_target(config)
-  end
-
-  build output
-end
-
-# Document target.
-
-def rdoc_target(config)
-  output = config['op']
-  input  = config.delete('include')
-
-  # Check for 'doc' directory.
-  # (Helps to ensure we're in the right place.)
-  #dir!(File.dirname(site))
-
-  # Remove old rdocs.
-  rm_r(output) if exist?(output) and safe?(output)
-
-  #input = input.collect{ |i| glob(i) }.flatten
-  vector = [input, config]
-  rdoc(vector.to_console)
-
+def rdoc
+  template = 'html'
+  output   = 'doc/rdoc'
+  FileUtils.rm_r(output) if File.exist?(output)
+  system "rdoc --op #{output} --template #{template} --main README --merge --inline-source [A-Z]* lib/**/*.rb ext/**/*.c"
   insert_ads(output)
-end
-
-# Collect RDocs configuration.
-
-def rdoc_configuration
-  config = configuration['rdoc'] || {}
-
-  config = {
-    'template'       => 'html',
-    'op'             => 'doc/rdoc',
-    'merge'          => true,
-    'inline-source'  => true,
-    'exclude'        => [],
-    'include'        => ['lib', '[A-Z]*']
-  }.merge(config)
-
-  if config['output']
-    config['op'] = config.delete('output')
-  end
-
-  output = config['op']
-
-  input  = config['include'].collect do |i|
-    dir?(i) ? File.join(i,'**','*') : i
-  end
-
-  return config, output, input
 end
 
 # Insert an ad if available.
 
 def insert_ads(site)
-  adfile = configuration['ad_file'] || 'meta/site_ad.html'
-  return unless adfile && File.file?(adfile)
+  adfile = 'doc/ads/rdoc.html'
+  return unless File.file?(adfile)
   adtext = File.read(adfile)
   #puts
   dirs = Dir.glob(File.join(site,'*/'))
@@ -82,3 +32,8 @@ def insert_ads(site)
     end
   end
 end
+
+if $0 == __FILE__
+  rdoc
+end
+

@@ -12,7 +12,6 @@ unless live
   $LOAD_PATH.unshift(File.expand_path('ext/libxml'))
   $LOAD_PATH.unshift(File.expand_path('lib'))
 end
-
 $LOAD_PATH.unshift('tests')  # NEEDED?
 
 unless glob = ARGV.select{ |a| a !~ /^[-]/ }[0]
