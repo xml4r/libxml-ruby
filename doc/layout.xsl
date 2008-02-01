@@ -25,7 +25,7 @@
               <li><a href="index.xml">Home</a></li>
               <li><a href="install.xml">Installation</a></li>
               <li><a href="license.xml">License</a></li>
-              <li><a href="rdoc/">API Docs</a></li>
+              <li><a href="rdoc/index.html">API Docs</a></li>
               <br/>
               <strong>Development</strong><br/>
               <li><a href="http://rubyforge.org/projects/libxml">Rubyforge</a></li>
