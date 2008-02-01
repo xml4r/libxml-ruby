@@ -12,3 +12,6 @@ release:
   notelog   : NOTES
   changelog : ChangeLog
 
+#test:
+#  loadpath  : [ lib, ext/libxml]
+

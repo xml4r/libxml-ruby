@@ -14,18 +14,16 @@ authors:
 creator     : Sean Chittenden
 created     : "2004-12-28"
 
-loadpath    : 
-  - ext
-  - ext/libxml
 default     : libxml.rb
+loadpath    : 
+  - lib
+  - ext/libxml
 
 # Packaging Information
 
 package    : libxml-ruby
-
 extensions :
   - ext/libxml/extconf.rb
-
 gem_path:
   - ext
 

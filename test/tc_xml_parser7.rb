@@ -6,7 +6,7 @@ class TC_XML_Parser7 < Test::Unit::TestCase
   def setup()
     @xp = XML::Parser.new()
     assert_instance_of(XML::Parser, @xp)
-    f = File.open('tests/model/rubynet.xml')
+    f = File.open('test/model/rubynet.xml')
     f1 = @xp.io = f
     assert_instance_of(File, f1)
     assert_instance_of(File, @xp.io)

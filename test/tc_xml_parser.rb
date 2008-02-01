@@ -159,13 +159,13 @@ class TC_XML_Parser < Test::Unit::TestCase
   end
 
   def test_libxml_parser_file()
-    file = 'tests/model/rubynet.xml'
+    file = 'test/model/rubynet.xml'
     assert_equal(file, @xp.filename = file)
     assert_instance_of(XML::Document, @xp.parse)
   end
 
   def test_libxml_parser_io()
-    File.open('tests/model/rubynet.xml') do |f|
+    File.open('test/model/rubynet.xml') do |f|
       assert_kind_of(IO, f)
       assert_kind_of(IO, @xp.io = f)
       assert_instance_of(XML::Document, @xp.parse)
