@@ -1,7 +1,7 @@
 rdoc:
   title   : LibXML-Ruby
   main    : README
-  include : [ ext, lib, README, LICENSE ]
+  include : [ext, lib, '[A-Z]*']
 
 rubyforge:
   project  : libxml

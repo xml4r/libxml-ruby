@@ -1,5 +1,3 @@
-$Id$
-
 ==== BUGS
 
 * Some C funcs need more NULL checking, they're throwing wierd 
