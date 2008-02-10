@@ -1,4 +1,4 @@
-# -x doc -x pkg
+# -x doc -x pkg -x work
 ChangeLog
 LICENSE
 README

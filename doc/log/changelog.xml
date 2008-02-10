@@ -2,6 +2,167 @@
 <?xml-stylesheet href="changelog.xsl" type="text/xsl" ?>
 <log>
 <logentry
+   revision="261">
+<author>transami</author>
+<date>2008-02-01T21:14:24.501344Z</date>
+<msg>Update test scripts to reflect move to test/.
+</msg>
+</logentry>
+<logentry
+   revision="260">
+<author>transami</author>
+<date>2008-02-01T20:56:58.894977Z</date>
+<msg>Moves tests/ to test/ which is more conventional.
+</msg>
+</logentry>
+<logentry
+   revision="259">
+<author>transami</author>
+<date>2008-02-01T20:55:23.367569Z</date>
+<msg>Update config file.
+</msg>
+</logentry>
+<logentry
+   revision="258">
+<author>transami</author>
+<date>2008-02-01T20:51:57.250130Z</date>
+<msg>Moved changelog.xml and changelog.xsl to doc/log/.
+</msg>
+</logentry>
+<logentry
+   revision="257">
+<author>transami</author>
+<date>2008-02-01T20:51:14.786912Z</date>
+<msg>Added doc/log for xml-based changelog and notes.
+</msg>
+</logentry>
+<logentry
+   revision="256">
+<author>transami</author>
+<date>2008-01-31T13:09:55.716965Z</date>
+<msg>Minor update to a task description in Rakefile.
+</msg>
+</logentry>
+<logentry
+   revision="255">
+<author>transami</author>
+<date>2008-01-31T04:22:13.717493Z</date>
+<msg>Added memory test task.
+</msg>
+</logentry>
+<logentry
+   revision="254">
+<author>transami</author>
+<date>2008-01-31T04:07:23.904143Z</date>
+<msg>Added work dir for "scrap" material. Modified Rakefile.
+</msg>
+</logentry>
+<logentry
+   revision="253">
+<author>transami</author>
+<date>2008-01-30T22:43:18.490381Z</date>
+<msg>Fixed adding lib/ to $LOAD_PATH.
+</msg>
+</logentry>
+<logentry
+   revision="252">
+<author>transami</author>
+<date>2008-01-22T18:16:15.788965Z</date>
+<msg>Small fixes to task/make and task/test.
+</msg>
+</logentry>
+<logentry
+   revision="251">
+<author>transami</author>
+<date>2008-01-22T18:12:00.856153Z</date>
+<msg>Changed all requires for 'libxml_test.rb' to 'libxml'.
+</msg>
+</logentry>
+<logentry
+   revision="250">
+<author>transami</author>
+<date>2008-01-22T18:01:12.918663Z</date>
+<msg>Removed runner code from tests/. It is now in task/test.
+</msg>
+</logentry>
+<logentry
+   revision="249">
+<author>transami</author>
+<date>2008-01-22T17:41:03.219364Z</date>
+<msg>Renamed compile to make.
+</msg>
+</logentry>
+<logentry
+   revision="248">
+<author>transami</author>
+<date>2008-01-22T17:40:40.704832Z</date>
+<msg>Convert task/compile to pure ruby.
+</msg>
+</logentry>
+<logentry
+   revision="247">
+<author>transami</author>
+<date>2008-01-22T17:35:02.641804Z</date>
+<msg>Moved svn task to admin.
+</msg>
+</logentry>
+<logentry
+   revision="246">
+<author>transami</author>
+<date>2008-01-22T17:33:53.833641Z</date>
+<msg>Moved admin tasks to admin directory.
+</msg>
+</logentry>
+<logentry
+   revision="245">
+<author>transami</author>
+<date>2008-01-22T17:32:26.793056Z</date>
+<msg>Added admin/ directory.
+</msg>
+</logentry>
+<logentry
+   revision="244">
+<author>transami</author>
+<date>2008-01-22T17:30:42.415296Z</date>
+<msg>Remove task/tests.
+</msg>
+</logentry>
+<logentry
+   revision="243">
+<author>transami</author>
+<date>2008-01-22T17:30:05.478561Z</date>
+<msg>Converted test task to pure ruby.
+</msg>
+</logentry>
+<logentry
+   revision="242">
+<author>transami</author>
+<date>2007-12-23T04:11:28.706386Z</date>
+<msg>Added distclean task.
+</msg>
+</logentry>
+<logentry
+   revision="241">
+<author>transami</author>
+<date>2007-12-23T04:10:48.910408Z</date>
+<msg>Added svn tasks and metadata.
+</msg>
+</logentry>
+<logentry
+   revision="240">
+<author>transami</author>
+<date>2007-12-15T11:37:40.069746Z</date>
+<msg>Added svn/log task and backward compatability require (xml/libxml.rb).
+</msg>
+</logentry>
+<logentry
+   revision="239">
+<author>transami</author>
+<date>2007-12-15T11:34:25.377811Z</date>
+<msg>Added doc/changelog.xsl.
+</msg>
+</logentry>
+<logentry
    revision="238">
 <author>transami</author>
 <date>2007-12-15T11:31:59.660804Z</date>
