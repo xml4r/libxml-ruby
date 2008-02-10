@@ -160,6 +160,9 @@ SHELL = /bin/sh
 
 #### Start of system configuration section. ####
 
+# I think we can remove all the parts related to the install target
+# since setup.rb and RubyGems handles that on their own. Correct?
+
 srcdir = .
 topdir = #{archdir}  #/usr/lib/ruby/1.8/x86_64-linux
 hdrdir = $(topdir)
