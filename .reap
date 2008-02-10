@@ -1,7 +1,7 @@
 rdoc:
   title   : LibXML-Ruby
   main    : README
-  include : [ ext, README, LICENSE ]
+  include : [ ext, lib, README, LICENSE ]
 
 rubyforge:
   project  : libxml
@@ -10,5 +10,5 @@ release:
   package   : Stable Releases
   name      : libxml-ruby
   notelog   : NOTES
-  changelog : ChangeLog
+  changelog : CHNAGES
 
