@@ -1,0 +1,435 @@
+= ChangeLog
+
+== 2008-02-01  transami
+
+* Update test scripts to reflect move to test/. (r261)
+* Moves tests/ to test/ which is more conventional. (r260)
+* Update config file. (r259)
+* Moved changelog.xml and changelog.xsl to doc/log/. (r258)
+* Added doc/log for xml-based changelog and notes. (r257)
+
+== 2008-01-31  transami
+
+* Minor update to a task description in Rakefile. (r256)
+
+== 2008-01-30  transami
+
+* Added memory test task. (r255)
+* Added work dir for "scrap" material. Modified Rakefile. (r254)
+* Fixed adding lib/ to $LOAD_PATH. (r253)
+
+== 2008-01-22  transami
+
+* Small fixes to task/make and task/test. (r252)
+* Changed all requires for 'libxml_test.rb' to 'libxml'. (r251)
+* Removed runner code from tests/. It is now in task/test. (r250)
+* Renamed compile to make. (r249)
+* Convert task/compile to pure ruby. (r248)
+* Moved svn task to admin. (r247)
+* Moved admin tasks to admin directory. (r246)
+* Added admin/ directory. (r245)
+* Remove task/tests. (r244)
+* Converted test task to pure ruby. (r243)
+
+== 2007-12-22  transami
+
+* Added distclean task. (r242)
+* Added svn tasks and metadata. (r241)
+
+== 2007-12-15  transami
+
+* Added svn/log task and backward compatability require (xml/libxml.rb). (r240)
+* Added doc/changelog.xsl. (r239)
+* Moved TODO up a directory level and updated meta/project.yaml. (r238)
+* Moved task/config.yaml to meta/config.yaml as required by Ratch 0.4.0. (r237)
+* Added packaging tasks. (r236)
+
+== 2007-12-11  danj
+
+* fix XML_TEXT_NODE add handling when libxml merges nodes (r235)
+
+== 2007-12-10  transami
+
+* Added lib/xml/libxml.rb for backward compatibility. (r234)
+* Moved ext/libxml/libxml.rb to lib/. (r233)
+* Removed compile prerequisite from test task for now. (r232)
+* Fixed extensions attribute inf project.yaml. (r231)
+* Added setup task. (r230)
+* Fixed tasks to "main". (r229)
+
+== 2007-12-07  transami
+
+* Added test and compile tasks. (r228)
+* Added version.h. (r227)
+* Moved header verison. (r226)
+
+== 2007-12-06  transami
+
+* Moved ext/xml to ext/libxml. (r225)
+
+== 2007-12-04  transami
+
+* Added meta dir and project.yaml file. (r224)
+* Added doc/.rsync-filter and .htaccess (r223)
+* Added some tasks. (r222)
+
+== 2007-12-03  danj
+
+* raise if parser string set to empty (r221)
+
+== 2007-11-27  danj
+
+* fix transposed ruby method mapping (r220)
+* apply patch to fix multiple namespaces for .find (submitted by keisukefukuda at gmail.com) (r219)
+
+== 2007-11-26  danj
+
+* add docs for to_s and encoding (r218)
+* take a step in the right direction with document encoding (r217)
+* fix variable reference in ruby_xml_parser_default_load_external_dtd_get (r216)
+
+== 2007-11-20  transami
+
+* Added project name. (r215)
+* Added log/history (for hand entries) and moved TODO to log/ too. (r214)
+* Added a log directory. (r213)
+
+== 2007-11-20  danj
+
+* deal with different .find return types, rev to 0.5.2.2 (r212)
+
+== 2007-11-14  danj
+
+* add Node#new_text (r211)
+* fix expand bug (r210)
+* move rwtest to test/ets... (r209)
+* add [] to XPath::Object and tests for it (r208)
+* full merge from MEM2 r.194 v0.5.2.1 (r207)
+
+== 2007-10-25  transami
+
+* Added task/ dir. (r205)
+* Further improvements on website. (r204)
+* Removed doc/web. (r203)
+* Moved doc/web files up one level. (r202)
+
+== 2007-10-20  transami
+
+* moved raze to web (r201)
+* added image (r200)
+* converted site to xml/xslt (r199)
+* updated stylesheet (r198)
+* removed pages (r197)
+* removed pages (r196)
+* these are about to be deleted (r195)
+
+== 2007-08-30  transami
+
+* remove .cvsignore (r162)
+* moved www/ to doc/ (r161)
+* removed www/Rakefile (not using Rote any longer) (r160)
+* moved www/doc to www/raze (r159)
+* removed rote logo (r158)
+* added raze logo (r157)
+* updated icon (r156)
+* added icon (r155)
+* website work (r154)
+* moved stylesheets to styles (r153)
+
+== 2007-08-29  transami
+
+* remove CVSROOT from trunk (r150)
+* continued work on website (r149)
+* removed res dir (r148)
+* continued work on converting website (r147)
+* converting website from rote to new system (r146)
+* removed libxslt (now in libxsl project) (r145)
+* removed libxml subdir (r144)
+* moved trunk/libxml/* to trunk/* (r143)
+
+== 2007-01-14  lrz
+
+* ===== 14.1.2007 Laurent Sansonetti <lrz at chopine.be>
+* Added some preliminary RDoc comments for XML::Reader. (r133)
+
+== 2006-12-23  roscopeco
+
+* Replaced RSTRING(str)->len with RSTRING_LEN(str) for future compatibility (r132)
+
+== 2006-12-05  roscopeco
+
+* Improved compatibility with MS Visual C:
+  * Replace void* increment and decrement with char* arithmetic.
+  * Predeclare all locals
+  * Removed -Wall (Win32 platform sdk emits *lots* of warnings)
+  * Fixed extconf for win32 libxml2 and dependencies from http://www.zlatkovic.com/pub/libxml/ (r131)
+* removed object file committed by mistake (r130)
+
+== 2006-12-04  lrz
+
+* ===== 5.12.2006 Laurent Sansonetti <lrz at chopine.be>
+* Added XML::Reader, a set of bindings to the xmlTextReader API. (r129)
+
+== 2006-12-02  roscopeco
+
+* Merged release task fix from 0.3.8.4 (r128)
+
+== 2006-11-30  roscopeco
+
+* Restore default config after tests to prevent wierd failures in other tests (r124)
+
+== 2006-11-27  roscopeco
+
+* Merged from 0.3.8.3:
+* Fixed a segfault on node.properties with empty props list (patch from Michael Koziarski)
+* Fixed version macros and release version handling (r123)
+
+== 2006-11-26  roscopeco
+
+* Merged contributed patches #6604, #6839, #6871
+Slight fix to sax error formatting patch (r120)
+
+== 2006-11-22  roscopeco
+
+* Fixed non-inclusion of Enumerable on Node::Set (r116)
+* Fixed parsing with errors bug (r113)
+
+== 2006-11-19  roscopeco
+
+* Merged non-backward-compatible DEV_0_4 changes:
+
+* Implemented new HTMLParser interface
+* Implemented new (faster) SAX callback strategy (r111)
+* Merged backward-compatible fixes down from DEV_0_4:
+
+* Tested fix of bug #4635
+* Reimplemented attribute memory handling
+* Fixed attribute list traversal (bug #4719)
+* Integrated Luc Van Deuren's cdata/comment node patch
+* Fixed test-naming bugs
+* Fixed doc build bug
+* Reimplemented XML::Node memory management
+* Reimplemented node copy handling
+* Fixed parser error handler proc early GC bug
+* include stdarg.h on ruby_xml_document (r107)
+
+== 2006-11-04  roscopeco
+
+* Merged stdarg fix (r106)
+
+== 2006-10-29  roscopeco
+
+* Remove nodoc from libxml.rb (r96)
+* Added benchmarks
+Updated project status (r93)
+
+== 2006-10-20  roscopeco
+
+* Fixed up new packaging to play nice with 'rake install' (r88)
+* Applied gem-build patch from Masashi Shimbo. See:
+http://rubyforge.org/pipermail/libxml-devel/2006-August/000205.html (r87)
+* Another failing test :( (r86)
+* Removed debugging printouts (r85)
+
+== 2006-08-15  roscopeco
+
+* Fixed nodelist handling
+
+Patches from Stephen Veit:
+Fixed for windows/visual C compliance
+Fixed extconf build for Windows
+
+(bug 5022, http://rubyforge.org/tracker/index.php?func=detail&aid=5022&group_id=494&atid=1971) (r84)
+* Fixed typo in reading example
+See: http://rubyforge.org/pipermail/libxml-devel/2006-June/000181.html (r83)
+
+== 2006-05-31  roscopeco
+
+* Bugfix: gc_mark both filename and str (r82)
+* Fixed a typo bug (r81)
+
+== 2006-05-28  roscopeco
+
+* Allow Node#[] and Node#[]= to handle symbol keys (See http://rubyforge.org/pipermail/libxml-devel/2006-May/000135.html) (r80)
+* Applied previous node fix (See bug #4497) (r79)
+
+== 2006-05-10  roscopeco
+
+* Implemented Node#next= and Node#prev= (r78)
+* Fixed incorrect class name (r77)
+
+== 2006-05-01  roscopeco
+
+* Removed a duplicate definition (and corresponding warning) (r76)
+* dev 0.3.9 (r75)
+
+== 2006-04-24  roscopeco
+
+* release 0.3.8 (r73)
+* Fixed a bug in release version update (r72)
+* changelog/readme update for release (r71)
+* Fixed tarball installation to site_ruby (added libxml.rb to install) (r70)
+* Check compiler supports -Wall before using it (r69)
+* Fixed rake testrunner bug (r68)
+
+== 2006-04-17  roscopeco
+
+* Switched .so to libxml_so and introduced libxml.rb to allow easier API prototype / update
+Fixed testcases for new require setup (use $LOADPATH rather than filename require) (r67)
+* Fixed rdoc build in gems (r66)
+
+== 2006-04-14  roscopeco
+
+* Fixed a struct initialization bug I introduced (r65)
+* Fixed a build bug I introduced (r64)
+* First cut of SAX callback API (r63)
+* Include Enumerable (r62)
+
+== 2006-04-12  roscopeco
+
+* Typos (r61)
+* Extended documentation
+Restyled things a little bit
+Removed standard Rote readme (r60)
+* From Mark Van Holstyn (mvette13 AT gmail DOT com):
+* Added XML::Node::Set#first
+* Added XML::Node::Set#empty?
+* Fixes to XML::Node::Set#to_a
+* Added XML::Node#find_first
+* Added XML::Node#remove!
+
+Also:
+* Tested the above
+* Defined node (hash) equality in  terms of XML representation
+* Added comparable nodes to TODOs and updated changelog (r59)
+* XML::Node#content fix Tim Yamin <plasmaroo AT gentoo DOT org> (r58)
+* Added rubygems require to example code (r57)
+
+== 2006-03-27  roscopeco
+
+* Implemented & tested XML::Parser.register_error_handler
+Doc fixup (XML::DTD -> XML::Dtd) (r56)
+* development version roll (r55)
+
+== 2006-03-21  roscopeco
+
+* Added RDoc
+Updated gem build
+Updated instructions (r53)
+* Updated instructions (r52)
+
+== 2006-03-09  roscopeco
+
+* Implemented better version check (Added RUBY_LIBXSLT_VER_xxx defines)
+Updated release versioning in Rakefile (r51)
+* Added RUBY_LIBXML_VER_xxx defines for libxslt checking
+Updated release versioning in Rakefile
+Todo update (r50)
+* Fixed copy/paste errors in documentation (r49)
+
+== 2006-03-08  roscopeco
+
+* Rakefile bugfix, Readme update, cvs ignorance update (r48)
+* Initial revision (r43)
+
+== 2006-02-28  roscopeco
+
+* * Ignored vi .swp files
+* Updated Changelog
+* Updated copyright years
+* Removed done todos (r42)
+
+== 2006-02-27  roscopeco
+
+* * Fixed issues with -fno-common GCC flag
+* Removed OSX -fno-common workaround
+* Fixed a couple of typos (r41)
+
+== 2006-02-23  roscopeco
+
+* Release 0.3.6 (r40)
+
+== 2006-02-21  roscopeco
+
+* Rearranged source layout to suit RubyGems packaging
+Removed obsolete (Rubynet) utility scripts (r39)
+* Band-aid for OSX build probs (r38)
+
+== 2006-02-20  roscopeco
+
+* * Fixed attribute memory handling (http://rubyforge.org/pipermail/libxml-devel/2005-December/000030.html)
+* Removed a small leak in ruby_xml_node.
+* Fixed parser memory_debug_enabled doc
+* Updated shebang in test runner (r37)
+
+== 2006-01-02  roscopeco
+
+* Cleaned up casts for GCC 4.0
+Migrated from (obsolete) STR2CSTR to StringValuePtr (r36)
+* Fixed Make invocation (r35)
+* Cleaned up casts for GCC 4.0
+Migrated from (obsolete) STR2CSTR to StringValuePtr (r34)
+
+== 2005-12-29  bshow
+
+* Initial checkin (r33)
+* Added "doc" to cleanfiles; added new task "pubdoc" (r32)
+* Added "doc" (r31)
+* Prevent RDoc from wrapping copyright notices (r30)
+
+== 2005-12-19  roscopeco
+
+* Removed (forgotten) temporary notice for documentation set (r29)
+* MIT license (r28)
+* better ignorance (r27)
+* Initial import (r26)
+
+== 2004-12-28  tom
+
+* initial checkin (r25)
+
+== 2003-09-04  gforge
+
+* initial checkin (r22)
+
+== 2003-09-04  tom
+
+* Test (r24)
+* Test (r23)
+
+== 2003-04-25  tcarrico
+
+* Updating binary default types (r21)
+
+== 2003-04-24  tom
+
+* initial checkin (r20)
+* tweak (r19)
+* initial checkin (r18)
+
+== 2003-03-05  tom
+
+* *** empty log message *** (r17)
+* *** empty log message *** (r16)
+
+== 2003-02-28  (no author)
+
+* New repository initialized by cvs2svn. (r1)
+
+== 2003-02-28  tom
+
+* *** empty log message *** (r15)
+* *** empty log message *** (r14)
+* *** empty log message *** (r13)
+* *** empty log message *** (r12)
+* *** empty log message *** (r11)
+* *** empty log message *** (r10)
+* *** empty log message *** (r9)
+* *** empty log message *** (r8)
+* *** empty log message *** (r7)
+* *** empty log message *** (r6)
+* *** empty log message *** (r5)
+* *** empty log message *** (r4)
+* added newline (r3)
+* *** empty log message *** (r2)
+
