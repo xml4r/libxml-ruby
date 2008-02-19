@@ -21,8 +21,7 @@ loadpath    :
 
 # Packaging Information
 
-package    : libxml-ruby
-exclude    : ['pkg', 'work', 'doc']
+exclude    : ['work', 'doc', 'ri']
 extensions :
   - ext/libxml/extconf.rb
 

@@ -65,6 +65,7 @@ module Setup
       [:rubypath        , :prog, 'path to set to #! line'],
       [:rubyprog        , :prog, 'ruby program using for installation'],
       [:makeprog        , :prog, 'make program to compile ruby extentions'],
+      [:extconfopt      , :name, 'options to pass-thru to extconf.rb'],
       [:without_ext     , :bool, 'do not compile/install ruby extentions'],
       [:without_doc     , :bool, 'do not generate html documentation'],
       [:shebang         , :pick, 'shebang line (#!) editing mode (all,ruby,never)'],
@@ -273,6 +274,7 @@ module Setup
       self.rubypath        = rubypath
       self.rubyprog        = rubypath
       self.makeprog        = makeprog
+      self.extconfopt      = ''
       self.shebang         = 'ruby'
       self.without_ext     = 'no'
       self.without_doc     = 'yes'
@@ -318,10 +320,10 @@ module Setup
       fmt = "%-20s %s\n"
       OPTIONS.each do |name|
         value = self[name]
-        printf fmt, name, __send__(name) if value
+        reslv = __send__(name)
+        reslv = "(none)" if String===reslv && reslv.empty?
+        printf fmt, name, reslv if value
       end
-      #printf fmt, 'verbose', verbose? ? 'yes' : 'no'
-      #printf fmt, 'no-write', no_harm? ? 'yes' : 'no'
     end
 
     #
@@ -516,9 +518,9 @@ module Setup
     def exec_config
       config.env_config
       config.save_config
-      exec_task_traverse 'config'
       config.show unless quiet?
       puts("Configuration saved.") unless quiet?
+      exec_task_traverse 'config'
     end
 
     alias config_dir_bin noop
@@ -534,7 +536,7 @@ module Setup
     alias config_dir_doc noop
 
     def extconf
-      ruby "#{curr_srcdir()}/extconf.rb", config_opt
+      ruby "#{curr_srcdir()}/extconf.rb", config.extconfopt
     end
 
     #
