@@ -1,4 +1,5 @@
 rdoc:
+  output  : doc/libxml-ruby/rdoc
   title   : LibXML-Ruby
   main    : README
   include : [ext, lib, '[A-Z]*']

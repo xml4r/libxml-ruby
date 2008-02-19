@@ -1,0 +1,4 @@
+name=libxml
+default=libxml.rb
+libpath=lib;ext/libxml
+

@@ -1,5 +1,5 @@
 ---
-project     : libxml
+project     : libxml-ruby
 title       : LibXML-Ruby
 summary     : Ruby Bindings for GNU/LibXML2
 description :
@@ -25,7 +25,4 @@ package    : libxml-ruby
 exclude    : ['pkg', 'work', 'doc']
 extensions :
   - ext/libxml/extconf.rb
-gem_path:
-  - ext
-  - lib
 
