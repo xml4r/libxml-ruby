@@ -9,6 +9,4 @@ rubyforge:
 release:
   package   : Stable Releases
   name      : libxml-ruby
-  notelog   : NOTES
-  changelog : CHNAGES
 
