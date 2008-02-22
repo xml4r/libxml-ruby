@@ -11,3 +11,6 @@ release:
   package   : Stable Releases
   name      : libxml-ruby
 
+package:
+  formats: [ tgz, gem ]
+

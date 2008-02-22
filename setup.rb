@@ -444,6 +444,9 @@ module Setup
       desc 'Compiles ruby extentions'
       task :setup do exec_setup end
 
+      desc 'Runs unit tests'
+      task :test do exec_test end
+
       desc 'Generate html api docs'
       task :doc do exec_doc end
 
