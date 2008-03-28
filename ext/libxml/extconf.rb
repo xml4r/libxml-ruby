@@ -6,6 +6,7 @@ def method_missing(s, *args)
   if v = Config::CONFIG[s] || Config::CONFIG[s.upcase]
     return v
   else
+    puts "missing: #{s}"
     super
   end
 end
@@ -31,12 +32,12 @@ if RUBY_PLATFORM =~ /win32/  # FIXME: Make more robust
 
   srcs = Dir['../ext/*.c']
 
-  objs = src.collect do |srcfile|
+  objs = srcs.collect do |srcfile|
     srcfile = File.basename(srcfile)
     srcfile.chomp(File.extname(srcfile) + '.o')
   end
 
-  #src.each do |srcfile|
+  #srcs.each do |srcfile|
   #  srcfile = File.basename(srcfile)
   #  objfile = srcfile.chomp(File.extname(srcfile) + '.o')
   #
