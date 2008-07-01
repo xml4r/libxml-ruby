@@ -1,6 +1,6 @@
 /* $Id: $ */
 
-#include "libxml.h"
+#include "ruby_libxml.h"
 
 /*
  * Document-class: XML::XPath::Object

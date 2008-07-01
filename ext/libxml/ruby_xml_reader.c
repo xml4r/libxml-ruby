@@ -1,7 +1,7 @@
 /* Copyright (c) 2006-2007 Apple Inc.
  * Please see the LICENSE file for copyright and distribution information. */
 
-#include "libxml.h"
+#include "ruby_libxml.h"
 #include "ruby_xml_reader.h"
 
 #define CSTR2RVAL(x)  (x == NULL ? Qnil : rb_str_new2((const char *)x))

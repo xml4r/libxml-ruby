@@ -1,4 +1,4 @@
-#include "libxml.h"
+#include "ruby_libxml.h"
 #include "ruby_xml_schema.h"
 
 VALUE cXMLSchema;

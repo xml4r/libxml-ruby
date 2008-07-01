@@ -2,7 +2,7 @@
 /* ruby support for custom scheme handlers      */
 /* Author: Martin Povolny (xpovolny@fi.muni.cz) */
 
-#include "libxml.h"
+#include "ruby_libxml.h"
 #include "ruby_xml_input_cbg.h"
 
 static ic_scheme *first_scheme = 0;

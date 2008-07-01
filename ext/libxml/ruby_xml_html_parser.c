@@ -2,7 +2,7 @@
 
 /* Please see the LICENSE file for copyright and distribution information */
 
-#include "libxml.h"
+#include "ruby_libxml.h"
 
 VALUE cXMLHTMLParser;
 

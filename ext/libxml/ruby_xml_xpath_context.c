@@ -2,7 +2,7 @@
 
 /* Please see the LICENSE file for copyright and distribution information */
 
-#include "libxml.h"
+#include "ruby_libxml.h"
 #include "ruby_xml_xpath_context.h"
 
 VALUE cXMLXPathContext;

@@ -1,6 +1,6 @@
 /* $Id$ */
 
-#include "libxml.h"
+#include "ruby_libxml.h"
 
 VALUE cXMLState;
 static VALUE weak_holder;
