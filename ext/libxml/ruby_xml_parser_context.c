@@ -453,6 +453,19 @@ ruby_xml_parser_context_replace_entities_set(VALUE self, VALUE bool) {
 
 /*
  * call-seq:
+ *    context.reset
+ * 
+ * Resets the parser context.
+ */
+VALUE
+ruby_xml_parser_context_reset(VALUE self) {
+  ruby_xml_parser_context *rxpc;
+  Data_Get_Struct(self, ruby_xml_parser_context, rxpc);
+  xmlCtxtReset(rxpc->ctxt);
+}
+
+/*
+ * call-seq:
  *    context.space_depth => num
  * 
  * Obtain the space depth for this context.
@@ -720,6 +733,7 @@ ruby_init_xml_parser_context(void) {
   rb_define_method(cXMLParserContext, "options=", ruby_xml_parser_context_options_set, 1);
   rb_define_method(cXMLParserContext, "replace_entities?", ruby_xml_parser_context_replace_entities_q, 0);
   rb_define_method(cXMLParserContext, "replace_entities=", ruby_xml_parser_context_replace_entities_set, 1);
+  rb_define_method(cXMLParserContext, "reset", ruby_xml_parser_context_reset, 0);
   rb_define_method(cXMLParserContext, "space_depth", ruby_xml_parser_context_space_depth_get, 0);
   rb_define_method(cXMLParserContext, "space_depth_max", ruby_xml_parser_context_space_depth_max_get, 0);
   rb_define_method(cXMLParserContext, "subset_external?", ruby_xml_parser_context_subset_external_q, 0);
