@@ -79,7 +79,6 @@ class TC_XML_SaxParser2 < Test::Unit::TestCase
 
   def do_test
     @xp.parse
-
     assert_equal [1], @xp.callbacks.test[:startdoc]
     assert_equal [[2,'test',{'uga'=>'booga','foo'=>'bar'}],[3,'fixnum',{}],[6,'fixnum',{}]],
                  @xp.callbacks.test[:startel]
@@ -90,5 +89,16 @@ class TC_XML_SaxParser2 < Test::Unit::TestCase
     assert_equal [[14, 'here it goes']], @xp.callbacks.test[:cdata]
     assert_equal [[5,'fixnum'],[8,'fixnum'],[16,'test']], @xp.callbacks.test[:endel]
     assert_equal [17], @xp.callbacks.test[:enddoc]
+  end
+  
+  def test_doctype
+    @xp.callbacks = TestCaseCallbacks.new
+    @xp.string = <<-EOS
+      <?xml version="1.0" encoding="UTF-8"?>
+      <!DOCTYPE ONIXmessage SYSTEM "http://www.editeur.org/onix/2.1/short/onix-international.dtd">
+      <ONIXmessage release="2.1">
+      </ONIXmessage>
+    EOS
+    @xp.parse
   end
 end # TC_XML_Sax_Parser
