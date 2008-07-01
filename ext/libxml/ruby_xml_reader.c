@@ -30,17 +30,12 @@ ruby_xml_reader_new(VALUE class, xmlTextReaderPtr reader)
 }
 
 static xmlTextReaderPtr
-__ruby_xml_parser_get(VALUE obj)
+ruby_xml_text_reader_get(VALUE obj)
 {
   xmlTextReaderPtr ptr;
   Data_Get_Struct(obj, xmlTextReader, ptr);
   return ptr;
 }
-
-#if defined(_SELF)
-# undef _SELF
-#endif
-#define _SELF(x) (__ruby_xml_parser_get(x))
 
 /*
  * call-seq:
@@ -129,7 +124,7 @@ ruby_xml_reader_new_data(int argc, VALUE *argv, VALUE self)
 static VALUE
 ruby_xml_reader_close(VALUE self)
 {
-  return INT2FIX(xmlTextReaderClose(_SELF(self)));
+  return INT2FIX(xmlTextReaderClose(ruby_xml_text_reader_get(self)));
 }
 
 /*
@@ -146,7 +141,7 @@ ruby_xml_reader_move_to_attr(VALUE self, VALUE val)
   xmlTextReaderPtr reader;
   int ret;
 
-  reader = _SELF(self);
+  reader = ruby_xml_text_reader_get(self);
 
   if (TYPE(val) == T_FIXNUM) {
     ret = xmlTextReaderMoveToAttributeNo(reader, FIX2INT(val));
@@ -168,7 +163,7 @@ ruby_xml_reader_move_to_attr(VALUE self, VALUE val)
 static VALUE
 ruby_xml_reader_move_to_first_attr(VALUE self)
 {
-  return INT2FIX(xmlTextReaderMoveToFirstAttribute(_SELF(self)));
+  return INT2FIX(xmlTextReaderMoveToFirstAttribute(ruby_xml_text_reader_get(self)));
 }
 
 /*
@@ -181,7 +176,7 @@ ruby_xml_reader_move_to_first_attr(VALUE self)
 static VALUE
 ruby_xml_reader_move_to_next_attr(VALUE self)
 {
-  return INT2FIX(xmlTextReaderMoveToNextAttribute(_SELF(self)));
+  return INT2FIX(xmlTextReaderMoveToNextAttribute(ruby_xml_text_reader_get(self)));
 }
 
 /*
@@ -194,7 +189,7 @@ ruby_xml_reader_move_to_next_attr(VALUE self)
 static VALUE
 ruby_xml_reader_move_to_element(VALUE self)
 {
-  return INT2FIX(xmlTextReaderMoveToElement(_SELF(self)));
+  return INT2FIX(xmlTextReaderMoveToElement(ruby_xml_text_reader_get(self)));
 }
 
 /*
@@ -207,7 +202,7 @@ ruby_xml_reader_move_to_element(VALUE self)
 static VALUE
 ruby_xml_reader_next(VALUE self)
 {
-  return INT2FIX(xmlTextReaderNext(_SELF(self)));
+  return INT2FIX(xmlTextReaderNext(ruby_xml_text_reader_get(self)));
 }
 
 /*
@@ -221,7 +216,7 @@ ruby_xml_reader_next(VALUE self)
 static VALUE
 ruby_xml_reader_next_sibling(VALUE self)
 {
-  return INT2FIX(xmlTextReaderNextSibling(_SELF(self)));
+  return INT2FIX(xmlTextReaderNextSibling(ruby_xml_text_reader_get(self)));
 }
 
 /*
@@ -234,7 +229,7 @@ ruby_xml_reader_next_sibling(VALUE self)
 static VALUE
 ruby_xml_reader_node_type(VALUE self)
 {
-  return INT2FIX(xmlTextReaderNodeType(_SELF(self)));
+  return INT2FIX(xmlTextReaderNodeType(ruby_xml_text_reader_get(self)));
 }
 
 /*
@@ -252,7 +247,7 @@ ruby_xml_reader_node_type(VALUE self)
 static VALUE
 ruby_xml_reader_normalization(VALUE self)
 {
-  return INT2FIX(xmlTextReaderNormalization(_SELF(self)));
+  return INT2FIX(xmlTextReaderNormalization(ruby_xml_text_reader_get(self)));
 }
 
 /*
@@ -268,7 +263,7 @@ ruby_xml_reader_normalization(VALUE self)
 static VALUE
 ruby_xml_reader_read(VALUE self)
 {
-  return INT2FIX(xmlTextReaderRead(_SELF(self)));
+  return INT2FIX(xmlTextReaderRead(ruby_xml_text_reader_get(self)));
 }
 
 /*
@@ -284,7 +279,7 @@ ruby_xml_reader_read(VALUE self)
 static VALUE
 ruby_xml_reader_read_attr_value(VALUE self)
 {
-  return INT2FIX(xmlTextReaderReadAttributeValue(_SELF(self)));
+  return INT2FIX(xmlTextReaderReadAttributeValue(ruby_xml_text_reader_get(self)));
 }
 
 /*
@@ -299,7 +294,7 @@ ruby_xml_reader_read_attr_value(VALUE self)
 static VALUE
 ruby_xml_reader_read_inner_xml(VALUE self)
 {
-  return CSTR2RVAL2(xmlTextReaderReadInnerXml(_SELF(self)));
+  return CSTR2RVAL2(xmlTextReaderReadInnerXml(ruby_xml_text_reader_get(self)));
 }
 
 /*
@@ -314,7 +309,7 @@ ruby_xml_reader_read_inner_xml(VALUE self)
 static VALUE
 ruby_xml_reader_read_outer_xml(VALUE self)
 {
-  return CSTR2RVAL2(xmlTextReaderReadOuterXml(_SELF(self)));
+  return CSTR2RVAL2(xmlTextReaderReadOuterXml(ruby_xml_text_reader_get(self)));
 }
 
 /*
@@ -326,7 +321,7 @@ ruby_xml_reader_read_outer_xml(VALUE self)
 static VALUE
 ruby_xml_reader_read_state(VALUE self)
 {
-  return INT2FIX(xmlTextReaderReadState(_SELF(self)));
+  return INT2FIX(xmlTextReaderReadState(ruby_xml_text_reader_get(self)));
 }
 
 /*
@@ -341,7 +336,7 @@ ruby_xml_reader_read_state(VALUE self)
 static VALUE
 ruby_xml_reader_read_string(VALUE self)
 {
-  return CSTR2RVAL2(xmlTextReaderReadString(_SELF(self)));
+  return CSTR2RVAL2(xmlTextReaderReadString(ruby_xml_text_reader_get(self)));
 }
 
 static void
@@ -390,7 +385,7 @@ ruby_xml_reader_set_error_handler(VALUE self)
    * Previous handler if exits is overwritten. 
    */
   rb_ivar_set(self, error_handler_block_ivar_id, block); 
-  reader = _SELF(self);
+  reader = ruby_xml_text_reader_get(self);
   xmlTextReaderSetErrorHandler(reader, __xml_reader_error_cb, (void *)self); 
   
   return self;
@@ -405,7 +400,7 @@ ruby_xml_reader_set_error_handler(VALUE self)
 static VALUE
 ruby_xml_reader_reset_error_handler(VALUE self)
 {
-  xmlTextReaderSetErrorHandler(_SELF(self), NULL, NULL);
+  xmlTextReaderSetErrorHandler(ruby_xml_text_reader_get(self), NULL, NULL);
   return self;
 }
 
@@ -423,7 +418,7 @@ ruby_xml_reader_reset_error_handler(VALUE self)
 static VALUE
 ruby_xml_reader_relax_ng_validate(VALUE self, VALUE rng)
 {
-  return INT2FIX(xmlTextReaderRelaxNGValidate(_SELF(self), NIL_P(rng) ? NULL : RVAL2CSTR(rng)));
+  return INT2FIX(xmlTextReaderRelaxNGValidate(ruby_xml_text_reader_get(self), NIL_P(rng) ? NULL : RVAL2CSTR(rng)));
 }
 
 #if LIBXML_VERSION >= 20620
@@ -441,7 +436,7 @@ ruby_xml_reader_relax_ng_validate(VALUE self, VALUE rng)
 static VALUE
 ruby_xml_reader_schema_validate(VALUE self, VALUE xsd)
 {
-  return INT2FIX(xmlTextReaderSchemaValidate(_SELF(self), NIL_P(xsd) ? NULL : RVAL2CSTR(xsd)));
+  return INT2FIX(xmlTextReaderSchemaValidate(ruby_xml_text_reader_get(self), NIL_P(xsd) ? NULL : RVAL2CSTR(xsd)));
 }
 #endif
 
@@ -454,7 +449,7 @@ ruby_xml_reader_schema_validate(VALUE self, VALUE xsd)
 static VALUE
 ruby_xml_reader_name(VALUE self)
 {
-  return CSTR2RVAL(xmlTextReaderConstName(_SELF(self)));
+  return CSTR2RVAL(xmlTextReaderConstName(ruby_xml_text_reader_get(self)));
 }
 
 /* 
@@ -466,7 +461,7 @@ ruby_xml_reader_name(VALUE self)
 static VALUE
 ruby_xml_reader_local_name(VALUE self)
 {
-  return CSTR2RVAL(xmlTextReaderConstLocalName(_SELF(self)));
+  return CSTR2RVAL(xmlTextReaderConstLocalName(ruby_xml_text_reader_get(self)));
 }
 
 /*
@@ -478,7 +473,7 @@ ruby_xml_reader_local_name(VALUE self)
 static VALUE
 ruby_xml_reader_attr_count(VALUE self)
 {
-  return INT2FIX(xmlTextReaderAttributeCount(_SELF(self)));
+  return INT2FIX(xmlTextReaderAttributeCount(ruby_xml_text_reader_get(self)));
 }
 
 /*
@@ -490,7 +485,7 @@ ruby_xml_reader_attr_count(VALUE self)
 static VALUE
 ruby_xml_reader_encoding(VALUE self)
 {
-  return CSTR2RVAL(xmlTextReaderConstEncoding(_SELF(self)));
+  return CSTR2RVAL(xmlTextReaderConstEncoding(ruby_xml_text_reader_get(self)));
 }
 
 /*
@@ -502,7 +497,7 @@ ruby_xml_reader_encoding(VALUE self)
 static VALUE
 ruby_xml_reader_base_uri(VALUE self)
 {
-  return CSTR2RVAL(xmlTextReaderConstBaseUri(_SELF(self)));
+  return CSTR2RVAL(xmlTextReaderConstBaseUri(ruby_xml_text_reader_get(self)));
 }
 
 /*
@@ -514,7 +509,7 @@ ruby_xml_reader_base_uri(VALUE self)
 static VALUE
 ruby_xml_reader_namespace_uri(VALUE self)
 {
-  return CSTR2RVAL(xmlTextReaderConstNamespaceUri(_SELF(self)));
+  return CSTR2RVAL(xmlTextReaderConstNamespaceUri(ruby_xml_text_reader_get(self)));
 }
 
 /*
@@ -526,7 +521,7 @@ ruby_xml_reader_namespace_uri(VALUE self)
 static VALUE
 ruby_xml_reader_value(VALUE self)
 {
-  return CSTR2RVAL(xmlTextReaderConstValue(_SELF(self)));
+  return CSTR2RVAL(xmlTextReaderConstValue(ruby_xml_text_reader_get(self)));
 }
 
 /* 
@@ -538,7 +533,7 @@ ruby_xml_reader_value(VALUE self)
 static VALUE
 ruby_xml_reader_prefix(VALUE self)
 {
-  return CSTR2RVAL(xmlTextReaderConstPrefix(_SELF(self)));
+  return CSTR2RVAL(xmlTextReaderConstPrefix(ruby_xml_text_reader_get(self)));
 }
 
 /*
@@ -550,7 +545,7 @@ ruby_xml_reader_prefix(VALUE self)
 static VALUE
 ruby_xml_reader_depth(VALUE self)
 {
-  return INT2FIX(xmlTextReaderDepth(_SELF(self)));
+  return INT2FIX(xmlTextReaderDepth(ruby_xml_text_reader_get(self)));
 }
 
 /*
@@ -563,7 +558,7 @@ ruby_xml_reader_depth(VALUE self)
 static VALUE
 ruby_xml_reader_quote_char(VALUE self)
 {
-  return INT2FIX(xmlTextReaderQuoteChar(_SELF(self)));
+  return INT2FIX(xmlTextReaderQuoteChar(ruby_xml_text_reader_get(self)));
 }
 
 /*
@@ -579,7 +574,7 @@ ruby_xml_reader_quote_char(VALUE self)
 static VALUE
 ruby_xml_reader_standalone(VALUE self)
 {
-  return INT2FIX(xmlTextReaderStandalone(_SELF(self)));
+  return INT2FIX(xmlTextReaderStandalone(ruby_xml_text_reader_get(self)));
 }
 
 /*
@@ -591,7 +586,7 @@ ruby_xml_reader_standalone(VALUE self)
 static VALUE
 ruby_xml_reader_xml_lang(VALUE self)
 {
-  return CSTR2RVAL(xmlTextReaderConstXmlLang(_SELF(self)));
+  return CSTR2RVAL(xmlTextReaderConstXmlLang(ruby_xml_text_reader_get(self)));
 }
 
 /*
@@ -603,7 +598,7 @@ ruby_xml_reader_xml_lang(VALUE self)
 static VALUE
 ruby_xml_reader_xml_version(VALUE self)
 {
-  return CSTR2RVAL(xmlTextReaderConstXmlVersion(_SELF(self)));
+  return CSTR2RVAL(xmlTextReaderConstXmlVersion(ruby_xml_text_reader_get(self)));
 }
 
 /*
@@ -615,7 +610,7 @@ ruby_xml_reader_xml_version(VALUE self)
 static VALUE
 ruby_xml_reader_has_attributes(VALUE self)
 {
-  return xmlTextReaderHasAttributes(_SELF(self)) ? Qtrue : Qfalse;
+  return xmlTextReaderHasAttributes(ruby_xml_text_reader_get(self)) ? Qtrue : Qfalse;
 }
 
 /*
@@ -627,7 +622,7 @@ ruby_xml_reader_has_attributes(VALUE self)
 static VALUE
 ruby_xml_reader_has_value(VALUE self)
 {
-  return xmlTextReaderHasValue(_SELF(self)) ? Qtrue : Qfalse;
+  return xmlTextReaderHasValue(ruby_xml_text_reader_get(self)) ? Qtrue : Qfalse;
 }
 
 /*
@@ -644,7 +639,7 @@ ruby_xml_reader_attribute(VALUE self, VALUE key)
   xmlTextReaderPtr reader;
   xmlChar *attr;
 
-  reader = _SELF(self);
+  reader = ruby_xml_text_reader_get(self);
 
   if (TYPE(key) == T_FIXNUM) {
     attr = xmlTextReaderGetAttributeNo(reader, FIX2INT(key));
@@ -665,7 +660,7 @@ ruby_xml_reader_attribute(VALUE self, VALUE key)
 static VALUE
 ruby_xml_reader_lookup_namespace(VALUE self, VALUE prefix)
 {
-  return CSTR2RVAL2(xmlTextReaderLookupNamespace(_SELF(self), (const xmlChar *)RVAL2CSTR(prefix)));
+  return CSTR2RVAL2(xmlTextReaderLookupNamespace(ruby_xml_text_reader_get(self), (const xmlChar *)RVAL2CSTR(prefix)));
 }
 
 /*
@@ -681,13 +676,22 @@ static VALUE
 ruby_xml_reader_expand(VALUE self)
 {
   xmlNodePtr node;
-
-  node = xmlTextReaderExpand(_SELF(self));
-  if (NIL_P(node))
+  xmlDocPtr doc;
+  xmlTextReaderPtr reader = ruby_xml_text_reader_get(self);
+  node = xmlTextReaderExpand(reader);
+  
+  if (!node)
     return Qnil;
+    
+  /* Okay this is tricky.  By accessing the returned node, we
+     take ownership of the reader's document.  Thus we need to
+     tell the reader to not free it.  Otherwise it will be
+     freed twice - once when the Ruby document wrapper goes
+     out of scope and once when the reader goes out of scope. */
 
-  if ( node->doc != NULL )
-    ruby_xml_document_wrap2(node->doc);
+  xmlTextReaderPreserve(reader);
+  doc = xmlTextReaderCurrentDoc(reader);
+  ruby_xml_document_wrap(doc);
 
   return ruby_xml_node2_wrap(cXMLNode, node);
 }
@@ -703,7 +707,7 @@ ruby_xml_reader_expand(VALUE self)
 static VALUE
 ruby_xml_reader_byte_consumed(VALUE self)
 {
-  return INT2NUM(xmlTextReaderByteConsumed(_SELF(self)));
+  return INT2NUM(xmlTextReaderByteConsumed(ruby_xml_text_reader_get(self)));
 }
 #endif
 
@@ -717,7 +721,7 @@ ruby_xml_reader_byte_consumed(VALUE self)
 static VALUE
 ruby_xml_reader_column_number(VALUE self)
 {
-  return INT2NUM(xmlTextReaderGetParserColumnNumber(_SELF(self)));
+  return INT2NUM(xmlTextReaderGetParserColumnNumber(ruby_xml_text_reader_get(self)));
 }
 
 /*
@@ -729,7 +733,7 @@ ruby_xml_reader_column_number(VALUE self)
 static VALUE
 ruby_xml_reader_line_number(VALUE self)
 {
-  return INT2NUM(xmlTextReaderGetParserLineNumber(_SELF(self)));
+  return INT2NUM(xmlTextReaderGetParserLineNumber(ruby_xml_text_reader_get(self)));
 }
 #endif
 
@@ -743,7 +747,7 @@ ruby_xml_reader_line_number(VALUE self)
 static VALUE
 ruby_xml_reader_default(VALUE self)
 {
-  return xmlTextReaderIsDefault(_SELF(self)) ? Qtrue : Qfalse;
+  return xmlTextReaderIsDefault(ruby_xml_text_reader_get(self)) ? Qtrue : Qfalse;
 }
 
 /*
@@ -756,7 +760,7 @@ ruby_xml_reader_default(VALUE self)
 static VALUE
 ruby_xml_reader_namespace_declaration(VALUE self)
 {
-  return xmlTextReaderIsNamespaceDecl(_SELF(self)) ? Qtrue : Qfalse;
+  return xmlTextReaderIsNamespaceDecl(ruby_xml_text_reader_get(self)) ? Qtrue : Qfalse;
 }
 
 /*
@@ -768,7 +772,7 @@ ruby_xml_reader_namespace_declaration(VALUE self)
 static VALUE
 ruby_xml_reader_empty_element(VALUE self)
 {
-  return xmlTextReaderIsEmptyElement(_SELF(self)) ? Qtrue : Qfalse;
+  return xmlTextReaderIsEmptyElement(ruby_xml_text_reader_get(self)) ? Qtrue : Qfalse;
 }
 
 /*
@@ -780,7 +784,7 @@ ruby_xml_reader_empty_element(VALUE self)
 static VALUE
 ruby_xml_reader_valid(VALUE self)
 {
-  return xmlTextReaderIsValid(_SELF(self)) ? Qtrue : Qfalse;
+  return xmlTextReaderIsValid(ruby_xml_text_reader_get(self)) ? Qtrue : Qfalse;
 }
 
 /* Rdoc needs to know. */ 
