@@ -12,6 +12,27 @@
  */
 VALUE cXMLXPathObject;
 
+
+static VALUE
+ruby_xml_xpath_object_tabref(xmlXPathObjectPtr xpop, int apos) {
+
+  if (apos < 0 )
+    apos=xpop->nodesetval->nodeNr+apos;
+
+  if (apos < 0 || apos+1 > xpop->nodesetval->nodeNr )
+    return Qnil;
+
+  switch(xpop->nodesetval->nodeTab[apos]->type) {
+  case XML_ATTRIBUTE_NODE:
+    return ruby_xml_attr_wrap(cXMLAttr,
+			      (xmlAttrPtr)xpop->nodesetval->nodeTab[apos]);
+    break;
+  default:
+    return ruby_xml_node2_wrap(cXMLNode,
+			       xpop->nodesetval->nodeTab[apos]);
+  }
+}
+
 void
 ruby_xml_xpath_object_mark(xmlXPathObjectPtr xpop)
 {
@@ -148,26 +169,6 @@ ruby_xml_xpath_object_empty_q(VALUE self) {
   return ( xpop->nodesetval == NULL || xpop->nodesetval->nodeNr <= 0 ) ? Qtrue : Qfalse;
 }
 
-static VALUE
-ruby_xml_xpath_object_tabref(xmlXPathObjectPtr xpop, int apos) {
-
-  if (apos < 0 )
-    apos=xpop->nodesetval->nodeNr+apos;
-
-  if (apos < 0 || apos+1 > xpop->nodesetval->nodeNr )
-    return Qnil;
-
-  switch(xpop->nodesetval->nodeTab[apos]->type) {
-  case XML_ATTRIBUTE_NODE:
-    return ruby_xml_attr_wrap(cXMLAttr,
-			      (xmlAttrPtr)xpop->nodesetval->nodeTab[apos]);
-    break;
-  default:
-    return ruby_xml_node2_wrap(cXMLNode,
-			       xpop->nodesetval->nodeTab[apos]);
-  }
-}
-
 /*
  * call-seq:
  *    xpath_object.each { |node| ... } => self
@@ -216,8 +217,7 @@ ruby_xml_xpath_object_aref(VALUE self, VALUE aref) {
   if ( ruby_xml_xpath_object_empty_q(self) == Qtrue )
     return Qnil;
 
-  return ruby_xml_xpath_object_tabref(
-				      (xmlXPathObjectPtr)DATA_PTR(self),
+  return ruby_xml_xpath_object_tabref((xmlXPathObjectPtr)DATA_PTR(self),
 				      NUM2INT(aref));
 }
 
