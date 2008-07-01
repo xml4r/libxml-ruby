@@ -16,12 +16,24 @@ class TC_XML_Parser < Test::Unit::TestCase
     assert_equal(str, @xp.string = str)
     assert_instance_of(XML::Document, @xp.parse)
   end
-
+  
   def test_libxml_parser_bad_xml()
-    # @xp.string = '<ruby_array uga="booga" foo="bar"<fixnum>one</fixnum><fixnum>two</fixnum></ruby_array>'
-    # assert_not_nil(@xp.parse)
+    @xp.string = '<ruby_array uga="booga" foo="bar"<fixnum>one</fixnum><fixnum>two</fixnum></ruby_array>'
+    assert_raise(XML::Parser::ParseError) do
+      assert_not_nil(@xp.parse)
+    end
   end
 
+  def test_libxml_parser_empty_string
+    assert_raise(XML::Parser::ParseError) do
+      @xp.string = ''
+    end
+    
+    assert_raise(TypeError) do
+      @xp.string = nil
+    end
+  end
+      
   def test_ruby_xml_parser_check_lib_versions()
     assert(XML::Parser::check_lib_versions)
   end
@@ -150,11 +162,11 @@ class TC_XML_Parser < Test::Unit::TestCase
     assert_instance_of(Fixnum, XML::Parser::VERNUM)
   end
 
-  def test_ruby_xml_parser_parser_context()
+  def test_ruby_xml_parser_context()
     @xp = XML::Parser.string('<rubynet><testing>uga</testing><uga>foo</uga></rubynet>')
     doc = @xp.parse
     assert_instance_of(XML::Document, doc)
-    assert_instance_of(XML::Parser::Context, @xp.parser_context)
+    assert_instance_of(XML::Parser::Context, @xp.context)
   end
 
   def test_libxml_parser_file()
