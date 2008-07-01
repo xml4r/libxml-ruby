@@ -14,7 +14,7 @@ ext/libxml/extconf.rb
 ext/libxml/libxml.c
 ext/libxml/libxml.h
 ext/libxml/libxml.o
-ext/libxml/libxml_so.so
+ext/libxml/libxml.so
 ext/libxml/mkmf.log
 ext/libxml/ruby_xml_attr.c
 ext/libxml/ruby_xml_attr.h

@@ -19,7 +19,7 @@ if RUBY_PLATFORM =~ /win32/  # FIXME: Make more robust
   # built with VC++ while here we want to build
   # with MingW.  So just roll our own...
 
-  target = "libxml_so"
+  target = "libxml"
 
   #RUBY_INCLUDE_DIR = Config::CONFIG["archdir"]
   #RUBY_BIN_DIR = Config::CONFIG["bindir"]
@@ -110,11 +110,11 @@ else
 need libiconv.
 
   Install the libiconv or try passing one of the following options
-	to extconf.rb:
+  to extconf.rb:
 
-	  --with-iconv-dir=/path/to/iconv
-	  --with-iconv-lib=/path/to/iconv/lib
-	  --with-iconv-include=/path/to/iconv/include
+    --with-iconv-dir=/path/to/iconv
+    --with-iconv-lib=/path/to/iconv/lib
+    --with-iconv-include=/path/to/iconv/include
 EOL
   end
 
@@ -123,7 +123,7 @@ EOL
           find_library('xml2', '/opt/lib', '/usr/local/lib', '/usr/lib')) and 
          (have_header('libxml/xmlversion.h') or
           find_header('libxml/xmlversion.h',
-          						"#{CONFIG['prefix']}/include", 
+                      "#{CONFIG['prefix']}/include", 
                       '/opt/include/libxml2', 
                       '/usr/local/include/libxml2', 
                       '/usr/include/libxml2'))
@@ -150,9 +150,7 @@ EOL
   #$INSTALLFILES = [["libxml.rb", "$(RUBYLIBDIR)", "../xml"]]
 
   create_header()
-  #create_makefile('xml/libxml_so')
-  create_makefile('libxml_so')
-
+  create_makefile('libxml')
 end
 
 __END__
@@ -256,29 +254,29 @@ TARGET_SO     = $(DLLIB)
 CLEANLIBS     = $(TARGET).so $(TARGET).il? $(TARGET).tds $(TARGET).map
 CLEANOBJS     = *.o *.a *.s[ol] *.pdb *.exp *.bak
 
-all:		$(DLLIB)
-static:		$(STATIC_LIB)
+all:    $(DLLIB)
+static:   $(STATIC_LIB)
 
 clean:
-		@-$(RM) $(CLEANLIBS) $(CLEANOBJS) $(CLEANFILES)
+    @-$(RM) $(CLEANLIBS) $(CLEANOBJS) $(CLEANFILES)
 
-distclean:	clean
-		@-$(RM) Makefile $(RUBY_EXTCONF_H) conftest.* mkmf.log
-		@-$(RM) core ruby$(EXEEXT) *~ $(DISTCLEANFILES)
+distclean:  clean
+    @-$(RM) Makefile $(RUBY_EXTCONF_H) conftest.* mkmf.log
+    @-$(RM) core ruby$(EXEEXT) *~ $(DISTCLEANFILES)
 
-realclean:	distclean
+realclean:  distclean
 install: install-so install-rb
 
 install-so: $(RUBYARCHDIR)
 install-so: $(RUBYARCHDIR)/$(DLLIB)
 $(RUBYARCHDIR)/$(DLLIB): $(DLLIB)
-	$(INSTALL_PROG) $(DLLIB) $(RUBYARCHDIR)
+  $(INSTALL_PROG) $(DLLIB) $(RUBYARCHDIR)
 install-rb: pre-install-rb install-rb-default
 install-rb-default: pre-install-rb-default
 pre-install-rb: Makefile
 pre-install-rb-default: Makefile
 $(RUBYARCHDIR):
-	$(MAKEDIRS) $@
+  $(MAKEDIRS) $@
 
 site-install: site-install-so site-install-rb
 site-install-so: install-so
@@ -287,23 +285,23 @@ site-install-rb: install-rb
 .SUFFIXES: .c .m .cc .cxx .cpp .C .o
 
 .cc.o:
-	$(CXX) $(INCFLAGS) $(CPPFLAGS) $(CXXFLAGS) -c $<
+  $(CXX) $(INCFLAGS) $(CPPFLAGS) $(CXXFLAGS) -c $<
 
 .cxx.o:
-	$(CXX) $(INCFLAGS) $(CPPFLAGS) $(CXXFLAGS) -c $<
+  $(CXX) $(INCFLAGS) $(CPPFLAGS) $(CXXFLAGS) -c $<
 
 .cpp.o:
-	$(CXX) $(INCFLAGS) $(CPPFLAGS) $(CXXFLAGS) -c $<
+  $(CXX) $(INCFLAGS) $(CPPFLAGS) $(CXXFLAGS) -c $<
 
 .C.o:
-	$(CXX) $(INCFLAGS) $(CPPFLAGS) $(CXXFLAGS) -c $<
+  $(CXX) $(INCFLAGS) $(CPPFLAGS) $(CXXFLAGS) -c $<
 
 .c.o:
-	$(CC) $(INCFLAGS) $(CPPFLAGS) $(CFLAGS) -c $<
+  $(CC) $(INCFLAGS) $(CPPFLAGS) $(CFLAGS) -c $<
 
 $(DLLIB): $(OBJS)
-	@-$(RM) $@
-	$(LDSHARED) -o $@ $(OBJS) $(LIBPATH) $(DLDFLAGS) $(LOCAL_LIBS) $(LIBS)
+  @-$(RM) $@
+  $(LDSHARED) -o $@ $(OBJS) $(LIBPATH) $(DLDFLAGS) $(LOCAL_LIBS) $(LIBS)
 
 
 $(OBJS): ruby.h defines.h $(RUBY_EXTCONF_H)

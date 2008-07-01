@@ -37,7 +37,6 @@ class TC_XML_Parser < Test::Unit::TestCase
     assert(!XML::Parser::debug_entities)
   end
 
-
   def test_ruby_xml_parser_default_compression()
     0.upto(9) do |i|
       XML::Parser::default_compression = i
@@ -159,13 +158,14 @@ class TC_XML_Parser < Test::Unit::TestCase
   end
 
   def test_libxml_parser_file()
-    file = 'test/model/rubynet.xml'
+    file = File.expand_path('model/rubynet.xml')
+    
     assert_equal(file, @xp.filename = file)
     assert_instance_of(XML::Document, @xp.parse)
   end
 
   def test_libxml_parser_io()
-    File.open('test/model/rubynet.xml') do |f|
+    File.open('model/rubynet.xml') do |f|
       assert_kind_of(IO, f)
       assert_kind_of(IO, @xp.io = f)
       assert_instance_of(XML::Document, @xp.parse)

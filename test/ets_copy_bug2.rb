@@ -1,4 +1,4 @@
-#!/usr/bin/ruby -w -I.
+require 'libxml'
 
 $FAILS = []
 
