@@ -35,6 +35,12 @@
 #define RSTRING_LEN(x) RSTRING(x)->len
 #endif
 
+// not in Ruby 1.9
+#ifndef GetWriteFile
+#define GetWriteFile(fp) rb_io_stdio_file(fp)
+#define OpenFile rb_io_t
+#endif
+
 #ifdef LIBXML_DEBUG_ENABLED
 #include <libxml/xpathInternals.h>
 #endif
