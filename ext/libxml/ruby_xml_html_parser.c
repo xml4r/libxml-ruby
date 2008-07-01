@@ -443,7 +443,7 @@ ruby_init_html_parser(void) {
   rb_define_method(cXMLHTMLParser, "io=", ruby_xml_html_parser_io_set, 1);
   */
   rb_define_method(cXMLHTMLParser, "parse", ruby_xml_html_parser_parse, 0);
-  rb_define_method(cXMLHTMLParser, "parser_context", ruby_xml_html_parser_context_get, 0);
+  rb_define_method(cXMLHTMLParser, "context", ruby_xml_html_parser_context_get, 0);
   rb_define_method(cXMLHTMLParser, "string", ruby_xml_html_parser_str_get, 0);
   rb_define_method(cXMLHTMLParser, "string=", ruby_xml_html_parser_str_set, 1);  
 }
