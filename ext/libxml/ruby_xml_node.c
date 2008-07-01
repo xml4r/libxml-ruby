@@ -62,14 +62,21 @@ ruby_xml_node_attribute_decl_q(VALUE self) {
 VALUE
 ruby_xml_node_base_get(VALUE self) {
   ruby_xml_node *rxn;
+  xmlChar* base_uri;            
+  VALUE result = Qnil;
+  
   Data_Get_Struct(self, ruby_xml_node, rxn);
+  
   if (rxn->node->doc == NULL)
-    return(Qnil);
-    
-  // TODO some NULL checking, raises ArgumentError in Ruby:
-  //                          ArgumentError: NULL pointer given
-
-  return(rb_str_new2((const char*)xmlNodeGetBase(rxn->node->doc, rxn->node)));
+    return(result);
+  
+  base_uri = xmlNodeGetBase(rxn->node->doc, rxn->node);
+  if (base_uri) {
+    result = rb_str_new2((const char*)base_uri);
+    xmlFree(base_uri);
+  }
+  
+  return(result);
 }
 
 
@@ -173,14 +180,16 @@ VALUE
 ruby_xml_node_content_get(VALUE self) {
   ruby_xml_node *rxn;
   xmlChar *content;
-  VALUE out;
+  VALUE result;
   
   Data_Get_Struct(self, ruby_xml_node, rxn);
   content = xmlNodeGetContent(rxn->node);
-  out = rb_str_new2((const char *) content);
-  xmlFree(content);
+  if (content) {
+    result = rb_str_new2((const char *) content);
+    xmlFree(content);
+  }
  
-  return out;
+  return result;
 }
 
 /*
@@ -213,12 +222,20 @@ ruby_xml_node_content_set(VALUE self, VALUE content) {
 VALUE
 ruby_xml_node_content_stripped_get(VALUE self) {
   ruby_xml_node *rxn;
+  xmlChar* content;
+  VALUE result = Qnil;
 
   Data_Get_Struct(self, ruby_xml_node, rxn);
-  if (rxn->node->content == NULL)
-    return(Qnil);
-  else
-    return(rb_str_new2((const char*)xmlNodeGetContent(rxn->node)));
+  
+  if (!rxn->node->content) 
+    return result;
+  
+  content = xmlNodeGetContent(rxn->node);
+  if (content) { 
+    result = rb_str_new2((const char*)content);
+    xmlFree(content);
+  }
+  return(result);
 }
 
 /*
@@ -810,14 +827,17 @@ VALUE
 ruby_xml_node_lang_get(VALUE self) {
   ruby_xml_node *rxn;
   xmlChar *lang;
+  VALUE result = Qnil;
 
   Data_Get_Struct(self, ruby_xml_node, rxn);
   lang = xmlNodeGetLang(rxn->node);
 
-  if (lang == NULL)
-    return(Qnil);
-  else
-    return(rb_str_new2((const char*)lang));
+  if (lang) {
+    result = rb_str_new2((const char*)lang);
+    xmlFree(lang);
+  }
+    
+  return(result);
 }
 
 
@@ -1829,21 +1849,19 @@ VALUE
 ruby_xml_node_property_get(VALUE self, VALUE prop) {
   ruby_xml_node *rxn;
   xmlChar *p;
-  VALUE r;
+  VALUE result = Qnil;
   
   prop = check_string_or_symbol( prop );
   
   Data_Get_Struct(self, ruby_xml_node, rxn);
   p = xmlGetProp(rxn->node, (xmlChar*)StringValuePtr(prop));
 
-  if (p == NULL)
-    r = Qnil;
-  else {
-    r = rb_str_new2((const char*)p);
+  if (p) {
+    result = rb_str_new2((const char*)p);
     xmlFree(p);
   }
   
-  return r;
+  return result;
 }
 
 

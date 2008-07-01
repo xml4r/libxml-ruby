@@ -348,14 +348,18 @@ VALUE
 ruby_xml_attr_value(VALUE self) {
   ruby_xml_attr_t *rxa;
   xmlChar *value;
-
+  VALUE result = Qnil;
+  
   Data_Get_Struct(self, ruby_xml_attr_t, rxa);
   if (ruby_xml_attr_parent_q(self) == Qtrue) {
     value = xmlGetProp(rxa->attr->parent, rxa->attr->name);
     if (value != NULL)
-      return(rb_str_new2((const char*)value));
+    {
+      result = rb_str_new2((const char*)value);
+      xmlFree(value);
+    }
   }
-  return(Qnil);
+  return(result);
 }
 
 // Rdoc needs to know 
