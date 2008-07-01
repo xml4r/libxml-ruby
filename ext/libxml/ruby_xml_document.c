@@ -350,7 +350,7 @@ ruby_xml_document_encoding_set(VALUE self, VALUE encoding) {
 
   Check_Type(encoding, T_STRING);
   Data_Get_Struct(self, ruby_xml_document_t, rxd);
-  rxd->doc->encoding = (xmlChar*)ruby_strdup(StringValuePtr(encoding));
+  rxd->doc->encoding = xmlStrdup(StringValuePtr(encoding));
   return(ruby_xml_document_encoding_get(self));
 }
 
@@ -417,21 +417,21 @@ ruby_xml_document_free(ruby_xml_document_t *rxd) {
     break;
   case RUBY_LIBXML_SRC_TYPE_FILE:
     data = (void*)(rx_file_data *)rxd->data;
-    free((rx_file_data *)data);
+    ruby_xfree((rx_file_data *)data);
     break;
   case RUBY_LIBXML_SRC_TYPE_STRING:
     data = (void*)(rx_string_data *)rxd->data;
-    free((rx_string_data *)data);
+    ruby_xfree((rx_string_data *)data);
     break;
   case RUBY_LIBXML_SRC_TYPE_IO:
     data = (void*)(rx_io_data *)rxd->data;
-    free((rx_io_data *)data);
+    ruby_xfree((rx_io_data *)data);
     break;
   default:
     rb_fatal("Unknown data type, %d", rxd->data_type);
   }
 
-  free(rxd);
+  ruby_xfree(rxd);
 }
 
 void
@@ -505,19 +505,19 @@ ruby_xml_document_last_q(VALUE self) {
 }
 
 VALUE
-ruby_xml_document_wrap(VALUE class, xmlDocPtr xnode) {
+ruby_xml_document_wrap(xmlDocPtr xdoc) {
   VALUE obj;
   ruby_xml_document_t *rx;
 
   // This node is already wrapped
-  if (xnode->_private != NULL)
-    return (VALUE)xnode->_private;
-
-  obj=Data_Make_Struct(class,ruby_xml_document_t,
-		       ruby_xml_document_mark,
-		       ruby_xml_document_free,rx);
-  rx->doc=xnode;
-  xnode->_private=(void*)obj;
+  if (xdoc->_private != NULL)
+    return (VALUE)xdoc->_private;
+    
+  obj=Data_Make_Struct(cXMLDocument, ruby_xml_document_t,
+     	               ruby_xml_document_mark, ruby_xml_document_free,rx);
+  
+  rx->doc=xdoc;
+  xdoc->_private=(void*)obj;
   rx->data = NULL;
   rx->data_type = RUBY_LIBXML_SRC_TYPE_NULL;
 
@@ -527,10 +527,6 @@ ruby_xml_document_wrap(VALUE class, xmlDocPtr xnode) {
   return obj;
 }
 
-VALUE
-ruby_xml_document_wrap2(xmlDocPtr xnode) {
-  return ruby_xml_document_wrap(cXMLDocument,xnode);
-}
 
 VALUE
 ruby_xml_document_new_native(VALUE class, VALUE xmlver) {
@@ -539,7 +535,7 @@ ruby_xml_document_new_native(VALUE class, VALUE xmlver) {
   Check_Type(xmlver, T_STRING);
   rx=xmlNewDoc((xmlChar*)StringValuePtr(xmlver));
   rx->_private=NULL;
-  return ruby_xml_document_wrap(class,rx);
+  return ruby_xml_document_wrap(rx);
 }
 
 

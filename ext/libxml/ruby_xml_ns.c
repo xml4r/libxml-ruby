@@ -48,7 +48,7 @@ ruby_xml_ns_free(ruby_xml_ns *rxns) {
     rxns->ns = NULL;
   }
 
-  free(rxns);
+  ruby_xfree(rxns);
 }
 
 

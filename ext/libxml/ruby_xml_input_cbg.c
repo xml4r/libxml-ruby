@@ -66,8 +66,8 @@ int ic_read (void *context, char *buffer, int len) {
 }
 
 int ic_close (void *context) {
-    free( ((ic_doc_context*)context)->buffer );
-    free( context );
+    ruby_xfree( ((ic_doc_context*)context)->buffer );
+    ruby_xfree( context );
     return 1;
 }
 
@@ -118,8 +118,8 @@ input_callbacks_remove_scheme (VALUE self, VALUE scheme_name) {
     if (!strncmp(name, first_scheme->scheme_name, first_scheme->name_len)) {
         save_scheme = first_scheme->next_scheme;
 
-        free(first_scheme->scheme_name);
-        free(first_scheme);
+        ruby_xfree(first_scheme->scheme_name);
+        ruby_xfree(first_scheme);
 
         first_scheme = save_scheme;
         return Qtrue;
@@ -130,8 +130,8 @@ input_callbacks_remove_scheme (VALUE self, VALUE scheme_name) {
         if ( !strncmp( name, scheme->next_scheme->scheme_name, scheme->next_scheme->name_len ) ) {
             save_scheme = scheme->next_scheme->next_scheme;
             
-            free(scheme->next_scheme->scheme_name);
-            free(scheme->next_scheme);
+            ruby_xfree(scheme->next_scheme->scheme_name);
+            ruby_xfree(scheme->next_scheme);
 
             scheme->next_scheme = save_scheme;
             return Qtrue;

@@ -386,10 +386,8 @@ ruby_xml_node_child_add(VALUE self, VALUE rnode) {
  */
 VALUE
 ruby_xml_node_doc(VALUE self) {
-  ruby_xml_document_t *rxd;
   ruby_xml_node *rxn;
   xmlDocPtr doc=NULL;
-  VALUE docobj;
 
   Data_Get_Struct(self, ruby_xml_node, rxn);
   
@@ -737,7 +735,7 @@ ruby_xml_node_html_doc_q(VALUE self) {
 VALUE
 ruby_xml_node_new_cdata(int argc, VALUE *argv, VALUE class) {
   xmlNodePtr xnode;
-  VALUE node, str=Qnil;
+  VALUE str=Qnil;
 
   switch(argc) {
   case 1:
@@ -774,7 +772,7 @@ ruby_xml_node_new_cdata(int argc, VALUE *argv, VALUE class) {
 VALUE
 ruby_xml_node_new_comment(int argc, VALUE *argv, VALUE class) {
   xmlNodePtr xnode;
-  VALUE node, str=Qnil;
+  VALUE str=Qnil;
 
   switch(argc) {
   case 1:
@@ -989,7 +987,6 @@ ruby_xml_node_xlink_q(VALUE self) {
 VALUE
 ruby_xml_node_xlink_type(VALUE self) {
   ruby_xml_node *node;
-  ruby_xml_document_t *doc;
   xlinkType xlt;
 
   Data_Get_Struct(self, ruby_xml_node, node);
@@ -1013,7 +1010,6 @@ ruby_xml_node_xlink_type(VALUE self) {
 VALUE
 ruby_xml_node_xlink_type_name(VALUE self) {
   ruby_xml_node *node;
-  ruby_xml_document_t *doc;
   xlinkType xlt;
 
   Data_Get_Struct(self, ruby_xml_node, node);
@@ -1122,7 +1118,7 @@ ruby_xml_node_namespace_get(VALUE self) {
 
   arr = rb_ary_new();
   for (cur = nsList; *cur != NULL; cur++) {
-    ns = ruby_xml_ns_new2(cXMLNS, ruby_xml_document_wrap(cXMLDocument,node->node->doc), *cur);
+    ns = ruby_xml_ns_new2(cXMLNS, ruby_xml_document_wrap(node->node->doc), *cur);
     if (ns == Qnil)
       continue;
     else
@@ -1149,7 +1145,7 @@ ruby_xml_node_namespace_get_node(VALUE self) {
     return(Qnil);
   else
     return ruby_xml_ns_new2(cXMLNS,
-			    ruby_xml_document_wrap(cXMLDocument,node->node->doc),
+			    ruby_xml_document_wrap(node->node->doc),
 			    node->node->ns);
 }
 
@@ -1208,7 +1204,7 @@ ruby_xml_node_namespace_set(int argc, VALUE *argv, VALUE self) {
     if (ns == NULL)
       rb_raise(eXMLNodeSetNamespace, "unable to set the namespace");
     else
-      return ruby_xml_ns_new2(cXMLNS, ruby_xml_document_wrap(cXMLDocument,rxn->node->doc), ns);
+      return ruby_xml_ns_new2(cXMLNS, ruby_xml_document_wrap(rxn->node->doc), ns);
     break;
 
   default:
@@ -1245,7 +1241,7 @@ ruby_xml_node_namespace_q(VALUE self) {
  *
  * All ruby retrieval for an xml
  * node will result in the same ruby instance. When all handles to them
- * go out of scope, then free gets called and _private is set to NULL.
+ * go out of scope, then ruby_xfree gets called and _private is set to NULL.
  * If the xmlNode has no parent or document, then call xmlFree.
  */
 void
@@ -1258,7 +1254,7 @@ ruby_xml_node2_free(ruby_xml_node *rxn) {
 
     if ( rxn->node->doc==NULL && rxn->node->parent==NULL ) {
 #ifdef NODE_DEBUG
-      fprintf(stderr,"ruby_xml_node2_free free rxn=0x%x xn=0x%x o=0x%x\n",(long)rxn,(long)rxn->node,(long)rxn->node->_private);
+      fprintf(stderr,"ruby_xml_node2_free ruby_xfree rxn=0x%x xn=0x%x o=0x%x\n",(long)rxn,(long)rxn->node,(long)rxn->node->_private);
 #endif
       xmlFreeNode(rxn->node);
     }
@@ -1266,7 +1262,7 @@ ruby_xml_node2_free(ruby_xml_node *rxn) {
     rxn->node=NULL;
   }
 
-  free(rxn);
+  ruby_xfree(rxn);
 }
 
 void
@@ -1298,7 +1294,6 @@ ruby_xml_node_mark_common(xmlNodePtr node) {
 
 void
 ruby_xml_node2_mark(ruby_xml_node *rxn) {
-  xmlNodePtr node;
   if (rxn->node == NULL ) return;
 
   if (rxn->node->_private == NULL ) {
@@ -1343,7 +1338,6 @@ ruby_xml_node2_new_native(VALUE class, VALUE ns, VALUE name)
   VALUE obj;
   xmlNodePtr xnode;
   xmlNsPtr xns=NULL;
-  ruby_xml_node *rxn;
 
   if ( ! NIL_P(ns) ) {
     Data_Get_Struct(ns,xmlNs,xns);
@@ -1362,7 +1356,6 @@ VALUE
 ruby_xml_node2_new_string(VALUE class, VALUE ns, VALUE name, VALUE val)
 {
   VALUE obj;
-  char* value;
   obj=ruby_xml_node2_new_native(class,ns,name);
   if ( ! NIL_P(val) ) {
     if ( TYPE(val) != T_STRING )
@@ -1383,7 +1376,8 @@ ruby_xml_node2_new_string(VALUE class, VALUE ns, VALUE name, VALUE val)
 VALUE
 ruby_xml_node2_new_string_bc(int argc, VALUE *argv, VALUE class)
 {
-  VALUE content=Qnil,name=Qnil,rxnode;
+  VALUE content=Qnil;
+  VALUE name=Qnil;
   switch(argc) {
   case 2:
     content=argv[1];
@@ -1560,7 +1554,7 @@ ruby_xml_node_ns_def_get(VALUE self) {
   if (rxn->node->nsDef == NULL)
     return(Qnil);
   else
-    return(ruby_xml_ns_new2(cXMLNS, ruby_xml_document_wrap(cXMLDocument,rxn->node->doc), rxn->node->nsDef));
+    return(ruby_xml_ns_new2(cXMLNS, ruby_xml_document_wrap(rxn->node->doc), rxn->node->nsDef));
 }
 
 
@@ -1957,7 +1951,7 @@ ruby_xml_node_search_href(VALUE self, VALUE href) {
 
   Check_Type(href, T_STRING);
   Data_Get_Struct(self, ruby_xml_node, node);
-  return(ruby_xml_ns_new2(cXMLNS, ruby_xml_document_wrap(cXMLDocument,node->node->doc),
+  return(ruby_xml_ns_new2(cXMLNS, ruby_xml_document_wrap(node->node->doc),
 			  xmlSearchNsByHref(node->node->doc, node->node,
 					    (xmlChar*)StringValuePtr(href))));
 }
@@ -1976,7 +1970,7 @@ ruby_xml_node_search_ns(VALUE self, VALUE ns) {
   Check_Type(ns, T_STRING);
   Data_Get_Struct(self, ruby_xml_node, node);
   return(ruby_xml_ns_new2(cXMLNS,
-			  ruby_xml_document_wrap(cXMLDocument,node->node->doc),
+			  ruby_xml_document_wrap(node->node->doc),
 			  xmlSearchNs(node->node->doc, node->node,
 				      (xmlChar*)StringValuePtr(ns))));
 }

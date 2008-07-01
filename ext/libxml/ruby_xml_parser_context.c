@@ -82,7 +82,7 @@ ruby_xml_parser_context_doc_get(VALUE self) {
   if (rxpc->ctxt->myDoc == NULL)
     return(Qnil);
 
-  return(ruby_xml_document_wrap(cXMLDocument, rxpc->ctxt->myDoc));
+  return(ruby_xml_document_wrap(rxpc->ctxt->myDoc));
 }
 
 
@@ -145,7 +145,7 @@ ruby_xml_parser_context_free(ruby_xml_parser_context *rxpc) {
     rxpc->ctxt = NULL;
   }
 
-  free(rxpc);
+  ruby_xfree(rxpc);
 }
 
 void

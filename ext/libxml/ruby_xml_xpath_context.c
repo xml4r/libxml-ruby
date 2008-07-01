@@ -18,7 +18,7 @@ ruby_xml_xpath_context_doc_get(VALUE self) {
   xmlXPathContextPtr ctxt;
   Data_Get_Struct(self, xmlXPathContext, ctxt);
 
-  return ruby_xml_document_wrap2(ctxt->doc);
+  return ruby_xml_document_wrap(ctxt->doc);
 }
 
 

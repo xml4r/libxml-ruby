@@ -85,21 +85,21 @@ ruby_xml_html_parser_free(ruby_xml_html_parser *rxp) {
     break;
   case RUBY_LIBXML_SRC_TYPE_FILE:
     data = (void *)(rx_file_data *)rxp->data;
-    free((rx_file_data *)data);
+    ruby_xfree((rx_file_data *)data);
     break;
   case RUBY_LIBXML_SRC_TYPE_STRING:
     data = (void *)(rx_string_data *)rxp->data;
-    free((rx_string_data *)data);
+    ruby_xfree((rx_string_data *)data);
     break;
   case RUBY_LIBXML_SRC_TYPE_IO:
     data = (void *)(rx_io_data *)rxp->data;
-    free((rx_io_data *)data);
+    ruby_xfree((rx_io_data *)data);
     break;
   default:
     rb_fatal("Unknown data type, %d", rxp->data_type);
   }
 
-  free(rxp);
+  ruby_xfree(rxp);
 }
 
 
@@ -316,7 +316,6 @@ ruby_xml_html_parser_new_string(VALUE class, VALUE str) {
  */
 VALUE
 ruby_xml_html_parser_parse(VALUE self) {
-  ruby_xml_document_t *rxd;
   ruby_xml_html_parser *rxp;
   ruby_xml_parser_context *rxpc;
   htmlDocPtr xdp;
@@ -339,7 +338,7 @@ ruby_xml_html_parser_parse(VALUE self) {
     xdp = rxpc->ctxt->myDoc;
     rxp->parsed = 1;
 
-    doc = ruby_xml_document_wrap(cXMLDocument, xdp);
+    doc = ruby_xml_document_wrap(xdp);
     break;
   default:
     rb_fatal("Unknown data type, %d", rxp->data_type);

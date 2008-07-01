@@ -15,7 +15,7 @@ ruby_xml_schema_free(ruby_xml_schema *rxschema) {
     rxschema->schema = NULL;
   }
 
-  free(rxschema);
+  ruby_xfree(rxschema);
 }
 
 /*

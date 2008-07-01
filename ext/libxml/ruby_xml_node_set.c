@@ -101,7 +101,7 @@ ruby_xml_node_set_mark(ruby_xml_node_set *rxnset) {
 
 static void
 ruby_xml_node_set_free(ruby_xml_node_set *rxnset) {
-  free(rxnset);
+  ruby_xfree(rxnset);
 }
 
 VALUE

@@ -14,7 +14,7 @@ void ruby_xml_attr_free(ruby_xml_attr_t *rx) {
     rx->attr->_private=NULL;
     if (rx->attr->parent == NULL && rx->attr->doc == NULL ) {
 #ifdef NODE_DEBUG
-      fprintf(stderr,"free rxn=0x%x xn=0x%x o=0x%x\n",(long)rxn,(long)rxn->node,(long)rxn->node->_private);
+      fprintf(stderr,"ruby_xfree rxn=0x%x xn=0x%x o=0x%x\n",(long)rxn,(long)rxn->node,(long)rxn->node->_private);
 #endif
       xmlFreeProp(rx->attr);
     }
@@ -22,12 +22,11 @@ void ruby_xml_attr_free(ruby_xml_attr_t *rx) {
     rx->attr=NULL;
   }
 
-  free(rx);
+  ruby_xfree(rx);
 }
 
 void
 ruby_xml_attr_mark(ruby_xml_attr_t *rx) {
-  xmlNodePtr node;
   if ( rx == NULL ) return;
   if ( rx->attr == NULL ) return;
 
@@ -37,7 +36,7 @@ ruby_xml_attr_mark(ruby_xml_attr_t *rx) {
     return;
   }
 
-  ruby_xml_node_mark_common(rx->attr);
+  ruby_xml_node_mark_common((xmlNodePtr)rx->attr);
 }
 
 VALUE
@@ -119,7 +118,7 @@ ruby_xml_attr_doc_get(VALUE self) {
   if (rxa->attr->doc == NULL)
     return(Qnil);
   else
-    return(ruby_xml_document_wrap(cXMLDocument, rxa->attr->doc));
+    return(ruby_xml_document_wrap(rxa->attr->doc));
 }
 
 /*
@@ -249,7 +248,7 @@ ruby_xml_attr_ns_get(VALUE self) {
   if (rxa->attr->ns == NULL)
     return(Qnil);
   else
-    return(ruby_xml_ns_new2(cXMLNS, NULL, rxa->attr->ns));
+    return(ruby_xml_ns_new2(cXMLNS, Qnil, rxa->attr->ns));
 }
 
 

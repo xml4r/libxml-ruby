@@ -119,7 +119,6 @@ ruby_xml_xpath_find(VALUE class, VALUE anode, VALUE xpath_expr, VALUE nslist) {
   xmlXPathCompExprPtr comp;
   xmlXPathObjectPtr xxpop;
   ruby_xml_node *node;
-  ruby_xml_xpath *rxxp;
   xmlXPathContextPtr ctxt;
   ruby_xml_document_t *rdocp;
   VALUE rnode, xxpc;

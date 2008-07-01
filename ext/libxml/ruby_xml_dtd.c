@@ -10,7 +10,7 @@ ruby_xml_dtd_free(ruby_xml_dtd *rxdtd) {
     rxdtd->dtd = NULL;
   }
 
-  free(rxdtd);
+  ruby_xfree(rxdtd);
 }
 
 static void
@@ -48,7 +48,7 @@ ruby_xml_dtd_initialize(int argc, VALUE *argv, VALUE class) {
     rxdtd->dtd = xmlParseDTD( (xmlChar*)StringValuePtr(external),
                               (xmlChar*)StringValuePtr(system) );
     if (rxdtd->dtd == NULL) {
-      free(rxdtd);
+      ruby_xfree(rxdtd);
       return(Qfalse);
     }
 

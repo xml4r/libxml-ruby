@@ -14,7 +14,7 @@ void
 ruby_xml_state_free(int * dummy) {
   if ( dummy==NULL ) return;
   xmlCleanupParser();
-  free(dummy);
+  ruby_xfree(dummy);
   dummy=NULL;
   weak_holder=Qnil;
   rb_ivar_set(cXMLState,id_state,Qnil);
@@ -57,10 +57,9 @@ ruby_xml_state_object() {
 
 VALUE
 ruby_xml_state_object_find_aux(VALUE id) {
-  rb_funcall(rb_const_get(rb_cModule,rb_intern("ObjectSpace")),
-	     rb_intern("_id2ref"),
-	     1,
-	     id);
+  return rb_funcall(rb_const_get(rb_cModule,rb_intern("ObjectSpace")),
+	            rb_intern("_id2ref"),
+	            1, id);
 }
 
 

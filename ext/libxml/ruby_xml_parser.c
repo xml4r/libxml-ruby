@@ -12,7 +12,7 @@ VALUE cXMLParser;
 VALUE eXMLParserParseError;
 
 static int
-ctxtRead(FILE *f, char * buf, int len) {
+ctxtRead(FILE *f, char * buf, size_t len) {
     return(fread(buf, 1, len, f));
 }
 
@@ -587,7 +587,7 @@ ruby_xml_parser_default_tree_indent_string_get(VALUE class) {
 VALUE
 ruby_xml_parser_default_tree_indent_string_set(VALUE class, VALUE string) {
   Check_Type(string, T_STRING);
-  xmlTreeIndentString = ruby_strdup(StringValuePtr(string));
+  xmlTreeIndentString = xmlStrdup(StringValuePtr(string));
   return(string);
 }
 
@@ -786,7 +786,7 @@ ruby_xml_parser_filename_set(VALUE self, VALUE filename) {
   Data_Get_Struct(rxp->ctxt, ruby_xml_parser_context, rxpc);
   rxpc->ctxt = xmlCreateFileParserCtxt(StringValuePtr(filename));
   if (rxpc->ctxt == NULL)
-    rb_sys_fail(StringValuePtr(filename));
+    rb_raise(rb_eIOError, filename);
 
   return(data->filename);
 }
@@ -801,21 +801,21 @@ ruby_xml_parser_free(ruby_xml_parser *rxp) {
     break;
   case RUBY_LIBXML_SRC_TYPE_FILE:
     data = (void *)(rx_file_data *)rxp->data;
-    free((rx_file_data *)data);
+    ruby_xfree((rx_file_data *)data);
     break;
   case RUBY_LIBXML_SRC_TYPE_STRING:
     data = (void *)(rx_string_data *)rxp->data;
-    free((rx_string_data *)data);
+    ruby_xfree((rx_string_data *)data);
     break;
   case RUBY_LIBXML_SRC_TYPE_IO:
     data = (void *)(rx_io_data *)rxp->data;
-    free((rx_io_data *)data);
+    ruby_xfree((rx_io_data *)data);
     break;
   default:
     rb_fatal("Unknown data type, %d", rxp->data_type);
   }
 
-  free(rxp);
+  ruby_xfree(rxp);
 }
 
 
@@ -893,6 +893,10 @@ ruby_xml_parser_io_set(VALUE self, VALUE io) {
   rx_io_data *data;
   OpenFile *fptr;
   FILE *f;
+  
+  #ifdef _WIN32
+    rb_raise(rb_eRuntimeError, "Setting an io buffer is not supported on Windows");
+  #endif             
 
   if (!rb_obj_is_kind_of(io, rb_cIO))
     rb_raise(rb_eTypeError, "need an IO object");
@@ -922,7 +926,7 @@ ruby_xml_parser_io_set(VALUE self, VALUE io) {
   rxpc->ctxt = xmlCreateIOParserCtxt(NULL, NULL,
 				     (xmlInputReadCallback) ctxtRead,
 				     NULL, f, XML_CHAR_ENCODING_NONE);
-  if (NIL_P(rxpc->ctxt))
+  if (!rxpc->ctxt)
     rb_sys_fail(0);
 
   return(data->io);
@@ -1107,7 +1111,6 @@ ruby_xml_parser_new_string(VALUE class, VALUE str) {
  */
 VALUE
 ruby_xml_parser_parse(VALUE self) {
-  ruby_xml_document_t *rxd;
   ruby_xml_parser *rxp;
   ruby_xml_parser_context *rxpc;
   xmlDocPtr xdp;
@@ -1136,7 +1139,7 @@ ruby_xml_parser_parse(VALUE self) {
       rxp->parsed = 1;
     }
 
-    doc = ruby_xml_document_wrap(cXMLDocument, xdp);
+    doc = ruby_xml_document_wrap(xdp);
     break;
   default:
     rb_fatal("Unknown data type, %d", rxp->data_type);
@@ -1154,7 +1157,7 @@ ruby_xml_parser_parse(VALUE self) {
  * parser.
  */
 VALUE
-ruby_xml_parser_parser_context_get(VALUE self) {
+ruby_xml_parser_context_get(VALUE self) {
   ruby_xml_parser *rxp;
 
   Data_Get_Struct(self, ruby_xml_parser, rxp);
@@ -1406,7 +1409,7 @@ ruby_init_parser(void) {
   rb_define_method(cXMLParser, "io", ruby_xml_parser_io_get, 0);
   rb_define_method(cXMLParser, "io=", ruby_xml_parser_io_set, 1);
   rb_define_method(cXMLParser, "parse", ruby_xml_parser_parse, 0);
-  rb_define_method(cXMLParser, "parser_context", ruby_xml_parser_parser_context_get, 0);
+  rb_define_method(cXMLParser, "context", ruby_xml_parser_context_get, 0);
   rb_define_method(cXMLParser, "string", ruby_xml_parser_str_get, 0);
   rb_define_method(cXMLParser, "string=", ruby_xml_parser_str_set, 1);
   
