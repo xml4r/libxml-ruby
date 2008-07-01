@@ -60,17 +60,23 @@ ruby_xml_xpath_object_wrap(xmlXPathObjectPtr xpop)
       rval=Qtrue;
     else
       rval=Qfalse;
+ 
+    xmlXPathFreeObject(xpop);
     break;
   case XPATH_NUMBER:
     rval=rb_float_new(xpop->floatval);
+ 
+    xmlXPathFreeObject(xpop);
     break;
   case XPATH_STRING:
     rval=rb_str_new2(xpop->stringval);
+ 
+    xmlXPathFreeObject(xpop);
     break;
   default:
+    xmlXPathFreeObject(xpop);
     rval=Qnil;
   }
-  xmlXPathFreeObject(xpop);
   return rval;
 }
 
