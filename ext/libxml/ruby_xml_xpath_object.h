@@ -10,7 +10,6 @@ typedef struct ruby_xml_xpath_object_s {
 } ruby_xml_xpath_object;
 
 VALUE ruby_xml_xpath_object_wrap(xmlXPathObjectPtr xpop);
-
 VALUE ruby_xml_xpath_object_to_a(VALUE self);
 VALUE ruby_xml_xpath_object_first(VALUE self);
 VALUE ruby_xml_xpath_object_set(VALUE self);

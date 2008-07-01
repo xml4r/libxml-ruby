@@ -43,10 +43,17 @@ ruby_xml_xpath_object_wrap(xmlXPathObjectPtr xpop)
 
   switch(xpop->type) {
   case XPATH_NODESET:
-    return Data_Wrap_Struct(cXMLXPathObject,
-			    ruby_xml_xpath_object_mark,
-			    ruby_xml_xpath_object_free,
-			    xpop);
+    rval = Data_Wrap_Struct(cXMLXPathObject,
+                            ruby_xml_xpath_object_mark,
+                            ruby_xml_xpath_object_free,
+                            xpop);
+  
+    if (xpop->type == XPATH_NODESET && !((xpop->nodesetval == NULL) || (xpop->nodesetval->nodeNr == 0))) {
+      int i;
+      for (i = 0; i < xpop->nodesetval->nodeNr; i++) {
+        ruby_xml_xpath_object_tabref(xpop, i);
+      }
+    }
     break;
   case XPATH_BOOLEAN:
     if (xpop->boolval != 0)
@@ -67,6 +74,7 @@ ruby_xml_xpath_object_wrap(xmlXPathObjectPtr xpop)
   return rval;
 }
 
+
 /*
  * call-seq:
  *    xpath_object.to_a => [node, ..., node]
@@ -85,7 +93,7 @@ ruby_xml_xpath_object_to_a(VALUE self)
   set_ary = rb_ary_new();
   if (!((xpop->nodesetval == NULL) || (xpop->nodesetval->nodeNr == 0))) {
     for (i = 0; i < xpop->nodesetval->nodeNr; i++) {
-      nodeobj = ruby_xml_node2_wrap(cXMLNode, xpop->nodesetval->nodeTab[i]);
+      nodeobj = ruby_xml_xpath_object_tabref(xpop, i);
       rb_ary_push(set_ary, nodeobj);
     }
   }

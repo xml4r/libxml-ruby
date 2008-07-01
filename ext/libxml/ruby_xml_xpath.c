@@ -175,15 +175,7 @@ ruby_xml_xpath_find(VALUE class, VALUE anode, VALUE xpath_expr, VALUE nslist) {
   if ( xxpop == NULL )
     return Qnil;
 
-#define ALT
-#ifdef ALT
   rxpop = ruby_xml_xpath_object_wrap(xxpop);
-#else
-  rxpop = Data_Wrap_Struct(cXMLXPathObject,
-			   ruby_xml_xpath_object_mark,
-			   ruby_xml_xpath_object_free,
-			   xxpop);
-#endif
 
 #ifdef NODE_DEBUG
   fprintf(stderr,"xpo 0x%x class=%s\n",
