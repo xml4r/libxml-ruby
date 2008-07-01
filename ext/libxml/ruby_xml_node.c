@@ -1272,7 +1272,7 @@ ruby_xml_node2_free(ruby_xml_node *rxn) {
   if (rxn->node != NULL ) {
     rxn->node->_private=NULL;
 
-    if ( rxn->node->doc==NULL && rxn->node->parent==NULL ) {
+    if ( rxn->node->doc==NULL || rxn->node->parent==NULL ) {
 #ifdef NODE_DEBUG
       fprintf(stderr,"ruby_xml_node2_free ruby_xfree rxn=0x%x xn=0x%x o=0x%x\n",(long)rxn,(long)rxn->node,(long)rxn->node->_private);
 #endif
@@ -1953,7 +1953,7 @@ ruby_xml_node_remove_ex(VALUE self) {
   ruby_xml_node *rxn;
   Data_Get_Struct(self, ruby_xml_node, rxn);
   xmlUnlinkNode(rxn->node);
-    return(Qnil);
+  return(Qnil);
 }
 
 
