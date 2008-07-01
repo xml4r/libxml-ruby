@@ -26,24 +26,28 @@ ruby_xml_schema_free(ruby_xml_schema *rxschema) {
  */
 VALUE
 ruby_xml_schema_init_from_uri(int argc, VALUE *argv, VALUE class) {
-  VALUE uri;
   xmlSchemaParserCtxtPtr parser;
-  xmlSchemaPtr sptr;
+  ruby_xml_schema *schema;
+  
+  VALUE uri;
+  VALUE result = Qnil;
 
   switch (argc) {
   case 1:
     rb_scan_args(argc, argv, "10", &uri);
-
     Check_Type(uri, T_STRING);
 
- 	parser = xmlSchemaNewParserCtxt(StringValuePtr(uri));
- 	sptr = xmlSchemaParse(parser);
- 	xmlSchemaFreeParserCtxt(parser);
+    parser = xmlSchemaNewParserCtxt(StringValuePtr(uri));
+    schema = ALLOC(ruby_xml_schema);
+    schema->schema = xmlSchemaParse(parser);
+    xmlSchemaFreeParserCtxt(parser);
+ 	
+    result = Data_Wrap_Struct(cXMLSchema, ruby_xml_schema_mark, ruby_xml_schema_free, schema);
     break;
   default:
     rb_raise(rb_eArgError, "wrong number of arguments (need 1)");
   }
-  return Qnil;
+  return(result);
 }
 
 /*
