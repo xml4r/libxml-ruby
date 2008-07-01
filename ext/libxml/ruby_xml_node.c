@@ -1881,7 +1881,10 @@ ruby_xml_node_property_set(VALUE self, VALUE key, VALUE val) {
   
   if( val == Qnil ) {
     attr = xmlSetProp(node->node, (xmlChar*)StringValuePtr(key), NULL);
-    xmlRemoveProp( attr );
+    if (attr->_private == NULL)
+      xmlRemoveProp( attr );
+    else
+      xmlUnlinkNode( attr );
     return Qnil;
   } else {
     Check_Type(val, T_STRING);

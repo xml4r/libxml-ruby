@@ -340,6 +340,20 @@ ruby_xml_attr_prev_q(VALUE self) {
 
 /*
  * call-seq:
+ *     node.remove! => nil
+ * 
+ * Removes this attribute from it's parent.
+ */
+VALUE
+ruby_xml_attr_remove_ex(VALUE self) {
+  ruby_xml_attr_t *rxa;
+  Data_Get_Struct(self, ruby_xml_attr_t, rxa);
+  xmlUnlinkNode(rxa->attr);
+  return(Qnil);
+}
+
+/*
+ * call-seq:
  *    attr.value => "value"
  * 
  * Obtain the value of this attribute.
@@ -386,5 +400,6 @@ ruby_init_xml_attr(void) {
   rb_define_method(cXMLAttr, "parent?", ruby_xml_attr_parent_q, 0);
   rb_define_method(cXMLAttr, "prev", ruby_xml_attr_prev_get, 0);
   rb_define_method(cXMLAttr, "prev?", ruby_xml_attr_prev_q, 0);
+  rb_define_method(cXMLAttr, "remove!", ruby_xml_attr_remove_ex, 0);
   rb_define_method(cXMLAttr, "value", ruby_xml_attr_value, 0);
 }
