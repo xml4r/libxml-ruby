@@ -15,9 +15,13 @@ typedef struct rxp_document {
 
 VALUE ruby_xml_document_filename_get(VALUE self);
 VALUE ruby_xml_document_new_native(VALUE class, VALUE xmlver);
-VALUE ruby_xml_document_wrap(xmlDocPtr xnode);
 void  ruby_xml_document_free(ruby_xml_document_t *rxd);
 VALUE ruby_xml_document_root_get(VALUE self);
 void  ruby_init_xml_document(void);
+
+#if defined(_WIN32)
+__declspec(dllexport) 
+#endif
+VALUE ruby_xml_document_wrap(xmlDocPtr xnode);
 
 #endif
