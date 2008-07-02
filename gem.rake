@@ -6,8 +6,6 @@ require 'date'
 SO_NAME = "libxml.so"
 
 # ------- Default Package ----------
-RUBY_PROF_VERSION = "0.6.1"
-
 FILES = FileList[
   'README',
   'LICENSE',
@@ -36,7 +34,7 @@ default_spec = Gem::Specification.new do |spec|
 
   # Determine the current version of the software
   spec.version = 
-    if File.read('ext/libxml/ruby_libxml.h') =~ /\s*RUBY_LIBXML_VERSION\s*['"](\d.+)['"]/
+    if File.read('ext/libxml/version.h') =~ /\s*RUBY_LIBXML_VERSION\s*['"](\d.+)['"]/
       CURRENT_VERSION = $1
     else
       CURRENT_VERSION = "0.0.0"
@@ -88,7 +86,7 @@ task :create_win32_gem do
   # since there are no dependencies of msvcr80.dll
   current_dir = File.expand_path(File.dirname(__FILE__))
 
-  libraries = [SO_NAME, 'libxml2.dll', 'libiconv-2.dll']
+  libraries = [SO_NAME, 'libxml2-2.dll', 'libiconv-2.dll']
 
   libraries.each do |file_name|
     source = File.join(current_dir, 'work', 'mingw', file_name)
