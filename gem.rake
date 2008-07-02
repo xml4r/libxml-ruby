@@ -11,10 +11,15 @@ FILES = FileList[
   'LICENSE',
   'CHANGES',
   'bin/*',
-  'lib/**/*',
-  'ext/**/*',
   'doc/**/*',
+  'ext/**/*',
+  'lib/**/*',
+  'mingw/*.rake',
+  'mingw/*.dll',
+  'mingw/*.so',
   'test/*',
+  'vc/*.sln',
+  'vc/*.vcproj',
   'work/**/*'
 ]
 
@@ -59,7 +64,7 @@ default_spec = Gem::Specification.new do |spec|
   # Show source inline with line numbers
   spec.rdoc_options << "--inline-source" << "--line-numbers"
   # Make the readme file the start page for the generated html
-  spec.rdoc_options << '--main' << 'README'
+  #spec.rdoc_options << '--main' << 'README'
   #spec.extra_rdoc_files = ['ext/libxml/*.c',
    #                        'README',
     #                       'LICENSE']
@@ -74,11 +79,14 @@ end
 
 
 # ------- Windows Package ----------
+
+libraries = [SO_NAME]
+
 # Windows specification
 win_spec = default_spec.clone
 win_spec.extensions = []
 win_spec.platform = Gem::Platform::CURRENT
-win_spec.files += ["lib/#{SO_NAME}"]
+win_spec.files += libraries.map {|lib_name| "lib/#{lib_name}"}
 
 desc "Create Windows Gem"
 task :create_win32_gem do
@@ -86,10 +94,8 @@ task :create_win32_gem do
   # since there are no dependencies of msvcr80.dll
   current_dir = File.expand_path(File.dirname(__FILE__))
 
-  libraries = [SO_NAME, 'libxml2-2.dll', 'libiconv-2.dll']
-
   libraries.each do |file_name|
-    source = File.join(current_dir, 'work', 'mingw', file_name)
+    source = File.join(current_dir, 'mingw', file_name)
     target = File.join(current_dir, 'lib', file_name)
     cp(source, target)
   end
