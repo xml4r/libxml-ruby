@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="libxml"
-	ProjectGUID="{6DCFD1E6-224E-479C-BBD9-B6931DFCD02C}"
+	ProjectGUID="{0B65CD1D-EEB9-41AE-93BB-75496E504152}"
 	RootNamespace="libxml"
 	Keyword="Win32Proj"
 	>
@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;C:\Development\ruby\lib\ruby\1.8\i386-mswin32&quot;;&quot;C:\Development\msys\src\libxml2-2.6.32\include&quot;;&quot;C:\Development\msys\src\libiconv\1.9.2\libiconv-1.9.2\include&quot;"
+				AdditionalIncludeDirectories="&quot;C:\Development\ruby\lib\ruby\1.8\i386-mswin32&quot;;&quot;C:\Development\msys\src\libxml2-2.6.32\include&quot;;&quot;C:\Development\msys\src\libiconv-1.12\include&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;LIBXML_EXPORTS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -62,7 +62,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="msvcrt-ruby18.lib libxml2.lib"
-				OutputFile="$(OutDir)\$(ProjectName).so"
+				OutputFile="C:\Development\msys\src\rlibxml\work\vc\Debug\libxml.so"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="C:\Development\ruby\lib;&quot;C:\Development\msys\src\libxml2-2.6.32\win32\lib&quot;"
 				GenerateDebugInformation="true"
@@ -119,7 +119,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;C:\Development\ruby\lib\ruby\1.8\i386-mswin32&quot;;&quot;C:\Development\msys\src\libxml2-2.6.32\include&quot;;&quot;C:\Development\msys\src\libiconv\1.9.2\libiconv-1.9.2\include&quot;"
+				AdditionalIncludeDirectories="&quot;C:\Development\ruby\lib\ruby\1.8\i386-mswin32&quot;;&quot;C:\Development\msys\src\libxml2-2.6.32\include&quot;;&quot;C:\Development\msys\src\libiconv-1.12\include&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;LIBXML_EXPORTS"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
