@@ -31,6 +31,6 @@ SRC.each do |srcfile|
 end
 
 file "libxml" => OBJ do
-  command = "gcc -shared -o libxml.so -L/usr/local/bin -lxml2 #{OBJ} #{RUBY_BIN_DIR}/#{RUBY_SHARED_DLL}" 
+  command = "libtool --mode=link gcc -shared -o libxml.so -L/usr/local/lib -lxml2 #{OBJ} #{RUBY_BIN_DIR}/#{RUBY_SHARED_DLL}" 
   sh "sh -c '#{command}'" 
 end
