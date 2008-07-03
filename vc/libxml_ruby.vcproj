@@ -62,7 +62,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="msvcrt-ruby18.lib libxml2.lib"
-				OutputFile="C:\Development\ruby\lib\ruby\gems\1.8\gems\libxml-ruby-0.6.0-x86-mswin32-60\lib\libxml.so"
+				OutputFile="$(OutDir)\$(ProjectName).so"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="C:\Development\ruby\lib;&quot;C:\Development\msys\src\libxml2-2.6.32\win32\lib&quot;"
 				GenerateDebugInformation="true"
