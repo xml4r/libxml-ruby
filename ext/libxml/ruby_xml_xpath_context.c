@@ -25,6 +25,10 @@ ruby_xml_xpath_context_doc_get(VALUE self) {
 void
 ruby_xml_xpath_context_free(xmlXPathContextPtr ctxt) {
   if (ctxt != NULL) {
+    if (ctxt->namespaces != NULL) {
+      xmlFree(ctxt->namespaces);
+      ctxt->namespaces = NULL;
+    }  
     xmlXPathFreeContext(ctxt);
     ctxt = NULL;
   }
