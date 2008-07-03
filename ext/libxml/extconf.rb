@@ -150,7 +150,7 @@ EOL
   #$INSTALLFILES = [["libxml.rb", "$(RUBYLIBDIR)", "../xml"]]
 
   create_header()
-  create_makefile('libxml')
+  create_makefile('libxml_ruby')
 end
 
 __END__

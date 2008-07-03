@@ -17,7 +17,7 @@ __declspec(dllexport)
 #endif
 
 void
-Init_libxml(void) {
+Init_libxml_ruby(void) {
   /* Some libxml memory goo that should be done before anything else */
 #ifdef NONE
   xmlMemGet((xmlFreeFunc *) & freeFunc,

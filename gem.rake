@@ -3,7 +3,7 @@ require 'date'
 require 'rake/gempackagetask'
 require 'date'
 
-SO_NAME = "libxml.so"
+SO_NAME = "libxml_ruby.so"
 
 # ------- Default Package ----------
 FILES = FileList[
@@ -46,7 +46,6 @@ default_spec = Gem::Specification.new do |spec|
     end
   
   spec.author = "Charlie Savage"
-  spec.email = "cfis@savagexi.com"
   spec.platform = Gem::Platform::RUBY
   spec.require_path = "lib" 
   spec.bindir = "bin"

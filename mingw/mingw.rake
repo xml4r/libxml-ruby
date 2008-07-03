@@ -17,7 +17,7 @@ CLOBBER.include('libxml.so')
 
 task :default => "libxml"
 
-SRC = FileList['../../ext/libxml/*.c']
+SRC = FileList['../ext/libxml/*.c']
 OBJ = SRC.collect do |file_name|
   File.basename(file_name).ext('o')
 end
@@ -31,6 +31,6 @@ SRC.each do |srcfile|
 end
 
 file "libxml" => OBJ do
-  command = "libtool --mode=link gcc -shared -o libxml.so -L/usr/local/lib -lxml2 #{OBJ} #{RUBY_BIN_DIR}/#{RUBY_SHARED_DLL}" 
+  command = "libtool --mode=link gcc -shared -o libxml_ruby.so -L/usr/local/lib -lxml2 #{OBJ} #{RUBY_BIN_DIR}/#{RUBY_SHARED_DLL}" 
   sh "sh -c '#{command}'" 
 end
