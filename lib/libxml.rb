@@ -111,11 +111,17 @@ class XML::Attr
   alias :each :each_sibling
   
   def to_h
-    inject({}) do |h,a| h[a.name] = a.value; h end
+    inject({}) do |h,a|
+      h[a.name] = a.value
+      h
+    end
   end
 
   def to_a
-    inject([]) do |ary,a| ary << [a.name, a.value] end
+    inject([]) do |ary,a| 
+      ary << [a.name, a.value]
+      ary
+    end
   end
   
   def to_s
