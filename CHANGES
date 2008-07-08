@@ -1,5 +1,30 @@
 (See log/ChangeLog for more detailed changes derived directly from source control.)
 
+== 0.6..0 / 2008-07-01 Charlie Savage
+
+* Fixed memory allocation errors in Windows.  On Windows, it is essential that the same library that allocates memory must free it. Thus ALLOC calls must be matched to ruby_xfree calls, which they were not.  In addition, in one case Ruby was allocating memory to be freed by libxml.  On Windows, that's a segmentation fault.  On Linux it might fly, but still seems like a bad idea.
+
+* Fixed segmentation fault in xml reader expand (same xml tree freed twice)
+
+* Applied a number of patches from Tom Bagby, including fixes for xpath segmentation faults and fixes for various memory leaks
+
+* Cleaned up a number of compiler warnings
+
+* Renamed libxml_so.so to libxml_ruby.so (same for xslt).  That wasn't actually my original intention, but um, it kind of sort of happened.  It should not be noticeable from an end-user perspective.
+
+* Added rake files for building with MingW
+
+* Added rake files for packing gems.  Note that I did this outside the existing rake tasks because I didn't see how they were actually building the gems.
+
+* Cleaned up the tests and added a few more based on bug reports from the Tracker and mailing list.
+
+* Cleaned out the patch queue and went through about 1/2 the bug list
+
+
+=== 2007-11-16 "Dan Janowski" <danj at 3skel.com>
+
+* Merged Dan's MEM2 branch to trunk.
+
 == 0.5.3 /
 
 === 2007-11-16 "Dan Janowski" <danj at 3skel.com>
