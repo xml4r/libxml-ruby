@@ -20,25 +20,6 @@ class TC_XML_Node4 < Test::Unit::TestCase
     @root = nil
   end
 
-  def test_xml_node_eql?()
-    first1 = @root.child
-    first2 = @doc2.root.child
-
-    assert_not_equal first1.object_id, first2.object_id
-    assert first1.eql?(first2)
-    assert first2.eql?(first1)
-
-    assert_equal first1, first2
-  end
-
-  def test_xml_node_hash()
-    first1 = @root.child
-    first2 = @doc2.root.child
-
-    assert_not_equal first1.object_id, first2.object_id
-    assert_equal first1.hash, first2.hash
-  end
-
   def test_01_xml_node_remove!()
     first = @root.child
 
@@ -72,15 +53,4 @@ class TC_XML_Node4 < Test::Unit::TestCase
 
     assert_equal 'one', first.content
   end
-
-  def test_xml_node_property_set_remove()
-    assert_equal 'booga', @root['uga']
-    @root['uga'] = nil
-    assert_equal nil , @root['uga']
-    assert_equal "<ruby_array foo=\"bar\">\n  <fixnum>one</fixnum>\n  <fixnum>two</fixnum>\n</ruby_array>",
-        @root.to_s
-  end
-
-
-
 end

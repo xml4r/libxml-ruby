@@ -1,7 +1,7 @@
 require "libxml"
 require 'test/unit'
 
-class TC_WELL_FORMED < Test::Unit::TestCase
+class TestWellFormed < Test::Unit::TestCase
   def test_xml_node_doc_get()
     parser = XML::Parser.new
     parser.string = "<p>I am well formed</p>"

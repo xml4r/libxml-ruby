@@ -1,7 +1,7 @@
 require "libxml"
 require 'test/unit'
 
-class TC_XML_Node8 < Test::Unit::TestCase
+class CDataCommentTest < Test::Unit::TestCase
   def setup()
     xp = XML::Parser.new()
     str = '<root></root>'
@@ -20,7 +20,7 @@ class TC_XML_Node8 < Test::Unit::TestCase
   def test_libxml_node_add_cdata_02
     @root << XML::Node.new_cdata('mycdata')
     assert_equal 'cdata',
-		@root.child.node_type_name
+    @root.child.node_type_name
   end
 
   def test_libxml_node_add_cdata_03

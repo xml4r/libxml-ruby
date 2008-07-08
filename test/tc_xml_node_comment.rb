@@ -1,7 +1,7 @@
 require "libxml"
 require 'test/unit'
 
-class TC_XML_Node9 < Test::Unit::TestCase
+class NodeCommentTest < Test::Unit::TestCase
   def setup()
     xp = XML::Parser.new()
     str = '<root></root>'
@@ -20,13 +20,13 @@ class TC_XML_Node9 < Test::Unit::TestCase
   def test_libxml_node_add_comment_02
     @root << XML::Node.new_comment('mycomment')
     assert_equal 'comment',
-		@root.child.node_type_name
+    @root.child.node_type_name
   end
 
   def test_libxml_node_add_comment_03
     @root << el = XML::Node.new_comment('mycomment')
     el << "_this_is_added"
     assert_equal '<root><!--mycomment_this_is_added--></root>',
-		@root.to_s.gsub(/\n\s*/,'')
+    @root.to_s.gsub(/\n\s*/,'')
   end
 end

@@ -62,7 +62,7 @@ class TC_XML_Document_Write3 < Test::Unit::TestCase
     xml << "<rubynet xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n"
     xml << "  <pkg/>\n"
     xml << "</rubynet>\n"
-    @doc['xmlns:xlink'] = "http://www.w3.org/1999/xlink"
+    @doc.root['xmlns:xlink'] = "http://www.w3.org/1999/xlink"
     pkg = @doc.root.child = XML::Node.new('pkg')
     assert_equal(xml, @doc.to_s)
   end

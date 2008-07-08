@@ -1,17 +1,17 @@
 require "libxml"
 require 'test/unit'
 
-class TC_XML_XInclude < Test::Unit::TestCase
-  def setup()
+class TextXInclude < Test::Unit::TestCase
+  def setup
     @doc = XML::Document.file('model/xinclude.xml')
     assert_instance_of(XML::Document, @doc)
   end
 
-  def teardown()
+  def teardown
     @doc = nil
   end
 
-  def test_ruby_xml_xinclude()
+  def test_ruby_xml_xinclude
     xinclude_doc =  "<?xml version=\"1.0\"?>\n<document xmlns:xi=\"http://www.w3.org/2001/XInclude\">\n"
     xinclude_doc << "  <p>This libxml2 binding has the following project information:\n   <code>"
     msg = ''
@@ -27,4 +27,3 @@ class TC_XML_XInclude < Test::Unit::TestCase
     assert_equal(xinclude_doc, @doc.to_s)
   end
 end
-

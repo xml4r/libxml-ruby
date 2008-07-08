@@ -1,7 +1,8 @@
 require "libxml"
+require "tempfile"
 require "test/unit"
 
-class TC_XML_XPath < Test::Unit::TestCase
+class TextXPath < Test::Unit::TestCase
   def setup()
     xp = XML::Parser.new()
     str = '<ruby_array uga="booga" foo="bar"><fixnum>one</fixnum><fixnum>two</fixnum></ruby_array>'
@@ -35,4 +36,13 @@ class TC_XML_XPath < Test::Unit::TestCase
       m
     }
   end
-end # TC_XML_Document
+  
+  def test_custom_function
+    xml = Tempfile.new("xxx")
+    xml.puts("<a/>")
+    xml.close
+
+    doc = XML::Document.file(xml.path)
+    assert_nil(doc.find("//*[name(.)=normalize_space(' a ')]"))
+  end
+end

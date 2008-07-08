@@ -54,10 +54,10 @@ class TC_XML_HTMLParser < Test::Unit::TestCase
     assert_equal 'World', world.content
   end
 
-  def test_libxml_html_parser_parser_context()
+  def test_libxml_html_parser_context()
     doc = @xp.parse
     assert_instance_of(XML::Document, doc)
-    assert_instance_of(XML::Parser::Context, @xp.parser_context)
-	assert @xp.parser_context.html?
+    assert_instance_of(XML::Parser::Context, @xp.context)
+  assert @xp.context.html?
   end
 end # TC_XML_HTMLParser
