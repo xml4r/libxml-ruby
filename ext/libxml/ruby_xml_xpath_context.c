@@ -55,7 +55,7 @@ ruby_xml_xpath_context_wrap(xmlXPathContextPtr ctxt) {
 VALUE
 ruby_xml_xpath_context_new(VALUE anode) {
   ruby_xml_document_t *rxd;
-  ruby_xml_node *node;
+  xmlNodePtr xnode;
   xmlXPathContextPtr ctxt;
   
   if (rb_obj_is_kind_of(anode,cXMLDocument) == Qtrue ) {
@@ -66,11 +66,11 @@ ruby_xml_xpath_context_new(VALUE anode) {
     if (ctxt == NULL) return(Qnil);
 
   } else if (rb_obj_is_kind_of(anode,cXMLNode) == Qtrue ) {
-    Data_Get_Struct(anode, ruby_xml_node, node);
-    if (node->node->doc == NULL)
+    Data_Get_Struct(anode, xmlNodePtr, xnode);
+    if (xnode->doc == NULL)
       rb_raise(rb_eTypeError,"Supplied node must be part of a document");
 
-    ctxt = xmlXPathNewContext(node->node->doc);
+    ctxt = xmlXPathNewContext(xnode->doc);
     if (ctxt == NULL) return(Qnil);
 
   } else {

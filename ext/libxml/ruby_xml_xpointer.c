@@ -11,7 +11,7 @@ VALUE eXMLXPointerInvalidExpression;
 VALUE
 ruby_xml_xpointer_point(VALUE class, VALUE rnode, VALUE xptr_str) {
 #ifdef LIBXML_XPTR_ENABLED
-  ruby_xml_node *node;
+  xmlNodePtr xnode;
   xmlXPathContextPtr ctxt;
   VALUE rxptr_xpth_ctxt, rxxp;
   xmlXPathObjectPtr xpath;
@@ -20,10 +20,10 @@ ruby_xml_xpointer_point(VALUE class, VALUE rnode, VALUE xptr_str) {
   if (rb_obj_is_kind_of(rnode, cXMLNode) == Qfalse)
     rb_raise(rb_eTypeError, "require an XML::Node object");
 
-  Data_Get_Struct(rnode, ruby_xml_node, node);
+  Data_Get_Struct(rnode, xmlNodePtr, xnode);
 
   rxptr_xpth_ctxt =
-    ruby_xml_xpath_context_wrap(ctxt=xmlXPtrNewContext(node->node->doc, node->node, NULL));
+    ruby_xml_xpath_context_wrap(ctxt=xmlXPtrNewContext(xnode->doc, xnode, NULL));
 
   if (NIL_P(rxptr_xpth_ctxt))
     return(Qnil);
@@ -57,7 +57,7 @@ ruby_xml_xpointer_point2(VALUE node, VALUE xptr_str) {
 VALUE
 ruby_xml_xpointer_range(VALUE class, VALUE rstart, VALUE rend) {
 #ifdef LIBXML_XPTR_ENABLED
-  ruby_xml_node *start, *end;
+  xmlNodePtr start, end;
   VALUE rxxp;
   xmlXPathObjectPtr xpath;
 
@@ -66,15 +66,15 @@ ruby_xml_xpointer_range(VALUE class, VALUE rstart, VALUE rend) {
   if (rb_obj_is_kind_of(rend, cXMLNode) == Qfalse)
     rb_raise(rb_eTypeError, "require an XML::Node object as an ending point");
 
-  Data_Get_Struct(rstart, ruby_xml_node, start);
-  if (start->node == NULL)
+  Data_Get_Struct(rstart, xmlNodePtr, start);
+  if (start == NULL)
     return(Qnil);
 
-  Data_Get_Struct(rend, ruby_xml_node, end);
-  if (end->node == NULL)
+  Data_Get_Struct(rend, xmlNodePtr, end);
+  if (end == NULL)
     return(Qnil);
 
-  xpath = xmlXPtrNewRangeNodes(start->node, end->node);
+  xpath = xmlXPtrNewRangeNodes(start, end);
   if (xpath == NULL)
     rb_fatal("You shouldn't be able to have this happen");
 

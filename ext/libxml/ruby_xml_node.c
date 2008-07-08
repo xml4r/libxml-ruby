@@ -27,9 +27,9 @@ check_string_or_symbol( VALUE val ) {
  */
 VALUE
 ruby_xml_node_attribute_q(VALUE self) {
-  ruby_xml_node *rxn;
-  Data_Get_Struct(self, ruby_xml_node, rxn);
-  if (rxn->node->type == XML_ATTRIBUTE_NODE)
+  xmlNodePtr xnode;
+  Data_Get_Struct(self, xmlNodePtr, xnode);
+  if (xnode->type == XML_ATTRIBUTE_NODE)
     return(Qtrue);
   else
     return(Qfalse);
@@ -44,9 +44,9 @@ ruby_xml_node_attribute_q(VALUE self) {
  */
 VALUE
 ruby_xml_node_attribute_decl_q(VALUE self) {
-  ruby_xml_node *rxn;
-  Data_Get_Struct(self, ruby_xml_node, rxn);
-  if (rxn->node->type == XML_ATTRIBUTE_DECL)
+  xmlNodePtr xnode;
+  Data_Get_Struct(self, xmlNodePtr, xnode);
+  if (xnode->type == XML_ATTRIBUTE_DECL)
     return(Qtrue);
   else
     return(Qfalse);
@@ -61,16 +61,16 @@ ruby_xml_node_attribute_decl_q(VALUE self) {
  */
 VALUE
 ruby_xml_node_base_get(VALUE self) {
-  ruby_xml_node *rxn;
+  xmlNodePtr xnode;
   xmlChar* base_uri;            
   VALUE result = Qnil;
   
-  Data_Get_Struct(self, ruby_xml_node, rxn);
+  Data_Get_Struct(self, xmlNodePtr, xnode);
   
-  if (rxn->node->doc == NULL)
+  if (xnode->doc == NULL)
     return(result);
   
-  base_uri = xmlNodeGetBase(rxn->node->doc, rxn->node);
+  base_uri = xmlNodeGetBase(xnode->doc, xnode);
   if (base_uri) {
     result = rb_str_new2((const char*)base_uri);
     xmlFree(base_uri);
@@ -90,14 +90,14 @@ ruby_xml_node_base_get(VALUE self) {
  */
 VALUE
 ruby_xml_node_base_set(VALUE self, VALUE uri) {
-  ruby_xml_node *node;
+  xmlNodePtr xnode;
 
   Check_Type(uri, T_STRING);
-  Data_Get_Struct(self, ruby_xml_node, node);
-  if (node->node->doc == NULL)
+  Data_Get_Struct(self, xmlNodePtr, xnode);
+  if (xnode->doc == NULL)
     return(Qnil);
 
-  xmlNodeSetBase(node->node, (xmlChar*)StringValuePtr(uri));
+  xmlNodeSetBase(xnode, (xmlChar*)StringValuePtr(uri));
   return(Qtrue);
 }
 
@@ -110,9 +110,9 @@ ruby_xml_node_base_set(VALUE self, VALUE uri) {
  */
 VALUE
 ruby_xml_node_cdata_q(VALUE self) {
-  ruby_xml_node *rxn;
-  Data_Get_Struct(self, ruby_xml_node, rxn);
-  if (rxn->node->type == XML_CDATA_SECTION_NODE)
+  xmlNodePtr xnode;
+  Data_Get_Struct(self, xmlNodePtr, xnode);
+  if (xnode->type == XML_CDATA_SECTION_NODE)
     return(Qtrue);
   else
     return(Qfalse);
@@ -127,9 +127,9 @@ ruby_xml_node_cdata_q(VALUE self) {
  */
 VALUE
 ruby_xml_node_comment_q(VALUE self) {
-  ruby_xml_node *rxn;
-  Data_Get_Struct(self, ruby_xml_node, rxn);
-  if (rxn->node->type == XML_COMMENT_NODE)
+  xmlNodePtr xnode;
+  Data_Get_Struct(self, xmlNodePtr, xnode);
+  if (xnode->type == XML_COMMENT_NODE)
     return(Qtrue);
   else
     return(Qfalse);
@@ -145,10 +145,10 @@ ruby_xml_node_comment_q(VALUE self) {
  */
 VALUE
 ruby_xml_node_content_add(VALUE self, VALUE obj) {
-  ruby_xml_node *node;
+  xmlNodePtr xnode;
   VALUE str;
 
-  Data_Get_Struct(self, ruby_xml_node, node);
+  Data_Get_Struct(self, xmlNodePtr, xnode);
   /* XXX This should only be legal for a CDATA type node, I think,
    * resulting in a merge of content, as if a string were passed
    * danj 070827
@@ -157,14 +157,14 @@ ruby_xml_node_content_add(VALUE self, VALUE obj) {
     ruby_xml_node_child_set(self, obj);
     return(self);
   } else if (TYPE(obj) == T_STRING) {
-    xmlNodeAddContent(node->node, (xmlChar*)StringValuePtr(obj));
+    xmlNodeAddContent(xnode, (xmlChar*)StringValuePtr(obj));
     return(self);
   } else {
     str = rb_obj_as_string(obj);
     if (NIL_P(str) || TYPE(str) != T_STRING)
       rb_raise(rb_eTypeError, "invalid argument: must be string or XML::Node");
 
-    xmlNodeAddContent(node->node, (xmlChar*)StringValuePtr(str));
+    xmlNodeAddContent(xnode, (xmlChar*)StringValuePtr(str));
     return(self);
   }
 }
@@ -178,12 +178,12 @@ ruby_xml_node_content_add(VALUE self, VALUE obj) {
  */
 VALUE
 ruby_xml_node_content_get(VALUE self) {
-  ruby_xml_node *rxn;
+  xmlNodePtr xnode;
   xmlChar *content;
   VALUE result;
   
-  Data_Get_Struct(self, ruby_xml_node, rxn);
-  content = xmlNodeGetContent(rxn->node);
+  Data_Get_Struct(self, xmlNodePtr, xnode);
+  content = xmlNodeGetContent(xnode);
   if (content) {
     result = rb_str_new2((const char *) content);
     xmlFree(content);
@@ -200,12 +200,12 @@ ruby_xml_node_content_get(VALUE self) {
  */ 
 VALUE
 ruby_xml_node_content_set(VALUE self, VALUE content) {
-  ruby_xml_node *node;
+  xmlNodePtr xnode;
 
   Check_Type(content, T_STRING);
-  Data_Get_Struct(self, ruby_xml_node, node);
+  Data_Get_Struct(self, xmlNodePtr, xnode);
   // XXX docs indicate need for escaping entites, need to be done? danj
-  xmlNodeSetContent(node->node, (xmlChar*)StringValuePtr(content));
+  xmlNodeSetContent(xnode, (xmlChar*)StringValuePtr(content));
   return(Qtrue);
 }
 
@@ -221,16 +221,16 @@ ruby_xml_node_content_set(VALUE self, VALUE content) {
  */
 VALUE
 ruby_xml_node_content_stripped_get(VALUE self) {
-  ruby_xml_node *rxn;
+  xmlNodePtr xnode;
   xmlChar* content;
   VALUE result = Qnil;
 
-  Data_Get_Struct(self, ruby_xml_node, rxn);
+  Data_Get_Struct(self, xmlNodePtr, xnode);
   
-  if (!rxn->node->content) 
+  if (!xnode->content) 
     return result;
   
-  content = xmlNodeGetContent(rxn->node);
+  content = xmlNodeGetContent(xnode);
   if (content) { 
     result = rb_str_new2((const char*)content);
     xmlFree(content);
@@ -246,12 +246,12 @@ ruby_xml_node_content_stripped_get(VALUE self) {
  */
 VALUE
 ruby_xml_node_child_get(VALUE self) {
-  ruby_xml_node *node;
+  xmlNodePtr xnode;
   xmlNodePtr tmp;
 
-  Data_Get_Struct(self, ruby_xml_node, node);
+  Data_Get_Struct(self, xmlNodePtr, xnode);
 
-  switch (node->node->type) {
+  switch (xnode->type) {
   case XML_ELEMENT_NODE:
   case XML_ENTITY_REF_NODE:
   case XML_ENTITY_NODE:
@@ -263,11 +263,11 @@ ruby_xml_node_child_get(VALUE self) {
 #endif
   case XML_HTML_DOCUMENT_NODE:
   case XML_DTD_NODE:
-    tmp = node->node->children;
+    tmp = xnode->children;
     break;
   case XML_ATTRIBUTE_NODE:
     {
-      xmlAttrPtr attr = (xmlAttrPtr) node->node;
+      xmlAttrPtr attr = (xmlAttrPtr) xnode;
       tmp = attr->children;
       break;
     }
@@ -291,12 +291,12 @@ ruby_xml_node_child_get(VALUE self) {
  */
 VALUE
 ruby_xml_node_child_q(VALUE self) {
-  ruby_xml_node *rxn;
+  xmlNodePtr xnode;
   xmlNodePtr node;
-  Data_Get_Struct(self, ruby_xml_node, rxn);
+  Data_Get_Struct(self, xmlNodePtr, xnode);
 
   node = NULL;
-  switch (rxn->node->type) {
+  switch (xnode->type) {
   case XML_ELEMENT_NODE:
   case XML_ENTITY_REF_NODE:
   case XML_ENTITY_NODE:
@@ -308,11 +308,11 @@ ruby_xml_node_child_q(VALUE self) {
 #endif
   case XML_HTML_DOCUMENT_NODE:
   case XML_DTD_NODE:
-    node = rxn->node->children;
+    node = xnode->children;
     break;
   case XML_ATTRIBUTE_NODE:
     {
-      xmlAttrPtr attr = (xmlAttrPtr) rxn->node;
+      xmlAttrPtr attr = (xmlAttrPtr) xnode;
       node = attr->children;
       break;
     }
@@ -332,17 +332,15 @@ ruby_xml_node_child_q(VALUE self) {
  */
 VALUE
 ruby_xml_node_child_set_aux(VALUE self, VALUE rnode, int do_raise) {
-  ruby_xml_node *cnode, *pnode;
-  xmlNodePtr chld, ret;
+  xmlNodePtr pnode, chld, ret;
   int copied=0;
 
   if (rb_obj_is_kind_of(rnode, cXMLNode) == Qfalse)
     rb_raise(rb_eTypeError, "Must pass an XML::Node object");
 
-  Data_Get_Struct(self,  ruby_xml_node, pnode);
-  Data_Get_Struct(rnode, ruby_xml_node, cnode);
+  Data_Get_Struct(self,  xmlNodePtr, pnode);
+  Data_Get_Struct(rnode, xmlNodePtr, chld);
   
-  chld = cnode->node;
   /* Since an add operation may destroy a textnode by merging, we need to work
    * with a copy, so that the ruby instance is not left with a dangling reference
    */
@@ -359,7 +357,7 @@ ruby_xml_node_child_set_aux(VALUE self, VALUE rnode, int do_raise) {
     copied=1;
   }
 
-  ret = xmlAddChild(pnode->node, chld);
+  ret = xmlAddChild(pnode, chld);
   if (ret == NULL) {
     if ( copied == 1 )
       xmlFreeNode(chld);
@@ -403,12 +401,12 @@ ruby_xml_node_child_add(VALUE self, VALUE rnode) {
  */
 VALUE
 ruby_xml_node_doc(VALUE self) {
-  ruby_xml_node *rxn;
+  xmlNodePtr xnode;
   xmlDocPtr doc=NULL;
 
-  Data_Get_Struct(self, ruby_xml_node, rxn);
+  Data_Get_Struct(self, xmlNodePtr, xnode);
   
-  switch (rxn->node->type) {
+  switch (xnode->type) {
   case XML_DOCUMENT_NODE:
 #ifdef LIBXML_DOCB_ENABLED
   case XML_DOCB_DOCUMENT_NODE:
@@ -418,7 +416,7 @@ ruby_xml_node_doc(VALUE self) {
     break;
   case XML_ATTRIBUTE_NODE:
     {
-      xmlAttrPtr attr = (xmlAttrPtr) rxn->node;
+      xmlAttrPtr attr = (xmlAttrPtr) xnode;
       doc = attr->doc;
       break;
     }
@@ -426,7 +424,7 @@ ruby_xml_node_doc(VALUE self) {
     doc = NULL;
     break;
   default:
-    doc = rxn->node->doc;
+    doc = xnode->doc;
     break;
   }
 
@@ -449,9 +447,9 @@ ruby_xml_node_doc(VALUE self) {
 VALUE
 ruby_xml_node_docbook_doc_q(VALUE self) {
 #ifdef LIBXML_DOCB_ENABLED
-  ruby_xml_node *rxn;
-  Data_Get_Struct(self, ruby_xml_node, rxn);
-  if (rxn->node->type == XML_DOCB_DOCUMENT_NODE)
+  xmlNodePtr xnode;
+  Data_Get_Struct(self, xmlNodePtr, xnode);
+  if (xnode->type == XML_DOCB_DOCUMENT_NODE)
     return(Qtrue);
   else
     return(Qfalse);
@@ -470,9 +468,9 @@ ruby_xml_node_docbook_doc_q(VALUE self) {
  */
 VALUE
 ruby_xml_node_doctype_q(VALUE self) {
-  ruby_xml_node *rxn;
-  Data_Get_Struct(self, ruby_xml_node, rxn);
-  if (rxn->node->type == XML_DOCUMENT_TYPE_NODE)
+  xmlNodePtr xnode;
+  Data_Get_Struct(self, xmlNodePtr, xnode);
+  if (xnode->type == XML_DOCUMENT_TYPE_NODE)
     return(Qtrue);
   else
     return(Qfalse);
@@ -487,9 +485,9 @@ ruby_xml_node_doctype_q(VALUE self) {
  */
 VALUE
 ruby_xml_node_document_q(VALUE self) {
-  ruby_xml_node *rxn;
-  Data_Get_Struct(self, ruby_xml_node, rxn);
-  if (rxn->node->type == XML_DOCUMENT_NODE)
+  xmlNodePtr xnode;
+  Data_Get_Struct(self, xmlNodePtr, xnode);
+  if (xnode->type == XML_DOCUMENT_NODE)
     return(Qtrue);
   else
     return(Qfalse);
@@ -504,9 +502,9 @@ ruby_xml_node_document_q(VALUE self) {
  */
 VALUE
 ruby_xml_node_dtd_q(VALUE self) {
-  ruby_xml_node *rxn;
-  Data_Get_Struct(self, ruby_xml_node, rxn);
-  if (rxn->node->type == XML_DTD_NODE)
+  xmlNodePtr xnode;
+  Data_Get_Struct(self, xmlNodePtr, xnode);
+  if (xnode->type == XML_DTD_NODE)
     return(Qtrue);
   else
     return(Qfalse);
@@ -521,16 +519,16 @@ ruby_xml_node_dtd_q(VALUE self) {
  */
 VALUE
 ruby_xml_node_dump(VALUE self) {
-  ruby_xml_node *rxn;
+  xmlNodePtr xnode;
   xmlBufferPtr buf;
 
-  Data_Get_Struct(self, ruby_xml_node, rxn);
+  Data_Get_Struct(self, xmlNodePtr, xnode);
 
-  if (rxn->node->doc == NULL)
+  if (xnode->doc == NULL)
     return(Qnil);
 
   buf = xmlBufferCreate();
-  xmlNodeDump(buf, rxn->node->doc, rxn->node, 0, 1);
+  xmlNodeDump(buf, xnode->doc, xnode, 0, 1);
   xmlBufferDump(stdout, buf);
   xmlBufferFree(buf);
   return(Qtrue);
@@ -546,13 +544,13 @@ ruby_xml_node_dump(VALUE self) {
  */
 VALUE
 ruby_xml_node_debug_dump(VALUE self) {
-  ruby_xml_node *rxn;
-  Data_Get_Struct(self, ruby_xml_node, rxn);
+  xmlNodePtr xnode;
+  Data_Get_Struct(self, xmlNodePtr, xnode);
 
-  if (rxn->node->doc == NULL)
+  if (xnode->doc == NULL)
     return(Qnil);
 
-  xmlElemDump(stdout, rxn->node->doc, rxn->node);
+  xmlElemDump(stdout, xnode->doc, xnode);
   return(Qtrue);
 }
 
@@ -565,9 +563,9 @@ ruby_xml_node_debug_dump(VALUE self) {
  */
 VALUE
 ruby_xml_node_element_q(VALUE self) {
-  ruby_xml_node *rxn;
-  Data_Get_Struct(self, ruby_xml_node, rxn);
-  if (rxn->node->type == XML_ELEMENT_NODE)
+  xmlNodePtr xnode;
+  Data_Get_Struct(self, xmlNodePtr, xnode);
+  if (xnode->type == XML_ELEMENT_NODE)
     return(Qtrue);
   else
     return(Qfalse);
@@ -582,9 +580,9 @@ ruby_xml_node_element_q(VALUE self) {
  */
 VALUE
 ruby_xml_node_element_decl_q(VALUE self) {
-  ruby_xml_node *rxn;
-  Data_Get_Struct(self, ruby_xml_node, rxn);
-  if (rxn->node->type == XML_ELEMENT_DECL)
+  xmlNodePtr xnode;
+  Data_Get_Struct(self, xmlNodePtr, xnode);
+  if (xnode->type == XML_ELEMENT_DECL)
     return(Qtrue);
   else
     return(Qfalse);
@@ -599,12 +597,12 @@ ruby_xml_node_element_decl_q(VALUE self) {
  */
 VALUE
 ruby_xml_node_empty_q(VALUE self) {
-  ruby_xml_node *rxn;
-  Data_Get_Struct(self, ruby_xml_node, rxn);
-  if (rxn->node == NULL)
+  xmlNodePtr xnode;
+  Data_Get_Struct(self, xmlNodePtr, xnode);
+  if (xnode == NULL)
     return(Qnil);
 
-  return((xmlIsBlankNode(rxn->node) == 1) ? Qtrue : Qfalse);
+  return((xmlIsBlankNode(xnode) == 1) ? Qtrue : Qfalse);
 }
 
 
@@ -616,9 +614,9 @@ ruby_xml_node_empty_q(VALUE self) {
  */
 VALUE
 ruby_xml_node_entity_q(VALUE self) {
-  ruby_xml_node *rxn;
-  Data_Get_Struct(self, ruby_xml_node, rxn);
-  if (rxn->node->type == XML_ENTITY_NODE)
+  xmlNodePtr xnode;
+  Data_Get_Struct(self, xmlNodePtr, xnode);
+  if (xnode->type == XML_ENTITY_NODE)
     return(Qtrue);
   else
     return(Qfalse);
@@ -633,9 +631,9 @@ ruby_xml_node_entity_q(VALUE self) {
  */
 VALUE
 ruby_xml_node_entity_ref_q(VALUE self) {
-  ruby_xml_node *rxn;
-  Data_Get_Struct(self, ruby_xml_node, rxn);
-  if (rxn->node->type == XML_ENTITY_REF_NODE)
+  xmlNodePtr xnode;
+  Data_Get_Struct(self, xmlNodePtr, xnode);
+  if (xnode->type == XML_ENTITY_REF_NODE)
     return(Qtrue);
   else
     return(Qfalse);
@@ -680,9 +678,9 @@ ruby_xml_node_find_first(int argc, VALUE *argv, VALUE self) {
  */
 VALUE
 ruby_xml_node_fragment_q(VALUE self) {
-  ruby_xml_node *rxn;
-  Data_Get_Struct(self, ruby_xml_node, rxn);
-  if (rxn->node->type == XML_DOCUMENT_FRAG_NODE)
+  xmlNodePtr xnode;
+  Data_Get_Struct(self, xmlNodePtr, xnode);
+  if (xnode->type == XML_DOCUMENT_FRAG_NODE)
     return(Qtrue);
   else
     return(Qfalse);
@@ -697,9 +695,9 @@ ruby_xml_node_fragment_q(VALUE self) {
  */
 VALUE
 ruby_xml_node_html_doc_q(VALUE self) {
-  ruby_xml_node *rxn;
-  Data_Get_Struct(self, ruby_xml_node, rxn);
-  if (rxn->node->type == XML_HTML_DOCUMENT_NODE)
+  xmlNodePtr xnode;
+  Data_Get_Struct(self, xmlNodePtr, xnode);
+  if (xnode->type == XML_HTML_DOCUMENT_NODE)
     return(Qtrue);
   else
     return(Qfalse);
@@ -788,12 +786,12 @@ ruby_xml_node_new_comment(int argc, VALUE *argv, VALUE class) {
  */
 VALUE
 ruby_xml_node_lang_get(VALUE self) {
-  ruby_xml_node *rxn;
+  xmlNodePtr xnode;
   xmlChar *lang;
   VALUE result = Qnil;
 
-  Data_Get_Struct(self, ruby_xml_node, rxn);
-  lang = xmlNodeGetLang(rxn->node);
+  Data_Get_Struct(self, xmlNodePtr, xnode);
+  lang = xmlNodeGetLang(xnode);
 
   if (lang) {
     result = rb_str_new2((const char*)lang);
@@ -815,11 +813,11 @@ ruby_xml_node_lang_get(VALUE self) {
  */
 VALUE
 ruby_xml_node_lang_set(VALUE self, VALUE lang) {
-  ruby_xml_node *node;
+  xmlNodePtr xnode;
 
   Check_Type(lang, T_STRING);
-  Data_Get_Struct(self, ruby_xml_node, node);
-  xmlNodeSetLang(node->node, (xmlChar*)StringValuePtr(lang));
+  Data_Get_Struct(self, xmlNodePtr, xnode);
+  xmlNodeSetLang(xnode, (xmlChar*)StringValuePtr(lang));
 
   return(Qtrue);
 }
@@ -833,12 +831,12 @@ ruby_xml_node_lang_set(VALUE self, VALUE lang) {
  */
 VALUE
 ruby_xml_node_last_get(VALUE self) {
-  ruby_xml_node *rxn;
+  xmlNodePtr xnode;
   xmlNodePtr node;
 
-  Data_Get_Struct(self, ruby_xml_node, rxn);
+  Data_Get_Struct(self, xmlNodePtr, xnode);
 
-  switch (rxn->node->type) {
+  switch (xnode->type) {
   case XML_ELEMENT_NODE:
   case XML_ENTITY_REF_NODE:
   case XML_ENTITY_NODE:
@@ -850,11 +848,11 @@ ruby_xml_node_last_get(VALUE self) {
 #endif
   case XML_HTML_DOCUMENT_NODE:
   case XML_DTD_NODE:
-    node = rxn->node->last;
+    node = xnode->last;
     break;
   case XML_ATTRIBUTE_NODE:
     {
-      xmlAttrPtr attr = (xmlAttrPtr) rxn->node;
+      xmlAttrPtr attr = (xmlAttrPtr) xnode;
       node = attr->last;
     }
   default:
@@ -877,12 +875,12 @@ ruby_xml_node_last_get(VALUE self) {
  */
 VALUE
 ruby_xml_node_last_q(VALUE self) {
-  ruby_xml_node *rxn;
+  xmlNodePtr xnode;
   xmlNodePtr node;
 
-  Data_Get_Struct(self, ruby_xml_node, rxn);
+  Data_Get_Struct(self, xmlNodePtr, xnode);
 
-  switch (rxn->node->type) {
+  switch (xnode->type) {
   case XML_ELEMENT_NODE:
   case XML_ENTITY_REF_NODE:
   case XML_ENTITY_NODE:
@@ -894,11 +892,11 @@ ruby_xml_node_last_q(VALUE self) {
 #endif
   case XML_HTML_DOCUMENT_NODE:
   case XML_DTD_NODE:
-    node = rxn->node->last;
+    node = xnode->last;
     break;
   case XML_ATTRIBUTE_NODE:
     {
-      xmlAttrPtr attr = (xmlAttrPtr) rxn->node;
+      xmlAttrPtr attr = (xmlAttrPtr) xnode;
       node = attr->last;
     }
   default:
@@ -923,14 +921,14 @@ ruby_xml_node_last_q(VALUE self) {
  */
 VALUE
 ruby_xml_node_line_num(VALUE self) {
-  ruby_xml_node *rxn;
+  xmlNodePtr xnode;
   long line_num;
-  Data_Get_Struct(self, ruby_xml_node, rxn);
+  Data_Get_Struct(self, xmlNodePtr, xnode);
 
   if (!xmlLineNumbersDefaultValue)
     rb_warn("Line numbers were not retained: use XML::Parser::default_line_numbers=true");
 
-  line_num = xmlGetLineNo(rxn->node);
+  line_num = xmlGetLineNo(xnode);
   if (line_num == -1)
     return(Qnil);
   else
@@ -946,11 +944,11 @@ ruby_xml_node_line_num(VALUE self) {
  */
 VALUE
 ruby_xml_node_xlink_q(VALUE self) {
-  ruby_xml_node *node;
+  xmlNodePtr xnode;
   xlinkType xlt;
 
-  Data_Get_Struct(self, ruby_xml_node, node);
-  xlt = xlinkIsLink(node->node->doc, node->node);
+  Data_Get_Struct(self, xmlNodePtr, xnode);
+  xlt = xlinkIsLink(xnode->doc, xnode);
 
   if (xlt == XLINK_TYPE_NONE)
     return(Qfalse);
@@ -969,11 +967,11 @@ ruby_xml_node_xlink_q(VALUE self) {
  */
 VALUE
 ruby_xml_node_xlink_type(VALUE self) {
-  ruby_xml_node *node;
+  xmlNodePtr xnode;
   xlinkType xlt;
 
-  Data_Get_Struct(self, ruby_xml_node, node);
-  xlt = xlinkIsLink(node->node->doc, node->node);
+  Data_Get_Struct(self, xmlNodePtr, xnode);
+  xlt = xlinkIsLink(xnode->doc, xnode);
 
   if (xlt == XLINK_TYPE_NONE)
     return(Qnil);
@@ -992,11 +990,11 @@ ruby_xml_node_xlink_type(VALUE self) {
  */
 VALUE
 ruby_xml_node_xlink_type_name(VALUE self) {
-  ruby_xml_node *node;
+  xmlNodePtr xnode;
   xlinkType xlt;
 
-  Data_Get_Struct(self, ruby_xml_node, node);
-  xlt = xlinkIsLink(node->node->doc, node->node);
+  Data_Get_Struct(self, xmlNodePtr, xnode);
+  xlt = xlinkIsLink(xnode->doc, xnode);
 
   switch(xlt) {
   case XLINK_TYPE_NONE:
@@ -1020,40 +1018,40 @@ ruby_xml_node_xlink_type_name(VALUE self) {
  */
 VALUE
 ruby_xml_node_name_get(VALUE self) {
-  ruby_xml_node *rxn;
+  xmlNodePtr xnode;
   const xmlChar *name;
 
-  Data_Get_Struct(self, ruby_xml_node, rxn);
+  Data_Get_Struct(self, xmlNodePtr, xnode);
 
-  switch (rxn->node->type) {
+  switch (xnode->type) {
   case XML_DOCUMENT_NODE:
 #ifdef LIBXML_DOCB_ENABLED
   case XML_DOCB_DOCUMENT_NODE:
 #endif
   case XML_HTML_DOCUMENT_NODE:
     {
-      xmlDocPtr doc = (xmlDocPtr) rxn->node;
+      xmlDocPtr doc = (xmlDocPtr) xnode;
       name = doc->URL;
       break;
     }
   case XML_ATTRIBUTE_NODE:
     {
-      xmlAttrPtr attr = (xmlAttrPtr) rxn->node;
+      xmlAttrPtr attr = (xmlAttrPtr) xnode;
       name = attr->name;
       break;
     }
   case XML_NAMESPACE_DECL:
     {
-      xmlNsPtr ns = (xmlNsPtr) rxn->node;
+      xmlNsPtr ns = (xmlNsPtr) xnode;
       name = ns->prefix;
       break;
     }
   default:
-    name = rxn->node->name;
+    name = xnode->name;
     break;
   }
 
-  if (rxn->node->name == NULL)
+  if (xnode->name == NULL)
     return(Qnil);
   else
     return(rb_str_new2((const char*)name));
@@ -1068,11 +1066,11 @@ ruby_xml_node_name_get(VALUE self) {
  */
 VALUE
 ruby_xml_node_name_set(VALUE self, VALUE name) {
-  ruby_xml_node *node;
+  xmlNodePtr xnode;
 
   Check_Type(name, T_STRING);
-  Data_Get_Struct(self, ruby_xml_node, node);
-  xmlNodeSetName(node->node, (xmlChar*)StringValuePtr(name));
+  Data_Get_Struct(self, xmlNodePtr, xnode);
+  xmlNodeSetName(xnode, (xmlChar*)StringValuePtr(name));
   return(Qtrue);
 }
 
@@ -1086,15 +1084,15 @@ ruby_xml_node_name_set(VALUE self, VALUE name) {
  */
 VALUE
 ruby_xml_node_namespace_get(VALUE self) {
-  ruby_xml_node *node;
+  xmlNodePtr xnode;
   xmlNsPtr *nsList, *cur;
   VALUE arr, ns;
 
-  Data_Get_Struct(self, ruby_xml_node, node);
-  if (node->node == NULL)
+  Data_Get_Struct(self, xmlNodePtr, xnode);
+  if (xnode == NULL)
     return(Qnil);
 
-  nsList = xmlGetNsList(node->node->doc, node->node);
+  nsList = xmlGetNsList(xnode->doc, xnode);
 
   if (nsList == NULL)
     return(Qnil);
@@ -1121,13 +1119,13 @@ ruby_xml_node_namespace_get(VALUE self) {
  */
 VALUE
 ruby_xml_node_namespace_get_node(VALUE self) {
-  ruby_xml_node *node;
+  xmlNodePtr xnode;
 
-  Data_Get_Struct(self, ruby_xml_node, node);
-  if (node->node->ns == NULL)
+  Data_Get_Struct(self, xmlNodePtr, xnode);
+  if (xnode->ns == NULL)
     return(Qnil);
   else
-    return ruby_xml_ns_wrap(node->node->ns);
+    return ruby_xml_ns_wrap(xnode->ns);
 }
 
 // TODO namespace_set can take varargs (in fact, must if used
@@ -1146,11 +1144,11 @@ ruby_xml_node_namespace_get_node(VALUE self) {
 VALUE
 ruby_xml_node_namespace_set(int argc, VALUE *argv, VALUE self) {
   VALUE rns, rprefix;
-  ruby_xml_node *rxn;
+  xmlNodePtr xnode;
   xmlNsPtr xns;
   char *cp, *href;
 
-  Data_Get_Struct(self, ruby_xml_node, rxn);
+  Data_Get_Struct(self, xmlNodePtr, xnode);
   switch (argc) {
   case 1:
     rns = argv[0];
@@ -1165,7 +1163,7 @@ ruby_xml_node_namespace_set(int argc, VALUE *argv, VALUE self) {
       }
     } else if (rb_obj_is_kind_of(rns, cXMLNS) == Qtrue) {
       Data_Get_Struct(self, xmlNsPtr, xns);
-      xmlSetNs(rxn->node, xns);
+      xmlSetNs(xnode, xns);
       return(rns);
     } else
       rb_raise(rb_eTypeError, "must pass a string or an XML::Ns object");
@@ -1180,7 +1178,7 @@ ruby_xml_node_namespace_set(int argc, VALUE *argv, VALUE self) {
       href = StringValuePtr(argv[1]);
     }
 
-    xns = xmlNewNs(rxn->node, (xmlChar*)href, (xmlChar*)StringValuePtr(rprefix));
+    xns = xmlNewNs(xnode, (xmlChar*)href, (xmlChar*)StringValuePtr(rprefix));
     if (xns == NULL)
       rb_raise(eXMLNodeSetNamespace, "unable to set the namespace");
     else
@@ -1205,9 +1203,9 @@ ruby_xml_node_namespace_set(int argc, VALUE *argv, VALUE self) {
  */
 VALUE
 ruby_xml_node_namespace_q(VALUE self) {
-  ruby_xml_node *rxn;
-  Data_Get_Struct(self, ruby_xml_node, rxn);
-  if (rxn->node->type == XML_NAMESPACE_DECL)
+  xmlNodePtr xnode;
+  Data_Get_Struct(self, xmlNodePtr, xnode);
+  if (xnode->type == XML_NAMESPACE_DECL)
     return(Qtrue);
   else
     return(Qfalse);
@@ -1225,24 +1223,18 @@ ruby_xml_node_namespace_q(VALUE self) {
  * If the xmlNode has no parent or document, then call xmlFree.
  */
 void
-ruby_xml_node2_free(ruby_xml_node *rxn) {
+ruby_xml_node2_free(xmlNodePtr xnode) {
 
-  if (rxn == NULL ) return;
+  if (xnode != NULL) {
+    xnode->_private=NULL;
 
-  if (rxn->node != NULL ) {
-    rxn->node->_private=NULL;
-
-    if ( rxn->node->doc==NULL || rxn->node->parent==NULL ) {
+    if (xnode->doc==NULL || xnode->parent==NULL) {
 #ifdef NODE_DEBUG
-      fprintf(stderr,"ruby_xml_node2_free ruby_xfree rxn=0x%x xn=0x%x o=0x%x\n",(long)rxn,(long)rxn->node,(long)rxn->node->_private);
+      fprintf(stderr,"ruby_xml_node2_free ruby_xfree rxn=0x%x xn=0x%x o=0x%x\n",(long)rxn,(long)xnode,(long)xnode->_private);
 #endif
-      xmlFreeNode(rxn->node);
+      xmlFreeNode(xnode);
     }
-    
-    rxn->node=NULL;
   }
-
-  ruby_xfree(rxn);
 }
 
 void
@@ -1273,23 +1265,22 @@ ruby_xml_node_mark_common(xmlNodePtr node) {
 }
 
 void
-ruby_xml_node2_mark(ruby_xml_node *rxn) {
-  if (rxn->node == NULL ) return;
+ruby_xml_node2_mark(xmlNodePtr xnode) {
+  if (xnode == NULL ) return;
 
-  if (rxn->node->_private == NULL ) {
+  if (xnode->_private == NULL ) {
     rb_warning("XmlNode is not bound! (%s:%d)",
 	       __FILE__,__LINE__);
     return;
   }
 
-  ruby_xml_node_mark_common(rxn->node);
+  ruby_xml_node_mark_common(xnode);
 }
 
 VALUE
 ruby_xml_node2_wrap(VALUE class, xmlNodePtr xnode)
 {
   VALUE obj;
-  ruby_xml_node *rxn;
 
   // This node is already wrapped
   if (xnode->_private != NULL) {
@@ -1300,10 +1291,10 @@ ruby_xml_node2_wrap(VALUE class, xmlNodePtr xnode)
     return (VALUE)xnode->_private;
   }
 
-  obj=Data_Make_Struct(class,ruby_xml_node,ruby_xml_node2_mark,
-		       ruby_xml_node2_free,rxn);
+  obj=Data_Wrap_Struct(class,
+                       ruby_xml_node2_mark, ruby_xml_node2_free,
+                       xnode);
 
-  rxn->node=xnode;
   xnode->_private=(void*)obj;
 #ifdef NODE_DEBUG
   fprintf(stderr,"wrap rn=0x%x n*=0x%x d*=0x%x\n",
@@ -1381,11 +1372,11 @@ ruby_xml_node2_new_string_bc(int argc, VALUE *argv, VALUE class)
  */
 VALUE
 ruby_xml_node_next_get(VALUE self) {
-  ruby_xml_node *rxn;
+  xmlNodePtr xnode;
   xmlNodePtr node;
-  Data_Get_Struct(self, ruby_xml_node, rxn);
+  Data_Get_Struct(self, xmlNodePtr, xnode);
 
-  switch (rxn->node->type) {
+  switch (xnode->type) {
   case XML_DOCUMENT_NODE:
 #ifdef LIBXML_DOCB_ENABLED
   case XML_DOCB_DOCUMENT_NODE:
@@ -1395,18 +1386,18 @@ ruby_xml_node_next_get(VALUE self) {
     break;
   case XML_ATTRIBUTE_NODE:
     {
-      xmlAttrPtr attr = (xmlAttrPtr) rxn->node;
+      xmlAttrPtr attr = (xmlAttrPtr) xnode;
       node = (xmlNodePtr) attr->next;
       break;
     }
   case XML_NAMESPACE_DECL:
     {
-      xmlNsPtr ns = (xmlNsPtr) rxn->node;
+      xmlNsPtr ns = (xmlNsPtr) xnode;
       node = (xmlNodePtr) ns->next;
       break;
     }
   default:
-    node = rxn->node->next;
+    node = xnode->next;
     break;
   }
 
@@ -1426,11 +1417,11 @@ ruby_xml_node_next_get(VALUE self) {
  */
 VALUE
 ruby_xml_node_next_q(VALUE self) {
-  ruby_xml_node *rxn;
+  xmlNodePtr xnode;
   xmlNodePtr node;
-  Data_Get_Struct(self, ruby_xml_node, rxn);
+  Data_Get_Struct(self, xmlNodePtr, xnode);
 
-  switch (rxn->node->type) {
+  switch (xnode->type) {
   case XML_DOCUMENT_NODE:
 #ifdef LIBXML_DOCB_ENABLED
   case XML_DOCB_DOCUMENT_NODE:
@@ -1440,18 +1431,18 @@ ruby_xml_node_next_q(VALUE self) {
     break;
   case XML_ATTRIBUTE_NODE:
     {
-      xmlAttrPtr attr = (xmlAttrPtr) rxn->node;
+      xmlAttrPtr attr = (xmlAttrPtr) xnode;
       node = (xmlNodePtr) attr->next;
       break;
     }
   case XML_NAMESPACE_DECL:
     {
-      xmlNsPtr ns = (xmlNsPtr) rxn->node;
+      xmlNsPtr ns = (xmlNsPtr) xnode;
       node = (xmlNodePtr) ns->next;
       break;
     }
   default:
-    node = rxn->node->next;
+    node = xnode->next;
     break;
   }
 
@@ -1470,16 +1461,15 @@ ruby_xml_node_next_q(VALUE self) {
  */
 VALUE
 ruby_xml_node_next_set(VALUE self, VALUE rnode) {
-  ruby_xml_node *cnode, *pnode;
-  xmlNodePtr ret;
+  xmlNodePtr cnode, pnode, ret;
 
   if (rb_obj_is_kind_of(rnode, cXMLNode) == Qfalse)
     rb_raise(rb_eTypeError, "Must pass an XML::Node object");
 
-  Data_Get_Struct(self,  ruby_xml_node, pnode);
-  Data_Get_Struct(rnode, ruby_xml_node, cnode);
+  Data_Get_Struct(self,  xmlNodePtr, pnode);
+  Data_Get_Struct(rnode, xmlNodePtr, cnode);
 
-  ret = xmlAddNextSibling(pnode->node, cnode->node);
+  ret = xmlAddNextSibling(pnode, cnode);
   if (ret == NULL)
     rb_raise(eXMLNodeFailedModify, "unable to add a sibling to the document");
 
@@ -1495,9 +1485,9 @@ ruby_xml_node_next_set(VALUE self, VALUE rnode) {
  */
 VALUE
 ruby_xml_node_notation_q(VALUE self) {
-  ruby_xml_node *rxn;
-  Data_Get_Struct(self, ruby_xml_node, rxn);
-  if (rxn->node->type == XML_NOTATION_NODE)
+  xmlNodePtr xnode;
+  Data_Get_Struct(self, xmlNodePtr, xnode);
+  if (xnode->type == XML_NOTATION_NODE)
     return(Qtrue);
   else
     return(Qfalse);
@@ -1512,9 +1502,9 @@ ruby_xml_node_notation_q(VALUE self) {
  */
 VALUE
 ruby_xml_node_ns_q(VALUE self) {
-  ruby_xml_node *rxn;
-  Data_Get_Struct(self, ruby_xml_node, rxn);
-  if (rxn->node->ns == NULL)
+  xmlNodePtr xnode;
+  Data_Get_Struct(self, xmlNodePtr, xnode);
+  if (xnode->ns == NULL)
     return(Qfalse);
   else
     return(Qtrue);
@@ -1529,12 +1519,12 @@ ruby_xml_node_ns_q(VALUE self) {
  */
 VALUE
 ruby_xml_node_ns_def_get(VALUE self) {
-  ruby_xml_node *rxn;
-  Data_Get_Struct(self, ruby_xml_node, rxn);
-  if (rxn->node->nsDef == NULL)
+  xmlNodePtr xnode;
+  Data_Get_Struct(self, xmlNodePtr, xnode);
+  if (xnode->nsDef == NULL)
     return(Qnil);
   else
-    return(ruby_xml_ns_wrap(rxn->node->nsDef));
+    return(ruby_xml_ns_wrap(xnode->nsDef));
 }
 
 
@@ -1547,9 +1537,9 @@ ruby_xml_node_ns_def_get(VALUE self) {
  */
 VALUE
 ruby_xml_node_ns_def_q(VALUE self) {
-  ruby_xml_node *rxn;
-  Data_Get_Struct(self, ruby_xml_node, rxn);
-  if (rxn->node->nsDef == NULL)
+  xmlNodePtr xnode;
+  Data_Get_Struct(self, xmlNodePtr, xnode);
+  if (xnode->nsDef == NULL)
     return(Qfalse);
   else
     return(Qtrue);
@@ -1564,12 +1554,12 @@ ruby_xml_node_ns_def_q(VALUE self) {
  */
 VALUE
 ruby_xml_node_parent_get(VALUE self) {
-  ruby_xml_node *rxn;
+  xmlNodePtr xnode;
   xmlNodePtr node;
 
-  Data_Get_Struct(self, ruby_xml_node, rxn);
+  Data_Get_Struct(self, xmlNodePtr, xnode);
 
-  switch (rxn->node->type) {
+  switch (xnode->type) {
   case XML_DOCUMENT_NODE:
   case XML_HTML_DOCUMENT_NODE:
 #ifdef LIBXML_DOCB_ENABLED
@@ -1579,7 +1569,7 @@ ruby_xml_node_parent_get(VALUE self) {
     break;
   case XML_ATTRIBUTE_NODE:
     {
-      xmlAttrPtr attr = (xmlAttrPtr) rxn->node;
+      xmlAttrPtr attr = (xmlAttrPtr) xnode;
       node = attr->parent;
     }
   case XML_ENTITY_DECL:
@@ -1589,7 +1579,7 @@ ruby_xml_node_parent_get(VALUE self) {
     node = NULL;
     break;
   default:
-    node = rxn->node->parent;
+    node = xnode->parent;
     break;
   }
 
@@ -1608,12 +1598,12 @@ ruby_xml_node_parent_get(VALUE self) {
  */
 VALUE
 ruby_xml_node_parent_q(VALUE self) {
-  ruby_xml_node *rxn;
+  xmlNodePtr xnode;
   xmlNodePtr node;
 
-  Data_Get_Struct(self, ruby_xml_node, rxn);
+  Data_Get_Struct(self, xmlNodePtr, xnode);
 
-  switch (rxn->node->type) {
+  switch (xnode->type) {
   case XML_DOCUMENT_NODE:
   case XML_HTML_DOCUMENT_NODE:
 #ifdef LIBXML_DOCB_ENABLED
@@ -1623,7 +1613,7 @@ ruby_xml_node_parent_q(VALUE self) {
     break;
   case XML_ATTRIBUTE_NODE:
     {
-      xmlAttrPtr attr = (xmlAttrPtr) rxn->node;
+      xmlAttrPtr attr = (xmlAttrPtr) xnode;
       node = attr->parent;
     }
   case XML_ENTITY_DECL:
@@ -1633,7 +1623,7 @@ ruby_xml_node_parent_q(VALUE self) {
     node = NULL;
     break;
   default:
-    node = rxn->node->parent;
+    node = xnode->parent;
     break;
   }
 
@@ -1652,11 +1642,11 @@ ruby_xml_node_parent_q(VALUE self) {
  */
 VALUE
 ruby_xml_node_path(VALUE self) {
-  ruby_xml_node *rxn;
+  xmlNodePtr xnode;
   xmlChar *path;
 
-  Data_Get_Struct(self, ruby_xml_node, rxn);
-  path = xmlGetNodePath(rxn->node);
+  Data_Get_Struct(self, xmlNodePtr, xnode);
+  path = xmlGetNodePath(xnode);
 
   if (path == NULL)
     return(Qnil);
@@ -1673,9 +1663,9 @@ ruby_xml_node_path(VALUE self) {
  */
 VALUE
 ruby_xml_node_pi_q(VALUE self) {
-  ruby_xml_node *rxn;
-  Data_Get_Struct(self, ruby_xml_node, rxn);
-  if (rxn->node->type == XML_PI_NODE)
+  xmlNodePtr xnode;
+  Data_Get_Struct(self, xmlNodePtr, xnode);
+  if (xnode->type == XML_PI_NODE)
     return(Qtrue);
   else
     return(Qfalse);
@@ -1702,11 +1692,11 @@ ruby_xml_node_pointer(VALUE self, VALUE xptr_str) {
  */
 VALUE
 ruby_xml_node_prev_get(VALUE self) {
-  ruby_xml_node *rxn;
+  xmlNodePtr xnode;
   xmlNodePtr node;
-  Data_Get_Struct(self, ruby_xml_node, rxn);
+  Data_Get_Struct(self, xmlNodePtr, xnode);
 
-  switch (rxn->node->type) {
+  switch (xnode->type) {
   case XML_DOCUMENT_NODE:
 #ifdef LIBXML_DOCB_ENABLED
   case XML_DOCB_DOCUMENT_NODE:
@@ -1717,12 +1707,12 @@ ruby_xml_node_prev_get(VALUE self) {
     break;
   case XML_ATTRIBUTE_NODE:
     {
-      xmlAttrPtr attr = (xmlAttrPtr) rxn->node;
+      xmlAttrPtr attr = (xmlAttrPtr) xnode;
       node = (xmlNodePtr) attr->prev;
     }
     break;
   default:
-    node = rxn->node->prev;
+    node = xnode->prev;
     break;
   }
 
@@ -1741,12 +1731,12 @@ ruby_xml_node_prev_get(VALUE self) {
  */
 VALUE
 ruby_xml_node_prev_q(VALUE self) {
-  ruby_xml_node *rxn;
+  xmlNodePtr xnode;
   xmlNodePtr node;
 
-  Data_Get_Struct(self, ruby_xml_node, rxn);
+  Data_Get_Struct(self, xmlNodePtr, xnode);
 
-  switch (rxn->node->type) {
+  switch (xnode->type) {
   case XML_DOCUMENT_NODE:
 #ifdef LIBXML_DOCB_ENABLED
   case XML_DOCB_DOCUMENT_NODE:
@@ -1757,12 +1747,12 @@ ruby_xml_node_prev_q(VALUE self) {
     break;
   case XML_ATTRIBUTE_NODE:
     {
-      xmlAttrPtr attr = (xmlAttrPtr) rxn->node;
+      xmlAttrPtr attr = (xmlAttrPtr) xnode;
       node = (xmlNodePtr) attr->prev;
     }
     break;
   default:
-    node = rxn->node->prev;
+    node = xnode->prev;
     break;
   }
 
@@ -1781,16 +1771,15 @@ ruby_xml_node_prev_q(VALUE self) {
  */
 VALUE
 ruby_xml_node_prev_set(VALUE self, VALUE rnode) {
-  ruby_xml_node *cnode, *pnode;
-  xmlNodePtr ret;
+  xmlNodePtr cnode, pnode, ret;
 
   if (rb_obj_is_kind_of(rnode, cXMLNode) == Qfalse)
     rb_raise(rb_eTypeError, "Must pass an XML::Node object");
 
-  Data_Get_Struct(self,  ruby_xml_node, pnode);
-  Data_Get_Struct(rnode, ruby_xml_node, cnode);
+  Data_Get_Struct(self,  xmlNodePtr, pnode);
+  Data_Get_Struct(rnode, xmlNodePtr, cnode);
 
-  ret = xmlAddPrevSibling(pnode->node, cnode->node);
+  ret = xmlAddPrevSibling(pnode, cnode);
   if (ret == NULL)
     rb_raise(eXMLNodeFailedModify, "unable to add a sibling to the document");
 
@@ -1832,13 +1821,13 @@ ruby_xml_node_property_set(VALUE self, VALUE name, VALUE value) {
  */
 VALUE
 ruby_xml_node_attributes_get(VALUE self) {
-  ruby_xml_node *node;
+  xmlNodePtr xnode;
   xmlAttrPtr attr;
 
-  Data_Get_Struct(self, ruby_xml_node, node);
+  Data_Get_Struct(self, xmlNodePtr, xnode);
 
-  if (node->node->type == XML_ELEMENT_NODE) {
-    return ruby_xml_attributes_new(node->node);
+  if (xnode->type == XML_ELEMENT_NODE) {
+    return ruby_xml_attributes_new(xnode);
   } else {
     return(Qnil);
   }
@@ -1854,9 +1843,9 @@ ruby_xml_node_attributes_get(VALUE self) {
  */
 VALUE
 ruby_xml_node_attributes_q(VALUE self) {
-  ruby_xml_node *rxn;
-  Data_Get_Struct(self, ruby_xml_node, rxn);
-  if (rxn->node->type == XML_ELEMENT_NODE && rxn->node->properties != NULL)
+  xmlNodePtr xnode;
+  Data_Get_Struct(self, xmlNodePtr, xnode);
+  if (xnode->type == XML_ELEMENT_NODE && xnode->properties != NULL)
     return(Qtrue);
   else
     return(Qfalse);
@@ -1871,9 +1860,9 @@ ruby_xml_node_attributes_q(VALUE self) {
 */
 VALUE
 ruby_xml_node_remove_ex(VALUE self) {
-  ruby_xml_node *rxn;
-  Data_Get_Struct(self, ruby_xml_node, rxn);
-  xmlUnlinkNode(rxn->node);
+  xmlNodePtr xnode;
+  Data_Get_Struct(self, xmlNodePtr, xnode);
+  xmlUnlinkNode(xnode);
   return(Qnil);
 }
 
@@ -1886,11 +1875,11 @@ ruby_xml_node_remove_ex(VALUE self) {
  */
 VALUE
 ruby_xml_node_search_href(VALUE self, VALUE href) {
-  ruby_xml_node *node;
+  xmlNodePtr xnode;
 
   Check_Type(href, T_STRING);
-  Data_Get_Struct(self, ruby_xml_node, node);
-  return(ruby_xml_ns_wrap(xmlSearchNsByHref(node->node->doc, node->node,
+  Data_Get_Struct(self, xmlNodePtr, xnode);
+  return(ruby_xml_ns_wrap(xmlSearchNsByHref(xnode->doc, xnode,
 					    (xmlChar*)StringValuePtr(href))));
 }
 
@@ -1903,11 +1892,11 @@ ruby_xml_node_search_href(VALUE self, VALUE href) {
  */
 VALUE
 ruby_xml_node_search_ns(VALUE self, VALUE ns) {
-  ruby_xml_node *node;
+  xmlNodePtr xnode;
 
   Check_Type(ns, T_STRING);
-  Data_Get_Struct(self, ruby_xml_node, node);
-  return(ruby_xml_ns_wrap(xmlSearchNs(node->node->doc, node->node,
+  Data_Get_Struct(self, xmlNodePtr, xnode);
+  return(ruby_xml_ns_wrap(xmlSearchNs(xnode->doc, xnode,
 			              (xmlChar*)StringValuePtr(ns))));
 }
 
@@ -1920,17 +1909,16 @@ ruby_xml_node_search_ns(VALUE self, VALUE ns) {
  */
 VALUE
 ruby_xml_node_sibling_set(VALUE self, VALUE rnode) {
-  ruby_xml_node *cnode, *pnode;
-  xmlNodePtr ret;
+  xmlNodePtr cnode, pnode, ret;
   VALUE obj;
 
   if (rb_obj_is_kind_of(rnode, cXMLNode) == Qfalse)
     rb_raise(rb_eTypeError, "Must pass an XML::Node object");
 
-  Data_Get_Struct(self,  ruby_xml_node, pnode);
-  Data_Get_Struct(rnode, ruby_xml_node, cnode);
+  Data_Get_Struct(self,  xmlNodePtr, pnode);
+  Data_Get_Struct(rnode, xmlNodePtr, cnode);
 
-  ret = xmlAddSibling(pnode->node, cnode->node);
+  ret = xmlAddSibling(pnode, cnode);
   if (ret == NULL)
     rb_raise(eXMLNodeFailedModify, "unable to add a sibling to the document");
   if (ret->_private==NULL)
@@ -1950,10 +1938,10 @@ ruby_xml_node_sibling_set(VALUE self, VALUE rnode) {
  */
 VALUE
 ruby_xml_node_space_preserve_get(VALUE self) {
-  ruby_xml_node *rxn;
+  xmlNodePtr xnode;
 
-  Data_Get_Struct(self, ruby_xml_node, rxn);
-  return(INT2NUM(xmlNodeGetSpacePreserve(rxn->node)));
+  Data_Get_Struct(self, xmlNodePtr, xnode);
+  return(INT2NUM(xmlNodeGetSpacePreserve(xnode)));
 }
 
 
@@ -1965,13 +1953,13 @@ ruby_xml_node_space_preserve_get(VALUE self) {
  */
 VALUE
 ruby_xml_node_space_preserve_set(VALUE self, VALUE bool) {
-  ruby_xml_node *rxn;
-  Data_Get_Struct(self, ruby_xml_node, rxn);
+  xmlNodePtr xnode;
+  Data_Get_Struct(self, xmlNodePtr, xnode);
 
   if (TYPE(bool) == T_FALSE)
-    xmlNodeSetSpacePreserve(rxn->node, 1);
+    xmlNodeSetSpacePreserve(xnode, 1);
   else
-    xmlNodeSetSpacePreserve(rxn->node, 0);
+    xmlNodeSetSpacePreserve(xnode, 0);
 
   return(Qnil);
 }
@@ -1985,12 +1973,12 @@ ruby_xml_node_space_preserve_set(VALUE self, VALUE bool) {
  */
 VALUE
 ruby_xml_node_text_q(VALUE self) {
-  ruby_xml_node *rxn;
-  Data_Get_Struct(self, ruby_xml_node, rxn);
-  if (rxn->node == NULL)
+  xmlNodePtr xnode;
+  Data_Get_Struct(self, xmlNodePtr, xnode);
+  if (xnode == NULL)
     return(Qnil);
 
-  return((xmlNodeIsText(rxn->node) == 1) ? Qtrue : Qfalse);
+  return((xmlNodeIsText(xnode) == 1) ? Qtrue : Qfalse);
 }
 
 
@@ -2003,13 +1991,13 @@ ruby_xml_node_text_q(VALUE self) {
  */
 VALUE
 ruby_xml_node_to_s(VALUE self) {
-  ruby_xml_node *rxn;
+  xmlNodePtr xnode;
   xmlBufferPtr buf;
   VALUE result;
 
-  Data_Get_Struct(self, ruby_xml_node, rxn);
+  Data_Get_Struct(self, xmlNodePtr, xnode);
   buf = xmlBufferCreate();
-  xmlNodeDump(buf, rxn->node->doc, rxn->node, 0, 1);
+  xmlNodeDump(buf, xnode->doc, xnode, 0, 1);
   result = rb_str_new2((const char*)buf->content);
   
   xmlBufferFree(buf);
@@ -2025,9 +2013,9 @@ ruby_xml_node_to_s(VALUE self) {
  */
 VALUE
 ruby_xml_node_type(VALUE self) {
-  ruby_xml_node *rxn;
-  Data_Get_Struct(self, ruby_xml_node, rxn);
-  return(INT2NUM(rxn->node->type));
+  xmlNodePtr xnode;
+  Data_Get_Struct(self, xmlNodePtr, xnode);
+  return(INT2NUM(xnode->type));
 }
 
 
@@ -2039,10 +2027,10 @@ ruby_xml_node_type(VALUE self) {
  */
 VALUE
 ruby_xml_node_type_name(VALUE self) {
-  ruby_xml_node *rxn;
-  Data_Get_Struct(self, ruby_xml_node, rxn);
+  xmlNodePtr xnode;
+  Data_Get_Struct(self, xmlNodePtr, xnode);
 
-  switch(rxn->node->type) {
+  switch(xnode->type) {
   case XML_ELEMENT_NODE:
     return(rb_str_new2("element"));
   case XML_ATTRIBUTE_NODE:
@@ -2088,7 +2076,7 @@ ruby_xml_node_type_name(VALUE self) {
     return(rb_str_new2("document_docbook"));
 #endif
   default:
-    rb_raise(eXMLNodeUnknownType, "Unknown node type: %n", rxn->node->type);
+    rb_raise(eXMLNodeUnknownType, "Unknown node type: %n", xnode->type);
     return(Qfalse);
   }
 }
@@ -2102,9 +2090,9 @@ ruby_xml_node_type_name(VALUE self) {
  */
 VALUE
 ruby_xml_node_xinclude_end_q(VALUE self) {
-  ruby_xml_node *rxn;
-  Data_Get_Struct(self, ruby_xml_node, rxn);
-  if (rxn->node->type == XML_XINCLUDE_END)
+  xmlNodePtr xnode;
+  Data_Get_Struct(self, xmlNodePtr, xnode);
+  if (xnode->type == XML_XINCLUDE_END)
     return(Qtrue);
   else
     return(Qfalse);
@@ -2119,9 +2107,9 @@ ruby_xml_node_xinclude_end_q(VALUE self) {
  */
 VALUE
 ruby_xml_node_xinclude_start_q(VALUE self) {
-  ruby_xml_node *rxn;
-  Data_Get_Struct(self, ruby_xml_node, rxn);
-  if (rxn->node->type == XML_XINCLUDE_START)
+  xmlNodePtr xnode;
+  Data_Get_Struct(self, xmlNodePtr, xnode);
+  if (xnode->type == XML_XINCLUDE_START)
     return(Qtrue);
   else
     return(Qfalse);
@@ -2136,12 +2124,12 @@ ruby_xml_node_xinclude_start_q(VALUE self) {
  */
 VALUE
 ruby_xml_node_copy(VALUE self, VALUE deep) {
-  ruby_xml_node *rxn;
+  xmlNodePtr xnode;
   xmlNode *copy;
   VALUE obj;
 
-  Data_Get_Struct(self, ruby_xml_node, rxn);
-  copy = xmlCopyNode( rxn->node, ((deep==Qnil)||(deep==Qfalse))?0:1 );
+  Data_Get_Struct(self, xmlNodePtr, xnode);
+  copy = xmlCopyNode( xnode, ((deep==Qnil)||(deep==Qfalse))?0:1 );
 
   if (copy == NULL)
     return Qnil;
@@ -2187,12 +2175,13 @@ ruby_xml_node_registerNode(xmlNodePtr node)
 }
 
 void
-ruby_xml_node_deregisterNode(xmlNodePtr node)
+ruby_xml_node_deregisterNode(xmlNodePtr xnode)
 {
-  ruby_xml_node *rxn;
-  if ( node->_private==NULL ) return;
-  Data_Get_Struct(node->_private, ruby_xml_node, rxn);
-  rxn->node=NULL;
+  VALUE node;
+  
+  if (xnode->_private==NULL ) return;
+  node = (VALUE)xnode->_private;
+  DATA_PTR(node) = NULL;
 }
 
 // Rdoc needs to know 

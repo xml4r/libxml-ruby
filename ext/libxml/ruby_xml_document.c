@@ -697,19 +697,18 @@ ruby_xml_document_root_get(VALUE self) {
 VALUE
 ruby_xml_document_root_set(VALUE self, VALUE node) {
   ruby_xml_document_t *rxd;
-  ruby_xml_node *rxn;
-  xmlNodePtr root;
+  xmlNodePtr xroot, xnode;
 
   if (rb_obj_is_kind_of(node, cXMLNode) == Qfalse)
     rb_raise(rb_eTypeError, "must pass an XML::Node type object");
 
   Data_Get_Struct(self, ruby_xml_document_t, rxd);
-  Data_Get_Struct(node, ruby_xml_node, rxn);
-  root = xmlDocSetRootElement(rxd->doc, rxn->node);
-  if (root == NULL)
+  Data_Get_Struct(node, xmlNodePtr, xnode);
+  xroot = xmlDocSetRootElement(rxd->doc, xnode);
+  if (xroot == NULL)
     return(Qnil);
 
-  return ruby_xml_node2_wrap(cXMLNode, root);
+  return ruby_xml_node2_wrap(cXMLNode, xroot);
 }
 
 

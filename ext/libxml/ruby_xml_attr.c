@@ -77,7 +77,7 @@ ruby_xml_attr_initialize(int argc, VALUE *argv, VALUE self) {
   VALUE value = argv[2];
   VALUE ns = (argc == 4 ? argv[3] : Qnil);
 
-  ruby_xml_node *rxn;
+  xmlNodePtr xnode;
   xmlAttrPtr xattr;
   
   if ( argc < 3 || argc > 4 )
@@ -86,17 +86,17 @@ ruby_xml_attr_initialize(int argc, VALUE *argv, VALUE self) {
   Check_Type(name, T_STRING);
   Check_Type(value, T_STRING);
   
-  Data_Get_Struct(node, ruby_xml_node, rxn);
+  Data_Get_Struct(node, xmlNodePtr, xnode);
   
   if NIL_P(ns)
   {
-    xattr = xmlNewProp(rxn->node, (xmlChar*)StringValuePtr(name), (xmlChar*)StringValuePtr(value));
+    xattr = xmlNewProp(xnode, (xmlChar*)StringValuePtr(name), (xmlChar*)StringValuePtr(value));
   }
   else
   {
     xmlNsPtr xns;
     Data_Get_Struct(ns, xmlNsPtr, xns);
-    xattr = xmlNewNsProp(rxn->node, xns, (xmlChar*)StringValuePtr(name), (xmlChar*)StringValuePtr(value));
+    xattr = xmlNewNsProp(xnode, xns, (xmlChar*)StringValuePtr(name), (xmlChar*)StringValuePtr(value));
   }
   
   xattr->_private = self;

@@ -15,11 +15,11 @@ ruby_xml_ns_alloc(VALUE klass) {
 
 static void
 ruby_xml_ns_initialize(VALUE self, VALUE node, VALUE href, VALUE prefix) {
-  ruby_xml_node *rxn;
+  xmlNodePtr xnode;
   xmlNsPtr xns;
 
-  Data_Get_Struct(node, ruby_xml_node, rxn);
-  xns = xmlNewNs(rxn->node, (xmlChar*)StringValuePtr(href), (xmlChar*)StringValuePtr(prefix));
+  Data_Get_Struct(node, xmlNodePtr, xnode);
+  xns = xmlNewNs(xnode, (xmlChar*)StringValuePtr(href), (xmlChar*)StringValuePtr(prefix));
 
   DATA_PTR(self) = xns;
   return self;  

@@ -10,15 +10,11 @@ extern VALUE eXMLNodeSetNamespace;
 extern VALUE eXMLNodeFailedModify;
 extern VALUE eXMLNodeUnknownType;
 
-typedef struct ruby_xml_node {
-  xmlNodePtr node;
-} ruby_xml_node;
-
 VALUE
 ruby_xml_node2_wrap(VALUE class, xmlNodePtr xnode);
 
-void ruby_xml_node_free(ruby_xml_node *rxn);
-void ruby_xml_node_mark_common(xmlNodePtr n);
+void ruby_xml_node_free(xmlNodePtr xnode);
+void ruby_xml_node_mark_common(xmlNodePtr xnode);
 void ruby_init_xml_node(void);
 
 VALUE check_string_or_symbol(VALUE val);

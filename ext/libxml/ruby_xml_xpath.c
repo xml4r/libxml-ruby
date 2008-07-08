@@ -118,7 +118,7 @@ ruby_xml_xpath_find(VALUE class, VALUE anode, VALUE xpath_expr, VALUE nslist) {
 #ifdef LIBXML_XPATH_ENABLED
   xmlXPathCompExprPtr comp;
   xmlXPathObjectPtr xxpop;
-  ruby_xml_node *node;
+  xmlNodePtr xnode;
   xmlXPathContextPtr ctxt;
   ruby_xml_document_t *rdocp;
   VALUE rnode, xxpc;
@@ -134,10 +134,10 @@ ruby_xml_xpath_find(VALUE class, VALUE anode, VALUE xpath_expr, VALUE nslist) {
 #ifdef DEBUG
     fprintf(stderr,"rnode 0x%x 0x%x\n",rnode,xmlDocGetRootElement(rdocp->doc)->_private);
 #endif
-    Data_Get_Struct(rnode, ruby_xml_node, node);
+    Data_Get_Struct(rnode, xmlNodePtr, xnode);
   } else if ( rb_obj_is_kind_of(anode, cXMLNode) == Qtrue) {
     xxpc = ruby_xml_xpath_context_new(anode);
-    Data_Get_Struct(anode, ruby_xml_node, node);
+    Data_Get_Struct(anode, xmlNodePtr, xnode);
   } else
     rb_raise(rb_eTypeError, "arg 1 must be XML::Document or XML::Node within a document %s", rb_obj_as_string(anode));
   
@@ -146,14 +146,14 @@ ruby_xml_xpath_find(VALUE class, VALUE anode, VALUE xpath_expr, VALUE nslist) {
 
   Data_Get_Struct(xxpc,xmlXPathContext,ctxt);
   // XXX Is this legal? Set a subtree to apply xpath?
-  ctxt->node = node->node;
+  ctxt->node = xnode;
 
   // XXX is setting ->namespaces used?
-  if (node->node->type == XML_DOCUMENT_NODE) {
-    ctxt->namespaces = xmlGetNsList(node->node->doc,
-				    xmlDocGetRootElement(node->node->doc));
+  if (xnode->type == XML_DOCUMENT_NODE) {
+    ctxt->namespaces = xmlGetNsList(xnode->doc,
+				    xmlDocGetRootElement(xnode->doc));
   } else {
-    ctxt->namespaces = xmlGetNsList(node->node->doc, node->node);
+    ctxt->namespaces = xmlGetNsList(xnode->doc, xnode);
   }
 
   ctxt->nsNr = 0;
