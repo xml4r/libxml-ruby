@@ -51,6 +51,12 @@ class XML::Node::Set
 end
 
 module XML::SiblingEnum
+  def length
+    inject(0) do |result, node| 
+      result + 1
+    end
+  end
+  
   private 
   
   # Iterates nodes and attributes
@@ -67,7 +73,6 @@ end
 class XML::Node
   include XML::SiblingEnum
   include Enumerable
-  include Comparable
   
   # maybe these don't belong on all nodes...
   def each_child(&blk)
@@ -87,12 +92,11 @@ class XML::Node
   alias :each :each_child
 
   def to_a
-    inject([]) { |ary,n| ary << n }
+    inject([]) do |ary,n|
+      ary << n
+      ary
+    end
   end
-  
-  def <=>(other)
-    to_s <=> other.to_s
-  end  
 
   def clone
     copy(false)
@@ -128,4 +132,3 @@ class XML::Attr
     "#{name} = #{value}"
   end
 end
-
