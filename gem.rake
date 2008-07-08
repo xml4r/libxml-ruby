@@ -56,18 +56,6 @@ default_spec = Gem::Specification.new do |spec|
   spec.required_ruby_version = '>= 1.8.4'
   spec.date = DateTime.now
   spec.rubyforge_project = 'libxml-ruby'
-  
-  # rdoc
-  spec.has_rdoc = true
-  spec.rdoc_options << "--title" << "libxml-ruby"
-  # Show source inline with line numbers
-  spec.rdoc_options << "--inline-source" << "--line-numbers"
-  # Make the readme file the start page for the generated html
-  #spec.rdoc_options << '--main' << 'README'
-  #spec.extra_rdoc_files = ['ext/libxml/*.c',
-   #                        'README',
-    #                       'LICENSE']
-
 end
 
 # Rake task to build the default package
@@ -109,6 +97,27 @@ task :create_win32_gem do
     target = File.join(current_dir, 'lib', file_name)
     rm(target)
   end
+end
+
+
+# ---------  RDoc Documentation ------
+desc "Generate rdoc documentation"
+Rake::RDocTask.new("rdoc") do |rdoc|
+  rdoc.rdoc_dir = 'doc'
+  rdoc.title    = "libxml-ruby"
+  # Show source inline with line numbers
+  rdoc.options << "--inline-source" << "--line-numbers"
+  ## Make the readme file the start page for the generated html
+  #rdoc.options << '--main' << 'README'
+  #rdoc.rdoc_files.include('bin/**/*',
+                          #'doc/*.rdoc',
+                          #'examples/flat.txt',
+                          #'examples/graph.txt',
+                          #'examples/graph.html',
+                          #'lib/**/*.rb',
+                          #'ext/**/ruby_prof.c',
+                          #'README',
+                          #'LICENSE')
 end
 
 task :package => :create_win32_gem
