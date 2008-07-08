@@ -7,6 +7,30 @@
 
 VALUE cXMLNS;
 
+
+static void
+ruby_xml_ns_alloc(VALUE klass) {
+  return Data_Wrap_Struct(cXMLNS, NULL, NULL, NULL);
+}
+
+static void
+ruby_xml_ns_initialize(VALUE self, VALUE node, VALUE href, VALUE prefix) {
+  ruby_xml_node *rxn;
+  xmlNsPtr xns;
+
+  Data_Get_Struct(node, ruby_xml_node, rxn);
+  xns = xmlNewNs(rxn->node, (xmlChar*)StringValuePtr(href), (xmlChar*)StringValuePtr(prefix));
+
+  DATA_PTR(self) = xns;
+  return self;  
+}
+
+VALUE
+ruby_xml_ns_wrap(xmlNsPtr xns) {
+  return(Data_Wrap_Struct(cXMLNS, NULL, NULL, xns));
+}
+
+
 /*
  * call-seq:
  *    ns.href => "href"
@@ -15,12 +39,12 @@ VALUE cXMLNS;
  */
 VALUE
 ruby_xml_ns_href_get(VALUE self) {
-  ruby_xml_ns *rxns;
-  Data_Get_Struct(self, ruby_xml_ns, rxns);
-  if (rxns->ns == NULL || rxns->ns->href == NULL)
+  xmlNsPtr xns;
+  Data_Get_Struct(self, xmlNsPtr, xns);
+  if (xns == NULL || xns->href == NULL)
     return(Qnil);
   else
-    return(rb_str_new2((const char*)rxns->ns->href));
+    return(rb_str_new2((const char*)xns->href));
 }
 
 
@@ -32,57 +56,12 @@ ruby_xml_ns_href_get(VALUE self) {
  */
 VALUE
 ruby_xml_ns_href_q(VALUE self) {
-  ruby_xml_ns *rxns;
-  Data_Get_Struct(self, ruby_xml_ns, rxns);
-  if (rxns->ns == NULL || rxns->ns->href == NULL)
+  xmlNsPtr xns;
+  Data_Get_Struct(self, xmlNsPtr, xns);
+  if (xns == NULL || xns->href == NULL)
     return(Qfalse);
   else
     return(Qtrue);
-}
-
-
-void
-ruby_xml_ns_free(ruby_xml_ns *rxns) {
-  if (rxns->ns != NULL && !rxns->is_ptr) {
-    xmlFreeNs(rxns->ns);
-    rxns->ns = NULL;
-  }
-
-  ruby_xfree(rxns);
-}
-
-
-static void
-ruby_xml_ns_mark(ruby_xml_ns *rxns) {
-  if (rxns == NULL) return;
-  if (!NIL_P(rxns->xd))
-    rb_gc_mark(rxns->xd);
-}
-
-
-VALUE
-ruby_xml_ns_new(VALUE class, VALUE xd, xmlNsPtr ns) {
-  ruby_xml_ns *rxns;
-
-  rxns = ALLOC(ruby_xml_ns);
-  rxns->is_ptr = 0;
-  rxns->ns = ns;
-  rxns->xd = xd;
-  return(Data_Wrap_Struct(class, ruby_xml_ns_mark,
-			  ruby_xml_ns_free, rxns));
-}
-
-
-VALUE
-ruby_xml_ns_new2(VALUE class, VALUE xd, xmlNsPtr ns) {
-  ruby_xml_ns *rxns;
-
-  rxns = ALLOC(ruby_xml_ns);
-  rxns->is_ptr = 1;
-  rxns->ns = ns;
-  rxns->xd = xd;
-  return(Data_Wrap_Struct(class, ruby_xml_ns_mark,
-			  ruby_xml_ns_free, rxns));
 }
 
 
@@ -94,12 +73,12 @@ ruby_xml_ns_new2(VALUE class, VALUE xd, xmlNsPtr ns) {
  */
 VALUE
 ruby_xml_ns_next(VALUE self) {
-  ruby_xml_ns *rxns;
-  Data_Get_Struct(self, ruby_xml_ns, rxns);
-  if (rxns->ns == NULL || rxns->ns->next == NULL)
+  xmlNsPtr xns;
+  Data_Get_Struct(self, xmlNsPtr, xns);
+  if (xns == NULL || xns->next == NULL)
     return(Qnil);
   else
-    return(ruby_xml_ns_new2(cXMLNS, rxns->xd, rxns->ns->next));
+    return(ruby_xml_ns_wrap(xns->next));
 }
 
 
@@ -112,12 +91,12 @@ ruby_xml_ns_next(VALUE self) {
  */
 VALUE
 ruby_xml_ns_prefix_get(VALUE self) {
-  ruby_xml_ns *rxns;
-  Data_Get_Struct(self, ruby_xml_ns, rxns);
-  if (rxns->ns == NULL || rxns->ns->prefix == NULL)
+  xmlNsPtr xns;
+  Data_Get_Struct(self, xmlNsPtr, xns);
+  if (xns == NULL || xns->prefix == NULL)
     return(Qnil);
   else
-    return(rb_str_new2((const char*)rxns->ns->prefix));
+    return(rb_str_new2((const char*)xns->prefix));
 }
 
 
@@ -129,9 +108,9 @@ ruby_xml_ns_prefix_get(VALUE self) {
  */
 VALUE
 ruby_xml_ns_prefix_q(VALUE self) {
-  ruby_xml_ns *rxns;
-  Data_Get_Struct(self, ruby_xml_ns, rxns);
-  if (rxns->ns == NULL || rxns->ns->prefix == NULL)
+  xmlNsPtr xns;
+  Data_Get_Struct(self, xmlNsPtr, xns);
+  if (xns == NULL || xns->prefix == NULL)
     return(Qfalse);
   else
     return(Qtrue);
@@ -145,6 +124,8 @@ ruby_xml_ns_prefix_q(VALUE self) {
 void
 ruby_init_xml_ns(void) {
   cXMLNS = rb_define_class_under(mXML, "NS", rb_cObject);
+  rb_define_alloc_func(cXMLNS, ruby_xml_ns_alloc);
+  rb_define_method(cXMLNS, "initialize", ruby_xml_ns_initialize, 3);
   rb_define_method(cXMLNS, "href", ruby_xml_ns_href_get, 0);
   rb_define_method(cXMLNS, "href?", ruby_xml_ns_href_q, 0);
   rb_define_method(cXMLNS, "next", ruby_xml_ns_next, 0);

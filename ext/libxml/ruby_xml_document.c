@@ -669,30 +669,6 @@ ruby_xml_document_prev_q(VALUE self) {
 
 /*
  * call-seq:
- *    document["key"] => "value"
- * 
- * Obtain the named property.
- */
-VALUE
-ruby_xml_document_property_get(VALUE self, VALUE key) {
-  return(ruby_xml_node_property_get(ruby_xml_document_root_get(self), key));
-}
-
-
-/*
- * call-seq:
- *    document["key"] = "value"
- * 
- * Set the named property.
- */
-VALUE
-ruby_xml_document_property_set(VALUE self, VALUE key, VALUE val) {
-  return(ruby_xml_node_property_set(ruby_xml_document_root_get(self), key, val));
-}
-
-
-/*
- * call-seq:
  *    document.root => node
  * 
  * Obtain the root node.
@@ -1073,8 +1049,6 @@ ruby_init_xml_document(void) {
   //rb_raise(eXMLNodeFailedModify, "unable to add a child to the document");
   //eDTDValidityWarning = rb_define_class_under(cXMLNode, "ValidityWarning", eXMLError);
   //eDTDValidityError   = rb_define_class_under(cXMLNode, "ValidityWarning", eXMLError);
-  rb_define_method(cXMLDocument, "[]", ruby_xml_document_property_get, 1);
-  rb_define_method(cXMLDocument, "[]=", ruby_xml_document_property_set, 2);
   rb_define_method(cXMLDocument, "child", ruby_xml_document_child_get, 0);
   rb_define_method(cXMLDocument, "child?", ruby_xml_document_child_q, 0);
   rb_define_method(cXMLDocument, "compression", ruby_xml_document_compression_get, 0);

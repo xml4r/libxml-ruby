@@ -20,6 +20,9 @@ ruby_xml_node2_wrap(VALUE class, xmlNodePtr xnode);
 void ruby_xml_node_free(ruby_xml_node *rxn);
 void ruby_xml_node_mark_common(xmlNodePtr n);
 void ruby_init_xml_node(void);
+
+VALUE check_string_or_symbol(VALUE val);
+
 VALUE ruby_xml_node_child_set(VALUE self, VALUE obj);
 VALUE ruby_xml_node_name_get(VALUE self);
 VALUE ruby_xml_node_property_get(VALUE self, VALUE key);

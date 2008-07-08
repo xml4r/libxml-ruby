@@ -29,24 +29,24 @@ VALUE cbidOnExternalSubset;
 #include "sax_parser_callbacks.inc"
 
 void
-ruby_xml_sax_parser_free(ruby_xml_sax_parser *rxsp) {
+ruby_xml_sax_parser_free(ruby_xml_sax_parser *nodesp) {
   /* Apparently this isn't needed: time will tell */
-  /* if (rxsp->xsh != NULL) */
-  /* xmlFreeSax_Parser(rxsp->sax_parser); */
+  /* if (nodesp->xsh != NULL) */
+  /* xmlFreeSax_Parser(nodesp->sax_parser); */
 }
 
 void
-ruby_xml_sax_parser_mark(ruby_xml_sax_parser *rxsp) {
-  if (rxsp->callbackHandler && (rxsp->callbackHandler != Qnil)) {
-    rb_gc_mark(rxsp->callbackHandler);
+ruby_xml_sax_parser_mark(ruby_xml_sax_parser *nodesp) {
+  if (nodesp->callbackHandler && (nodesp->callbackHandler != Qnil)) {
+    rb_gc_mark(nodesp->callbackHandler);
   }
   
-  if (rxsp->filename && (rxsp->filename != Qnil)) {
-    rb_gc_mark(rxsp->filename);
+  if (nodesp->filename && (nodesp->filename != Qnil)) {
+    rb_gc_mark(nodesp->filename);
   }
 
-  if (rxsp->str && (rxsp->str != Qnil)) {
-    rb_gc_mark(rxsp->str);
+  if (nodesp->str && (nodesp->str != Qnil)) {
+    rb_gc_mark(nodesp->str);
   }
 }
 
@@ -58,18 +58,18 @@ ruby_xml_sax_parser_mark(ruby_xml_sax_parser *rxsp) {
  */
 VALUE
 ruby_xml_sax_parser_new(VALUE class) {
-  ruby_xml_sax_parser *rxsp;
+  ruby_xml_sax_parser *nodesp;
   
-  rxsp = ALLOC(ruby_xml_sax_parser);
-  rxsp->xsh = &rubySAXHandlerStruct;
+  nodesp = ALLOC(ruby_xml_sax_parser);
+  nodesp->xsh = &rubySAXHandlerStruct;
 
-  rxsp->callbackHandler = Qnil;  
-  rxsp->xpc = NULL;
-  rxsp->filename = Qnil;
-  rxsp->str = Qnil;
+  nodesp->callbackHandler = Qnil;  
+  nodesp->xpc = NULL;
+  nodesp->filename = Qnil;
+  nodesp->str = Qnil;
 
   return(Data_Wrap_Struct(class, ruby_xml_sax_parser_mark, 
-                              ruby_xml_sax_parser_free, rxsp));
+                              ruby_xml_sax_parser_free, nodesp));
 }
 
 
@@ -81,9 +81,9 @@ ruby_xml_sax_parser_new(VALUE class) {
  */
 VALUE
 ruby_xml_sax_parser_callbacks_get(VALUE self) {
-  ruby_xml_sax_parser *rxsp;
-  Data_Get_Struct(self, ruby_xml_sax_parser, rxsp);
-  return(rxsp->callbackHandler);
+  ruby_xml_sax_parser *nodesp;
+  Data_Get_Struct(self, ruby_xml_sax_parser, nodesp);
+  return(nodesp->callbackHandler);
 }
 
 
@@ -92,16 +92,16 @@ ruby_xml_sax_parser_callbacks_get(VALUE self) {
  *    sax_parser.callbacks = #<XML::SaxParser::Callbacks subclass>
  * 
  * Set the callbacks used by this parser. The value assigned to
- * this attribute will usually be an object that extends the the 
+ * this attributesibute will usually be an object that extends the the 
  * XML::SaxParser::Callbacks module, overriding the callbacks it
  * wishes to process.
  */
 VALUE
 ruby_xml_sax_parser_callbacks_set(VALUE self, VALUE callbacks) {
-  ruby_xml_sax_parser *rxsp;
-  Data_Get_Struct(self, ruby_xml_sax_parser, rxsp);
-  rxsp->callbackHandler = callbacks;
-  return(rxsp->callbackHandler);
+  ruby_xml_sax_parser *nodesp;
+  Data_Get_Struct(self, ruby_xml_sax_parser, nodesp);
+  nodesp->callbackHandler = callbacks;
+  return(nodesp->callbackHandler);
 }
 
 
@@ -113,9 +113,9 @@ ruby_xml_sax_parser_callbacks_set(VALUE self, VALUE callbacks) {
  */
 VALUE
 ruby_xml_sax_parser_filename_get(VALUE self) {
-  ruby_xml_sax_parser *rxsp;
-  Data_Get_Struct(self, ruby_xml_sax_parser, rxsp);
-  return(rxsp->filename);
+  ruby_xml_sax_parser *nodesp;
+  Data_Get_Struct(self, ruby_xml_sax_parser, nodesp);
+  return(nodesp->filename);
 }
 
 
@@ -127,11 +127,11 @@ ruby_xml_sax_parser_filename_get(VALUE self) {
  */
 VALUE
 ruby_xml_sax_parser_filename_set(VALUE self, VALUE filename) {
-  ruby_xml_sax_parser *rxsp;
+  ruby_xml_sax_parser *nodesp;
   Check_Type(filename, T_STRING);
-  Data_Get_Struct(self, ruby_xml_sax_parser, rxsp);
-  rxsp->filename = filename;
-  return(rxsp->filename);
+  Data_Get_Struct(self, ruby_xml_sax_parser, nodesp);
+  nodesp->filename = filename;
+  return(nodesp->filename);
 }
 
  
@@ -140,22 +140,22 @@ ruby_xml_sax_parser_filename_set(VALUE self, VALUE filename) {
  *    parser.parse => (true|false)
  * 
  * Parse the input XML, generating callbacks to the object
- * registered via the +callbacks+ attribute.
+ * registered via the +callbacks+ attributesibute.
  */
 VALUE
 ruby_xml_sax_parser_parse(VALUE self) {
   char *str;
   int status = 1;
-  ruby_xml_sax_parser *rxsp;
+  ruby_xml_sax_parser *nodesp;
 
-  Data_Get_Struct(self, ruby_xml_sax_parser, rxsp);
+  Data_Get_Struct(self, ruby_xml_sax_parser, nodesp);
 
-  if (rxsp->filename != Qnil) {
-    status = xmlSAXUserParseFile(rxsp->xsh, rxsp, StringValuePtr(rxsp->filename));
-  } else if (rxsp->str != Qnil) {
-    str = StringValuePtr(rxsp->str);
+  if (nodesp->filename != Qnil) {
+    status = xmlSAXUserParseFile(nodesp->xsh, nodesp, StringValuePtr(nodesp->filename));
+  } else if (nodesp->str != Qnil) {
+    str = StringValuePtr(nodesp->str);
     status = //ruby_xml_document_new(cXMLDocument,
-				   xmlSAXUserParseMemory(rxsp->xsh, rxsp,
+				   xmlSAXUserParseMemory(nodesp->xsh, nodesp,
                  str, strlen(str)); //);
   }
   
@@ -177,9 +177,9 @@ ruby_xml_sax_parser_parse(VALUE self) {
  */
 VALUE
 ruby_xml_sax_parser_str_get(VALUE self) {
-  ruby_xml_sax_parser *rxsp;
-  Data_Get_Struct(self, ruby_xml_sax_parser, rxsp);
-  return(rxsp->str);
+  ruby_xml_sax_parser *nodesp;
+  Data_Get_Struct(self, ruby_xml_sax_parser, nodesp);
+  return(nodesp->str);
 }
 
 
@@ -191,11 +191,11 @@ ruby_xml_sax_parser_str_get(VALUE self) {
  */
 VALUE
 ruby_xml_sax_parser_str_set(VALUE self, VALUE str) {
-  ruby_xml_sax_parser *rxsp;
+  ruby_xml_sax_parser *nodesp;
   Check_Type(str, T_STRING);
-  Data_Get_Struct(self, ruby_xml_sax_parser, rxsp);
-  rxsp->str = str;
-  return(rxsp->str);
+  Data_Get_Struct(self, ruby_xml_sax_parser, nodesp);
+  nodesp->str = str;
+  return(nodesp->str);
 }
 
 
@@ -276,7 +276,7 @@ ruby_xml_sax_callbacks_on_end_document(int argc, VALUE *argv, VALUE self) {
  
 /*
  * call-seq:
- *    callbacks.on_start_element(name, attr_hash)
+ *    callbacks.on_start_element(name, attributes_hash)
  * 
  * Called for an element start event.
  */

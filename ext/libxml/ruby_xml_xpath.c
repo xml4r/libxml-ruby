@@ -51,7 +51,7 @@ ruby_xml_xpath_register_namespaces(VALUE nslist, VALUE xxpc, int level) {
   char *cp;
   long i;
   VALUE rprefix, ruri;
-  ruby_xml_ns *rxns;
+  xmlNsPtr xns;
 
   /* Need to loop through the 2nd argument and iterate through the
    * list of namespaces that we want to allow */
@@ -87,9 +87,9 @@ ruby_xml_xpath_register_namespaces(VALUE nslist, VALUE xxpc, int level) {
     break;
   default:
     if (rb_obj_is_kind_of(nslist, cXMLNS) == Qtrue) {
-      Data_Get_Struct(nslist, ruby_xml_ns, rxns);
-      rprefix = rb_str_new2((const char*)rxns->ns->prefix);
-      ruri = rb_str_new2((const char*)rxns->ns->href);
+      Data_Get_Struct(nslist, xmlNsPtr, xns);
+      rprefix = rb_str_new2((const char*)xns->prefix);
+      ruri = rb_str_new2((const char*)xns->href);
       ruby_xml_xpath_context_register_namespace(xxpc, rprefix, ruri);
     } else
       rb_raise(rb_eArgError, "Invalid argument type, only accept string, array of strings, or an array of arrays");
