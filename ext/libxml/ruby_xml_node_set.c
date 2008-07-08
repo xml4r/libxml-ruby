@@ -96,7 +96,8 @@ ruby_xml_node_set_length(VALUE self) {
 
 static void
 ruby_xml_node_set_mark(ruby_xml_node_set *rxnset) {
-  if (!NIL_P(rxnset->rxpop)) rb_gc_mark(rxnset->rxpop);
+  if (!NIL_P(rxnset->rxpop))
+    rb_gc_mark(rxnset->rxpop);
 }
 
 static void

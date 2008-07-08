@@ -7,10 +7,6 @@
 VALUE mXML;
 VALUE eXMLError;
 
-static xmlFreeFunc freeFunc = NULL;
-static xmlMallocFunc mallocFunc = NULL;
-static xmlReallocFunc reallocFunc = NULL;
-static xmlStrdupFunc strdupFunc = NULL;
 
 #if defined(_WIN32)
 __declspec(dllexport) 
@@ -29,7 +25,6 @@ Init_libxml_ruby(void) {
                   (xmlReallocFunc)RubyMemRealloc, (xmlStrdupFunc)RubyMemStrdup) != 0)
     rb_fatal("could not install the memory handlers for libxml");
 #endif
-  xmlInitParser();
 
   mXML = rb_define_module("XML");
   eXMLError = rb_define_class_under(mXML, "Error", rb_eRuntimeError);

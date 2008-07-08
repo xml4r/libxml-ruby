@@ -438,7 +438,7 @@ void
 ruby_xml_document_mark(ruby_xml_document_t *rxd) {
   // will mark parsers and source types
   // I do not thing doc->parent has anything useful in it.
-  ruby_xml_state_marker();
+  rb_gc_mark(LIBXML_STATE);
 }
 
 /*

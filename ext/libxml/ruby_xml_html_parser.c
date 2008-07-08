@@ -63,7 +63,7 @@ ruby_xml_html_parser_filename_set(VALUE self, VALUE filename) {
     return(Qnil);
   }
 
-  rxp->ctxt = ruby_xml_parser_context_new3();
+  rxp->ctxt = ruby_xml_parser_context_new();
   data = (rx_file_data *)rxp->data;
   data->filename = filename;
 
@@ -159,7 +159,7 @@ ruby_xml_html_parser_io_set(VALUE self, VALUE io) {
     return(Qnil);
   }
 
-  rxp->ctxt = ruby_xml_parser_context_new3();
+  rxp->ctxt = ruby_xml_parser_context_new();
   data = (rx_io_data *)rxp->data;
   data->io = io;
 
@@ -181,9 +181,10 @@ ruby_xml_html_parser_io_set(VALUE self, VALUE io) {
 void
 ruby_xml_html_parser_mark(ruby_xml_html_parser *rxp) {
   if (rxp == NULL) return;
-  if (!NIL_P(rxp->ctxt)) rb_gc_mark(rxp->ctxt);
+  if (!NIL_P(rxp->ctxt))
+    rb_gc_mark(rxp->ctxt);
 
-  ruby_xml_state_marker();
+  rb_gc_mark(LIBXML_STATE);
 
   switch(rxp->data_type) {
   case RUBY_LIBXML_SRC_TYPE_NULL:
@@ -410,7 +411,7 @@ ruby_xml_html_parser_str_set(VALUE self, VALUE str) {
     return(Qnil);
   }
 
-  rxp->ctxt = ruby_xml_parser_context_new3();
+  rxp->ctxt = ruby_xml_parser_context_new();
   data = (rx_string_data *)rxp->data;
   data->str = str;
 

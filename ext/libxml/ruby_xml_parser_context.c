@@ -148,11 +148,6 @@ ruby_xml_parser_context_free(ruby_xml_parser_context *rxpc) {
   ruby_xfree(rxpc);
 }
 
-void
-ruby_xml_parser_context_mark(void *v) {
-  if ( v == NULL ) return;
-  ruby_xml_state_marker();
-}
 
 /*
  * call-seq:
@@ -367,28 +362,12 @@ ruby_xml_parser_context_num_chars_get(VALUE self) {
 
 
 VALUE
-ruby_xml_parser_context_new(VALUE class, xmlParserCtxtPtr ctxt) {
-  ruby_xml_parser_context *rxpc;
-
-  rxpc = ALLOC(ruby_xml_parser_context);
-
-  rxpc->ctxt = ctxt;
-  return Data_Wrap_Struct(class,
-			  ruby_xml_parser_context_mark,
+ruby_xml_parser_context_new() {
+  ruby_xml_parser_context *rxpc = ALLOC(ruby_xml_parser_context);
+  return Data_Wrap_Struct(cXMLParserContext,
+			  NULL,
 			  ruby_xml_parser_context_free,
 			  rxpc);
-}
-
-
-VALUE
-ruby_xml_parser_context_new2(VALUE class) {
-  return(ruby_xml_parser_context_new(class, NULL));
-}
-
-
-VALUE
-ruby_xml_parser_context_new3() {
-  return(ruby_xml_parser_context_new2(cXMLParserContext));
 }
 
 

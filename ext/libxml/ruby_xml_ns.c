@@ -55,7 +55,8 @@ ruby_xml_ns_free(ruby_xml_ns *rxns) {
 static void
 ruby_xml_ns_mark(ruby_xml_ns *rxns) {
   if (rxns == NULL) return;
-  if (!NIL_P(rxns->xd)) rb_gc_mark(rxns->xd);
+  if (!NIL_P(rxns->xd))
+    rb_gc_mark(rxns->xd);
 }
 
 
