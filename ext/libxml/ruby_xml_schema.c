@@ -25,61 +25,63 @@ ruby_xml_schema_free(ruby_xml_schema *rxschema) {
  * Create a new schema from the specified URI.
  */
 VALUE
-ruby_xml_schema_init_from_uri(int argc, VALUE *argv, VALUE class) {
+ruby_xml_schema_init_from_uri(VALUE class, VALUE uri) {
   xmlSchemaParserCtxtPtr parser;
   ruby_xml_schema *schema;
-  
-  VALUE uri;
   VALUE result = Qnil;
 
-  switch (argc) {
-  case 1:
-    rb_scan_args(argc, argv, "10", &uri);
-    Check_Type(uri, T_STRING);
+  Check_Type(uri, T_STRING);
 
-    parser = xmlSchemaNewParserCtxt(StringValuePtr(uri));
-    schema = ALLOC(ruby_xml_schema);
-    schema->schema = xmlSchemaParse(parser);
-    xmlSchemaFreeParserCtxt(parser);
- 	
-    result = Data_Wrap_Struct(cXMLSchema, ruby_xml_schema_mark, ruby_xml_schema_free, schema);
-    break;
-  default:
-    rb_raise(rb_eArgError, "wrong number of arguments (need 1)");
-  }
-  return(result);
+  parser = xmlSchemaNewParserCtxt(StringValuePtr(uri));
+  schema = ALLOC(ruby_xml_schema);
+  schema->schema = xmlSchemaParse(parser);
+  xmlSchemaFreeParserCtxt(parser);
+
+  return Data_Wrap_Struct(cXMLSchema, ruby_xml_schema_mark, ruby_xml_schema_free, schema);
 }
 
 /*
  * call-seq:
- *    XML::Schema.from_string("schema_data") => "value"
+ *    XML::Schema.document(document) => schema
+ * 
+ * Create a new schema from the specified URI.
+ */
+VALUE
+ruby_xml_schema_init_from_document(VALUE class, VALUE document) {
+  ruby_xml_document_t *rdoc;
+  ruby_xml_schema *schema;
+  xmlSchemaParserCtxtPtr parser;
+  VALUE result = Qnil;
+
+  Data_Get_Struct(document, ruby_xml_document_t, rdoc);
+
+  parser = xmlSchemaNewDocParserCtxt(rdoc->doc);
+  schema = ALLOC(ruby_xml_schema);
+  schema->schema = xmlSchemaParse(parser);
+  xmlSchemaFreeParserCtxt(parser);
+
+  return Data_Wrap_Struct(cXMLSchema, ruby_xml_schema_mark, ruby_xml_schema_free, schema);
+}
+
+/*
+ * call-seq:
+ *    XML::Schema.string("schema_data") => "value"
  * 
  * Create a new schema using the specified string.
  */
 VALUE
-ruby_xml_schema_init_from_str(int argc, VALUE *argv, VALUE class) {
-  VALUE schema_str;
-
+ruby_xml_schema_init_from_string(VALUE self, VALUE schema_str) {
   xmlSchemaParserCtxtPtr  parser;
-  //xmlSchemaPtr            sptr;
   ruby_xml_schema *rxschema;
 
-  switch (argc) {
-  case 1:
-    rb_scan_args(argc, argv, "10", &schema_str);
+  Check_Type(schema_str, T_STRING);
 
-    Check_Type(schema_str, T_STRING);
+  parser = xmlSchemaNewMemParserCtxt(StringValuePtr(schema_str), strlen(StringValuePtr(schema_str)));
+  rxschema = ALLOC(ruby_xml_schema);
+  rxschema->schema = xmlSchemaParse(parser);
+  xmlSchemaFreeParserCtxt(parser);
 
-    parser = xmlSchemaNewMemParserCtxt(StringValuePtr(schema_str), strlen(StringValuePtr(schema_str)));
-    rxschema = ALLOC(ruby_xml_schema);
-    rxschema->schema = xmlSchemaParse(parser);
- 	xmlSchemaFreeParserCtxt(parser);
-
-    return( Data_Wrap_Struct(cXMLSchema, ruby_xml_schema_mark, ruby_xml_schema_free, rxschema) );
-  default:
-    rb_raise(rb_eArgError, "wrong number of arguments (need 1)");
-  }
-  return Qnil;
+  return Data_Wrap_Struct(cXMLSchema, ruby_xml_schema_mark, ruby_xml_schema_free, rxschema);
 }
   
 /* TODO what is this patch doing here?
@@ -130,17 +132,10 @@ ruby_xml_schema_init_from_str(int argc, VALUE *argv, VALUE class) {
  	} else if (!strcmp(method, "validate_schema_buffer")) {
 */
 
-void  ruby_schema_free(ruby_xml_schema *rxs) {
-}
-
-// Rdoc needs to know 
-#ifdef RDOC_NEVER_DEFINED
-  mXML = rb_define_module("XML");
-#endif
-
 void  ruby_init_xml_schema(void) {
   cXMLSchema = rb_define_class_under(mXML, "Schema", rb_cObject);
-  rb_define_singleton_method(cXMLSchema, "new",         ruby_xml_schema_init_from_uri, -1);
-  rb_define_singleton_method(cXMLSchema, "from_string", ruby_xml_schema_init_from_str, -1);
+  rb_define_singleton_method(cXMLSchema, "new",         ruby_xml_schema_init_from_uri, 1);
+  rb_define_singleton_method(cXMLSchema, "from_string", ruby_xml_schema_init_from_string, 1);
+  rb_define_singleton_method(cXMLSchema, "document",    ruby_xml_schema_init_from_document, 1);
 }
 
