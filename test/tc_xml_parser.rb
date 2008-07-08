@@ -1,7 +1,7 @@
 require "libxml"
 require 'test/unit'
 
-class TC_XML_Parser < Test::Unit::TestCase
+class TextParser < Test::Unit::TestCase
   def setup
     @xp = XML::Parser.new
     assert_not_nil(@xp)
