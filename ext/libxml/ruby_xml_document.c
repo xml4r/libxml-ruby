@@ -411,7 +411,7 @@ ruby_xml_document_filename_get(VALUE self) {
  * Find nodes matching the specified xpath expression, optionally
  * using the specified namespace. Returns an XML::Node::Set.  For
  * more information about working with namespaces, please refer
- * to the XML::Xpath documentation.
+ * to the XML::XPath documentation.
  */
 VALUE
 ruby_xml_document_find(int argc, VALUE *argv, VALUE self) {
