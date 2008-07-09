@@ -1,6 +1,23 @@
 (See log/ChangeLog for more detailed changes derived directly from source control.)
 
-== 0.6..0 / 2008-07-01 Charlie Savage
+== 0.7.0 / 2008-07-09 Charlie Savage
+
+* Added new attributes class to provide a more natural way of working with attributes
+
+* Fixed XML::Attr to better support namespaces
+
+* Added documentation on how to use namespaces with XPath
+
+* Removed allocation of extraneous structures used to wrap nodes, namespaces and attributes
+
+* Cleaned up tests and added new test suite
+
+* Updated rdocs
+
+* Cleaned out most of the bug list
+
+
+== 0.6.0 / 2008-07-01 Charlie Savage
 
 * Fixed memory allocation errors in Windows.  On Windows, it is essential that the same library that allocates memory must free it. Thus ALLOC calls must be matched to ruby_xfree calls, which they were not.  In addition, in one case Ruby was allocating memory to be freed by libxml.  On Windows, that's a segmentation fault.  On Linux it might fly, but still seems like a bad idea.
 
