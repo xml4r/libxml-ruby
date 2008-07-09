@@ -937,7 +937,7 @@ LibXML_validity_warning(void * ctxt, const char * msg, va_list ap)
 
 /*
  * call-seq:
- *    document.validate(schema) -> (true|false)
+ *    document.validate_schema(schema) -> (true|false)
  * 
  * Validate this document against the specified XML::Schema.
  */
@@ -968,7 +968,7 @@ ruby_xml_document_validate_schema(VALUE self, VALUE schema) {
 
 /*
  * call-seq:
- *    document.validate(schema) -> (true|false)
+ *    document.validate(dtd) -> (true|false)
  * 
  * Validate this document against the specified XML::DTD.
  */
