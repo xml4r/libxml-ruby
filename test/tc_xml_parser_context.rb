@@ -1,7 +1,7 @@
 require "libxml"
 require 'test/unit'
 
-class TextParserContext < Test::Unit::TestCase
+class TestParserContext < Test::Unit::TestCase
   def setup
     str = '<ruby_array uga="booga" foo="bar"><fixnum>one</fixnum><fixnum>two</fixnum></ruby_array>'
     xp = XML::Parser.string(str)
