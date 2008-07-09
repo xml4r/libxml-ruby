@@ -1,7 +1,7 @@
 require "libxml"
 require 'test/unit'
 
-class TC_XML_Node < Test::Unit::TestCase
+class TestNode < Test::Unit::TestCase
   def setup
     xp = XML::Parser.new()
     str = '<ruby_array uga="booga" foo="bar"><fixnum>one</fixnum><fixnum>two</fixnum></ruby_array>'
@@ -75,8 +75,8 @@ class TC_XML_Node < Test::Unit::TestCase
     node_a2 = doc2.find('/ruby_array/fixnum').first
     
     assert(node_a.to_s == node_a2.to_s)
-    assert(node_a != node_a2)
-    assert(!node_a.eql?(node_a2))
+    assert(node_a == node_a2)
+    assert(node_a.eql?(node_a2))
     assert(!node_a.equal?(node_a2))
   end
       
@@ -86,5 +86,10 @@ class TC_XML_Node < Test::Unit::TestCase
     first = @doc.root.child
     assert_equal('one', first.content)
     assert_equal('two', first.next.content)
+  end
+  
+  def test_base
+    doc = XML::Parser.string('<person />').parse
+    assert_nil(doc.root.base)
   end
 end
