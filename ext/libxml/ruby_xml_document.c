@@ -406,10 +406,12 @@ ruby_xml_document_filename_get(VALUE self) {
 
 /*
  * call-seq:
- *    document.find(xpath_expr, [namespace]) -> nodeset
+ *    document.find(xpath_expr, [namespace]) -> XML::Node::Set
  * 
  * Find nodes matching the specified xpath expression, optionally
- * using the specified namespace. Returns an XML::Node::Set.
+ * using the specified namespace. Returns an XML::Node::Set.  For
+ * more information about working with namespaces, please refer
+ * to the XML::Xpath documentation.
  */
 VALUE
 ruby_xml_document_find(int argc, VALUE *argv, VALUE self) {
