@@ -2,6 +2,22 @@
 
 /* Please see the LICENSE file for copyright and distribution information */
 
+/*
+* Document-class: XML::Attr
+*
+* Provides access to an single element attribute.  Accessed by
+* calling XML::Node#attributes method.
+*
+* Basic Usage:
+*  require 'libxml'
+*
+*  doc = XML::Document.new(<some_file>)
+*  attribute = doc.root.attributes.get_attribute_ns('http://www.w3.org/1999/xlink', 'href')
+*  attribute.name == 'href'
+*  attribute.value == 'http://www.mydocument.com'
+*  attribute.remove!
+*/
+
 #include "ruby_libxml.h"
 #include "ruby_xml_attr.h"
 
@@ -69,6 +85,12 @@ ruby_xml_attr_alloc(VALUE klass)
  *    attr.initialize(node, "name", "value")
  * 
  * Creates a new attribute for the node.
+ *
+ * node: The XML::Node that will contain the attribute
+ * name: The name of the attribute
+ * value: The value of the attribute
+ *
+ *  attr = XML::Attr.new(doc.root, 'name', 'libxml')
  */
 VALUE
 ruby_xml_attr_initialize(int argc, VALUE *argv, VALUE self) {
@@ -105,7 +127,7 @@ ruby_xml_attr_initialize(int argc, VALUE *argv, VALUE self) {
 
 /*
  * call-seq:
- *    attr.child => node
+ *    attr.child -> node
  * 
  * Obtain this attribute's child attribute(s).
  */
@@ -122,7 +144,7 @@ ruby_xml_attr_child_get(VALUE self) {
 
 /*
  * call-seq:
- *    attr.child? => (true|false)
+ *    attr.child? -> (true|false)
  * 
  * Determine whether this attribute has child attributes.
  */
@@ -139,10 +161,11 @@ ruby_xml_attr_child_q(VALUE self) {
 
 /*
  * call-seq:
- *    attr.doc => document
+ *    attr.doc -> XML::Document
  * 
- * Obtain the XML::Document this attribute is associated with,
- * if any.
+ * Returns this attribute's document.
+ *
+ *  doc.root.attributes.get_attribute('name').doc == doc
  */
 VALUE
 ruby_xml_attr_doc_get(VALUE self) {
@@ -156,7 +179,7 @@ ruby_xml_attr_doc_get(VALUE self) {
 
 /*
  * call-seq:
- *    attr.doc? => (true|false)
+ *    attr.doc? -> (true|false)
  * 
  * Determine whether this attribute is associated with an
  * XML::Document.
@@ -174,7 +197,7 @@ ruby_xml_attr_doc_q(VALUE self) {
 
 /*
  * call-seq:
- *    attr.last => node
+ *    attr.last -> node
  * 
  * Obtain the last attribute.
  */
@@ -191,7 +214,7 @@ ruby_xml_attr_last_get(VALUE self) {
 
 /*
  * call-seq:
- *    attr.last? => (true|false)
+ *    attr.last? -> (true|false)
  * 
  * Determine whether this is the last attribute.
  */
@@ -207,7 +230,7 @@ ruby_xml_attr_last_q(VALUE self) {
 
 /*
  * call-seq:
- *    attr.name => "name"
+ *    attr.name -> "name"
  * 
  * Obtain this attribute's name.
  */
@@ -224,7 +247,7 @@ ruby_xml_attr_name_get(VALUE self) {
 
 /*
  * call-seq:
- *    attr.next => node
+ *    attr.next -> node
  * 
  * Obtain the next attribute.
  */
@@ -241,7 +264,7 @@ ruby_xml_attr_next_get(VALUE self) {
 
 /*
  * call-seq:
- *    attr.next? => (true|false)
+ *    attr.next? -> (true|false)
  * 
  * Determine whether there is a next attribute.
  */
@@ -258,7 +281,7 @@ ruby_xml_attr_next_q(VALUE self) {
 
 /*
  * call-seq:
- *    attr.type_name => "attribute"
+ *    attr.type_name -> "attribute"
  * 
  * Obtain this attribute node's type name.
  */
@@ -270,7 +293,7 @@ ruby_xml_attr_node_type_name(VALUE self) {
 
 /*
  * call-seq:
- *    attr.ns => namespace
+ *    attr.ns -> namespace
  * 
  * Obtain this attribute's associated XML::NS, if any.
  */
@@ -287,7 +310,7 @@ ruby_xml_attr_ns_get(VALUE self) {
 
 /*
  * call-seq:
- *    attr.ns? => (true|false)
+ *    attr.ns? -> (true|false)
  * 
  * Determine whether this attribute has an associated 
  * namespace.
@@ -305,7 +328,7 @@ ruby_xml_attr_ns_q(VALUE self) {
 
 /*
  * call-seq:
- *    attr.parent => node
+ *    attr.parent -> node
  * 
  * Obtain this attribute node's parent.
  */
@@ -322,7 +345,7 @@ ruby_xml_attr_parent_get(VALUE self) {
 
 /*
  * call-seq:
- *    attr.parent? => (true|false)
+ *    attr.parent? -> (true|false)
  * 
  * Determine whether this attribute has a parent.
  */
@@ -339,7 +362,7 @@ ruby_xml_attr_parent_q(VALUE self) {
 
 /*
  * call-seq:
- *    attr.prev => node
+ *    attr.prev -> node
  * 
  * Obtain the previous attribute.
  */
@@ -356,7 +379,7 @@ ruby_xml_attr_prev_get(VALUE self) {
 
 /*
  * call-seq:
- *    attr.prev? => (true|false)
+ *    attr.prev? -> (true|false)
  * 
  * Determine whether there is a previous attribute.
  */
@@ -373,7 +396,7 @@ ruby_xml_attr_prev_q(VALUE self) {
 
 /*
  * call-seq:
- *     node.remove! => nil
+ *     node.remove! -> nil
  * 
  * Removes this attribute from it's parent.
  */
@@ -392,7 +415,7 @@ ruby_xml_attr_remove_ex(VALUE self) {
 
 /*
  * call-seq:
- *    attr.value => "value"
+ *    attr.value -> "value"
  * 
  * Obtain the value of this attribute.
  */

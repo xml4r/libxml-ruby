@@ -2,6 +2,33 @@
 
 /* Please see the LICENSE file for copyright and distribution information */
 
+/*
+* Document-class: XML::Attributes
+*
+* Provides access to an elements attributes (XML::Attr).
+*
+* Basic Usage:
+*  require 'libxml'
+*
+*  doc = XML::Document.new(<some_file>)
+*  attributes = doc.root.attributes
+*
+*  attributes.each do |attribute|
+*    ..
+*  end
+* 
+*  attributes['foo'] = 'bar'
+*  attribute = attributes.get_attribute['foo']
+*  attribute.value == 'foo'
+*
+* To access a namespaced attribute:
+*
+*  XLINK_URI = 'http://www.w3.org/1999/xlink'
+*
+*  attribute = attributes.get_attribute_ns(XLINK_URI, 'title')
+*  attribute.value = 'My title'
+*/
+
 #include "ruby_libxml.h"
 #include "ruby_xml_attributes.h"
 
@@ -13,7 +40,7 @@ ruby_xml_attributes_mark(xmlNodePtr xnode) {
 }
 
 /*
- * Create new attributes instance.  Not exposed to ruby.
+ * Creates a  new attributes instance.  Not exposed to ruby.
  */
 VALUE
 ruby_xml_attributes_new(xmlNodePtr xnode)
@@ -25,9 +52,11 @@ ruby_xml_attributes_new(xmlNodePtr xnode)
 
 /*
  * call-seq:
- *    attributes.xnode => xnode
+ *   attributes.node -> XML::Node
  * 
- * Obtain this attributes parent element.
+ * Return the node that owns this attributes list.
+ *
+ *  doc.root.attributes.node == doc.root
  */
 VALUE
 ruby_xml_attributes_node_get(VALUE self) {
@@ -39,9 +68,13 @@ ruby_xml_attributes_node_get(VALUE self) {
 
 /*
  * call-seq:
- *    attributes.get_attribute("name") => xattr
+ *    attributes.get_attribute("name") -> XML::Attr
  * 
- * Returns the named attribute.
+ * Returns the specified attribute.
+ * 
+ * name: The name of the attribute, not including a namespace.
+ *
+ *  doc.root.attributes.get_attribute("foo")
  */
 VALUE
 ruby_xml_attributes_get_attribute(VALUE self, VALUE name) {
@@ -62,9 +95,14 @@ ruby_xml_attributes_get_attribute(VALUE self, VALUE name) {
 
 /*
  * call-seq:
- *    attributes.get_attribute_ns("namespace", "name") => xattr
+ *    attributes.get_attribute_ns("namespace", "name") -> XML::Attr
  * 
- * Returns the named attribute.
+ * Returns the specified attribute.
+ * 
+ * namespace: The URI of the attribute's namespace.
+ * name: The name of the attribute, not including a namespace.
+ *
+ *  doc.root.attributes.get_attribute_ns('http://www.w3.org/1999/xlink', 'href')
  */
 VALUE
 ruby_xml_attributes_get_attribute_ns(VALUE self, VALUE namespace, VALUE name) {
@@ -85,9 +123,14 @@ ruby_xml_attributes_get_attribute_ns(VALUE self, VALUE namespace, VALUE name) {
 
 /*
  * call-seq:
- *    attributes["name"]          => "string"
+ *    attributes["name"] -> String
  * 
- * Obtain the value of the named attribute.
+ * Fetches an attribute value. If you want to access the underlying
+ * Attribute itself use get_attribute.  
+ *
+ * name: The name of the attribute, not including any namespaces.
+ *  
+ *  doc.root.attributes['att'] -> 'some value'
  */
 VALUE
 ruby_xml_attributes_attribute_get(VALUE self, VALUE name) {
@@ -100,9 +143,15 @@ ruby_xml_attributes_attribute_get(VALUE self, VALUE name) {
 
 /*
  * call-seq:
- *    attributes["name"] = "string"
+ *    attributes["name"] = "value"
  * 
- * Set the value of the named attribute.
+ * Sets an attribute value. If you want to get the Attribute itself,
+ * use get_attribute.  
+ *
+ * name: The name of the attribute, not including any namespaces.
+ * value: The new value of the namespace.
+ *  
+ *  doc.root.attributes['att'] = 'some value'
  */
 VALUE
 ruby_xml_attributes_attribute_set(VALUE self, VALUE name, VALUE value) {
@@ -128,9 +177,11 @@ ruby_xml_attributes_attribute_set(VALUE self, VALUE name, VALUE value) {
 
 /*
  * call-seq:
- *    attributes.each => iterator
+ *    attributes.each {block} -> XML::Attr
  * 
- * Iterate over each attribute.
+ * Iterates over each attribute.
+ *  
+ *  doc.root.attributes.each {|attribute| puts attribute.name}
  */
 VALUE
 ruby_xml_attributes_each(VALUE self) {
@@ -152,9 +203,11 @@ ruby_xml_attributes_each(VALUE self) {
   
 /*
  * call-seq:
- *    attributes.length => iterator
+ *    attributes.length -> Integer
  * 
  * Returns the number of attributes.
+ *
+ *  doc.root.attributes.length
  */
 VALUE
 ruby_xml_attributes_length(VALUE self) {
@@ -176,9 +229,11 @@ ruby_xml_attributes_length(VALUE self) {
 
 /*
  * call-seq:
- *    attributes.first => XML::Attr
+ *    attributes.first -> XML::Attr
  * 
  * Returns the first attribute.
+ *
+ *  doc.root.attributes.first
  */
 VALUE
 ruby_xml_attributes_first(VALUE self) {
@@ -195,12 +250,16 @@ ruby_xml_attributes_first(VALUE self) {
   return(Qnil);
 }
 
+// Rdoc needs to know 
+#ifdef RDOC_NEVER_DEFINED
+  mXML = rb_define_module("XML");
+#endif
     
 void
 ruby_init_xml_attributes(void) {
   cXMLAttributes = rb_define_class_under(mXML, "Attributes", rb_cObject);
   rb_include_module(cXMLAttributes, rb_const_get(rb_cObject, rb_intern("Enumerable")));
-  rb_define_method(cXMLAttributes, "xnode", ruby_xml_attributes_node_get, 0);
+  rb_define_method(cXMLAttributes, "node", ruby_xml_attributes_node_get, 0);
   rb_define_method(cXMLAttributes, "get_attribute", ruby_xml_attributes_get_attribute, 1);
   rb_define_method(cXMLAttributes, "get_attribute_ns", ruby_xml_attributes_get_attribute_ns, 2);
   rb_define_method(cXMLAttributes, "[]", ruby_xml_attributes_attribute_get, 1);
