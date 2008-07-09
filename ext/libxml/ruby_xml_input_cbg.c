@@ -71,6 +71,12 @@ int ic_close (void *context) {
     return 1;
 }
 
+/*
+ * call-seq:
+ *    register
+ * 
+ * Register a new set of I/O callback for handling parser input.
+ */
 VALUE input_callbacks_register_input_callbacks() {
     xmlRegisterInputCallbacks( ic_match, ic_open, ic_read, ic_close );
     return(Qtrue);

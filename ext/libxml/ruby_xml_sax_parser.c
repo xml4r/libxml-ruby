@@ -52,7 +52,7 @@ ruby_xml_sax_parser_mark(ruby_xml_sax_parser *nodesp) {
 
 /*
  * call-seq:
- *    XML::SaxParser.new => sax_parser
+ *    XML::SaxParser.new -> sax_parser
  * 
  * Create a new XML::SaxParser instance.
  */
@@ -75,7 +75,7 @@ ruby_xml_sax_parser_new(VALUE class) {
 
 /*
  * call-seq:
- *    sax_parser.callbacks => #<XML::SaxParser::Callbacks subclass>
+ *    sax_parser.callbacks -> #<XML::SaxParser::Callbacks subclass>
  * 
  * Obtain the callbacks used by this parser.
  */
@@ -107,7 +107,7 @@ ruby_xml_sax_parser_callbacks_set(VALUE self, VALUE callbacks) {
 
 /*
  * call-seq:
- *    sax_parser.filename => "filename"
+ *    sax_parser.filename -> "filename"
  * 
  * Obtain the filename this parser reads from.
  */
@@ -137,7 +137,7 @@ ruby_xml_sax_parser_filename_set(VALUE self, VALUE filename) {
  
 /*
  * call-seq:
- *    parser.parse => (true|false)
+ *    parser.parse -> (true|false)
  * 
  * Parse the input XML, generating callbacks to the object
  * registered via the +callbacks+ attributesibute.
@@ -171,7 +171,7 @@ ruby_xml_sax_parser_parse(VALUE self) {
 
 /*
  * call-seq:
- *    parser.string => "xml"
+ *    parser.string -> "xml"
  * 
  * Obtain the parser's input string.
  */

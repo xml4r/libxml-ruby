@@ -9,7 +9,7 @@ VALUE cXMLXPathContext;
 
 /*
  * call-seq:
- *    context.doc => document
+ *    context.doc -> document
  * 
  * Obtain the XML::Document associated with this XPath.
  */
@@ -83,7 +83,7 @@ ruby_xml_xpath_context_new(VALUE anode) {
 
 /*
  * call-seq:
- *    context.register_namespace(prefix, uri) => (true|false)
+ *    context.register_namespace(prefix, uri) -> (true|false)
  * 
  * Register the specified namespace URI with the specified prefix
  * in this context.

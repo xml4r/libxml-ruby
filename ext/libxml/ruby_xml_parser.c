@@ -18,7 +18,7 @@ ctxtRead(FILE *f, char * buf, size_t len) {
 
 /*
  * call-seq:
- * 		XML::Parser.catalog_dump => true
+ * 		XML::Parser.catalog_dump -> true
  * 
  * Dump the parser resource catalogs to stdout.
  */
@@ -31,7 +31,7 @@ ruby_xml_parser_catalog_dump(VALUE self) {
 
 /*
  * call-seq:
- * 		XML::Parser.catalog_remove(catalog) => true
+ * 		XML::Parser.catalog_remove(catalog) -> true
  * 
  * Remove the specified resource catalog.
  */
@@ -45,7 +45,7 @@ ruby_xml_parser_catalog_remove(VALUE self, VALUE cat) {
 
 /*
  * call-seq:
- * 		XML::Parser.check_lib_versions => true							
+ * 		XML::Parser.check_lib_versions -> true							
  * 
  * Check LIBXML version matches version the bindings
  * were compiled to. Throws an exception if not.
@@ -59,7 +59,7 @@ ruby_xml_parser_check_lib_versions(VALUE class) {
 
 /*
  * call-seq:
- * 		XML::Parser.enabled_automata? => (true|false)
+ * 		XML::Parser.enabled_automata? -> (true|false)
  * 
  * Determine whether libxml regexp automata support is enabled.
  */
@@ -75,7 +75,7 @@ ruby_xml_parser_enabled_automata_q(VALUE class) {
 
 /*
  * call-seq:
- * 		XML::Parser.enabled_c14n? => (true|false)
+ * 		XML::Parser.enabled_c14n? -> (true|false)
  * 
  * Determine whether libxml 'canonical XML' support is enabled.
  * See "Canonical XML" (http://www.w3.org/TR/xml-c14n)
@@ -92,7 +92,7 @@ ruby_xml_parser_enabled_c14n_q(VALUE class) {
 
 /*
  * call-seq:
- * 		XML::Parser.enabled_catalog? => (true|false)                                         
+ * 		XML::Parser.enabled_catalog? -> (true|false)                                         
  * 
  * Determine whether libxml resource catalog support is enabled.
  */
@@ -108,7 +108,7 @@ ruby_xml_parser_enabled_catalog_q(VALUE class) {
 
 /*
  * call-seq:
- * 		XML::Parser.enabled_debug? => (true|false)  
+ * 		XML::Parser.enabled_debug? -> (true|false)  
  * 
  * Determine whether libxml debugging support is enabled.
  */
@@ -124,7 +124,7 @@ ruby_xml_parser_enabled_debug_q(VALUE class) {
 
 /*
  * call-seq:
- * 		XML::Parser.enabled_docbook? => (true|false)  
+ * 		XML::Parser.enabled_docbook? -> (true|false)  
  * 
  * Determine whether libxml docbook support is enabled.
  */
@@ -140,7 +140,7 @@ ruby_xml_parser_enabled_docbook_q(VALUE class) {
 
 /*
  * call-seq:
- * 		XML::Parser.enabled_ftp? => (true|false)  
+ * 		XML::Parser.enabled_ftp? -> (true|false)  
  * 
  * Determine whether libxml ftp client support is enabled.
  */
@@ -156,7 +156,7 @@ ruby_xml_parser_enabled_ftp_q(VALUE class) {
 
 /*
  * call-seq:
- * 		XML::Parser.enabled_http? => (true|false)  
+ * 		XML::Parser.enabled_http? -> (true|false)  
  * 
  * Determine whether libxml http client support is enabled.
  */
@@ -172,7 +172,7 @@ ruby_xml_parser_enabled_http_q(VALUE class) {
 
 /*
  * call-seq:
- * 		XML::Parser.enabled_html? => (true|false)  
+ * 		XML::Parser.enabled_html? -> (true|false)  
  * 
  * Determine whether libxml html support is enabled.
  */
@@ -188,7 +188,7 @@ ruby_xml_parser_enabled_html_q(VALUE class) {
 
 /*
  * call-seq:
- * 		XML::Parser.enabled_iconv? => (true|false)  
+ * 		XML::Parser.enabled_iconv? -> (true|false)  
  * 
  * Determine whether libxml iconv support is enabled.
  */
@@ -204,7 +204,7 @@ ruby_xml_parser_enabled_iconv_q(VALUE class) {
 
 /*
  * call-seq:
- * 		XML::Parser.enabled_memory_debug? => (true|false)  
+ * 		XML::Parser.enabled_memory_debug? -> (true|false)  
  * 
  * Determine whether libxml memory location debugging support
  * is enabled.
@@ -221,7 +221,7 @@ ruby_xml_parser_enabled_memory_debug_location_q(VALUE class) {
 
 /*
  * call-seq:
- * 		XML::Parser.enabled_regexp? => (true|false)  
+ * 		XML::Parser.enabled_regexp? -> (true|false)  
  * 
  * Determine whether libxml regular expression support is enabled.
  */
@@ -237,7 +237,7 @@ ruby_xml_parser_enabled_regexp_q(VALUE class) {
 
 /*
  * call-seq:
- * 		XML::Parser.enabled_schemas? => (true|false)  
+ * 		XML::Parser.enabled_schemas? -> (true|false)  
  * 
  * Determine whether libxml schema support is enabled.
  */
@@ -253,7 +253,7 @@ ruby_xml_parser_enabled_schemas_q(VALUE class) {
 
 /*
  * call-seq:
- * 		XML::Parser.enabled_thread? => (true|false)  
+ * 		XML::Parser.enabled_thread? -> (true|false)  
  * 
  * Determine whether libxml thread-safe semantics support 
  * is enabled (I think?).
@@ -270,7 +270,7 @@ ruby_xml_parser_enabled_thread_q(VALUE class) {
 
 /*
  * call-seq:
- * 		XML::Parser.enabled_unicode? => (true|false)  
+ * 		XML::Parser.enabled_unicode? -> (true|false)  
  * 
  * Determine whether libxml unicode support is enabled.
  */
@@ -286,7 +286,7 @@ ruby_xml_parser_enabled_unicode_q(VALUE class) {
 
 /*
  * call-seq:
- * 		XML::Parser.enabled_xinclude? => (true|false)  
+ * 		XML::Parser.enabled_xinclude? -> (true|false)  
  * 
  * Determine whether libxml xinclude support is enabled.
  */
@@ -302,7 +302,7 @@ ruby_xml_parser_enabled_xinclude_q(VALUE class) {
 
 /*
  * call-seq:
- * 		XML::Parser.enabled_xpath? => (true|false)  
+ * 		XML::Parser.enabled_xpath? -> (true|false)  
  * 
  * Determine whether libxml xpath support is enabled.
  */
@@ -318,7 +318,7 @@ ruby_xml_parser_enabled_xpath_q(VALUE class) {
 
 /*
  * call-seq:
- * 		XML::Parser.enabled_xpointer? => (true|false)  
+ * 		XML::Parser.enabled_xpointer? -> (true|false)  
  * 
  * Determine whether libxml xpointer support is enabled.
  */
@@ -334,7 +334,7 @@ ruby_xml_parser_enabled_xpointer_q(VALUE class) {
 
 /*
  * call-seq:
- * 		XML::Parser.enabled_zlib? => (true|false)  
+ * 		XML::Parser.enabled_zlib? -> (true|false)  
  * 
  * Determine whether libxml zlib support is enabled.
  */
@@ -350,7 +350,7 @@ ruby_xml_parser_enabled_zlib_q(VALUE class) {
 
 /*
  * call-seq:
- *    XML::Parser.debug_entities => (true|false)
+ *    XML::Parser.debug_entities -> (true|false)
  * 
  * Determine whether included-entity debugging is enabled.
  * (Requires Libxml to be compiled with debugging support)
@@ -394,7 +394,7 @@ ruby_xml_parser_debug_entities_set(VALUE class, VALUE bool) {
 
 /*
  * call-seq:
- *    XML::Parser.default_keep_blanks => (true|false)
+ *    XML::Parser.default_keep_blanks -> (true|false)
  * 
  * Determine whether parsers retain whitespace by default.
  */
@@ -429,7 +429,7 @@ ruby_xml_parser_default_keep_blanks_set(VALUE class, VALUE bool) {
 
 /*
  * call-seq:
- *    XML::Parser.default_load_external_dtd => (true|false)
+ *    XML::Parser.default_load_external_dtd -> (true|false)
  * 
  * Determine whether parsers load external DTDs by default.
  */
@@ -462,7 +462,7 @@ ruby_xml_parser_default_load_external_dtd_set(VALUE class, VALUE bool) {
 
 /*
  * call-seq:
- *    XML::Parser.default_line_numbers => (true|false)
+ *    XML::Parser.default_line_numbers -> (true|false)
  * 
  * Determine whether parsers retain line-numbers by default.
  */
@@ -495,7 +495,7 @@ ruby_xml_parser_default_line_numbers_set(VALUE class, VALUE bool) {
 
 /*
  * call-seq:
- *    XML::Parser.default_pedantic_parser => (true|false)
+ *    XML::Parser.default_pedantic_parser -> (true|false)
  * 
  * Determine whether parsers are pedantic by default.
  */
@@ -528,7 +528,7 @@ ruby_xml_parser_default_pedantic_parser_set(VALUE class, VALUE bool) {
 
 /*
  * call-seq:
- *    XML::Parser.default_substitute_entities => (true|false)
+ *    XML::Parser.default_substitute_entities -> (true|false)
  * 
  * Determine whether parsers perform inline entity substitution
  * (for external entities) by default.
@@ -563,7 +563,7 @@ ruby_xml_parser_default_substitute_entities_set(VALUE class, VALUE bool) {
 
 /*
  * call-seq:
- *    XML::Parser.default_tree_indent_string => "string"
+ *    XML::Parser.default_tree_indent_string -> "string"
  * 
  * Obtain the default string used by parsers to indent the XML tree
  * for output.
@@ -594,7 +594,7 @@ ruby_xml_parser_default_tree_indent_string_set(VALUE class, VALUE string) {
 
 /*
  * call-seq:
- *    XML::Parser.default_validity_checking => (true|false)
+ *    XML::Parser.default_validity_checking -> (true|false)
  * 
  * Determine whether parsers perform XML validation by default.
  */
@@ -627,7 +627,7 @@ ruby_xml_parser_default_validity_checking_set(VALUE class, VALUE bool) {
 
 /*
  * call-seq:
- *    XML::Parser.default_warnings => (true|false)
+ *    XML::Parser.default_warnings -> (true|false)
  * 
  * Determine whether parsers output warnings by default.
  */
@@ -660,7 +660,7 @@ ruby_xml_parser_default_warnings_set(VALUE class, VALUE bool) {
 
 /*
  * call-seq:
- *    XML::Parser.default_compression => (true|false)
+ *    XML::Parser.default_compression -> (true|false)
  * 
  * Determine whether parsers use Zlib compression by default
  * (requires libxml to be compiled with Zlib support).
@@ -698,7 +698,7 @@ ruby_xml_parser_default_compression_set(VALUE class, VALUE num) {
 
 /*
  * call-seq:
- *    XML::Parser.features => ["feature", ..., "feature"]
+ *    XML::Parser.features -> ["feature", ..., "feature"]
  * 
  * Obtains an array of strings representing features supported 
  * (and enabled) by the installed libxml.
@@ -732,7 +732,7 @@ ruby_xml_parser_features(VALUE class) {
 
 /*
  * call-seq:
- *    parser.filename => "filename"
+ *    parser.filename -> "filename"
  * 
  * Obtain the filename this parser will read from.
  */
@@ -821,7 +821,7 @@ ruby_xml_parser_free(ruby_xml_parser *rxp) {
 
 /*
  * call-seq:
- *    XML::Parser.indent_tree_output => (true|false)
+ *    XML::Parser.indent_tree_output -> (true|false)
  * 
  * Determines whether XML output will be indented 
  * (using the string supplied to +default_indent_tree_string+)
@@ -858,7 +858,7 @@ ruby_xml_parser_indent_tree_output_set(VALUE class, VALUE bool) {
 
 /*
  * call-seq:
- *    parser.io => IO
+ *    parser.io -> IO
  * 
  * Obtain the IO instance this parser works with.
  */
@@ -964,7 +964,7 @@ ruby_xml_parser_mark(ruby_xml_parser *rxp) {
 
 /*
  * call-seq:
- *    XML::Parser.memory_dump => (true|false)
+ *    XML::Parser.memory_dump -> (true|false)
  * 
  * Perform a parser memory dump (requires memory debugging 
  * support in libxml).
@@ -983,7 +983,7 @@ ruby_xml_parser_memory_dump(VALUE self) {
 
 /*
  * call-seq:
- *    XML::Parser.memory_used => num_bytes
+ *    XML::Parser.memory_used -> num_bytes
  * 
  * Perform a parser memory dump (requires memory debugging 
  * support in libxml).
@@ -1001,7 +1001,7 @@ ruby_xml_parser_memory_used(VALUE self) {
 
 /*
  * call-seq:
- *    XML::Parser.new => parser
+ *    XML::Parser.new -> parser
  * 
  * Create a new parser instance with no pre-determined source.
  */
@@ -1027,7 +1027,7 @@ ruby_xml_parser_new(VALUE class) {
 
 /*
  * call-seq:
- *    XML::Parser.file => parser
+ *    XML::Parser.file -> parser
  * 
  * Create a new parser instance that will read the specified file.
  */
@@ -1052,7 +1052,7 @@ ruby_xml_parser_new_file(VALUE class, VALUE filename) {
 
 /*
  * call-seq:
- *    XML::Parser.io => parser
+ *    XML::Parser.io -> parser
  * 
  * Create a new parser instance that will read from the
  * specified IO object.
@@ -1078,7 +1078,7 @@ ruby_xml_parser_new_io(VALUE class, VALUE io) {
 
 /*
  * call-seq:
- *    XML::Parser.string => parser
+ *    XML::Parser.string -> parser
  * 
  * Create a new parser instance that will parse the given
  * string.
@@ -1104,7 +1104,7 @@ ruby_xml_parser_new_string(VALUE class, VALUE str) {
 
 /*
  * call-seq:
- *    parser.parse => document
+ *    parser.parse -> document
  * 
  * Parse the input XML and create an XML::Document with
  * it's content. If an error occurs, XML::Parser::ParseError
@@ -1152,7 +1152,7 @@ ruby_xml_parser_parse(VALUE self) {
 
 /*
  * call-seq:
- *    parser.context => context
+ *    parser.context -> context
  * 
  * Obtain the XML::Parser::Context associated with this
  * parser.
@@ -1171,7 +1171,7 @@ ruby_xml_parser_context_get(VALUE self) {
 
 /*
  * call-seq:
- *    parser.string => "string"
+ *    parser.string -> "string"
  * 
  * Obtain the string this parser works with.
  */
@@ -1226,8 +1226,8 @@ ruby_xml_parser_str_set(VALUE self, VALUE str) {
 
 /*
  * call-seq:
- *    XML::Parser.register_error_handler(lambda { |msg| ... }) => old_handler
- *    XML::Parser.register_error_handler(nil) => old_handler
+ *    XML::Parser.register_error_handler(lambda { |msg| ... }) -> old_handler
+ *    XML::Parser.register_error_handler(nil) -> old_handler
  * 
  * Register the attached block as the handler for parser errors.
  * A message describing parse errors is passed to the block.

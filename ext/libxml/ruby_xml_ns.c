@@ -13,6 +13,15 @@ ruby_xml_ns_alloc(VALUE klass) {
   return Data_Wrap_Struct(cXMLNS, NULL, NULL, NULL);
 }
 
+/*
+ * call-seq:
+ *    initialize(node, "href", "prefix")
+ * 
+ * Create a new namespace attached to the specified node with the
+ * give prefix and namespace.
+ *
+ *  XML::NS.new(node, "xlink", "http://www.w3.org/1999/xlink")
+ */
 static void
 ruby_xml_ns_initialize(VALUE self, VALUE node, VALUE href, VALUE prefix) {
   xmlNodePtr xnode;
@@ -33,7 +42,7 @@ ruby_xml_ns_wrap(xmlNsPtr xns) {
 
 /*
  * call-seq:
- *    ns.href => "href"
+ *    ns.href -> "href"
  * 
  * Obtain the namespace's href.
  */
@@ -50,7 +59,7 @@ ruby_xml_ns_href_get(VALUE self) {
 
 /*
  * call-seq:
- *    ns.href? => (true|false)
+ *    ns.href? -> (true|false)
  * 
  * Determine whether this namespace has an href.
  */
@@ -67,7 +76,7 @@ ruby_xml_ns_href_q(VALUE self) {
 
 /*
  * call-seq:
- *    ns.next => ns
+ *    ns.next -> ns
  * 
  * Obtain the next namespace.
  */
@@ -84,8 +93,8 @@ ruby_xml_ns_next(VALUE self) {
 
 /*
  * call-seq:
- *    ns.prefix => "prefix"
- *    ns.to_s   => "prefix"
+ *    ns.prefix -> "prefix"
+ *    ns.to_s   -> "prefix"
  * 
  * Obtain the namespace's prefix.
  */
@@ -102,7 +111,7 @@ ruby_xml_ns_prefix_get(VALUE self) {
 
 /*
  * call-seq:
- *    ns.prefix? => (true|false)
+ *    ns.prefix? -> (true|false)
  * 
  * Determine whether this namespace has a prefix.
  */

@@ -49,7 +49,7 @@ ruby_xml_xpointer_point2(VALUE node, VALUE xptr_str) {
 
 /*
  * call-seq:
- *    XML::XPointer.range(start_node, end_node) => xpath
+ *    XML::XPointer.range(start_node, end_node) -> xpath
  * 
  * Create an xpath representing the range between the supplied
  * start and end node.

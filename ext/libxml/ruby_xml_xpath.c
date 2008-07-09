@@ -17,7 +17,7 @@ VALUE eXMLXPathInvalidPath;
 
 /*
  * call-seq:
- *    xpath.debug => (true|false)
+ *    xpath.debug -> (true|false)
  * 
  * Dump libxml debugging information to stdout.
  * Requires Libxml be compiled with debugging enabled.
@@ -97,7 +97,7 @@ ruby_xml_xpath_register_namespaces(VALUE nslist, VALUE xxpc, int level) {
 }
 /*
  * call-seq:
- *    XML::XPath.find(path, namespaces = [any]) => xpath
+ *    XML::XPath.find(path, namespaces = [any]) -> xpath
  * 
  * Find nodes matching the specified xpath (and optionally any of the
  * supplied namespaces) and return as an XML::Node::Set.

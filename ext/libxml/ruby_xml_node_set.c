@@ -17,7 +17,7 @@ VALUE cXMLNodeSet;
 
 /*
  * call-seq:
- *    nodeset.to_a => [node, ..., node]
+ *    nodeset.to_a -> [node, ..., node]
  * 
  * Obtain an array of the nodes in this set.
  */
@@ -37,7 +37,7 @@ ruby_xml_node_set_to_a(VALUE self) {
 
 /*
  * call-seq:
- *    nodeset.each { |node| ... } => self
+ *    nodeset.each { |node| ... } -> self
  * 
  * Call the supplied block for each node in this set.
  */
@@ -52,7 +52,7 @@ ruby_xml_node_set_each(VALUE self) {
 
 /*
  * call-seq:
- *    nodeset.empty? => (true|false)
+ *    nodeset.empty? -> (true|false)
  *
  * Determine whether this nodeset is empty (contains no nodes).
  */
@@ -67,7 +67,7 @@ ruby_xml_node_set_empty_q(VALUE self) {
 
 /*
  * call-seq:
- *    nodeset.first => node
+ *    nodeset.first -> node
  *
  * Returns the first node in this node set, or nil if none exist.
  */
@@ -81,7 +81,7 @@ ruby_xml_node_set_first(VALUE self) {
 
 /*
  * call-seq:
- *    nodeset.length => num
+ *    nodeset.length -> num
  * 
  * Obtain the length of this nodeset.
  */
@@ -125,7 +125,7 @@ ruby_xml_node_set_new2(VALUE rxpop)
 
 /*
  * call-seq:
- *    nodeset.xpath => xpath
+ *    nodeset.xpath -> xpath
  * 
  * Obtain the xpath corresponding to this nodeset, if any.
  */
@@ -137,7 +137,7 @@ ruby_xml_node_set_xpath_get(VALUE self) {
 
 /*
  * call-seq:
- *    nodeset.xpath_ctxt => context
+ *    nodeset.xpath_ctxt -> context
  * 
  * Return the xpath context corresponding to this nodeset,
  * if any.

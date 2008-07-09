@@ -14,7 +14,7 @@ VALUE cXMLHTMLParser;
 
 /*
  * call-seq:
- *    parser.filename => "filename"
+ *    parser.filename -> "filename"
  * 
  * Obtain the filename this parser will read from.
  */
@@ -105,7 +105,7 @@ ruby_xml_html_parser_free(ruby_xml_html_parser *rxp) {
 
 /*
  * call-seq:
- *    parser.io => IO
+ *    parser.io -> IO
  * 
  * Obtain the IO instance this parser works with.
  */
@@ -209,7 +209,7 @@ ruby_xml_html_parser_mark(ruby_xml_html_parser *rxp) {
 
 /*
  * call-seq:
- *    XML::HTMLParser.new => parser
+ *    XML::HTMLParser.new -> parser
  * 
  * Create a new parser instance with no pre-determined source.
  */
@@ -230,7 +230,7 @@ ruby_xml_html_parser_new(VALUE class) {
 
 /*
  * call-seq:
- *    XML::HTMLParser.file => parser
+ *    XML::HTMLParser.file -> parser
  * 
  * Create a new parser instance that will read the specified file.
  */
@@ -256,7 +256,7 @@ ruby_xml_html_parser_new_file(VALUE class, VALUE filename) {
 
 /*
  * call-seq:
- *    XML::HTMLParser.io => parser
+ *    XML::HTMLParser.io -> parser
  * 
  * Create a new parser instance that will read from the
  * specified IO object.
@@ -283,7 +283,7 @@ ruby_xml_html_parser_new_io(VALUE class, VALUE io) {
 
 /*
  * call-seq:
- *    XML::HTMLParser.string => parser
+ *    XML::HTMLParser.string -> parser
  * 
  * Create a new parser instance that will parse the given
  * string.
@@ -309,7 +309,7 @@ ruby_xml_html_parser_new_string(VALUE class, VALUE str) {
 
 /*
  * call-seq:
- *    parser.parse => document
+ *    parser.parse -> document
  * 
  * Parse the input XML and create an XML::Document with
  * it's content. If an error occurs, XML::Parser::ParseError
@@ -351,7 +351,7 @@ ruby_xml_html_parser_parse(VALUE self) {
 
 /*
  * call-seq:
- *    parser.context => context
+ *    parser.context -> context
  * 
  * Obtain the XML::Parser::Context associated with this
  * parser.
@@ -370,7 +370,7 @@ ruby_xml_html_parser_context_get(VALUE self) {
 
 /*
  * call-seq:
- *    parser.string => "string"
+ *    parser.string -> "string"
  * 
  * Obtain the string this parser works with.
  */
@@ -431,13 +431,11 @@ void
 ruby_init_html_parser(void) {	
   cXMLHTMLParser = rb_define_class_under(mXML, "HTMLParser", rb_cObject);
 
+  rb_define_singleton_method(cXMLHTMLParser, "new", ruby_xml_html_parser_new, 0);
+  rb_define_singleton_method(cXMLHTMLParser, "string", ruby_xml_html_parser_new_string, 1);
   /*                
   rb_define_singleton_method(cXMLHTMLParser, "file", ruby_xml_html_parser_new_file, 1);
   rb_define_singleton_method(cXMLHTMLParser, "io", ruby_xml_html_parser_new_io, 1);
-  */
-  rb_define_singleton_method(cXMLHTMLParser, "new", ruby_xml_html_parser_new, 0);
-  rb_define_singleton_method(cXMLHTMLParser, "string", ruby_xml_html_parser_new_string, 1);
-  /*
   rb_define_method(cXMLHTMLParser, "filename", ruby_xml_html_parser_filename_get, 0);
   rb_define_method(cXMLHTMLParser, "filename=", ruby_xml_html_parser_filename_set, 1);
   rb_define_method(cXMLHTMLParser, "io", ruby_xml_html_parser_io_get, 0);

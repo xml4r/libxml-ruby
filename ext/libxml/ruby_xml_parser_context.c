@@ -18,7 +18,7 @@ VALUE cXMLParserContext;
 
 /*
  * call-seq:
- *    context.data_directory => "dir"
+ *    context.data_directory -> "dir"
  * 
  * Obtain the data directory associated with this context.
  */
@@ -36,7 +36,7 @@ ruby_xml_parser_context_data_directory_get(VALUE self) {
 
 /*
  * call-seq:
- *    context.depth => num
+ *    context.depth -> num
  * 
  * Obtain the depth of this context.
  */
@@ -51,7 +51,7 @@ ruby_xml_parser_context_depth_get(VALUE self) {
 
 /*
  * call-seq:
- *    context.disable_sax? => (true|false)
+ *    context.disable_sax? -> (true|false)
  * 
  * Determine whether SAX-based processing is disabled
  * in this context.
@@ -70,7 +70,7 @@ ruby_xml_parser_context_disable_sax_q(VALUE self) {
 
 /*
  * call-seq:
- *    context.doc => document
+ *    context.doc -> document
  * 
  * Obtain the +XML::Document+ associated with this context.
  */
@@ -88,7 +88,7 @@ ruby_xml_parser_context_doc_get(VALUE self) {
 
 /*
  * call-seq:
- *    context.docbook? => (true|false)
+ *    context.docbook? -> (true|false)
  * 
  * Determine whether this is a docbook context.
  */
@@ -106,7 +106,7 @@ ruby_xml_parser_context_docbook_q(VALUE self) {
 
 /*
  * call-seq:
- *    context.encoding => "encoding"
+ *    context.encoding -> "encoding"
  * 
  * Obtain the character encoding identifier used in
  * this context.
@@ -125,7 +125,7 @@ ruby_xml_parser_context_encoding_get(VALUE self) {
 
 /*
  * call-seq:
- *    context.errno => num
+ *    context.errno -> num
  * 
  * Obtain the last-error number in this context.
  */
@@ -151,7 +151,7 @@ ruby_xml_parser_context_free(ruby_xml_parser_context *rxpc) {
 
 /*
  * call-seq:
- *    context.html? => (true|false)
+ *    context.html? -> (true|false)
  * 
  * Determine whether this is an html context.
  */
@@ -169,7 +169,7 @@ ruby_xml_parser_context_html_q(VALUE self) {
 
 /*
  * call-seq:
- *    context.max_num_streams => num
+ *    context.max_num_streams -> num
  * 
  * Obtain the limit on the number of IO streams opened in
  * this context.
@@ -186,7 +186,7 @@ ruby_xml_parser_context_io_max_num_streams_get(VALUE self) {
 
 /*
  * call-seq:
- *    context.num_streams => "dir"
+ *    context.num_streams -> "dir"
  * 
  * Obtain the actual number of IO streams in this
  * context.
@@ -202,7 +202,7 @@ ruby_xml_parser_context_io_num_streams_get(VALUE self) {
 
 /*
  * call-seq:
- *    context.keep_blanks? => (true|false)
+ *    context.keep_blanks? -> (true|false)
  * 
  * Determine whether parsers in this context retain 
  * whitespace.
@@ -221,7 +221,7 @@ ruby_xml_parser_context_keep_blanks_q(VALUE self) {
 
 /*
  * call-seq:
- *    context.name_depth => num
+ *    context.name_depth -> num
  * 
  * Obtain the name depth for this context.
  */
@@ -236,7 +236,7 @@ ruby_xml_parser_context_name_depth_get(VALUE self) {
 
 /*
  * call-seq:
- *    context.name_depth_max => num
+ *    context.name_depth_max -> num
  * 
  * Obtain the maximum name depth for this context.
  */
@@ -251,7 +251,7 @@ ruby_xml_parser_context_name_depth_max_get(VALUE self) {
 
 /*
  * call-seq:
- *    context.name_node => "name"
+ *    context.name_node -> "name"
  * 
  * Obtain the name node for this context.
  */
@@ -269,7 +269,7 @@ ruby_xml_parser_context_name_node_get(VALUE self) {
 
 /*
  * call-seq:
- *    context.name_tab => ["name", ..., "name"]
+ *    context.name_tab -> ["name", ..., "name"]
  * 
  * Obtain the name table for this context.
  */
@@ -299,7 +299,7 @@ ruby_xml_parser_context_name_tab_get(VALUE self) {
 
 /*
  * call-seq:
- *    context.node_depth => num
+ *    context.node_depth -> num
  * 
  * Obtain the node depth for this context.
  */
@@ -314,7 +314,7 @@ ruby_xml_parser_context_node_depth_get(VALUE self) {
 
 /*
  * call-seq:
- *    context.node => node
+ *    context.node -> node
  * 
  * Obtain the root node of this context.
  */
@@ -333,7 +333,7 @@ ruby_xml_parser_context_node_get(VALUE self) {
 
 /*
  * call-seq:
- *    context.node_depth_max => num
+ *    context.node_depth_max -> num
  * 
  * Obtain the maximum node depth for this context.
  */
@@ -348,7 +348,7 @@ ruby_xml_parser_context_node_depth_max_get(VALUE self) {
 
 /*
  * call-seq:
- *    context.num_chars => num
+ *    context.num_chars -> num
  * 
  * Obtain the number of characters in this context.
  */
@@ -391,7 +391,7 @@ ruby_xml_parser_context_options_get(VALUE self) {
 
 /*
  * call-seq:
- *    context.replace_entities? => (true|false)
+ *    context.replace_entities? -> (true|false)
  * 
  * Determine whether external entity replacement is enabled in this 
  * context.
@@ -445,7 +445,7 @@ ruby_xml_parser_context_reset(VALUE self) {
 
 /*
  * call-seq:
- *    context.space_depth => num
+ *    context.space_depth -> num
  * 
  * Obtain the space depth for this context.
  */
@@ -460,7 +460,7 @@ ruby_xml_parser_context_space_depth_get(VALUE self) {
 
 /*
  * call-seq:
- *    context.space_depth => num
+ *    context.space_depth -> num
  * 
  * Obtain the maximum space depth for this context.
  */
@@ -475,7 +475,7 @@ ruby_xml_parser_context_space_depth_max_get(VALUE self) {
 
 /*
  * call-seq:
- *    context.subset_external? => (true|false)
+ *    context.subset_external? -> (true|false)
  * 
  * Determine whether this context is a subset of an
  * external context.
@@ -494,7 +494,7 @@ ruby_xml_parser_context_subset_external_q(VALUE self) {
 
 /*
  * call-seq:
- *    context.subset_internal? => (true|false)
+ *    context.subset_internal? -> (true|false)
  * 
  * Determine whether this context is a subset of an
  * internal context.
@@ -513,7 +513,7 @@ ruby_xml_parser_context_subset_internal_q(VALUE self) {
 
 /*
  * call-seq:
- *    context.subset_name => "name"
+ *    context.subset_name -> "name"
  * 
  * Obtain this context's subset name (valid only if
  * either of subset_external? or subset_internal?
@@ -533,7 +533,7 @@ ruby_xml_parser_context_subset_name_get(VALUE self) {
 
 /*
  * call-seq:
- *    context.subset_external_uri => "uri"
+ *    context.subset_external_uri -> "uri"
  * 
  * Obtain this context's external subset URI. (valid only if
  * either of subset_external? or subset_internal?
@@ -553,7 +553,7 @@ ruby_xml_parser_context_subset_external_uri_get(VALUE self) {
 
 /*
  * call-seq:
- *    context.subset_external_system_id => "system_id"
+ *    context.subset_external_system_id -> "system_id"
  * 
  * Obtain this context's external subset system identifier. 
  * (valid only if either of subset_external? or subset_internal?
@@ -573,7 +573,7 @@ ruby_xml_parser_context_subset_external_system_id_get(VALUE self) {
 
 /*
  * call-seq:
- *    context.standalone? => (true|false)
+ *    context.standalone? -> (true|false)
  * 
  * Determine whether this is a standalone context.
  */
@@ -591,7 +591,7 @@ ruby_xml_parser_context_standalone_q(VALUE self) {
 
 /*
  * call-seq:
- *    context.stats? => (true|false)
+ *    context.stats? -> (true|false)
  * 
  * Determine whether this context maintains statistics.
  */
@@ -609,7 +609,7 @@ ruby_xml_parser_context_stats_q(VALUE self) {
 
 /*
  * call-seq:
- *    context.valid? => (true|false)
+ *    context.valid? -> (true|false)
  * 
  * Determine whether this context is valid.
  */
@@ -627,7 +627,7 @@ ruby_xml_parser_context_valid_q(VALUE self) {
 
 /*
  * call-seq:
- *    context.validate? => (true|false)
+ *    context.validate? -> (true|false)
  * 
  * Determine whether validation is enabled in this context.
  */
@@ -645,7 +645,7 @@ ruby_xml_parser_context_validate_q(VALUE self) {
 
 /*
  * call-seq:
- *    context.version => "version"
+ *    context.version -> "version"
  * 
  * Obtain this context's version identifier.
  */
@@ -663,7 +663,7 @@ ruby_xml_parser_context_version_get(VALUE self) {
 
 /*
  * call-seq:
- *    context.well_formed? => (true|false)
+ *    context.well_formed? -> (true|false)
  * 
  * Determine whether this context contains well-formed XML.
  */

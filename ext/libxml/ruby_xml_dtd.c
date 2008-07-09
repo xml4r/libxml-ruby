@@ -22,8 +22,8 @@ ruby_xml_dtd_mark(ruby_xml_dtd *rxdtd) {
 
 /*
  * call-seq:
- *    XML::Dtd.new("public system") => dtd
- *    XML::Dtd.new("public", "system") => dtd
+ *    XML::Dtd.new("public system") -> dtd
+ *    XML::Dtd.new("public", "system") -> dtd
  * 
  * Create a new Dtd from the specified public and system
  * identifiers.

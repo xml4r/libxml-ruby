@@ -2,15 +2,35 @@
 
 /* Please see the LICENSE file for copyright and distribution information */
 
+/*
+* Document-class: XML::Document
+*
+* Reads or writes an XML document:
+*
+* Reading:
+*  require 'libxml'
+*
+*  doc = XML::Document.new()
+*  doc.root = XML::Node.new('root_node')
+*  doc.root << XML::Node.new('elem1')
+*  doc.save('output.xml', format)
+* 
+* Writing:
+*  require 'libxml'
+*  doc = XML::Document.file('output.xml')
+*  root = doc.root
+*/
+
 #include <stdarg.h>
 #include "ruby_libxml.h"
 #include "ruby_xml_document.h"
+
 
 VALUE cXMLDocument;
 
 /*
  * call-seq:
- *    document.compression => num
+ *    document.compression -> num
  * 
  * Obtain this document's compression mode identifier.
  */
@@ -67,7 +87,7 @@ ruby_xml_document_compression_set(VALUE self, VALUE num) {
 
 /*
  * call-seq:
- *    document.compression? => (true|false)
+ *    document.compression? -> (true|false)
  * 
  * Determine whether this document is compressed.
  */
@@ -90,7 +110,7 @@ ruby_xml_document_compression_q(VALUE self) {
 
 /*
  * call-seq:
- *    document.child => node
+ *    document.child -> node
  * 
  * Get this document's child node.
  */
@@ -109,7 +129,7 @@ ruby_xml_document_child_get(VALUE self) {
 
 /*
  * call-seq:
- *    document.child? => (true|false)
+ *    document.child? -> (true|false)
  * 
  * Determine whether this document has a child node.
  */
@@ -127,7 +147,7 @@ ruby_xml_document_child_q(VALUE self) {
 
 /*
  * call-seq:
- *    document.dump([stream]) => true
+ *    document.dump([stream]) -> true
  * 
  * Dump this document's XML to the specified IO stream.
  * If no stream is specified, stdout is used.
@@ -166,7 +186,7 @@ ruby_xml_document_dump(int argc, VALUE *argv, VALUE self) {
 
 /*
  * call-seq:
- *    document.debug_dump([stream]) => true
+ *    document.debug_dump([stream]) -> true
  * 
  * Debug version of dump.
  */
@@ -209,7 +229,7 @@ ruby_xml_document_debug_dump(int argc, VALUE *argv, VALUE self) {
 
 /*
  * call-seq:
- *    document.debug_dump_head([stream]) => true
+ *    document.debug_dump_head([stream]) -> true
  * 
  * Debug-dump this document's header to the specified IO stream.
  * If no stream is specified, stdout is used.
@@ -253,7 +273,7 @@ ruby_xml_document_debug_dump_head(int argc, VALUE *argv, VALUE self) {
 
 /*
  * call-seq:
- *    document.format_dump([stream], [spacing]) => true
+ *    document.format_dump([stream], [spacing]) -> true
  * 
  * Dump this document's formatted XML to the specified IO stream.
  * If no stream is specified, stdout is used. If spacing is 
@@ -310,7 +330,7 @@ ruby_xml_document_format_dump(int argc, VALUE *argv, VALUE self) {
 
 /*
  * call-seq:
- *    document.debug_format_dump([stream]) => true
+ *    document.debug_format_dump([stream]) -> true
  * 
  * *Deprecated* in favour of format_dump.
  */
@@ -323,7 +343,7 @@ ruby_xml_document_debug_format_dump(int argc, VALUE *argv, VALUE self) {
 
 /*
  * call-seq:
- *    document.encoding => "encoding"
+ *    document.encoding -> "encoding"
  * 
  * Obtain the encoding specified by this document.
  */
@@ -357,7 +377,7 @@ ruby_xml_document_encoding_set(VALUE self, VALUE encoding) {
 
 /*
  * call-seq:
- *    document.filename => "filename"
+ *    document.filename -> "filename"
  * 
  * Obtain the filename this document was read from.
  */
@@ -386,7 +406,7 @@ ruby_xml_document_filename_get(VALUE self) {
 
 /*
  * call-seq:
- *    document.find(xpath_expr, [namespace]) => nodeset
+ *    document.find(xpath_expr, [namespace]) -> nodeset
  * 
  * Find nodes matching the specified xpath expression, optionally
  * using the specified namespace. Returns an XML::Node::Set.
@@ -443,7 +463,7 @@ ruby_xml_document_mark(ruby_xml_document_t *rxd) {
 
 /*
  * call-seq:
- *    XML::Document.new(xml_version = 1.0) => document
+ *    XML::Document.new(xml_version = 1.0) -> document
  * 
  * Create a new XML::Document, optionally specifying the
  * XML version.
@@ -470,7 +490,7 @@ ruby_xml_document_new(int argc, VALUE *argv, VALUE class) {
 
 /*
  * call-seq:
- *    document.last => node
+ *    document.last -> node
  * 
  * Obtain the last node.
  */
@@ -489,7 +509,7 @@ ruby_xml_document_last_get(VALUE self) {
 
 /*
  * call-seq:
- *    document.last? => (true|false)
+ *    document.last? -> (true|false)
  * 
  * Determine whether there is a last node.
  */
@@ -541,7 +561,7 @@ ruby_xml_document_new_native(VALUE class, VALUE xmlver) {
 
 /*
  * call-seq:
- *    XML::Document.file(filename) => document
+ *    XML::Document.file(filename) -> document
  * 
  * Create a new XML::Document by parsing the specified
  * file.
@@ -558,7 +578,7 @@ ruby_xml_document_new_file(VALUE class, VALUE filename) {
 
 /*
  * call-seq:
- *    document.next => node
+ *    document.next -> node
  * 
  * Obtain the next node.
  */
@@ -577,7 +597,7 @@ ruby_xml_document_next_get(VALUE self) {
 
 /*
  * call-seq:
- *    document.next? => (true|false)
+ *    document.next? -> (true|false)
  * 
  * Determine whether there is a next node.
  */
@@ -595,7 +615,7 @@ ruby_xml_document_next_q(VALUE self) {
 
 /*
  * call-seq:
- *    document.parent => node
+ *    document.parent -> node
  * 
  * Obtain the parent node.
  */
@@ -614,7 +634,7 @@ ruby_xml_document_parent_get(VALUE self) {
 
 /*
  * call-seq:
- *    document.parent? => (true|false)
+ *    document.parent? -> (true|false)
  * 
  * Determine whether there is a parent node.
  */
@@ -632,7 +652,7 @@ ruby_xml_document_parent_q(VALUE self) {
 
 /*
  * call-seq:
- *    document.prev => node
+ *    document.prev -> node
  * 
  * Obtain the previous node.
  */
@@ -651,7 +671,7 @@ ruby_xml_document_prev_get(VALUE self) {
 
 /*
  * call-seq:
- *    document.prev? => (true|false)
+ *    document.prev? -> (true|false)
  * 
  * Determine whether there is a previous node.
  */
@@ -669,7 +689,7 @@ ruby_xml_document_prev_q(VALUE self) {
 
 /*
  * call-seq:
- *    document.root => node
+ *    document.root -> node
  * 
  * Obtain the root node.
  */
@@ -755,7 +775,7 @@ ruby_xml_document_save(int argc, VALUE *argv, VALUE self) {
 
 /*
  * call-seq:
- *    document.standalone? => (true|false)
+ *    document.standalone? -> (true|false)
  * 
  * Determine whether this is a standalone document.
  */
@@ -772,7 +792,7 @@ ruby_xml_document_standalone_q(VALUE self) {
 
 /*
  * call-seq:
- *    document.to_s({format=true,encoding) => "xml"
+ *    document.to_s({format=true,encoding) -> "xml"
  * 
  * Coerce this document to a string representation
  * of it's XML. The default is to pretty format, but this
@@ -833,7 +853,7 @@ ruby_xml_document_to_s(int argc, VALUE *argv, VALUE self) {
 
 /*
  * call-seq:
- *    document.url => "url"
+ *    document.url -> "url"
  * 
  * Obtain this document's source URL, if any.
  */
@@ -850,7 +870,7 @@ ruby_xml_document_url_get(VALUE self) {
 
 /*
  * call-seq:
- *    document.version => "version"
+ *    document.version -> "version"
  * 
  * Obtain the XML version specified by this document.
  */
@@ -867,7 +887,7 @@ ruby_xml_document_version_get(VALUE self) {
 
 /*
  * call-seq:
- *    document.xinclude => num
+ *    document.xinclude -> num
  * 
  * Process xinclude directives in this document. 
  */
@@ -917,7 +937,7 @@ LibXML_validity_warning(void * ctxt, const char * msg, va_list ap)
 
 /*
  * call-seq:
- *    document.validate(schema) => (true|false)
+ *    document.validate(schema) -> (true|false)
  * 
  * Validate this document against the specified XML::Schema.
  */
@@ -948,7 +968,7 @@ ruby_xml_document_validate_schema(VALUE self, VALUE schema) {
 
 /*
  * call-seq:
- *    document.validate(schema) => (true|false)
+ *    document.validate(schema) -> (true|false)
  * 
  * Validate this document against the specified XML::DTD.
  */
@@ -1023,7 +1043,7 @@ validate(self, ...)
 
 /*
  * call-seq:
- *    document.reader => reader
+ *    document.reader -> reader
  * 
  * Create a XML::Reader from the document. This is a shortcut to
  * XML::Reader.walker().

@@ -24,7 +24,7 @@ ruby_xml_xpath_object_tabref(xmlXPathObjectPtr xpop, int apos) {
 
   switch(xpop->nodesetval->nodeTab[apos]->type) {
   case XML_ATTRIBUTE_NODE:
-    return ruby_xml_attr_wrap((xmlAttrPtr)xpop->nodesetval->nodeTab[apos]);
+    return Qnil;//ruby_xml_attr_wrap((xmlAttrPtr)xpop->nodesetval->nodeTab[apos]);
     break;
   default:
     return ruby_xml_node2_wrap(cXMLNode,
@@ -68,12 +68,6 @@ ruby_xml_xpath_object_wrap(xmlXPathObjectPtr xpop)
                             ruby_xml_xpath_object_free,
                             xpop);
   
-    if (xpop->type == XPATH_NODESET && !((xpop->nodesetval == NULL) || (xpop->nodesetval->nodeNr == 0))) {
-      int i;
-      for (i = 0; i < xpop->nodesetval->nodeNr; i++) {
-        ruby_xml_xpath_object_tabref(xpop, i);
-      }
-    }
     break;
   case XPATH_BOOLEAN:
     if (xpop->boolval != 0)
@@ -103,7 +97,7 @@ ruby_xml_xpath_object_wrap(xmlXPathObjectPtr xpop)
 
 /*
  * call-seq:
- *    xpath_object.to_a => [node, ..., node]
+ *    xpath_object.to_a -> [node, ..., node]
  * 
  * Obtain an array of the nodes in this set.
  */
@@ -129,7 +123,7 @@ ruby_xml_xpath_object_to_a(VALUE self)
 
 /*
  * call-seq:
- *    xpath_object.set => Node::Set
+ *    xpath_object.set -> Node::Set
  * 
  * Obtain the previous type object which is really
  * just a proxy back to this object. Unless the
@@ -152,7 +146,7 @@ ruby_xml_xpath_object_set(VALUE self)
 
 /*
  * call-seq:
- *    xpath_object.empty? => (true|false)
+ *    xpath_object.empty? -> (true|false)
  *
  * Determine whether this nodeset is empty (contains no nodes).
  */
@@ -170,7 +164,7 @@ ruby_xml_xpath_object_empty_q(VALUE self) {
 
 /*
  * call-seq:
- *    xpath_object.each { |node| ... } => self
+ *    xpath_object.each { |node| ... } -> self
  * 
  * Call the supplied block for each node in this set.
  */
@@ -193,7 +187,7 @@ ruby_xml_xpath_object_each(VALUE self)
 
 /*
  * call-seq:
- *    xpath_object.first => node
+ *    xpath_object.first -> node
  *
  * Returns the first node in this node set, or nil if none exist.
  */
@@ -207,7 +201,7 @@ ruby_xml_xpath_object_first(VALUE self) {
 
 /*
  * call-seq:
- * xpath_object[i] => node
+ * xpath_object[i] -> node
  *
  * array index into set of nodes
  */
@@ -222,7 +216,7 @@ ruby_xml_xpath_object_aref(VALUE self, VALUE aref) {
 
 /*
  * call-seq:
- *    xpath_object.length => num
+ *    xpath_object.length -> num
  * 
  * Obtain the length of the nodesetval node list.
  */

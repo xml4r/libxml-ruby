@@ -21,7 +21,7 @@ check_string_or_symbol( VALUE val ) {
 
 /*
  * call-seq:
- *    node.attribute? => (true|false)
+ *    node.attribute? -> (true|false)
  * 
  * Determine whether this is an attribute node,
  */
@@ -38,7 +38,7 @@ ruby_xml_node_attribute_q(VALUE self) {
 
 /*
  * call-seq:
- *    node.attribute_decl? => (true|false)
+ *    node.attribute_decl? -> (true|false)
  * 
  * Determine whether this is an attribute declaration node,
  */
@@ -55,7 +55,7 @@ ruby_xml_node_attribute_decl_q(VALUE self) {
 
 /*
  * call-seq:
- *    node.base => "uri"
+ *    node.base -> "uri"
  * 
  * Obtain this node's base URI.
  */
@@ -104,7 +104,7 @@ ruby_xml_node_base_set(VALUE self, VALUE uri) {
 
 /*
  * call-seq:
- *    node.cdata? => (true|false)
+ *    node.cdata? -> (true|false)
  * 
  * Determine whether this is a #CDATA node
  */
@@ -121,7 +121,7 @@ ruby_xml_node_cdata_q(VALUE self) {
 
 /*
  * call-seq:
- *    node.comment? => (true|false)
+ *    node.comment? -> (true|false)
  * 
  * Determine whether this is a comment node
  */
@@ -138,7 +138,7 @@ ruby_xml_node_comment_q(VALUE self) {
 
 /*
  * call-seq:
- *    node << ("string" | node) => node
+ *    node << ("string" | node) -> node
  * 
  * Add the specified string or XML::Node to this node's
  * content.
@@ -172,7 +172,7 @@ ruby_xml_node_content_add(VALUE self, VALUE obj) {
 
 /*
  * call-seq:
- *    node.content => "string"
+ *    node.content -> "string"
  * 
  * Obtain this node's content as a string.
  */
@@ -212,7 +212,7 @@ ruby_xml_node_content_set(VALUE self, VALUE content) {
 
 /*
  * call-seq:
- *    node.content_stripped => "string"
+ *    node.content_stripped -> "string"
  * 
  * Obtain this node's stripped content.
  * 
@@ -240,7 +240,7 @@ ruby_xml_node_content_stripped_get(VALUE self) {
 
 /*
  * call-seq:
- *    node.child => node
+ *    node.child -> node
  * 
  * Obtain this node's first child node, if any.
  */
@@ -285,7 +285,7 @@ ruby_xml_node_child_get(VALUE self) {
 
 /*
  * call-seq:
- *    node.child? => (true|false)
+ *    node.child? -> (true|false)
  * 
  * Determine whether this node has at least one child.
  */
@@ -331,9 +331,8 @@ ruby_xml_node_child_q(VALUE self) {
  * former raises on implicit copy, latter does not.
  */
 VALUE
-ruby_xml_node_child_set_aux(VALUE self, VALUE rnode, int do_raise) {
+ruby_xml_node_child_set_aux(VALUE self, VALUE rnode) {
   xmlNodePtr pnode, chld, ret;
-  int copied=0;
 
   if (rb_obj_is_kind_of(rnode, cXMLNode) == Qfalse)
     rb_raise(rb_eTypeError, "Must pass an XML::Node object");
@@ -341,26 +340,11 @@ ruby_xml_node_child_set_aux(VALUE self, VALUE rnode, int do_raise) {
   Data_Get_Struct(self,  xmlNodePtr, pnode);
   Data_Get_Struct(rnode, xmlNodePtr, chld);
   
-  /* Since an add operation may destroy a textnode by merging, we need to work
-   * with a copy, so that the ruby instance is not left with a dangling reference
-   */
-  if ( chld->type == XML_TEXT_NODE ) {
-    chld = xmlCopyNode(chld,1);
-    copied=1;
-  }
-
-  if ( chld->parent != NULL || chld->doc != NULL ) {
-    /* raise before copying if applicable */
-    if ( do_raise == 1 )
-      rb_raise(rb_eRuntimeError, "implicit copy not legal for child= or <<");
-    chld=xmlCopyNode(chld,1);
-    copied=1;
-  }
+  if ( chld->parent != NULL || chld->doc != NULL )
+    rb_raise(rb_eRuntimeError, "Cannot move a node from one document to another with child= or <<.  First copy the node before moving it.");
 
   ret = xmlAddChild(pnode, chld);
   if (ret == NULL) {
-    if ( copied == 1 )
-      xmlFreeNode(chld);
     rb_raise(eXMLNodeFailedModify, "unable to add a child to the document");
   } else if ( ret==chld ) {
     /* child was added whole to parent and we need to return it as a new object */
@@ -395,7 +379,7 @@ ruby_xml_node_child_add(VALUE self, VALUE rnode) {
 
 /*
  * call-seq:
- *    node.doc => document
+ *    node.doc -> document
  * 
  * Obtain the XML::Document this node belongs to.
  */
@@ -440,7 +424,7 @@ ruby_xml_node_doc(VALUE self) {
 
 /*
  * call-seq:
- *    node.docbook? => (true|false)
+ *    node.docbook? -> (true|false)
  * 
  * Determine whether this is a docbook node.
  */
@@ -462,7 +446,7 @@ ruby_xml_node_docbook_doc_q(VALUE self) {
 
 /*
  * call-seq:
- *    node.doctype? => (true|false)
+ *    node.doctype? -> (true|false)
  * 
  * Determine whether this is a DOCTYPE node.
  */
@@ -479,7 +463,7 @@ ruby_xml_node_doctype_q(VALUE self) {
 
 /*
  * call-seq:
- *    node.document? => (true|false)
+ *    node.document? -> (true|false)
  * 
  * Determine whether this is a document node.
  */
@@ -496,7 +480,7 @@ ruby_xml_node_document_q(VALUE self) {
 
 /*
  * call-seq:
- *    node.dtd? => (true|false)
+ *    node.dtd? -> (true|false)
  * 
  * Determine whether this is a DTD node.
  */
@@ -513,7 +497,7 @@ ruby_xml_node_dtd_q(VALUE self) {
 
 /*
  * call-seq:
- *    node.dump => (true|nil)
+ *    node.dump -> (true|nil)
  * 
  * Dump this node to stdout.
  */
@@ -537,7 +521,7 @@ ruby_xml_node_dump(VALUE self) {
 
 /*
  * call-seq:
- *    node.debug_dump => (true|nil)
+ *    node.debug_dump -> (true|nil)
  * 
  * Dump this node to stdout, including any debugging
  * information.
@@ -557,7 +541,7 @@ ruby_xml_node_debug_dump(VALUE self) {
 
 /*
  * call-seq:
- *    node.element? => (true|false)
+ *    node.element? -> (true|false)
  * 
  * Determine whether this is an element node.
  */
@@ -574,7 +558,7 @@ ruby_xml_node_element_q(VALUE self) {
 
 /*
  * call-seq:
- *    node.element_decl? => (true|false)
+ *    node.element_decl? -> (true|false)
  * 
  * Determine whether this is an element declaration node.
  */
@@ -591,7 +575,7 @@ ruby_xml_node_element_decl_q(VALUE self) {
 
 /*
  * call-seq:
- *    node.empty? => (true|false)
+ *    node.empty? -> (true|false)
  * 
  * Determine whether this node is empty.
  */
@@ -608,7 +592,7 @@ ruby_xml_node_empty_q(VALUE self) {
 
 /*
  * call-seq:
- *    node.entity? => (true|false)
+ *    node.entity? -> (true|false)
  * 
  * Determine whether this is an entity node.
  */
@@ -625,7 +609,7 @@ ruby_xml_node_entity_q(VALUE self) {
 
 /*
  * call-seq:
- *    node.entity_ref? => (true|false)
+ *    node.entity_ref? -> (true|false)
  * 
  * Determine whether this is an entity reference node.
  */
@@ -644,7 +628,7 @@ VALUE ruby_xml_node_to_s(VALUE self);
 
 /*
  * call-seq:
- *    node.find(xpath_expr, namespace = [any]) => nodeset
+ *    node.find(xpath_expr, namespace = [any]) -> nodeset
  * 
  * Find nodes matching the specified xpath expression, optionally
  * using the specified namespaces. Returns an XML::Node::Set.
@@ -659,7 +643,7 @@ ruby_xml_node_find(int argc, VALUE *argv, VALUE self) {
 
 /*
  * call-seq:
- *    node.find_first(xpath_expr, namespace = [any]) => nodeset
+ *    node.find_first(xpath_expr, namespace = [any]) -> nodeset
  *
  * Find the first node matching the specified xpath expression, optionally
  * using the specified namespaces. Returns an XML::Node.
@@ -672,7 +656,7 @@ ruby_xml_node_find_first(int argc, VALUE *argv, VALUE self) {
 
 /*
  * call-seq:
- *    node.fragment? => (true|false)
+ *    node.fragment? -> (true|false)
  * 
  * Determine whether this node is a fragment.
  */
@@ -689,7 +673,7 @@ ruby_xml_node_fragment_q(VALUE self) {
 
 /*
  * call-seq:
- *    node.html_doc? => (true|false)
+ *    node.html_doc? -> (true|false)
  * 
  * Determine whether this node is an html document node.
  */
@@ -705,7 +689,7 @@ ruby_xml_node_html_doc_q(VALUE self) {
 
 /*
  * call-seq:
- *    XML::Node.new_cdata(content = nil) => node
+ *    XML::Node.new_cdata(content = nil) -> node
  * 
  * Create a new #CDATA node, optionally setting
  * the node's content.
@@ -741,7 +725,7 @@ ruby_xml_node_new_cdata(int argc, VALUE *argv, VALUE class) {
 
 /*
  * call-seq:
- *    XML::Node.new_comment(content = nil) => node
+ *    XML::Node.new_comment(content = nil) -> node
  * 
  * Create a new comment node, optionally setting
  * the node's content.
@@ -779,7 +763,7 @@ ruby_xml_node_new_comment(int argc, VALUE *argv, VALUE class) {
  
 /*
  * call-seq:
- *    node.lang => "string"
+ *    node.lang -> "string"
  * 
  * Obtain the language set for this node, if any.
  * This is set in XML via the xml:lang attribute.
@@ -825,7 +809,7 @@ ruby_xml_node_lang_set(VALUE self, VALUE lang) {
 
 /*
  * call-seq:
- *    node.last => node
+ *    node.last -> node
  * 
  * Obtain the last child node of this node, if any.
  */
@@ -869,7 +853,7 @@ ruby_xml_node_last_get(VALUE self) {
 
 /*
  * call-seq:
- *    node.last? => (true|false)
+ *    node.last? -> (true|false)
  * 
  * Determine whether this node has a last child node.
  */
@@ -913,7 +897,7 @@ ruby_xml_node_last_q(VALUE self) {
 
 /*
  * call-seq:
- *    node.line_num => num
+ *    node.line_num -> num
  * 
  * Obtain the line number (in the XML document) that this
  * node was read from. If +default_line_numbers+ is set
@@ -938,7 +922,7 @@ ruby_xml_node_line_num(VALUE self) {
 
 /*
  * call-seq:
- *    node.xlink? => (true|false)
+ *    node.xlink? -> (true|false)
  * 
  * Determine whether this node is an xlink node.
  */
@@ -959,7 +943,7 @@ ruby_xml_node_xlink_q(VALUE self) {
 
 /*
  * call-seq:
- *    node.xlink_type => num
+ *    node.xlink_type -> num
  * 
  * Obtain the type identifier for this xlink, if applicable.
  * If this is not an xlink node (see +xlink?+), will return
@@ -982,7 +966,7 @@ ruby_xml_node_xlink_type(VALUE self) {
 
 /*
  * call-seq:
- *    node.xlink_type_name => "string"
+ *    node.xlink_type_name -> "string"
  * 
  * Obtain the type name for this xlink, if applicable.
  * If this is not an xlink node (see +xlink?+), will return
@@ -1012,7 +996,7 @@ ruby_xml_node_xlink_type_name(VALUE self) {
 
 /*
  * call-seq:
- *    node.name => "string"
+ *    node.name -> "string"
  * 
  * Obtain this node's name.
  */
@@ -1077,7 +1061,7 @@ ruby_xml_node_name_set(VALUE self, VALUE name) {
 
 /*
  * call-seq:
- *    node.namespace => [namespace, ..., namespace]
+ *    node.namespace -> [namespace, ..., namespace]
  * 
  * Obtain an array of +XML::NS+ objects representing
  * this node's xmlns attributes
@@ -1113,7 +1097,7 @@ ruby_xml_node_namespace_get(VALUE self) {
 
 /*
  * call-seq:
- *    node.namespace_node => namespace.
+ *    node.namespace_node -> namespace.
  * 
  * Obtain this node's namespace node.
  */
@@ -1196,7 +1180,7 @@ ruby_xml_node_namespace_set(int argc, VALUE *argv, VALUE self) {
 
 /*
  * call-seq:
- *    node.namespace? => (true|false)
+ *    node.namespace? -> (true|false)
  * 
  * Determine whether this node *is* (not has) a namespace
  * node.
@@ -1228,7 +1212,7 @@ ruby_xml_node2_free(xmlNodePtr xnode) {
   if (xnode != NULL) {
     xnode->_private=NULL;
 
-    if (xnode->doc==NULL || xnode->parent==NULL) {
+    if (xnode->doc==NULL && xnode->parent==NULL) {
 #ifdef NODE_DEBUG
       fprintf(stderr,"ruby_xml_node2_free ruby_xfree rxn=0x%x xn=0x%x o=0x%x\n",(long)rxn,(long)xnode,(long)xnode->_private);
 #endif
@@ -1316,8 +1300,7 @@ ruby_xml_node2_new_native(VALUE class, VALUE ns, VALUE name)
   xnode=xmlNewNode(xns,(xmlChar*)StringValuePtr(name));
   xnode->_private=NULL;
 
-  obj=
-    ruby_xml_node2_wrap(class,xnode);
+  obj= ruby_xml_node2_wrap(class,xnode);
   
   rb_obj_call_init(obj,0,NULL);
   return obj;
@@ -1337,8 +1320,8 @@ ruby_xml_node2_new_string(VALUE class, VALUE ns, VALUE name, VALUE val)
 }
 /*
  * call-seq:
- *    XML::Node.new(name, content = nil) => node
- *    XML::Node.new_element(name, content = nil) => node
+ *    XML::Node.new(name, content = nil) -> node
+ *    XML::Node.new_element(name, content = nil) -> node
  * 
  * Create a new element node with the specified name, optionally setting
  * the node's content.
@@ -1366,7 +1349,7 @@ ruby_xml_node2_new_string_bc(int argc, VALUE *argv, VALUE class)
 
 /*
  * call-seq:
- *    node.next => node
+ *    node.next -> node
  * 
  * Obtain the next sibling node, if any.
  */
@@ -1411,7 +1394,7 @@ ruby_xml_node_next_get(VALUE self) {
 
 /*
  * call-seq:
- *    node.next? => (true|false)
+ *    node.next? -> (true|false)
  * 
  * Determine whether this node has a next sibling.
  */
@@ -1479,7 +1462,7 @@ ruby_xml_node_next_set(VALUE self, VALUE rnode) {
 
 /*
  * call-seq:
- *    node.notation? => (true|false)
+ *    node.notation? -> (true|false)
  * 
  * Determine whether this is a notation node
  */
@@ -1496,7 +1479,7 @@ ruby_xml_node_notation_q(VALUE self) {
 
 /*
  * call-seq:
- *    node.ns? => (true|false)
+ *    node.ns? -> (true|false)
  * 
  * Determine whether this node is a namespace node.
  */
@@ -1513,7 +1496,7 @@ ruby_xml_node_ns_q(VALUE self) {
 
 /*
  * call-seq:
- *    node.ns_def => namespace
+ *    node.ns_def -> namespace
  * 
  * Obtain this node's default namespace.
  */
@@ -1530,7 +1513,7 @@ ruby_xml_node_ns_def_get(VALUE self) {
 
 /*
  * call-seq:
- *    node.ns_def? => (true|false)
+ *    node.ns_def? -> (true|false)
  * 
  * Obtain an array of +XML::NS+ objects representing
  * this node's xmlns attributes
@@ -1548,7 +1531,7 @@ ruby_xml_node_ns_def_q(VALUE self) {
 
 /*
  * call-seq:
- *    node.parent => node
+ *    node.parent -> node
  * 
  * Obtain this node's parent node, if any.
  */
@@ -1592,7 +1575,7 @@ ruby_xml_node_parent_get(VALUE self) {
 
 /*
  * call-seq:
- *    node.parent? => (true|false)
+ *    node.parent? -> (true|false)
  * 
  * Determine whether this node has a parent node.
  */
@@ -1636,7 +1619,7 @@ ruby_xml_node_parent_q(VALUE self) {
 
 /*
  * call-seq:
- *    node.path => path
+ *    node.path -> path
  * 
  * Obtain this node's path.
  */
@@ -1657,7 +1640,7 @@ ruby_xml_node_path(VALUE self) {
 
 /*
  * call-seq:
- *    node.pi? => (true|false)
+ *    node.pi? -> (true|false)
  * 
  * Determine whether this is a processing instruction node.
  */
@@ -1674,7 +1657,7 @@ ruby_xml_node_pi_q(VALUE self) {
 
 /*
  * call-seq:
- *    node.pointer => node_set
+ *    node.pointer -> node_set
  * 
  * Evaluates an XPointer expression relative to this node.
  */
@@ -1686,7 +1669,7 @@ ruby_xml_node_pointer(VALUE self, VALUE xptr_str) {
 
 /*
  * call-seq:
- *    node.prev => node
+ *    node.prev -> node
  * 
  * Obtain the previous sibling, if any.
  */
@@ -1725,7 +1708,7 @@ ruby_xml_node_prev_get(VALUE self) {
 
 /*
  * call-seq:
- *    node.prev? => (true|false)
+ *    node.prev? -> (true|false)
  * 
  * Determines whether this node has a previous sibling node.
  */
@@ -1789,8 +1772,8 @@ ruby_xml_node_prev_set(VALUE self, VALUE rnode) {
 
 /*
  * call-seq:
- *    node.property("name") => "string"
- *    node["name"]          => "string"
+ *    node.property("name") -> "string"
+ *    node["name"]          -> "string"
  * 
  * Obtain the named property.
  */
@@ -1815,9 +1798,9 @@ ruby_xml_node_property_set(VALUE self, VALUE name, VALUE value) {
 
 /*
  * call-seq:
- *    node.attributes => attributes
+ *    node.attributes -> attributes
  * 
- * Returns the +XML::Attributes+ for this node. 
+ * Returns the XML::Attributes for this node. 
  */
 VALUE
 ruby_xml_node_attributes_get(VALUE self) {
@@ -1836,7 +1819,7 @@ ruby_xml_node_attributes_get(VALUE self) {
 
 /*
  * call-seq:
- *    node.attributes? => (true|false)
+ *    node.attributes? -> (true|false)
  * 
  * Determine whether this node has properties
  * (attributes).
@@ -1854,7 +1837,7 @@ ruby_xml_node_attributes_q(VALUE self) {
 
 /*
  * call-seq:
-*    node.remove! => nil
+*    node.remove! -> nil
 *
 * Removes this node from it's parent.
 */
@@ -1869,7 +1852,7 @@ ruby_xml_node_remove_ex(VALUE self) {
 
 /*
  * call-seq:
- *    node.search_href => namespace
+ *    node.search_href -> namespace
  * 
  * Search for a namespace by href.
  */
@@ -1886,7 +1869,7 @@ ruby_xml_node_search_href(VALUE self, VALUE href) {
 
 /*
  * call-seq:
- *    node.search_ns => namespace
+ *    node.search_ns -> namespace
  * 
  * Search for a namespace by namespace.
  */
@@ -1903,7 +1886,7 @@ ruby_xml_node_search_ns(VALUE self, VALUE ns) {
 
 /*
  * call-seq:
- *    node.sibling(node) => node
+ *    node.sibling(node) -> node
  * 
  * Add the specified node as a sibling of this node.
  */
@@ -1932,7 +1915,7 @@ ruby_xml_node_sibling_set(VALUE self, VALUE rnode) {
 
 /*
  * call-seq:
- *    node.space_preserve => (true|false)
+ *    node.space_preserve -> (true|false)
  * 
  * Determine whether this node preserves whitespace.
  */
@@ -1967,7 +1950,7 @@ ruby_xml_node_space_preserve_set(VALUE self, VALUE bool) {
 
 /*
  * call-seq:
- *    node.text? => (true|false)
+ *    node.text? -> (true|false)
  * 
  * Determine whether this node has text.
  */
@@ -1984,7 +1967,7 @@ ruby_xml_node_text_q(VALUE self) {
 
 /*
  * call-seq:
- *    node.to_s => "string"
+ *    node.to_s -> "string"
  * 
  * Coerce this node to a string representation of
  * it's XML.
@@ -2007,7 +1990,7 @@ ruby_xml_node_to_s(VALUE self) {
 
 /*
  * call-seq:
- *    node.type => num
+ *    node.type -> num
  * 
  * Obtain this node's type identifier.
  */
@@ -2021,7 +2004,7 @@ ruby_xml_node_type(VALUE self) {
 
 /*
  * call-seq:
- *    node.type_name => num
+ *    node.type_name -> num
  * 
  * Obtain this node's type name.
  */
@@ -2084,7 +2067,7 @@ ruby_xml_node_type_name(VALUE self) {
 
 /*
  * call-seq:
- *    node.xinclude_end? => num
+ *    node.xinclude_end? -> num
  * 
  * Determine whether this node is an xinclude end node.
  */
@@ -2101,7 +2084,7 @@ ruby_xml_node_xinclude_end_q(VALUE self) {
 
 /*
  * call-seq:
- *    node.xinclude_start? => num
+ *    node.xinclude_start? -> num
  * 
  * Determine whether this node is an xinclude start node.
  */
@@ -2118,30 +2101,28 @@ ruby_xml_node_xinclude_start_q(VALUE self) {
 
 /*
  * call-seq:
- *    node.copy => node
+ *    node.copy -> node
  * 
  * Create a copy of this node.
  */
 VALUE
 ruby_xml_node_copy(VALUE self, VALUE deep) {
   xmlNodePtr xnode;
-  xmlNode *copy;
-  VALUE obj;
-
+  xmlNodePtr xcopy;
+  int recursive = (deep==Qnil || deep==Qfalse) ? 0 : 1;
   Data_Get_Struct(self, xmlNodePtr, xnode);
-  copy = xmlCopyNode( xnode, ((deep==Qnil)||(deep==Qfalse))?0:1 );
+  
+  xcopy = xmlCopyNode(xnode, recursive);
 
-  if (copy == NULL)
+  if (xcopy)
+    return ruby_xml_node2_wrap(cXMLNode, xcopy);
+  else
     return Qnil;
-
-  obj=ruby_xml_node2_wrap(cXMLNode,copy);
-  copy->_private = (void*) obj;
-  return obj;
 }
 
  /*
  * call-seq: 
- *    XML::Node.new_text(content = nil) => node
+ *    XML::Node.new_text(content = nil) -> node
  * 
  * Create a new text node, optionally setting
  * the node's content.
@@ -2308,7 +2289,5 @@ ruby_init_xml_node(void) {
   rb_define_method(cXMLNode, "xlink_type_name", ruby_xml_node_xlink_type_name, 0);
   
   rb_define_alias(cXMLNode, "==", "eql?");
-  //rb_define_alias(cXMLNode, "properties", "attributes");
-  //rb_define_alias(cXMLNode, "properties?", "attributes?");
-  //rb_define_method(cXMLNode, "property", ruby_xml_node_property_get, 1);
+  rb_define_alias(cXMLNode, "properties?", "attributes?");
 }

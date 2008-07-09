@@ -27,6 +27,11 @@ ruby_xml_state_alloc() {
 			  dummy);
 }
 
+// Rdoc needs to know 
+#ifdef RDOC_NEVER_DEFINED
+  mXML = rb_define_module("XML");
+#endif
+
 void
 ruby_init_state(void) {	
   VALUE rb_mSingleton;
