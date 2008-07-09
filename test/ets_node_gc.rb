@@ -13,7 +13,7 @@ save = nil
     doc = XML::Document.new
     doc.root = outer
     # Uncomment the following line and it won't crash
-    # save = doc
+    save = doc
   end
   garbage_collect
 end

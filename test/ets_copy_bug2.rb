@@ -1,32 +1,21 @@
 require 'libxml'
 
-$FAILS = []
-
-def test( doc, doc2, iter )
-  doc.root = XML::Node.new("ccc")
-  iter.times { |i|
-    doc.root.child_add(doc2.root)
-#    doc.root << doc2.root.copy(true)
-  }
-  return doc
-end
-
-def test2(iter)
+# This will cause a segmentation fault by 
+# freeing a xml_node_object twice.  Haven't
+# figured out why this is happening yet.
+2.times do 
   doc = XML::Document.new('1.0')
+  doc.root = XML::Node.new("header")
+
   doc2 = XML::Document.new('1.0')
-  doc2.root = XML::Node.new("aaa")
-  ret = test( doc, doc2, iter )
-  li=ret.find('aaa').length
-  $FAILS << [li,iter] unless li == iter
+  doc2.root = XML::Node.new("footer")
+  
+  4000.times do 
+    doc.root << doc2.root.copy(false)
+  end
+  
+  nodes = doc.find('/header/footer')
+  nodes = nil
+  
 end
-
-test2(5)
-1000.times do |i| 
-  test2(i)
-  print "\r#{i}"; $stdout.flush
-end
-
-puts "\n#{$FAILS.length} failures"
-p $FAILS
-
-
+puts 'hi'

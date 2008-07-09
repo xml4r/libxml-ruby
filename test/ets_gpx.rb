@@ -17,7 +17,7 @@ require 'libxml'
   trkseg = XML::Node.new 'trkseg'
   track << trkseg
 
-  1.upto(10000) do |n|
+  1.upto(1000) do |n|
     trkpt = XML::Node.new 'trkpt'
     trkpt['lat'] = n.to_s
     trkpt['lon'] = n.to_s

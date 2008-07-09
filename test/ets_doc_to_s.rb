@@ -1,6 +1,6 @@
 require 'libxml'
 
-1000.times do |count|
+100.times do |count|
 
   xml_doc = XML::Document.new()
   xml_doc.encoding = "UTF-8"
