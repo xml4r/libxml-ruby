@@ -412,6 +412,25 @@ ruby_xml_document_filename_get(VALUE self) {
  * using the specified namespace. Returns an XML::Node::Set.  For
  * more information about working with namespaces, please refer
  * to the XML::XPath documentation.
+ *
+ * IMPORTANT - The returned XML::Node::Set must be freed before
+ * its associated document.  In a running Ruby program this will
+ * happen automatically via Ruby's mark and sweep garbage collector.
+ * However, if the program exits, Ruby does not guarantee the order
+ * in which objects are freed
+ * (see http://blade.nagaokaut.ac.jp/cgi-bin/scat.rb/ruby/ruby-core/17700).
+ * As a result, the associated document may be freed before the node
+ * list, which will cause a segmentation fault.
+ *
+ * To avoid this, use the following (non-ruby like) coding style:
+ *
+ *  nodes = doc.find('/header')
+ *  nodes.each do |node|
+ *    ... do stuff ...
+ *  end
+ *
+ *  nodes = nil
+ *  GC.start
  */
 VALUE
 ruby_xml_document_find(int argc, VALUE *argv, VALUE self) {
