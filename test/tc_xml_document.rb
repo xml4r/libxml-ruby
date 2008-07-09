@@ -27,25 +27,25 @@ class TC_XML_Document < Test::Unit::TestCase
   def test_ruby_xml_document_compression()
     if XML::Parser::enabled_zlib?
       0.upto(9) do |i|
-	assert_equal(i, @doc.compression = i)
-	assert_equal(i, @doc.compression)
+        assert_equal(i, @doc.compression = i)
+        assert_equal(i, @doc.compression)
       end
 
       9.downto(0) do |i|
-	assert_equal(i, @doc.compression = i)
-	assert_equal(i, @doc.compression)
+  assert_equal(i, @doc.compression = i)
+  assert_equal(i, @doc.compression)
       end
 
       10.upto(20) do |i|
-	# assert_equal(9, @doc.compression = i)
-	assert_equal(i, @doc.compression = i) # This works around a bug in Ruby 1.8
-	assert_equal(9, @doc.compression)
+  # assert_equal(9, @doc.compression = i)
+  assert_equal(i, @doc.compression = i) # This works around a bug in Ruby 1.8
+  assert_equal(9, @doc.compression)
       end
 
       -1.downto(-10) do |i|
-	# assert_equal(0, @doc.compression = i)
-	assert_equal(i, @doc.compression = i) # FIXME This bug should get fixed ASAP
-	assert_equal(0, @doc.compression)
+  # assert_equal(0, @doc.compression = i)
+  assert_equal(i, @doc.compression = i) # FIXME This bug should get fixed ASAP
+  assert_equal(0, @doc.compression)
       end
     end # if ...enabled_zlib?
   end # test_ruby_xml_document_compression()
