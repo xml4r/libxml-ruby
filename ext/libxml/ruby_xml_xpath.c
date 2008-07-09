@@ -8,12 +8,43 @@
 /*
  * Document-class: XML::XPath
  * 
- * Includes Enumerable.
- */
-VALUE cXMLXPath;
-VALUE eXMLXPathInvalidPath;
-
-#ifdef LIBXML_XPATH_ENABLED
+ * The XML::XPath class is used to query XML documents. It is used
+ * via the XML::Document#find method.
+ *
+ *  document.find('/foo')
+ *
+ * == Namespaces ==
+ * Finding namespaced elements and attributes can be tricky.  For example:
+ *
+ *  <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+ *    <soap:Body>
+ *      <getManufacturerNamesResponse xmlns="http://services.somewhere.com">
+ *        <IDAndNameList xmlns="http://services.somewhere.com">
+ *          <ns1:IdAndName xmlns:ns1="http://domain.somewhere.com"/>
+ *        </IDAndNameList>
+ *      </getManufacturerNamesResponse>
+ *  </soap:Envelope>
+ *
+ *  # Since the soap namespace is defined on the root 
+ *  # node we can directly use it.
+ *  doc.find('/soap:Envelope')
+ *
+ *  # Since the ns1 namespace is not defined on the root node
+ *  # we have to first register it with the xpath engine.
+ *  doc.find('//ns1:IdAndName', 
+             'ns1:http://domain.somewhere.com')
+ *             
+ *  # Since the getManufacturerNamesResponse element uses a default 
+ *  # namespace we first have to give it a prefix and register
+ *  # it with the xpath engine.
+ *  doc.find('//ns:getManufacturerNamesResponse', 
+ *            'ns:http://services.somewhere.com')
+ *
+ *  # Here is an example showing a complex namespace aware
+ *  # xpath expression.
+ *  doc.find('/soap:Envelope/soap:Body/ns0:getManufacturerNamesResponse/ns0:IDAndNameList/ns1:IdAndName', 
+             ['ns0:http://services.somewhere.com', 'ns1:http://domain.somewhere.com'])
+*/
 
 /*
  * call-seq:
@@ -173,7 +204,8 @@ ruby_xml_xpath_find(VALUE class, VALUE anode, VALUE xpath_expr, VALUE nslist) {
   }
   xxpop=xmlXPathCompiledEval(comp, ctxt);
   if ( xxpop == NULL )
-    return Qnil;
+    rb_raise(eXMLXPathInvalidPath,
+	     "Invalid XPath expression (expr could not be evaluated)");
 
   rxpop = ruby_xml_xpath_object_wrap(xxpop);
 
