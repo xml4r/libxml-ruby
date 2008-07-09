@@ -786,7 +786,7 @@ ruby_xml_parser_filename_set(VALUE self, VALUE filename) {
   Data_Get_Struct(rxp->ctxt, ruby_xml_parser_context, rxpc);
   rxpc->ctxt = xmlCreateFileParserCtxt(StringValuePtr(filename));
   if (rxpc->ctxt == NULL)
-    rb_raise(rb_eIOError, filename);
+    rb_raise(rb_eIOError, StringValuePtr(filename));
 
   return(data->filename);
 }

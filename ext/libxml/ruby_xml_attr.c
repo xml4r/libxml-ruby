@@ -108,7 +108,7 @@ ruby_xml_attr_initialize(int argc, VALUE *argv, VALUE self) {
   Check_Type(name, T_STRING);
   Check_Type(value, T_STRING);
   
-  Data_Get_Struct(node, xmlNodePtr, xnode);
+  Data_Get_Struct(node, xmlNode, xnode);
   
   if NIL_P(ns)
   {
@@ -117,11 +117,11 @@ ruby_xml_attr_initialize(int argc, VALUE *argv, VALUE self) {
   else
   {
     xmlNsPtr xns;
-    Data_Get_Struct(ns, xmlNsPtr, xns);
+    Data_Get_Struct(ns, xmlNs, xns);
     xattr = xmlNewNsProp(xnode, xns, (xmlChar*)StringValuePtr(name), (xmlChar*)StringValuePtr(value));
   }
   
-  xattr->_private = self;
+  xattr->_private = (void *)self;
   DATA_PTR(self) = xattr;
   return self;
 }
@@ -135,11 +135,11 @@ ruby_xml_attr_initialize(int argc, VALUE *argv, VALUE self) {
 VALUE
 ruby_xml_attr_child_get(VALUE self) {
   xmlAttrPtr xattr;
-  Data_Get_Struct(self, xmlAttrPtr, xattr);
+  Data_Get_Struct(self, xmlAttr, xattr);
   if (xattr->children == NULL)
     return(Qnil);
   else
-    return(ruby_xml_node2_wrap(cXMLNode, xattr->children));
+    return(ruby_xml_node2_wrap(cXMLNode, (xmlNodePtr)xattr->children));
 }
 
 
@@ -152,7 +152,7 @@ ruby_xml_attr_child_get(VALUE self) {
 VALUE
 ruby_xml_attr_child_q(VALUE self) {
   xmlAttrPtr xattr;
-  Data_Get_Struct(self, xmlAttrPtr, xattr);
+  Data_Get_Struct(self, xmlAttr, xattr);
   if (xattr->children == NULL)
     return(Qfalse);
   else
@@ -171,7 +171,7 @@ ruby_xml_attr_child_q(VALUE self) {
 VALUE
 ruby_xml_attr_doc_get(VALUE self) {
   xmlAttrPtr xattr;
-  Data_Get_Struct(self, xmlAttrPtr, xattr);
+  Data_Get_Struct(self, xmlAttr, xattr);
   if (xattr->doc == NULL)
     return(Qnil);
   else
@@ -188,7 +188,7 @@ ruby_xml_attr_doc_get(VALUE self) {
 VALUE
 ruby_xml_attr_doc_q(VALUE self) {
   xmlAttrPtr xattr;
-  Data_Get_Struct(self, xmlAttrPtr, xattr);
+  Data_Get_Struct(self, xmlAttr, xattr);
   if (xattr->doc == NULL)
     return(Qfalse);
   else
@@ -205,7 +205,7 @@ ruby_xml_attr_doc_q(VALUE self) {
 VALUE
 ruby_xml_attr_last_get(VALUE self) {
   xmlAttrPtr xattr;
-  Data_Get_Struct(self, xmlAttrPtr, xattr);
+  Data_Get_Struct(self, xmlAttr, xattr);
   if (xattr->last == NULL)
     return(Qnil);
   else
@@ -222,7 +222,7 @@ ruby_xml_attr_last_get(VALUE self) {
 VALUE
 ruby_xml_attr_last_q(VALUE self) {
   xmlAttrPtr xattr;
-  Data_Get_Struct(self, xmlAttrPtr, xattr);
+  Data_Get_Struct(self, xmlAttr, xattr);
   if (xattr->last == NULL)
     return(Qfalse);
   else
@@ -238,7 +238,7 @@ ruby_xml_attr_last_q(VALUE self) {
 VALUE
 ruby_xml_attr_name_get(VALUE self) {
   xmlAttrPtr xattr;
-  Data_Get_Struct(self, xmlAttrPtr, xattr);
+  Data_Get_Struct(self, xmlAttr, xattr);
 
   if (xattr->name == NULL)
     return(Qnil);
@@ -255,7 +255,7 @@ ruby_xml_attr_name_get(VALUE self) {
 VALUE
 ruby_xml_attr_next_get(VALUE self) {
   xmlAttrPtr xattr;
-  Data_Get_Struct(self, xmlAttrPtr, xattr);
+  Data_Get_Struct(self, xmlAttr, xattr);
   if (xattr->next == NULL)
     return(Qnil);
   else
@@ -272,7 +272,7 @@ ruby_xml_attr_next_get(VALUE self) {
 VALUE
 ruby_xml_attr_next_q(VALUE self) {
   xmlAttrPtr xattr;
-  Data_Get_Struct(self, xmlAttrPtr, xattr);
+  Data_Get_Struct(self, xmlAttr, xattr);
   if (xattr->next == NULL)
     return(Qfalse);
   else
@@ -301,7 +301,7 @@ ruby_xml_attr_node_type_name(VALUE self) {
 VALUE
 ruby_xml_attr_ns_get(VALUE self) {
   xmlAttrPtr xattr;
-  Data_Get_Struct(self, xmlAttrPtr, xattr);
+  Data_Get_Struct(self, xmlAttr, xattr);
   if (xattr->ns == NULL)
     return(Qnil);
   else
@@ -319,7 +319,7 @@ ruby_xml_attr_ns_get(VALUE self) {
 VALUE
 ruby_xml_attr_ns_q(VALUE self) {
   xmlAttrPtr xattr;
-  Data_Get_Struct(self, xmlAttrPtr, xattr);
+  Data_Get_Struct(self, xmlAttr, xattr);
   if (xattr->ns == NULL)
     return(Qfalse);
   else
@@ -336,7 +336,7 @@ ruby_xml_attr_ns_q(VALUE self) {
 VALUE
 ruby_xml_attr_parent_get(VALUE self) {
   xmlAttrPtr xattr;
-  Data_Get_Struct(self, xmlAttrPtr, xattr);
+  Data_Get_Struct(self, xmlAttr, xattr);
   if (xattr->parent == NULL)
     return(Qnil);
   else
@@ -353,7 +353,7 @@ ruby_xml_attr_parent_get(VALUE self) {
 VALUE
 ruby_xml_attr_parent_q(VALUE self) {
   xmlAttrPtr xattr;
-  Data_Get_Struct(self, xmlAttrPtr, xattr);
+  Data_Get_Struct(self, xmlAttr, xattr);
   if (xattr->parent == NULL)
     return(Qfalse);
   else
@@ -370,7 +370,7 @@ ruby_xml_attr_parent_q(VALUE self) {
 VALUE
 ruby_xml_attr_prev_get(VALUE self) {
   xmlAttrPtr xattr;
-  Data_Get_Struct(self, xmlAttrPtr, xattr);
+  Data_Get_Struct(self, xmlAttr, xattr);
   if (xattr->prev == NULL)
     return(Qnil);
   else
@@ -387,7 +387,7 @@ ruby_xml_attr_prev_get(VALUE self) {
 VALUE
 ruby_xml_attr_prev_q(VALUE self) {
   xmlAttrPtr xattr;
-  Data_Get_Struct(self, xmlAttrPtr, xattr);
+  Data_Get_Struct(self, xmlAttr, xattr);
   if (xattr->prev == NULL)
     return(Qfalse);
   else
@@ -404,10 +404,10 @@ ruby_xml_attr_prev_q(VALUE self) {
 VALUE
 ruby_xml_attr_remove_ex(VALUE self) {
   xmlAttrPtr xattr;
-  Data_Get_Struct(self, xmlAttrPtr, xattr);
+  Data_Get_Struct(self, xmlAttr, xattr);
   
   if (xattr->_private == NULL)
-    xmlRemoveProp((xmlNodePtr)xattr);
+    xmlRemoveProp(xattr);
   else
     xmlUnlinkNode((xmlNodePtr)xattr);
 
@@ -426,7 +426,7 @@ ruby_xml_attr_value_get(VALUE self) {
   xmlChar *value;
   VALUE result = Qnil;
   
-  Data_Get_Struct(self, xmlAttrPtr, xattr);
+  Data_Get_Struct(self, xmlAttr, xattr);
   if (ruby_xml_attr_parent_q(self) == Qtrue) {
     value = xmlGetProp(xattr->parent, xattr->name);
     if (value != NULL)
@@ -448,10 +448,9 @@ ruby_xml_attr_value_get(VALUE self) {
 VALUE
 ruby_xml_attr_value_set(VALUE self, VALUE val) {
   xmlAttrPtr xattr;
-  VALUE result = Qnil;
   
   Check_Type(val, T_STRING);
-  Data_Get_Struct(self, xmlAttrPtr, xattr);
+  Data_Get_Struct(self, xmlAttr, xattr);
 
   if (xattr->ns)
     xmlSetNsProp(xattr->parent, xattr->ns, xattr->name, (xmlChar*)StringValuePtr(val));

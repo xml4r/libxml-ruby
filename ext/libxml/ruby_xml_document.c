@@ -725,7 +725,7 @@ ruby_xml_document_root_set(VALUE self, VALUE node) {
     rb_raise(rb_eTypeError, "must pass an XML::Node type object");
 
   Data_Get_Struct(self, ruby_xml_document_t, rxd);
-  Data_Get_Struct(node, xmlNodePtr, xnode);
+  Data_Get_Struct(node, xmlNode, xnode);
   xroot = xmlDocSetRootElement(rxd->doc, xnode);
   if (xroot == NULL)
     return(Qnil);

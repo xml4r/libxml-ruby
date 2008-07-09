@@ -66,7 +66,7 @@ ruby_xml_xpath_context_new(VALUE anode) {
     if (ctxt == NULL) return(Qnil);
 
   } else if (rb_obj_is_kind_of(anode,cXMLNode) == Qtrue ) {
-    Data_Get_Struct(anode, xmlNodePtr, xnode);
+    Data_Get_Struct(anode, xmlNode, xnode);
     if (xnode->doc == NULL)
       rb_raise(rb_eTypeError,"Supplied node must be part of a document");
 

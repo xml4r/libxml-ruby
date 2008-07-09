@@ -20,7 +20,7 @@ ruby_xml_xpointer_point(VALUE class, VALUE rnode, VALUE xptr_str) {
   if (rb_obj_is_kind_of(rnode, cXMLNode) == Qfalse)
     rb_raise(rb_eTypeError, "require an XML::Node object");
 
-  Data_Get_Struct(rnode, xmlNodePtr, xnode);
+  Data_Get_Struct(rnode, xmlNode, xnode);
 
   rxptr_xpth_ctxt =
     ruby_xml_xpath_context_wrap(ctxt=xmlXPtrNewContext(xnode->doc, xnode, NULL));
@@ -66,11 +66,11 @@ ruby_xml_xpointer_range(VALUE class, VALUE rstart, VALUE rend) {
   if (rb_obj_is_kind_of(rend, cXMLNode) == Qfalse)
     rb_raise(rb_eTypeError, "require an XML::Node object as an ending point");
 
-  Data_Get_Struct(rstart, xmlNodePtr, start);
+  Data_Get_Struct(rstart, xmlNode, start);
   if (start == NULL)
     return(Qnil);
 
-  Data_Get_Struct(rend, xmlNodePtr, end);
+  Data_Get_Struct(rend, xmlNode, end);
   if (end == NULL)
     return(Qnil);
 

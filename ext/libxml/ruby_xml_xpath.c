@@ -125,7 +125,7 @@ ruby_xml_xpath_register_namespaces(VALUE nslist, VALUE xxpc, int level) {
     break;
   default:
     if (rb_obj_is_kind_of(nslist, cXMLNS) == Qtrue) {
-      Data_Get_Struct(nslist, xmlNsPtr, xns);
+      Data_Get_Struct(nslist, xmlNs, xns);
       rprefix = rb_str_new2((const char*)xns->prefix);
       ruri = rb_str_new2((const char*)xns->href);
       ruby_xml_xpath_context_register_namespace(xxpc, rprefix, ruri);
@@ -172,10 +172,10 @@ ruby_xml_xpath_find(VALUE class, VALUE anode, VALUE xpath_expr, VALUE nslist) {
 #ifdef DEBUG
     fprintf(stderr,"rnode 0x%x 0x%x\n",rnode,xmlDocGetRootElement(rdocp->doc)->_private);
 #endif
-    Data_Get_Struct(rnode, xmlNodePtr, xnode);
+    Data_Get_Struct(rnode, xmlNode, xnode);
   } else if ( rb_obj_is_kind_of(anode, cXMLNode) == Qtrue) {
     xxpc = ruby_xml_xpath_context_new(anode);
-    Data_Get_Struct(anode, xmlNodePtr, xnode);
+    Data_Get_Struct(anode, xmlNode, xnode);
   } else
     rb_raise(rb_eTypeError, "arg 1 must be XML::Document or XML::Node within a document %s", rb_obj_as_string(anode));
   

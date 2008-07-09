@@ -60,8 +60,8 @@ ruby_xml_attributes_new(xmlNodePtr xnode)
  */
 VALUE
 ruby_xml_attributes_node_get(VALUE self) {
-  xmlNodePtr *xnode;
-  Data_Get_Struct(self, xmlNodePtr, xnode);
+  xmlNodePtr xnode;
+  Data_Get_Struct(self, xmlNode, xnode);
   return(ruby_xml_node2_wrap(cXMLNode, xnode));
 }
 
@@ -83,7 +83,7 @@ ruby_xml_attributes_get_attribute(VALUE self, VALUE name) {
 
   name = check_string_or_symbol(name);
   
-  Data_Get_Struct(self, xmlNodePtr, xnode);
+  Data_Get_Struct(self, xmlNode, xnode);
   
   xattr = xmlHasProp(xnode, (xmlChar*)StringValuePtr(name));
   
@@ -111,7 +111,7 @@ ruby_xml_attributes_get_attribute_ns(VALUE self, VALUE namespace, VALUE name) {
 
   name = check_string_or_symbol(name);
   
-  Data_Get_Struct(self, xmlNodePtr, xnode);
+  Data_Get_Struct(self, xmlNode, xnode);
   
   xattr = xmlHasNsProp(xnode, (xmlChar*)StringValuePtr(name), (xmlChar*)StringValuePtr(namespace));
   
@@ -158,8 +158,6 @@ ruby_xml_attributes_attribute_set(VALUE self, VALUE name, VALUE value) {
   VALUE xattr = ruby_xml_attributes_get_attribute(self, name);
   if NIL_P(xattr)
   {
-    xmlNodePtr xnode;
-    xmlAttrPtr xattr;
     VALUE args[3];
 
     args[0] = ruby_xml_attributes_node_get(self);
@@ -187,7 +185,7 @@ VALUE
 ruby_xml_attributes_each(VALUE self) {
   xmlNodePtr xnode;
   xmlAttrPtr xattr;
-  Data_Get_Struct(self, xmlNodePtr, xnode);
+  Data_Get_Struct(self, xmlNode, xnode);
 
   xattr = xnode->properties;
 
@@ -214,7 +212,7 @@ ruby_xml_attributes_length(VALUE self) {
   int length = 0;
   xmlNodePtr xnode;
   xmlAttrPtr xattr;
-  Data_Get_Struct(self, xmlNodePtr, xnode);
+  Data_Get_Struct(self, xmlNode, xnode);
 
   xattr = xnode->properties;
 
@@ -238,7 +236,7 @@ ruby_xml_attributes_length(VALUE self) {
 VALUE
 ruby_xml_attributes_first(VALUE self) {
   xmlNodePtr xnode;
-  Data_Get_Struct(self, xmlNodePtr, xnode);
+  Data_Get_Struct(self, xmlNode, xnode);
 
   if (xnode->type == XML_ELEMENT_NODE) {
     xmlAttrPtr xattr = xnode->properties;

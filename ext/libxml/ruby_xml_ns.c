@@ -8,7 +8,7 @@
 VALUE cXMLNS;
 
 
-static void
+VALUE
 ruby_xml_ns_alloc(VALUE klass) {
   return Data_Wrap_Struct(cXMLNS, NULL, NULL, NULL);
 }
@@ -22,12 +22,12 @@ ruby_xml_ns_alloc(VALUE klass) {
  *
  *  XML::NS.new(node, "xlink", "http://www.w3.org/1999/xlink")
  */
-static void
+VALUE
 ruby_xml_ns_initialize(VALUE self, VALUE node, VALUE href, VALUE prefix) {
   xmlNodePtr xnode;
   xmlNsPtr xns;
 
-  Data_Get_Struct(node, xmlNodePtr, xnode);
+  Data_Get_Struct(node, xmlNode, xnode);
   xns = xmlNewNs(xnode, (xmlChar*)StringValuePtr(href), (xmlChar*)StringValuePtr(prefix));
 
   DATA_PTR(self) = xns;
@@ -49,7 +49,7 @@ ruby_xml_ns_wrap(xmlNsPtr xns) {
 VALUE
 ruby_xml_ns_href_get(VALUE self) {
   xmlNsPtr xns;
-  Data_Get_Struct(self, xmlNsPtr, xns);
+  Data_Get_Struct(self, xmlNs, xns);
   if (xns == NULL || xns->href == NULL)
     return(Qnil);
   else
@@ -66,7 +66,7 @@ ruby_xml_ns_href_get(VALUE self) {
 VALUE
 ruby_xml_ns_href_q(VALUE self) {
   xmlNsPtr xns;
-  Data_Get_Struct(self, xmlNsPtr, xns);
+  Data_Get_Struct(self, xmlNs, xns);
   if (xns == NULL || xns->href == NULL)
     return(Qfalse);
   else
@@ -83,7 +83,7 @@ ruby_xml_ns_href_q(VALUE self) {
 VALUE
 ruby_xml_ns_next(VALUE self) {
   xmlNsPtr xns;
-  Data_Get_Struct(self, xmlNsPtr, xns);
+  Data_Get_Struct(self, xmlNs, xns);
   if (xns == NULL || xns->next == NULL)
     return(Qnil);
   else
@@ -101,7 +101,7 @@ ruby_xml_ns_next(VALUE self) {
 VALUE
 ruby_xml_ns_prefix_get(VALUE self) {
   xmlNsPtr xns;
-  Data_Get_Struct(self, xmlNsPtr, xns);
+  Data_Get_Struct(self, xmlNs, xns);
   if (xns == NULL || xns->prefix == NULL)
     return(Qnil);
   else
@@ -118,7 +118,7 @@ ruby_xml_ns_prefix_get(VALUE self) {
 VALUE
 ruby_xml_ns_prefix_q(VALUE self) {
   xmlNsPtr xns;
-  Data_Get_Struct(self, xmlNsPtr, xns);
+  Data_Get_Struct(self, xmlNs, xns);
   if (xns == NULL || xns->prefix == NULL)
     return(Qfalse);
   else

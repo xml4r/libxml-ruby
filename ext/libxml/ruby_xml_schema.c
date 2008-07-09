@@ -28,7 +28,6 @@ VALUE
 ruby_xml_schema_init_from_uri(VALUE class, VALUE uri) {
   xmlSchemaParserCtxtPtr parser;
   ruby_xml_schema *schema;
-  VALUE result = Qnil;
 
   Check_Type(uri, T_STRING);
 
@@ -51,7 +50,6 @@ ruby_xml_schema_init_from_document(VALUE class, VALUE document) {
   ruby_xml_document_t *rdoc;
   ruby_xml_schema *schema;
   xmlSchemaParserCtxtPtr parser;
-  VALUE result = Qnil;
 
   Data_Get_Struct(document, ruby_xml_document_t, rdoc);
 

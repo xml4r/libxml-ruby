@@ -5,7 +5,7 @@
 VALUE cXMLState;
 VALUE LIBXML_STATE = Qnil;
 
-static int dummy;
+static int dummy = 0;
 
 void
 ruby_xml_state_free(int dummy) {
@@ -21,10 +21,9 @@ ruby_xml_state_alloc() {
   
   xmlInitParser();
   
-  return Data_Make_Struct(cXMLState, int,
-			  NULL,
-			  ruby_xml_state_free,
-			  dummy);
+  return Data_Wrap_Struct(cXMLState,
+			  NULL, ruby_xml_state_free,
+			  &dummy);
 }
 
 // Rdoc needs to know 

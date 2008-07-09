@@ -224,8 +224,8 @@ VALUE
 ruby_xml_xpath_object_length(VALUE self) {
   xmlXPathObjectPtr xpop;
 
-  if ( ruby_xml_xpath_object_empty_q(self) == Qtrue )
-    return INT2FIX0);
+  if (ruby_xml_xpath_object_empty_q(self) == Qtrue)
+    return INT2FIX(0);
 
   Data_Get_Struct(self,xmlXPathObject,xpop);
 
