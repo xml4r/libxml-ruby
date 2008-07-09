@@ -123,6 +123,7 @@ ruby_xml_attr_initialize(int argc, VALUE *argv, VALUE self) {
   
   xattr->_private = self;
   DATA_PTR(self) = xattr;
+  return self;
 }
 
 /*
@@ -406,9 +407,9 @@ ruby_xml_attr_remove_ex(VALUE self) {
   Data_Get_Struct(self, xmlAttrPtr, xattr);
   
   if (xattr->_private == NULL)
-    xmlRemoveProp(xattr);
+    xmlRemoveProp((xmlNodePtr)xattr);
   else
-    xmlUnlinkNode(xattr);
+    xmlUnlinkNode((xmlNodePtr)xattr);
 
   return(Qnil);
 }
@@ -469,7 +470,7 @@ ruby_xml_attr_value_set(VALUE self, VALUE val) {
 void
 ruby_init_xml_attr(void) {
   cXMLAttr = rb_define_class_under(mXML, "Attr", rb_cObject);
-  rb_define_alloc_func(cXMLAttr, ruby_xml_attr_alloc, -1);
+  rb_define_alloc_func(cXMLAttr, ruby_xml_attr_alloc);
   rb_define_method(cXMLAttr, "initialize", ruby_xml_attr_initialize, -1);
   rb_define_method(cXMLAttr, "child", ruby_xml_attr_child_get, 0);
   rb_define_method(cXMLAttr, "child?", ruby_xml_attr_child_q, 0);

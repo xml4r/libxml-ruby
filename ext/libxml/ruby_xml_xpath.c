@@ -13,8 +13,9 @@
  *
  *  document.find('/foo')
  *
- * == Namespaces ==
- * Finding namespaced elements and attributes can be tricky.  For example:
+ * === Working With Namespaces
+ * Finding namespaced elements and attributes can be tricky.  
+ * Lets work through some examples using the following xml document:
  *
  *  <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
  *    <soap:Body>
@@ -45,6 +46,12 @@
  *  doc.find('/soap:Envelope/soap:Body/ns0:getManufacturerNamesResponse/ns0:IDAndNameList/ns1:IdAndName', 
              ['ns0:http://services.somewhere.com', 'ns1:http://domain.somewhere.com'])
 */
+
+VALUE cXMLXPath;
+VALUE eXMLXPathInvalidPath;
+
+#ifdef LIBXML_XPATH_ENABLED
+
 
 /*
  * call-seq:

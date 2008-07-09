@@ -10,6 +10,8 @@ extern VALUE eXMLNodeSetNamespace;
 extern VALUE eXMLNodeFailedModify;
 extern VALUE eXMLNodeUnknownType;
 
+void ruby_init_xml_node(void);
+void ruby_xml_node_mark_common(xmlNodePtr xnode);
 VALUE ruby_xml_node2_wrap(VALUE class, xmlNodePtr xnode);
 VALUE check_string_or_symbol(VALUE val);
 #endif

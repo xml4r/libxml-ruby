@@ -138,40 +138,6 @@ ruby_xml_node_comment_q(VALUE self) {
 
 /*
  * call-seq:
- *    node << ("string" | node) -> node
- * 
- * Add the specified string or XML::Node to this node's
- * content.
- */
-VALUE
-ruby_xml_node_content_add(VALUE self, VALUE obj) {
-  xmlNodePtr xnode;
-  VALUE str;
-
-  Data_Get_Struct(self, xmlNodePtr, xnode);
-  /* XXX This should only be legal for a CDATA type node, I think,
-   * resulting in a merge of content, as if a string were passed
-   * danj 070827
-   */
-  if (rb_obj_is_kind_of(obj, cXMLNode)) {
-    ruby_xml_node_child_set(self, obj);
-    return(self);
-  } else if (TYPE(obj) == T_STRING) {
-    xmlNodeAddContent(xnode, (xmlChar*)StringValuePtr(obj));
-    return(self);
-  } else {
-    str = rb_obj_as_string(obj);
-    if (NIL_P(str) || TYPE(str) != T_STRING)
-      rb_raise(rb_eTypeError, "invalid argument: must be string or XML::Node");
-
-    xmlNodeAddContent(xnode, (xmlChar*)StringValuePtr(str));
-    return(self);
-  }
-}
-
-
-/*
- * call-seq:
  *    node.content -> "string"
  * 
  * Obtain this node's content as a string.
@@ -180,7 +146,7 @@ VALUE
 ruby_xml_node_content_get(VALUE self) {
   xmlNodePtr xnode;
   xmlChar *content;
-  VALUE result;
+  VALUE result = Qnil;
   
   Data_Get_Struct(self, xmlNodePtr, xnode);
   content = xmlNodeGetContent(xnode);
@@ -363,7 +329,41 @@ ruby_xml_node_child_set_aux(VALUE self, VALUE rnode) {
  */
 VALUE
 ruby_xml_node_child_set(VALUE self, VALUE rnode) {
-  return ruby_xml_node_child_set_aux(self,rnode,1);
+  return ruby_xml_node_child_set_aux(self, rnode);
+}
+
+
+/*
+ * call-seq:
+ *    node << ("string" | node) -> node
+ * 
+ * Add the specified string or XML::Node to this node's
+ * content.
+ */
+VALUE
+ruby_xml_node_content_add(VALUE self, VALUE obj) {
+  xmlNodePtr xnode;
+  VALUE str;
+
+  Data_Get_Struct(self, xmlNodePtr, xnode);
+  /* XXX This should only be legal for a CDATA type node, I think,
+   * resulting in a merge of content, as if a string were passed
+   * danj 070827
+   */
+  if (rb_obj_is_kind_of(obj, cXMLNode)) {
+    ruby_xml_node_child_set(self, obj);
+    return(self);
+  } else if (TYPE(obj) == T_STRING) {
+    xmlNodeAddContent(xnode, (xmlChar*)StringValuePtr(obj));
+    return(self);
+  } else {
+    str = rb_obj_as_string(obj);
+    if (NIL_P(str) || TYPE(str) != T_STRING)
+      rb_raise(rb_eTypeError, "invalid argument: must be string or XML::Node");
+
+    xmlNodeAddContent(xnode, (xmlChar*)StringValuePtr(str));
+    return(self);
+  }
 }
 
 /*
@@ -374,7 +374,7 @@ ruby_xml_node_child_set(VALUE self, VALUE rnode) {
  */
 VALUE
 ruby_xml_node_child_add(VALUE self, VALUE rnode) {
-  return ruby_xml_node_child_set_aux(self,rnode,0);
+  return ruby_xml_node_child_set_aux(self, rnode);
 }
 
 /*
@@ -624,6 +624,26 @@ ruby_xml_node_entity_ref_q(VALUE self) {
 }
 
 VALUE ruby_xml_node_to_s(VALUE self);
+
+/*
+ * call-seq:
+ *    node.eql?(other_node) => (true|false)
+ * 
+ * Test equality between the two nodes. Two nodes are equal
+ * if they are the same node or have the same XML representation.*/
+VALUE
+ruby_xml_node_eql_q(VALUE self, VALUE other) {
+  if (self == other)
+  {
+    return Qtrue;
+  }
+  else      
+  {
+    VALUE self_xml = ruby_xml_node_to_s(self);
+    VALUE other_xml = ruby_xml_node_to_s(other);
+    return(rb_funcall(self_xml, rb_intern("=="), 1, other_xml));
+  }    
+}
 
 
 /*
@@ -1222,28 +1242,28 @@ ruby_xml_node2_free(xmlNodePtr xnode) {
 }
 
 void
-ruby_xml_node_mark_common(xmlNodePtr node) {
-  if (node->parent == NULL ) {
+ruby_xml_node_mark_common(xmlNodePtr xnode) {
+  if (xnode->parent == NULL ) {
 #ifdef NODE_DEBUG
     fprintf(stderr,"mark no parent r=0x%x *n=0x%x\n",rxn,node);
 #endif
-  } else if ( node->doc != NULL ) {
-    if (node->doc->_private == NULL) {
+  } else if (xnode->doc != NULL ) {
+    if (xnode->doc->_private == NULL) {
       rb_bug("XmlNode Doc is not bound! (%s:%d)",
 	     __FILE__,__LINE__);
     }
-    rb_gc_mark((VALUE)node->doc->_private);
+    rb_gc_mark((VALUE)xnode->doc->_private);
   } else {
-    while (node->parent != NULL )
-      node=node->parent;
-    if (node->_private == NULL )
+    while (xnode->parent != NULL )
+      xnode = xnode->parent;
+    if (xnode->_private == NULL )
       rb_warning("XmlNode Root Parent is not bound! (%s:%d)",
 		 __FILE__,__LINE__);
     else {
 #ifdef NODE_DEBUG
       fprintf(stderr,"mark rxn=0x%x xn=0x%x o=0x%x doc=0x%x\n",(long)rxn,(long)node,(long)node->_private,node->doc);
 #endif
-      rb_gc_mark((VALUE)node->_private);
+      rb_gc_mark((VALUE)xnode->_private);
     }
   }
 }
@@ -1772,6 +1792,26 @@ ruby_xml_node_prev_set(VALUE self, VALUE rnode) {
 
 /*
  * call-seq:
+ *    node.attributes -> attributes
+ * 
+ * Returns the XML::Attributes for this node. 
+ */
+VALUE
+ruby_xml_node_attributes_get(VALUE self) {
+  xmlNodePtr xnode;
+  xmlAttrPtr attr;
+
+  Data_Get_Struct(self, xmlNodePtr, xnode);
+
+  if (xnode->type == XML_ELEMENT_NODE) {
+    return ruby_xml_attributes_new(xnode);
+  } else {
+    return(Qnil);
+  }
+}
+
+/*
+ * call-seq:
  *    node.property("name") -> "string"
  *    node["name"]          -> "string"
  * 
@@ -1793,27 +1833,6 @@ VALUE
 ruby_xml_node_property_set(VALUE self, VALUE name, VALUE value) {
   VALUE attributes = ruby_xml_node_attributes_get(self);
   return ruby_xml_attributes_attribute_set(attributes, name, value);
-}
-
-
-/*
- * call-seq:
- *    node.attributes -> attributes
- * 
- * Returns the XML::Attributes for this node. 
- */
-VALUE
-ruby_xml_node_attributes_get(VALUE self) {
-  xmlNodePtr xnode;
-  xmlAttrPtr attr;
-
-  Data_Get_Struct(self, xmlNodePtr, xnode);
-
-  if (xnode->type == XML_ELEMENT_NODE) {
-    return ruby_xml_attributes_new(xnode);
-  } else {
-    return(Qnil);
-  }
 }
 
 
@@ -2241,6 +2260,7 @@ ruby_init_xml_node(void) {
   rb_define_method(cXMLNode, "empty?", ruby_xml_node_empty_q, 0);
   rb_define_method(cXMLNode, "entity?", ruby_xml_node_entity_q, 0);
   rb_define_method(cXMLNode, "entity_ref?", ruby_xml_node_entity_ref_q, 0);
+  rb_define_method(cXMLNode, "eql?", ruby_xml_node_eql_q, 1);
   rb_define_method(cXMLNode, "find", ruby_xml_node_find, -1);
   rb_define_method(cXMLNode, "find_first", ruby_xml_node_find_first, -1);
   rb_define_method(cXMLNode, "fragment?", ruby_xml_node_fragment_q, 0);
