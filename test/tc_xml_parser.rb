@@ -183,7 +183,7 @@ class TextParser < Test::Unit::TestCase
     $stderr.puts "\nEXPECTING: TWO ERRORS:"
     # this will send message to stderr
     assert_raise(XML::Parser::ParseError) do
-      d = XML::Parser.string('<foo><bar/></foz>').parse
+      XML::Parser.string('<foo><bar/></foz>').parse
     end
 
     ary = []
@@ -191,8 +191,15 @@ class TextParser < Test::Unit::TestCase
 
     # this will use our error handler
     assert_raise(XML::Parser::ParseError) do
-      d = XML::Parser.string('<foo><bar/></foz>').parse
+      XML::Parser.string('<foo><bar/></foz>').parse
     end
+    
+    assert_equal(["Entity: line 1: ",
+                  "parser ",
+                  "error : ",
+                  "Opening and ending tag mismatch: foo line 1 and foz\n",
+                  "<foo><bar/></foz>\n",
+                  "                 ^\n"], ary)
 
     assert_instance_of(Proc, XML::Parser.register_error_handler(nil))
 

@@ -15,7 +15,7 @@ class TestSchema < Test::Unit::TestCase
     document = XML::Document.file('model/shiporder.xsd')
     schema = XML::Schema.document(document)
   end
-  
+
   def test_from_doc
     assert_instance_of(XML::Schema, schema)
   end

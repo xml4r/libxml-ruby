@@ -68,23 +68,6 @@ ruby_xml_parser_context_disable_sax_q(VALUE self) {
 }
 
 
-/*
- * call-seq:
- *    context.doc -> document
- * 
- * Obtain the +XML::Document+ associated with this context.
- */
-VALUE
-ruby_xml_parser_context_doc_get(VALUE self) {
-  ruby_xml_parser_context *rxpc;
-  Data_Get_Struct(self, ruby_xml_parser_context, rxpc);
-
-  if (rxpc->ctxt->myDoc == NULL)
-    return(Qnil);
-
-  return(ruby_xml_document_wrap(rxpc->ctxt->myDoc));
-}
-
 
 /*
  * call-seq:
@@ -429,20 +412,6 @@ ruby_xml_parser_context_replace_entities_set(VALUE self, VALUE bool) {
   }
 }
 
-
-/*
- * call-seq:
- *    context.reset
- * 
- * Resets the parser context.
- */
-VALUE
-ruby_xml_parser_context_reset(VALUE self) {
-  ruby_xml_parser_context *rxpc;
-  Data_Get_Struct(self, ruby_xml_parser_context, rxpc);
-  xmlCtxtReset(rxpc->ctxt);
-}
-
 /*
  * call-seq:
  *    context.space_depth -> num
@@ -692,7 +661,6 @@ ruby_init_xml_parser_context(void) {
   rb_define_method(cXMLParserContext, "data_directory", ruby_xml_parser_context_data_directory_get, 0);
   rb_define_method(cXMLParserContext, "depth", ruby_xml_parser_context_depth_get, 0);
   rb_define_method(cXMLParserContext, "disable_sax?", ruby_xml_parser_context_disable_sax_q, 0);
-  rb_define_method(cXMLParserContext, "doc", ruby_xml_parser_context_doc_get, 0);
   rb_define_method(cXMLParserContext, "docbook?", ruby_xml_parser_context_docbook_q, 0);
   rb_define_method(cXMLParserContext, "encoding", ruby_xml_parser_context_encoding_get, 0);
   rb_define_method(cXMLParserContext, "errno", ruby_xml_parser_context_errno_get, 0);
@@ -712,7 +680,6 @@ ruby_init_xml_parser_context(void) {
   rb_define_method(cXMLParserContext, "options=", ruby_xml_parser_context_options_set, 1);
   rb_define_method(cXMLParserContext, "replace_entities?", ruby_xml_parser_context_replace_entities_q, 0);
   rb_define_method(cXMLParserContext, "replace_entities=", ruby_xml_parser_context_replace_entities_set, 1);
-  rb_define_method(cXMLParserContext, "reset", ruby_xml_parser_context_reset, 0);
   rb_define_method(cXMLParserContext, "space_depth", ruby_xml_parser_context_space_depth_get, 0);
   rb_define_method(cXMLParserContext, "space_depth_max", ruby_xml_parser_context_space_depth_max_get, 0);
   rb_define_method(cXMLParserContext, "subset_external?", ruby_xml_parser_context_subset_external_q, 0);
