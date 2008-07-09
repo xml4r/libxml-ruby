@@ -1,6 +1,7 @@
 require 'rubygems'
 require 'date'
 require 'rake/gempackagetask'
+require 'rake/rdoctask'
 require 'date'
 
 SO_NAME = "libxml_ruby.so"
@@ -107,17 +108,15 @@ Rake::RDocTask.new("rdoc") do |rdoc|
   rdoc.title    = "libxml-ruby"
   # Show source inline with line numbers
   rdoc.options << "--inline-source" << "--line-numbers"
-  ## Make the readme file the start page for the generated html
-  #rdoc.options << '--main' << 'README'
-  #rdoc.rdoc_files.include('bin/**/*',
-                          #'doc/*.rdoc',
-                          #'examples/flat.txt',
-                          #'examples/graph.txt',
-                          #'examples/graph.html',
-                          #'lib/**/*.rb',
-                          #'ext/**/ruby_prof.c',
-                          #'README',
-                          #'LICENSE')
+  # Make the readme file the start page for the generated html
+  rdoc.options << '--main' << 'README'
+  rdoc.rdoc_files.include('doc/*.rdoc',
+                          'ext/**/*.c',
+                          'lib/**/*.rb',
+                          'CHANGES',
+                          'README',
+                          'LICENSE',
+                          'VERSION')
 end
 
 task :package => :create_win32_gem
