@@ -46,4 +46,25 @@ class TestDtd < Test::Unit::TestCase
       
     assert_equal(expected, messages)
   end
+  
+  def test_external_dtd
+    xml = <<-EOS
+      <!DOCTYPE test PUBLIC "-//TEST" "test.dtd" []>
+      <test>
+        <title>T1</title>
+      </test>
+    EOS
+    
+    messages = Array.new
+    XML::Parser.register_error_handler(lambda { |msg| messages << msg })
+    
+    XML::Parser.default_load_external_dtd = false
+    doc = XML::Parser.string(xml).parse
+    assert_equal(Array.new, messages)
+    
+    XML::Parser.default_load_external_dtd = true
+    doc = XML::Parser.string(xml).parse
+    assert_equal('I/O warning : failed to load external entity "test.dtd" <!DOCTYPE test PUBLIC "-//TEST" "test.dtd" []> ^',
+                 messages.map{|msg| msg.strip}.join(' ')) 
+  end
 end

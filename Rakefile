@@ -47,6 +47,7 @@ default_spec = Gem::Specification.new do |spec|
     end
   
   spec.author = "Charlie Savage"
+  spec.email = "libxml-devel@rubyforge.org"
   spec.platform = Gem::Platform::RUBY
   spec.require_path = "lib" 
   spec.bindir = "bin"

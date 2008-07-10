@@ -29,7 +29,7 @@ includes an already built extension.
 
 == INSTALLATION
 
-The easiest way to install ruby-prof is by using Ruby Gems.  To install:
+The easiest way to install libxml-ruby is via Ruby Gems.  To install:
 
 <tt>gem install libxml-ruby</tt>
 
@@ -138,7 +138,12 @@ The file output.xml contains:
     </foo>
   </root_node>
 
+== DOCUMENTATION
 
+RDoc comments are included - run 'rake doc' to generate documentation.
+You can find the latest documentation at:
+
+* http://libxml.rubyforge.org/rdoc/
 
 == License
 
