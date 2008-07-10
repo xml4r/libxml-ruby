@@ -764,6 +764,7 @@ ruby_xml_parser_filename_set(VALUE self, VALUE filename) {
   ruby_xml_parser *rxp;
   ruby_xml_parser_context *rxpc;
   rx_file_data *data;
+  int retry_count = 0;
 
   Check_Type(filename, T_STRING);
   Data_Get_Struct(self, ruby_xml_parser, rxp);
@@ -784,9 +785,17 @@ ruby_xml_parser_filename_set(VALUE self, VALUE filename) {
   data->filename = filename;
 
   Data_Get_Struct(rxp->ctxt, ruby_xml_parser_context, rxpc);
+  retry:
   rxpc->ctxt = xmlCreateFileParserCtxt(StringValuePtr(filename));
-  if (rxpc->ctxt == NULL)
-    rb_raise(rb_eIOError, StringValuePtr(filename));
+  if (rxpc->ctxt == NULL) {
+    if (errno == EMFILE && retry_count == 0) {
+      retry_count++;
+      rb_gc_start();
+      goto retry;
+    } else {
+      rb_raise(rb_eIOError, StringValuePtr(filename));
+    }
+  }
 
   return(data->filename);
 }
