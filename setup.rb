@@ -657,6 +657,10 @@ module Setup
     #
     # TODO: Add spec support.
 
+    def setup_rb_error(msg)
+      raise SetupError, msg
+    end
+
     def exec_test
       $stderr.puts 'Running tests...' if verbose?
 
@@ -861,7 +865,7 @@ module Setup
     end
 
     def dllext
-      RBCONFIG['DLEXT']
+      ::Config::CONFIG['DLLEXT']
     end
 
     def targetfiles
@@ -1428,7 +1432,6 @@ module Setup
     installer = Setup::Installer.new
     installer.rake_define
   end
-
 end
 
 #
@@ -1469,4 +1472,3 @@ elsif defined?(Rake)
   Setup.run_rake
 
 end
-
