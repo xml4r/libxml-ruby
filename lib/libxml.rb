@@ -1,7 +1,7 @@
 # $Id$ 
 # Please see the LICENSE file for copyright and distribution information 
 
-require 'libxml_ruby.so'
+require 'libxml_ruby'
 
 module XML::XMLParserOptions
   XML_PARSE_RECOVER = 1 # recover on errors
