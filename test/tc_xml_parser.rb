@@ -157,7 +157,7 @@ class TextParser < Test::Unit::TestCase
   end
 
   def test_file
-    file = File.expand_path('model/rubynet.xml')
+    file = File.expand_path('test/model/rubynet.xml')
     
     @xp.filename = file
     assert_equal(file, @xp.filename)
@@ -167,11 +167,19 @@ class TextParser < Test::Unit::TestCase
   end
 
   def test_io
-    File.open('model/rubynet.xml') do |f|
+    File.open('test/model/rubynet.xml') do |f|
       assert_kind_of(IO, f)
       assert_kind_of(IO, @xp.io = f)
       assert_instance_of(XML::Document, @xp.parse)
     end # File.open
+  end # def test_libxml_parser_io
+
+  def test_fd_gc
+    # XXX This ideally should run until libxml emits a warning, thereby knowing we've done a GC sweep.
+    # For the time being, re-open the same doc `limit descriptors` times.  If we make it to the end,
+    # then we've succeeded, otherwise an exception will be thrown.
+    max_fd = `ulimit -n`.chomp.to_i
+    (1..(max_fd + 1)).each {|i| XML::Document.file('test/model/rubynet.xml') }
   end # def test_libxml_parser_io
 
   def test_libxml_parser_features
