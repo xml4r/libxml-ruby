@@ -243,7 +243,6 @@ ruby_xml_xpath_object_length(VALUE self) {
  * UNDEFINED, NODESET, BOOLEAN, NUMBER,
  * STRING, POINT, RANGE, LOCATIONSET,
  * USERS, XSLT_TREE 
- * 
  */
 VALUE
 ruby_xml_xpath_object_get_type(VALUE self)
@@ -255,6 +254,13 @@ ruby_xml_xpath_object_get_type(VALUE self)
   return INT2FIX(xpop->type);
 }
 
+
+/*
+ * call-seq:
+ *    xpath_object.string -> String
+ * 
+ * Returns the original XPath expression as a string.
+ */
 VALUE
 ruby_xml_xpath_object_string(VALUE self)
 {
@@ -277,7 +283,6 @@ ruby_xml_xpath_object_string(VALUE self)
 void
 ruby_init_xml_xpath_object(void) {
   cXMLXPathObject = rb_define_class_under(cXMLXPath, "Object", rb_cObject);
-
   rb_include_module(cXMLXPathObject, rb_const_get(rb_cObject, rb_intern("Enumerable")));
 
   rb_define_method(cXMLXPathObject, "each", ruby_xml_xpath_object_each, 0);
@@ -288,10 +293,11 @@ ruby_init_xml_xpath_object(void) {
   rb_define_method(cXMLXPathObject, "size", ruby_xml_xpath_object_length, 0);
   rb_define_method(cXMLXPathObject, "to_a", ruby_xml_xpath_object_to_a, 0);
   rb_define_method(cXMLXPathObject, "[]", ruby_xml_xpath_object_aref, 1);
-
   rb_define_method(cXMLXPathObject, "string", ruby_xml_xpath_object_string, 0);
-
-  rb_include_module(cXMLNodeSet, rb_const_get(rb_cObject, rb_intern("Enumerable")));
+  
+  
+  
+  rb_define_method(cXMLXPathObject, "string", ruby_xml_xpath_object_string, 0);
 
   /* Give the NodeSet type, but it is pointless */
   rb_define_method(cXMLXPathObject, "set", ruby_xml_xpath_object_set, 0);
