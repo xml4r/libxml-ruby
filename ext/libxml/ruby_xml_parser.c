@@ -788,9 +788,9 @@ ruby_xml_parser_filename_set(VALUE self, VALUE filename) {
   retry:
   rxpc->ctxt = xmlCreateFileParserCtxt(StringValuePtr(filename));
   if (rxpc->ctxt == NULL) {
-    if (errno == EMFILE && retry_count == 0) {
+    if ((errno == EMFILE || errno == ENFILE) && retry_count == 0) {
       retry_count++;
-      rb_gc_start();
+      rb_gc();
       goto retry;
     } else {
       rb_raise(rb_eIOError, StringValuePtr(filename));
