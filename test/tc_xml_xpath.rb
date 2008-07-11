@@ -51,6 +51,14 @@ class TextXPath < Test::Unit::TestCase
     assert_equal(3, nodes.length)
   end
  
+  def test_attribute_ns
+    # Pull all nodes with http://services.somewhere.com namespace
+    nodes = @doc.find('@soap:encodingStyle')
+    assert_equal(1, nodes.length)
+    assert_equal('encodingStyle', nodes.first.name)
+    assert_equal('http://www.w3.org/2001/12/soap-encoding', nodes.first.value)
+  end
+  
   #def test_custom_function
     #xml = Tempfile.new("xxx")
     #xml.puts("<a/>")

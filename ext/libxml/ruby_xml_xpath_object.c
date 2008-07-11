@@ -24,7 +24,7 @@ ruby_xml_xpath_object_tabref(xmlXPathObjectPtr xpop, int apos) {
 
   switch(xpop->nodesetval->nodeTab[apos]->type) {
   case XML_ATTRIBUTE_NODE:
-    return Qnil;//ruby_xml_attr_wrap((xmlAttrPtr)xpop->nodesetval->nodeTab[apos]);
+    return ruby_xml_attr_wrap((xmlAttrPtr)xpop->nodesetval->nodeTab[apos]);
     break;
   default:
     return ruby_xml_node2_wrap(cXMLNode,
