@@ -4,7 +4,7 @@ require "test/unit"
 
 class TextXPath < Test::Unit::TestCase
   def setup()
-    @doc = XML::Document.file('model/soap.xml')
+    @doc = XML::Document.file(File.join(File.dirname(__FILE__), 'model/soap.xml'))
   end
   
   def teardown()

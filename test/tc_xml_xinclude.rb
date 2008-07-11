@@ -3,7 +3,7 @@ require 'test/unit'
 
 class TextXInclude < Test::Unit::TestCase
   def setup
-    @doc = XML::Document.file('model/xinclude.xml')
+    @doc = XML::Document.file(File.join(File.dirname(__FILE__), 'model/xinclude.xml'))
     assert_instance_of(XML::Document, @doc)
   end
 
@@ -15,7 +15,7 @@ class TextXInclude < Test::Unit::TestCase
     xinclude_doc =  "<?xml version=\"1.0\"?>\n<document xmlns:xi=\"http://www.w3.org/2001/XInclude\">\n"
     xinclude_doc << "  <p>This libxml2 binding has the following project information:\n   <code>"
     msg = ''
-    File.open('model/rubynet_project') do |f|
+    File.open(File.join(File.dirname(__FILE__), 'model/rubynet_project')) do |f|
       for line in f
         msg << line
       end

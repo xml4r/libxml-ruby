@@ -4,7 +4,7 @@ require 'test/unit'
 class TestSchema < Test::Unit::TestCase
   def setup
     xp = XML::Parser.new
-    @doc = XML::Document.file('model/shiporder.xml')
+    @doc = XML::Document.file(File.join(File.dirname(__FILE__), 'model/shiporder.xml'))
   end
   
   def teardown
@@ -12,7 +12,7 @@ class TestSchema < Test::Unit::TestCase
   end
   
   def schema
-    document = XML::Document.file('model/shiporder.xsd')
+    document = XML::Document.file(File.join(File.dirname(__FILE__), 'model/shiporder.xsd'))
     schema = XML::Schema.document(document)
   end
 
