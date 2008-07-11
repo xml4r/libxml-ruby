@@ -755,40 +755,48 @@ ruby_xml_document_root_set(VALUE self, VALUE node) {
 
 /*
  * call-seq:
- *    document.save(filename, format = false)
+ *    document.save(filename, format = false) -> int
  * 
  * Save this document to the file given by filename, 
  * optionally formatting the output.
+ 
+ * Parameters:
+ *  filename: The filename or URL of the new document
+ *  format: Specifies whether formatting spaces should be added.
+ *  returns: The number of bytes written or -1 in case of error. 
  */
 VALUE
 ruby_xml_document_save(int argc, VALUE *argv, VALUE self) {
   ruby_xml_document_t *rxd;
   const char *filename;
-  int format, len;
+  int format = 0;
+  int len;
 
-  format = 0;
-  switch (argc) {
-  case 1:
-    break;
-  case 2:
-    if (TYPE(argv[1]) == T_TRUE)
-      format = 1;
-    else if (TYPE(argv[1]) == T_FALSE)
-      format = 0;
-    else
-      rb_raise(rb_eTypeError, "wrong type of argument, must be bool");
-    break;
-  default:
-    rb_raise(rb_eArgError, "wrong number of arguments (0 or 1)");
-  }
+  if (argc <1 || argc > 2)
+    rb_raise(rb_eArgError, "wrong number of arguments (need 1 or 2)");
 
   Check_Type(argv[0], T_STRING);
   filename = StringValuePtr(argv[0]);
+  
+  if (argc == 2)
+  {
+    switch (TYPE(argv[1])) {
+      case T_TRUE:
+        format = 1;
+        break;
+      case T_FALSE:
+        format = 0;
+        break;
+      default:
+        rb_raise(rb_eArgError, "The second parameter (format) must be true or false");
+    }
+  }
 
   Data_Get_Struct(self, ruby_xml_document_t, rxd);
   len = xmlSaveFormatFileEnc(filename, rxd->doc, (const char*)rxd->doc->encoding, format);
+  
   if (len == -1)
-    rb_fatal("Unable to write out file");
+    rb_raise(rb_eIOError, "Could not write document");
   else
     return(INT2NUM(len));
 }
