@@ -232,8 +232,21 @@ ruby_xml_xpath_object_length(VALUE self) {
   return INT2NUM(xpop->nodesetval->nodeNr);
 }
 
+/*
+ * call-seq:
+ *    xpath_object.xpath_type -> int
+ * 
+ * Returns the XPath type of the result object. 
+ * Possible values are defined as constants
+ * on the XML::XPath class and include:
+ * 
+ * UNDEFINED, NODESET, BOOLEAN, NUMBER,
+ * STRING, POINT, RANGE, LOCATIONSET,
+ * USERS, XSLT_TREE 
+ * 
+ */
 VALUE
-ruby_xml_xpath_object_set_type(VALUE self)
+ruby_xml_xpath_object_get_type(VALUE self)
 {
   xmlXPathObjectPtr xpop;
 
@@ -268,7 +281,7 @@ ruby_init_xml_xpath_object(void) {
   rb_include_module(cXMLXPathObject, rb_const_get(rb_cObject, rb_intern("Enumerable")));
 
   rb_define_method(cXMLXPathObject, "each", ruby_xml_xpath_object_each, 0);
-  rb_define_method(cXMLXPathObject, "set_type", ruby_xml_xpath_object_set_type, 0);
+  rb_define_method(cXMLXPathObject, "xpath_type", ruby_xml_xpath_object_get_type, 0);
   rb_define_method(cXMLXPathObject, "empty?", ruby_xml_xpath_object_empty_q, 0);
   rb_define_method(cXMLXPathObject, "first", ruby_xml_xpath_object_first, 0);
   rb_define_method(cXMLXPathObject, "length", ruby_xml_xpath_object_length, 0);

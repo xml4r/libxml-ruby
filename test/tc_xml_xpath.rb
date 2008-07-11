@@ -14,6 +14,7 @@ class TextXPath < Test::Unit::TestCase
   def test_basic
     nodes = @doc.find('/soap:Envelope')
     assert_instance_of(XML::XPath::Object, nodes)
+    assert_equal(nodes.xpath_type, XML::XPath::NODESET)
     assert_instance_of(XML::Node::Set, nodes.set)
     assert_equal(1, nodes.length)
   end    
