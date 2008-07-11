@@ -3,6 +3,11 @@
 
 VALUE cXMLSchema;
 
+// Rdoc needs to know 
+#ifdef RDOC_NEVER_DEFINED
+  mXML = rb_define_module("XML");
+#endif
+
 static void
 ruby_xml_schema_mark(ruby_xml_schema *rxschema) {
   return;
