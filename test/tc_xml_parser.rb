@@ -3,12 +3,14 @@ require 'test/unit'
 
 class TextParser < Test::Unit::TestCase
   def setup
+    XML::Parser.register_error_handler(nil)
     @xp = XML::Parser.new
     assert_not_nil(@xp)
   end
 
   def teardown
     @xp = nil
+    XML::Parser.register_error_handler(nil)
   end
       
   # -----  Constants  ------
@@ -178,6 +180,7 @@ class TextParser < Test::Unit::TestCase
     # XXX This ideally should run until libxml emits a warning, thereby knowing we've done a GC sweep.
     # For the time being, re-open the same doc `limit descriptors` times.  If we make it to the end,
     # then we've succeeded, otherwise an exception will be thrown.
+    XML::Parser.register_error_handler(lambda {|msg| nil })
     max_fd = `ulimit -n`.chomp.to_i
     (1..(max_fd + 1)).each {|i| XML::Document.file(File.join(File.dirname(__FILE__), 'model/rubynet.xml')) }
   end # def test_libxml_parser_io
@@ -188,8 +191,7 @@ class TextParser < Test::Unit::TestCase
   
   # -----  Errors  ------
   def test_error_handler
-    $stderr.puts "\nEXPECTING: TWO ERRORS:"
-    # this will send message to stderr
+    XML::Parser.register_error_handler(nil)
     assert_raise(XML::Parser::ParseError) do
       XML::Parser.string('<foo><bar/></foz>').parse
     end
@@ -219,12 +221,14 @@ class TextParser < Test::Unit::TestCase
   
   def test_bad_xml
     @xp.string = '<ruby_array uga="booga" foo="bar"<fixnum>one</fixnum><fixnum>two</fixnum></ruby_array>'
+    XML::Parser.register_error_handler(lambda {|msg| nil })
     assert_raise(XML::Parser::ParseError) do
       assert_not_nil(@xp.parse)
     end
   end
   
   def test_double_parse
+    XML::Parser.register_error_handler(lambda {|msg| nil })
     parser = XML::Parser.string("<test>something</test>")
     doc = parser.parse
     
@@ -236,6 +240,7 @@ class TextParser < Test::Unit::TestCase
   def test_libxml_parser_empty_string
     assert_raise(XML::Parser::ParseError) do
       @xp.string = ''
+      @xp.parse
     end
     
     assert_raise(TypeError) do

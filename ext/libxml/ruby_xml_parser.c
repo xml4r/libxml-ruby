@@ -1236,7 +1236,8 @@ ruby_xml_parser_str_set(VALUE self, VALUE str) {
 /*
  * call-seq:
  *    XML::Parser.register_error_handler(lambda { |msg| ... }) -> old_handler
- *    XML::Parser.register_error_handler(nil) -> old_handler
+ *    XML::Parser.register_error_handler(true) -> stderr error handler
+ *    XML::Parser.register_error_handler(nil || false) -> no error handler
  * 
  * Register the attached block as the handler for parser errors.
  * A message describing parse errors is passed to the block.
@@ -1266,7 +1267,9 @@ libxml_xmlErrorFuncHandler(ATTRIBUTE_UNUSED void *ctx, const char *msg, ...)
   char str[1000];
   VALUE rstr;
 
-  if (libxml_xmlRubyErrorProc == Qnil) {
+  if (libxml_xmlRubyErrorProc == Qnil || libxml_xmlRubyErrorProc == Qfalse) {
+    /* Do nothing */
+  } else if (libxml_xmlRubyErrorProc == Qtrue) {
     va_start(ap, msg);
     vfprintf(stderr, msg, ap);
     va_end(ap);
