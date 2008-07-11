@@ -755,7 +755,7 @@ ruby_xml_document_root_set(VALUE self, VALUE node) {
 
 /*
  * call-seq:
- *    document.save(format = false)
+ *    document.save(filename, format = false)
  * 
  * Save this document to the file given by filename, 
  * optionally formatting the output.
