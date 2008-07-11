@@ -865,7 +865,7 @@ module Setup
     end
 
     def dllext
-      ::Config::CONFIG['DLLEXT']
+      ::Config::CONFIG['DLEXT']
     end
 
     def targetfiles

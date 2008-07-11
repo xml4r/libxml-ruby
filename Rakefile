@@ -2,8 +2,11 @@ require 'rubygems'
 require 'date'
 require 'rake/gempackagetask'
 require 'rake/rdoctask'
+require 'rake/testtask'
 require 'date'
 
+# what sort of extension are we building?
+ext = Config::CONFIG["DLEXT"]
 SO_NAME = "libxml_ruby.so"
 
 # ------- Default Package ----------
@@ -123,3 +126,32 @@ end
 
 task :package => :create_win32_gem
 task :default => :package
+
+Rake::TestTask.new do |t|
+  t.libs << "test"
+  t.libs << "ext"
+end
+
+task :build => :extensions
+task :extension => :build
+
+task :extensions => ["ext/libxml/libxml_ruby.#{ext}"]
+file "ext/libxml/libxml_ruby.#{ext}" =>
+  ["ext/libxml/Makefile"] + FileList["ext/libxml/*.{c,h}"].to_a do |t|
+  Dir.chdir("ext/libxml") { sh "make" }
+end
+
+namespace :extensions do
+  task :clean do
+    Dir.chdir("ext/libxml") do
+      sh "rm -f Makefile"
+      sh "rm -f *.{o,so,bundle,log}"
+    end
+  end
+end
+
+file "ext/libxml/Makefile" => ["ext/libxml/extconf.rb"] do
+
+  command = ["ruby"] + $:.map{|dir| "-I#{File.expand_path dir}"} + ["extconf.rb"]
+  Dir.chdir("ext/libxml") { sh *command }
+end
