@@ -1,7 +1,7 @@
 module XML
   class Parser
     class << self
-      attr_accessor :error_handler
+      attr_reader :error_handler
       # Register the attached block as the handler for parser errors.
       # A message describing parse errors is passed to the block.
       # Libxml passes error messages to the handler in parts, one per call.
@@ -16,20 +16,21 @@ module XML
       # 
       # Note that the error handler is shared by all threads.
       def register_error_handler(value = nil, &block)
-        tmp = error_handler
+        # Value may be nil or could be a lambda or proc
+        tmp = self.error_handler
         if block_given?
-          error_handler = block
+          @error_handler = block
         else
-          error_handler = nil
+          @error_handler = value
         end
         tmp
       end
 
       def xml_error_func_handler(msg)
-        if not error_handler
+        if not self.error_handler
           $stderr.puts(msg)
         else
-          error_handler.call(msg)
+          self.error_handler.call(msg)
         end
       end
     end

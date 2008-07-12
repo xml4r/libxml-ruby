@@ -1,7 +1,7 @@
 require "libxml"
 require 'test/unit'
 
-class TextParser < Test::Unit::TestCase
+class TestParser < Test::Unit::TestCase
   def setup
     XML::Parser.register_error_handler(nil)
     @xp = XML::Parser.new
@@ -207,7 +207,7 @@ class TextParser < Test::Unit::TestCase
     end
 
     ary = []
-    assert_nil XML::Parser.register_error_handler(1) do |msg|
+    XML::Parser.register_error_handler do |msg|
       ary << msg
     end
 
