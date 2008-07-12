@@ -1,7 +1,7 @@
 # $Id$ 
 # Please see the LICENSE file for copyright and distribution information 
 
-require 'libxml/libxml_ruby'
+require 'libxml_ruby'
 
 require 'sibling_enum'
 require 'parser_options'
