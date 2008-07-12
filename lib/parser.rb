@@ -24,7 +24,7 @@ module XML
       def register_error_handler(value = nil, &block)
         # Value may be nil or a proc.
         tmp = self.error_handler
-        self.error_handler = block_given? ? block : value
+        @error_handler = block_given? ? block : value
         tmp
       end
 
