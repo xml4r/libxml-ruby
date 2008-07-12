@@ -12,18 +12,15 @@ class TextXInclude < Test::Unit::TestCase
   end
 
   def test_ruby_xml_xinclude
-    xinclude_doc =  "<?xml version=\"1.0\"?>\n<document xmlns:xi=\"http://www.w3.org/2001/XInclude\">\n"
-    xinclude_doc << "  <p>This libxml2 binding has the following project information:\n   <code>"
-    msg = ''
-    File.open(File.join(File.dirname(__FILE__), 'model/rubynet_project')) do |f|
-      for line in f
-        msg << line
-      end
-    end
-    xinclude_doc << msg << "</code></p>\n</document>\n"
+    expected = <<-EOS
+<?xml version="1.0"?>
+<document xmlns:xi="http://www.w3.org/2001/XInclude">
+  <p>This libxml2 binding has the following project information:
+   <code>This is some text to include in an xml file via XInclude.</code></p>
+</document>
+EOS
 
-    ret = @doc.xinclude
-    assert_equal(1, ret)
-    assert_equal(xinclude_doc, @doc.to_s)
+    assert_equal(1, @doc.xinclude)
+    assert_equal(expected, @doc.to_s)    
   end
 end
