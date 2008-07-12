@@ -23,3 +23,6 @@ require 'tc_xml_schema'
 require 'tc_xml_xinclude'
 require 'tc_xml_xpath'
 require 'tc_xml_xpointer'
+
+# Compatibility
+require 'tc_xml_properties'
