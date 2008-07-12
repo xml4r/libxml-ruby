@@ -2,7 +2,13 @@ module XML
   class Parser
     class << self
       attr_reader :error_handler
+      
       # Register the attached block as the handler for parser errors.
+      #
+      # Parser.register_error_handler {|msg| <do stuff>}
+      # Parser.register_error_handler(lambda {|msg| <do stuff>})
+      # Parser.register_error_handler(nil)
+      #
       # A message describing parse errors is passed to the block.
       # Libxml passes error messages to the handler in parts, one per call.
       # A typical error results in six calls to this proc, with arguments:
@@ -16,13 +22,9 @@ module XML
       # 
       # Note that the error handler is shared by all threads.
       def register_error_handler(value = nil, &block)
-        # Value may be nil or could be a lambda or proc
+        # Value may be nil or a proc.
         tmp = self.error_handler
-        if block_given?
-          @error_handler = block
-        else
-          @error_handler = value
-        end
+        self.error_handler = block_given? ? block : value
         tmp
       end
 
