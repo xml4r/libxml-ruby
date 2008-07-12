@@ -5,7 +5,6 @@ class TextParser < Test::Unit::TestCase
   def setup
     XML::Parser.register_error_handler(nil)
     @xp = XML::Parser.new
-    assert_not_nil(@xp)
   end
 
   def teardown
@@ -188,9 +187,39 @@ class TextParser < Test::Unit::TestCase
   def test_libxml_parser_features
     assert_instance_of(Array, XML::Parser::features)
   end
-  
+
   # -----  Errors  ------
   def test_error_handler
+    assert_raise(XML::Parser::ParseError) do
+      XML::Parser.string('<foo><bar/></foz>').parse
+    end
+
+    ary = []
+    assert_nil XML::Parser.register_error_handler do |msg|
+      ary << msg
+    end
+
+    # this will use our error handler
+    assert_raise(XML::Parser::ParseError) do
+      XML::Parser.string('<foo><bar/></foz>').parse
+    end
+    
+    assert_equal(["Entity: line 1: ",
+                  "parser ",
+                  "error : ",
+                  "Opening and ending tag mismatch: foo line 1 and foz\n",
+                  "<foo><bar/></foz>\n",
+                  "                 ^\n"], ary)
+
+    assert_instance_of(Proc, XML::Parser.register_error_handler(nil))
+
+    # this will go to stderr again
+    assert_raise(XML::Parser::ParseError) do
+      d = XML::Parser.string('<foo><bar/></foz>').parse
+    end
+  end
+  
+  def test_error_handler_lambda
     XML::Parser.register_error_handler(nil)
     assert_raise(XML::Parser::ParseError) do
       XML::Parser.string('<foo><bar/></foz>').parse
