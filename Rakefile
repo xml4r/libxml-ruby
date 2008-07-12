@@ -133,6 +133,10 @@ Rake::TestTask.new do |t|
   t.libs << "ext"
 end
 
+if not RUBY_PLATFORM.match(/mswin32/i)
+  Rake::Task[:test].prerequisites << :extensions
+end
+
 task :build => :extensions
 task :extension => :build
 
