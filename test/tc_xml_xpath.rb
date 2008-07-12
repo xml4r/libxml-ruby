@@ -2,7 +2,7 @@ require "libxml"
 require "tempfile"
 require "test/unit"
 
-class TextXPath < Test::Unit::TestCase
+class TestXPath < Test::Unit::TestCase
   def setup()
     @doc = XML::Document.file(File.join(File.dirname(__FILE__), 'model/soap.xml'))
   end

@@ -1,7 +1,7 @@
 require "libxml"
 require 'test/unit'
 
-class TextNodeEdit < Test::Unit::TestCase
+class TestNodeEdit < Test::Unit::TestCase
   def setup
     xp = XML::Parser.new()
     xp.string = '<test><num>one</num><num>two</num><num>three</num></test>'

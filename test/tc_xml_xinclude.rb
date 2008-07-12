@@ -1,7 +1,7 @@
 require "libxml"
 require 'test/unit'
 
-class TextXInclude < Test::Unit::TestCase
+class TestXInclude < Test::Unit::TestCase
   def setup
     @doc = XML::Document.file(File.join(File.dirname(__FILE__), 'model/xinclude.xml'))
     assert_instance_of(XML::Document, @doc)
