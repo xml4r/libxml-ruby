@@ -15,9 +15,13 @@ module XML
       #   "                 ^\n"
       # 
       # Note that the error handler is shared by all threads.
-      def register_error_handler(&block)
-        tmp = self.error_handler
-        self.error_handler = block
+      def register_error_handler(value = nil, &block)
+        tmp = error_handler
+        if block_given?
+          error_handler = block
+        else
+          error_handler = nil
+        end
         tmp
       end
 

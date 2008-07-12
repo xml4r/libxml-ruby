@@ -176,13 +176,25 @@ class TextParser < Test::Unit::TestCase
   end # def test_libxml_parser_io
 
   def test_fd_gc
-    # XXX This ideally should run until libxml emits a warning, thereby knowing we've done a GC sweep.
-    # For the time being, re-open the same doc `limit descriptors` times.  If we make it to the end,
-    # then we've succeeded, otherwise an exception will be thrown.
+    # Test opening # of documents up to the file limit for the OS.
+    # Ideally it should run until libxml emits a warning, 
+    # thereby knowing we've done a GC sweep. For the time being,
+    # re-open the same doc `limit descriptors` times. 
+    # If we make it to the end, then we've succeeded, 
+    # otherwise an exception will be thrown.
     XML::Parser.register_error_handler(lambda {|msg| nil })
-    max_fd = `ulimit -n`.chomp.to_i
-    (1..(max_fd + 1)).each {|i| XML::Document.file(File.join(File.dirname(__FILE__), 'model/rubynet.xml')) }
-  end # def test_libxml_parser_io
+    
+    max_fd = if RUBY_PLATFORM.match(/mswin32/i)
+      500
+    else
+      (`ulimit -n`.chomp.to_i) + 1
+    end
+    
+    filename = File.join(File.dirname(__FILE__), 'model/rubynet.xml')
+    max_fd.times do
+       XML::Document.file(filename)
+     end
+  end
 
   def test_libxml_parser_features
     assert_instance_of(Array, XML::Parser::features)
@@ -195,7 +207,7 @@ class TextParser < Test::Unit::TestCase
     end
 
     ary = []
-    assert_nil XML::Parser.register_error_handler do |msg|
+    assert_nil XML::Parser.register_error_handler(1) do |msg|
       ary << msg
     end
 

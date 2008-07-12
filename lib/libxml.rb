@@ -4,6 +4,7 @@
 require 'libxml_ruby'
 
 require 'sibling_enum'
+require 'parser'
 require 'parser_options'
 require 'document'
 require 'node'
