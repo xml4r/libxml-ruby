@@ -256,7 +256,7 @@ ruby_xml_attributes_first(VALUE self) {
 void
 ruby_init_xml_attributes(void) {
   cXMLAttributes = rb_define_class_under(mXML, "Attributes", rb_cObject);
-  rb_include_module(cXMLAttributes, rb_const_get(rb_cObject, rb_intern("Enumerable")));
+  rb_include_module(cXMLAttributes, rb_mEnumerable);
   rb_define_method(cXMLAttributes, "node", ruby_xml_attributes_node_get, 0);
   rb_define_method(cXMLAttributes, "get_attribute", ruby_xml_attributes_get_attribute, 1);
   rb_define_method(cXMLAttributes, "get_attribute_ns", ruby_xml_attributes_get_attribute_ns, 2);

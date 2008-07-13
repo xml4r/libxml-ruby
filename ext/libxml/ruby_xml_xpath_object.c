@@ -283,7 +283,7 @@ ruby_xml_xpath_object_string(VALUE self)
 void
 ruby_init_xml_xpath_object(void) {
   cXMLXPathObject = rb_define_class_under(cXMLXPath, "Object", rb_cObject);
-  rb_include_module(cXMLXPathObject, rb_const_get(rb_cObject, rb_intern("Enumerable")));
+  rb_include_module(cXMLXPathObject, rb_mEnumerable);
 
   rb_define_method(cXMLXPathObject, "each", ruby_xml_xpath_object_each, 0);
   rb_define_method(cXMLXPathObject, "xpath_type", ruby_xml_xpath_object_get_type, 0);

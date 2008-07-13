@@ -257,7 +257,6 @@ ruby_xml_xpath_find2(VALUE anode, VALUE xpath_expr, VALUE nslist) {
 void
 ruby_init_xml_xpath(void) {
   cXMLXPath = rb_define_class_under(mXML, "XPath", rb_cObject);
-  rb_include_module(cXMLNode, rb_const_get(rb_cObject, rb_intern("Enumerable")));
 
   eXMLXPathInvalidPath = rb_define_class_under(cXMLXPath, "InvalidPath", eXMLError);
 

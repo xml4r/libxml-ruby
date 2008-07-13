@@ -156,7 +156,7 @@ ruby_xml_node_set_xpath_data_get(VALUE self) {
 void
 ruby_init_xml_node_set(void) {
   cXMLNodeSet = rb_define_class_under(cXMLNode, "Set", rb_cObject);  
-  rb_include_module(cXMLNodeSet, rb_const_get(rb_cObject, rb_intern("Enumerable")));
+  rb_include_module(cXMLNodeSet, rb_mEnumerable);
 
   rb_define_method(cXMLNodeSet, "each", ruby_xml_node_set_each, 0);
   rb_define_method(cXMLNodeSet, "empty?", ruby_xml_node_set_empty_q, 0);
