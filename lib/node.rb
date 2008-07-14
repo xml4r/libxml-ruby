@@ -5,7 +5,32 @@ module XML
   class Node
     include XML::SiblingEnum
     include Enumerable
-  
+    
+    # Return nodes matching the specified xpath expression.
+    # For more information, please refer to the documentation
+    # for XML::Document#find.
+    def find(xpath, nslist = nil)
+      if not self.doc
+        raise(TypeError, "A node must belong to a document before " +
+                         "it can be searched with XPath.")
+      end
+      
+      context = XPath::Context.new(self)
+      context.node = self  
+      context.register_namespaces_from_node(self)
+      context.register_namespaces_from_node(self.doc.root)
+      context.register_namespaces(nslist) if nslist
+
+      context.find(xpath)
+    end
+    
+    # Return the first node matching the specified xpath expression.
+    # For more information, please refer to the documentation
+    # for XML::Node#find.
+    def find_first(xpath, nslist = nil)
+      find(xpath, nslist).first
+    end
+    
     # maybe these don't belong on all nodes...
     def each_child(&blk)
       siblings(child, &blk)   

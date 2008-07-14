@@ -274,6 +274,26 @@ ruby_xml_xpath_object_string(VALUE self)
   return rb_str_new2((const char*) xpop->stringval);
 }
 
+/*
+ * call-seq:
+ *    nodes.debug -> (true|false)
+ * 
+ * Dump libxml debugging information to stdout.
+ * Requires Libxml be compiled with debugging enabled.
+ */
+VALUE
+ruby_xml_xpath_object_debug(VALUE self) {
+  xmlXPathObjectPtr xpop;
+  
+  #ifndef LIBXML_XPATH_ENABLED
+  rb_raise(rb_eTypeError, "libxml was not compiled with debug support.");
+  #endif
+
+  Data_Get_Struct(self, xmlXPathObject, xpop);
+  xmlXPathDebugDumpObject(stdout, xpop, 0);
+}
+
+
 // Rdoc needs to know
 #ifdef RDOC_NEVER_DEFINED
   mXML = rb_define_module("XML");
@@ -295,7 +315,8 @@ ruby_init_xml_xpath_object(void) {
   rb_define_method(cXMLXPathObject, "[]", ruby_xml_xpath_object_aref, 1);
   rb_define_method(cXMLXPathObject, "string", ruby_xml_xpath_object_string, 0);
   rb_define_attr(cXMLXPathObject, "context", 1, 0);
-
+  rb_define_method(cXMLXPathObject, "debug", ruby_xml_xpath_object_debug, 0);
+  
   /* Give the NodeSet type, but it is pointless */
   rb_define_method(cXMLXPathObject, "set", ruby_xml_xpath_object_set, 0);
 }

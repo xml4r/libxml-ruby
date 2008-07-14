@@ -648,34 +648,6 @@ ruby_xml_node_eql_q(VALUE self, VALUE other) {
 
 /*
  * call-seq:
- *    node.find(xpath_expr, namespace = [any]) -> nodeset
- * 
- * Find nodes matching the specified xpath expression, optionally
- * using the specified namespaces. Returns an XML::Node::Set.
- */
-VALUE
-ruby_xml_node_find(int argc, VALUE *argv, VALUE self) {
-  if (argc > 2 || argc < 1)
-    rb_raise(rb_eArgError, "wrong number of arguments (need 1 or 2)");
-
-  return(ruby_xml_xpath_find(mXMLXPath, self,argv[0],(argc==2)?argv[1]:Qnil));
-}
-
-/*
- * call-seq:
- *    node.find_first(xpath_expr, namespace = [any]) -> nodeset
- *
- * Find the first node matching the specified xpath expression, optionally
- * using the specified namespaces. Returns an XML::Node.
- */
-VALUE
-ruby_xml_node_find_first(int argc, VALUE *argv, VALUE self) {
-  return ruby_xml_xpath_object_first(ruby_xml_node_find(argc, argv, self));
-}
-
-
-/*
- * call-seq:
  *    node.fragment? -> (true|false)
  * 
  * Determine whether this node is a fragment.
@@ -2260,8 +2232,6 @@ ruby_init_xml_node(void) {
   rb_define_method(cXMLNode, "entity?", ruby_xml_node_entity_q, 0);
   rb_define_method(cXMLNode, "entity_ref?", ruby_xml_node_entity_ref_q, 0);
   rb_define_method(cXMLNode, "eql?", ruby_xml_node_eql_q, 1);
-  rb_define_method(cXMLNode, "find", ruby_xml_node_find, -1);
-  rb_define_method(cXMLNode, "find_first", ruby_xml_node_find_first, -1);
   rb_define_method(cXMLNode, "fragment?", ruby_xml_node_fragment_q, 0);
   rb_define_method(cXMLNode, "html_doc?", ruby_xml_node_html_doc_q, 0);
   rb_define_method(cXMLNode, "lang", ruby_xml_node_lang_get, 0);

@@ -3,21 +3,26 @@ require "tempfile"
 require "test/unit"
 
 class TestXPath < Test::Unit::TestCase
-  def setup()
+  def setup
     @doc = XML::Document.file(File.join(File.dirname(__FILE__), 'model/soap.xml'))
   end
   
-  def teardown()
+  def teardown
     @doc = nil
   end
   
-  def test_basic
+  def test_doc_find
     nodes = @doc.find('/soap:Envelope')
     assert_instance_of(XML::XPath::Object, nodes)
     assert_equal(1, nodes.length)
     assert_equal(nodes.xpath_type, XML::XPath::NODESET)
     assert_instance_of(XML::Node::Set, nodes.set)
     assert_instance_of(XML::XPath::Context, nodes.context)
+  end    
+
+  def test_doc_find_first
+    node = @doc.find_first('/soap:Envelope/soap:Body')
+    assert_instance_of(XML::Node, node)
   end    
 
   def test_ns
@@ -61,7 +66,7 @@ class TestXPath < Test::Unit::TestCase
     assert_equal('http://www.w3.org/2001/12/soap-encoding', nodes.first.value)
   end
 
-  def test_xpath_node
+  def test_node_find
     nodes = @doc.find('//ns1:IdAndName', 'ns1:http://domain.somewhere.com')
     node = nodes.first
 
@@ -72,6 +77,22 @@ class TestXPath < Test::Unit::TestCase
     assert_equal('man1', nodes.first.content)
   end
     
+  def test_node_find_first
+    node = @doc.find_first('//ns1:IdAndName', 'ns1:http://domain.somewhere.com')
+    
+    # Since we are searching on the node, don't have to register namespace
+    node = node.find_first('ns1:name')
+    assert_equal('name', node.name)
+    assert_equal('man1', node.content)
+  end
+  
+  def test_node_no_doc
+    node = XML::Node.new('header', 'some content')
+    assert_raise(TypeError) do
+      node = node.find_first('/header')
+    end
+  end
+
   #def test_custom_function
     #xml = Tempfile.new("xxx")
     #xml.puts("<a/>")

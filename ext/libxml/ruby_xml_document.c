@@ -404,43 +404,6 @@ ruby_xml_document_filename_get(VALUE self) {
 }
 
 
-/*
- * call-seq:
- *    document.find(xpath_expr, namespaces) -> XML::XPath::Object
- * 
- * Find nodes matching the specified xpath expression, optionally
- * using the specified namespace. Returns an XML::Node::Set.  For
- * more information about working with namespaces, please refer
- * to the XML::XPath documentation.
- *
- * IMPORTANT - The returned XML::Node::Set must be freed before
- * its associated document.  In a running Ruby program this will
- * happen automatically via Ruby's mark and sweep garbage collector.
- * However, if the program exits, Ruby does not guarantee the order
- * in which objects are freed
- * (see http://blade.nagaokaut.ac.jp/cgi-bin/scat.rb/ruby/ruby-core/17700).
- * As a result, the associated document may be freed before the node
- * list, which will cause a segmentation fault.
- *
- * To avoid this, use the following (non-ruby like) coding style:
- *
- *  nodes = doc.find('/header')
- *  nodes.each do |node|
- *    ... do stuff ...
- *  end
- *
- *  nodes = nil
- *  GC.start
- */
-VALUE
-ruby_xml_document_find(int argc, VALUE *argv, VALUE self) {
-  if (argc > 2 || argc < 1)
-    rb_raise(rb_eArgError, "wrong number of arguments (need 1 or 2)");
-
-  return(ruby_xml_xpath_find(mXMLXPath, self,argv[0],(argc==2)?argv[1]:Qnil));
-}
-
-
 void
 ruby_xml_document_free(ruby_xml_document_t *rxd) {
   void *data;
@@ -1109,7 +1072,6 @@ ruby_init_xml_document(void) {
   rb_define_method(cXMLDocument, "encoding", ruby_xml_document_encoding_get, 0);
   rb_define_method(cXMLDocument, "encoding=", ruby_xml_document_encoding_set, 1);
   rb_define_method(cXMLDocument, "filename", ruby_xml_document_filename_get, 0);
-  rb_define_method(cXMLDocument, "find", ruby_xml_document_find, -1);
   rb_define_method(cXMLDocument, "format_dump", ruby_xml_document_format_dump, -1);
   rb_define_method(cXMLDocument, "last", ruby_xml_document_last_get, 0);
   rb_define_method(cXMLDocument, "last?", ruby_xml_document_last_q, 0);

@@ -34,7 +34,7 @@ ruby_xml_xpath_context_alloc(VALUE klass) {
 }
 
 /* call-seq:
- *    XPath::Context.new(document) -> XPath::Context
+ *    XPath::Context.new(node) -> XPath::Context
  * 
  * Creates a new XPath context for the specified document.  The
  * context can then be used to evaluate an XPath expression.
@@ -45,12 +45,28 @@ ruby_xml_xpath_context_alloc(VALUE klass) {
  *  nodes.length == 1
  */
 VALUE
-ruby_xml_xpath_context_initialize(VALUE self, VALUE document) {
+ruby_xml_xpath_context_initialize(VALUE self, VALUE node) {
   ruby_xml_document_t *rxd;
-  
-  if (rb_obj_is_kind_of(document, cXMLDocument) == Qfalse)
-    rb_raise(rb_eTypeError, "Supplied argument must be a document.");
+  VALUE document;
+  #ifndef LIBXML_XPATH_ENABLED
+  rb_raise(rb_eTypeError, "libxml was not compiled with XPath support.");
+  #endif
 
+  if (rb_obj_is_kind_of(node, cXMLNode) == Qtrue)
+  {
+    document = rb_funcall(node, rb_intern("doc"), 0);
+    if NIL_P(document)
+     rb_raise(rb_eTypeError, "Supplied node must belong to a document.");
+  }
+  else if (rb_obj_is_kind_of(node, cXMLDocument) == Qtrue)
+  {
+    document = node;
+  }
+  else
+  {
+    rb_raise(rb_eTypeError, "Supplied argument must be a document or node.");
+  }
+  
   Data_Get_Struct(document, ruby_xml_document_t, rxd);
   DATA_PTR(self) = xmlXPathNewContext(rxd->doc);
   
