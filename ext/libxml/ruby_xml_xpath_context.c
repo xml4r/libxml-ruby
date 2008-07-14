@@ -10,14 +10,18 @@
 /*
  * Document-class: LibXML::XPath::Context
  * 
- * The LibXML::XPath::Context class is used to by the XPath engine
- * to evaluate an XPath expression.  Generally you should not
- * directly use this class, and instead use either LibXML::Document#find
- * or LibXML::Node#find.
+ * The LibXML::XPath::Context class is used to evaluate XPath
+ * expressions.  Generally, you should not directly use this class,
+ * but instead use the LibXML::Document#find and LibXML::Node#find methods.
+ *
+ *  doc = LibXML::Document.string('<header>content</header>')
+ *  context = XPath::Context.new(doc)
+ *  context.node = doc.root  
+ *  context.register_namespaces_from_node(doc.root)
+ *  nodes = context.find('/header')
  */
 
 VALUE cXMLXPathContext;
-
 
 void
 ruby_xml_xpath_context_free(xmlXPathContextPtr ctxt) {

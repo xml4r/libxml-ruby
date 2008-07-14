@@ -9,8 +9,9 @@
 /*
  * Document-class: LibXML::XPath
  * 
- * The LibXML::XPath class is used to query XML documents. It is used
- * via the LibXML::Document#find method.
+ * The LibXML::XPath module is used to query XML documents. It is 
+ * usually accessed via the LibXML::Document#find or 
+ * LibXML::Node#find methods.  For example:
  *
  *  document.find('/foo', namespaces) -> LibXML::XPath::Object
  *
