@@ -2162,8 +2162,6 @@ ruby_xml_node_deregisterNode(xmlNodePtr xnode)
 
 void
 ruby_init_xml_node(void) {
-  VALUE singleton;
-
   xmlRegisterNodeDefault(ruby_xml_node_registerNode);
   xmlDeregisterNodeDefault(ruby_xml_node_deregisterNode);
 
@@ -2172,8 +2170,6 @@ ruby_init_xml_node(void) {
   eXMLNodeFailedModify = rb_define_class_under(cXMLNode, "FailedModify", eXMLError);
   eXMLNodeUnknownType = rb_define_class_under(cXMLNode, "UnknownType", eXMLError);
   
-  singleton = rb_singleton_class(cXMLNode);
-
   rb_define_const(cXMLNode, "SPACE_DEFAULT", INT2NUM(0));
   rb_define_const(cXMLNode, "SPACE_PRESERVE", INT2NUM(1));
   rb_define_const(cXMLNode, "SPACE_NOT_INHERIT", INT2NUM(-1));
