@@ -14,6 +14,7 @@ FILES = FileList[
   'README',
   'LICENSE',
   'CHANGES',
+  'NOTES',
   'setup.rb',
   'doc/**/*',
   'ext/**/*',
@@ -23,8 +24,7 @@ FILES = FileList[
   'mingw/*.so',
   'test/**/*',
   'vc/*.sln',
-  'vc/*.vcproj',
-  'work/**/*'
+  'vc/*.vcproj'
 ]
 
 # Default GEM Specification
@@ -52,7 +52,7 @@ default_spec = Gem::Specification.new do |spec|
   spec.author = "Charlie Savage"
   spec.email = "libxml-devel@rubyforge.org"
   spec.platform = Gem::Platform::RUBY
-  spec.require_path = "lib" 
+  spec.require_path = ["lib", "ext/libxml"]
   spec.bindir = "bin"
   spec.extensions = ["ext/libxml/extconf.rb"]
   spec.files = FILES.to_a
@@ -60,13 +60,14 @@ default_spec = Gem::Specification.new do |spec|
   
   spec.required_ruby_version = '>= 1.8.4'
   spec.date = DateTime.now
-  spec.rubyforge_project = 'libxml-ruby'
+  spec.rubyforge_project = 'libxml'
   
   spec.has_rdoc = true
 end
 
 # Rake task to build the default package
 Rake::GemPackageTask.new(default_spec) do |pkg|
+  pkg.package_dir = 'admin/pkg'
   pkg.need_tar = true
   pkg.need_zip = true
 end
@@ -94,10 +95,10 @@ task :create_win32_gem do
     cp(source, target)
   end
   
-  # Create the gem, then move it to pkg
+  # Create the gem, then move it to admin/pkg
   Gem::Builder.new(win_spec).build
   gem_file = "#{win_spec.name}-#{win_spec.version}-#{win_spec.platform}.gem"
-  mv(gem_file, "pkg/#{gem_file}")
+  mv(gem_file, "admin/pkg/#{gem_file}")
 
   # Remove win extension from top level directory  
   libraries.each do |file_name|
@@ -127,6 +128,7 @@ end
 
 task :package => :rdoc
 task :package => :create_win32_gem
+
 task :default => :package
 
 Rake::TestTask.new do |t|
