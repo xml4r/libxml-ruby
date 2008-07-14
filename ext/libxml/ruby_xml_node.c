@@ -2191,7 +2191,7 @@ ruby_init_xml_node(void) {
   rb_define_singleton_method(cXMLNode, "new_comment", ruby_xml_node_new_comment, -1); 
   rb_define_singleton_method(cXMLNode, "new_text", ruby_xml_node_new_text, 1); 
   
-  rb_define_alias(singleton, "new_element", "new");
+  rb_define_alias(cXMLNode, "new_element", "new");
   
   rb_define_method(cXMLNode, "<<", ruby_xml_node_content_add, 1);
   rb_define_method(cXMLNode, "[]", ruby_xml_node_property_get, 1);
