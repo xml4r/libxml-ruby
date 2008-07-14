@@ -4,82 +4,62 @@
 
 #include "ruby_libxml.h"
 #include "ruby_xml_xpath_context.h"
+#include <st.h>
 
-VALUE cXMLXPathContext;
 
 /*
- * call-seq:
- *    context.doc -> document
+ * Document-class: XML::XPath::Context
  * 
- * Obtain the XML::Document associated with this XPath.
+ * The XML::XPath::Context class is used to by the XPath engine
+ * to evaluate an XPath expression.  Generally you should not
+ * directly use this class, and instead use either XML::Document#find
+ * or XML::Node#find.
  */
-VALUE
-ruby_xml_xpath_context_doc_get(VALUE self) {
-  xmlXPathContextPtr ctxt;
-  Data_Get_Struct(self, xmlXPathContext, ctxt);
 
-  return ruby_xml_document_wrap(ctxt->doc);
-}
+VALUE cXMLXPathContext;
 
 
 void
 ruby_xml_xpath_context_free(xmlXPathContextPtr ctxt) {
-  if (ctxt != NULL) {
-    if (ctxt->namespaces != NULL) {
-      xmlFree(ctxt->namespaces);
-      ctxt->namespaces = NULL;
-    }  
-    xmlXPathFreeContext(ctxt);
-    ctxt = NULL;
-  }
-}
-
-
-void
-ruby_xml_xpath_context_mark(xmlXPathContextPtr ctxt) {
-  if (ctxt == NULL ) return;
-  if (ctxt->doc != NULL && ctxt->doc->_private != NULL)
-    rb_gc_mark((VALUE)ctxt->doc->_private);
+  xmlXPathFreeContext(ctxt);
 }
 
 
 VALUE
-ruby_xml_xpath_context_wrap(xmlXPathContextPtr ctxt) {
+ruby_xml_xpath_context_alloc(VALUE klass) {
   return Data_Wrap_Struct(cXMLXPathContext,
-			  ruby_xml_xpath_context_mark,
+			  NULL,
 			  ruby_xml_xpath_context_free,
-			  ctxt);
+			  NULL);
 }
 
-
+/* call-seq:
+ *    XPath::Context.new(document) -> XPath::Context
+ * 
+ * Creates a new XPath context for the specified document.  The
+ * context can then be used to evaluate an XPath expression.
+ *
+ *  doc = XML::Document.string('<header><first>hi</first></header>')
+ *  context = XPath::Context.new(doc)
+ *  nodes = XPath::Object.new('//first', context)
+ *  nodes.length == 1
+ */
 VALUE
-ruby_xml_xpath_context_new(VALUE anode) {
+ruby_xml_xpath_context_initialize(VALUE self, VALUE document) {
   ruby_xml_document_t *rxd;
-  xmlNodePtr xnode;
-  xmlXPathContextPtr ctxt;
   
-  if (rb_obj_is_kind_of(anode,cXMLDocument) == Qtrue ) {
-    Data_Get_Struct(anode,ruby_xml_document_t,rxd);
-    if (rxd->doc == NULL) return(Qnil);
+  if (rb_obj_is_kind_of(document, cXMLDocument) == Qfalse)
+    rb_raise(rb_eTypeError, "Supplied argument must be a document.");
 
-    ctxt = xmlXPathNewContext(rxd->doc);
-    if (ctxt == NULL) return(Qnil);
+  Data_Get_Struct(document, ruby_xml_document_t, rxd);
+  DATA_PTR(self) = xmlXPathNewContext(rxd->doc);
+  
+  /* Save the doc as an attribute, this will expose it to Ruby's GC. */
+  rb_iv_set(self, "@doc", document);    
 
-  } else if (rb_obj_is_kind_of(anode,cXMLNode) == Qtrue ) {
-    Data_Get_Struct(anode, xmlNode, xnode);
-    if (xnode->doc == NULL)
-      rb_raise(rb_eTypeError,"Supplied node must be part of a document");
-
-    ctxt = xmlXPathNewContext(xnode->doc);
-    if (ctxt == NULL) return(Qnil);
-
-  } else {
-    rb_raise(rb_eTypeError,"create context requires a document or node. Supplied a %s?",
-	     rb_obj_as_string(anode));
-  }
-
-  return ruby_xml_xpath_context_wrap(ctxt);
+  return self;
 }
+
 
 /*
  * call-seq:
@@ -87,6 +67,8 @@ ruby_xml_xpath_context_new(VALUE anode) {
  * 
  * Register the specified namespace URI with the specified prefix
  * in this context.
+ 
+ *   context.register_namespace('xi', 'http://www.w3.org/2001/XInclude')
  */
 VALUE
 ruby_xml_xpath_context_register_namespace(VALUE self, VALUE prefix, VALUE uri) {
@@ -105,18 +87,176 @@ ruby_xml_xpath_context_register_namespace(VALUE self, VALUE prefix, VALUE uri) {
   }
 }
 
+/* call-seq:
+ *    context.register_namespaces_from_node(node) -> self
+ * 
+ * Helper method to read in namespaces defined on a node.
+ *
+ *  doc = XML::Document.string('<header><first>hi</first></header>')
+ *  context = XPath::Context.new(doc)
+ *  context.register_namespaces_from_node(doc.root)
+ */
+VALUE
+ruby_xml_xpath_context_register_namespaces_from_node(VALUE self, VALUE node) {
+  xmlXPathContextPtr xctxt;
+  xmlNodePtr xnode;
+  xmlNsPtr *xnsArr;
+
+  Data_Get_Struct(self, xmlXPathContext, xctxt);
+  
+  if (rb_obj_is_kind_of(node, cXMLDocument) == Qtrue)
+  {
+    ruby_xml_document_t *rdoc;
+    Data_Get_Struct(node, ruby_xml_document_t, rdoc);
+    xnode = xmlDocGetRootElement(rdoc->doc);
+  }
+  else if (rb_obj_is_kind_of(node, cXMLNode) == Qtrue)
+  {
+    Data_Get_Struct(node, xmlNode, xnode);
+  }
+  else
+  {
+    rb_raise(rb_eTypeError, "The first argument must be a document or node.");
+  } 
+  
+  xnsArr = xmlGetNsList(xnode->doc, xnode);
+  
+  if (xnsArr)
+  {
+    xmlNsPtr xns = *xnsArr;
+    
+    while (xns) {
+      /* If there is no prefix, then this is the default namespace.
+         Skip it for now. */
+      if (xns->prefix)
+      {
+        VALUE prefix = rb_str_new2(xns->prefix);
+        VALUE uri = rb_str_new2(xns->href);
+        ruby_xml_xpath_context_register_namespace(self, prefix, uri);
+      }
+      xns = xns->next;
+    }
+    xmlFree(xnsArr);
+  }
+    
+  return self;
+}
+
+static int
+iterate_ns_hash(st_data_t prefix, st_data_t uri, st_data_t self)
+{
+  ruby_xml_xpath_context_register_namespace(self, prefix, uri);
+  return ST_CONTINUE;
+}
+
+
+/*
+ * call-seq:
+ *    context.register_namespaces(["prefix:uri"]) -> self
+ * 
+ * Register the specified namespaces in this context.
+ *
+ *   context.register_namespaces('xi:http://www.w3.org/2001/XInclude')
+ *   context.register_namespaces(['xlink:http://www.w3.org/1999/xlink',
+ *                                'xi:http://www.w3.org/2001/XInclude')
+ *   context.register_namespaces('xlink' => 'http://www.w3.org/1999/xlink',
+ *                                  'xi' => 'http://www.w3.org/2001/XInclude')
+ */
+VALUE
+ruby_xml_xpath_context_register_namespaces(VALUE self, VALUE nslist) {
+  char *cp;
+  long i;
+  VALUE rprefix, ruri;
+
+  /* Need to loop through the 2nd argument and iterate through the
+   * list of namespaces that we want to allow */
+  switch (TYPE(nslist)) {
+  case T_STRING:
+    cp = strchr(StringValuePtr(nslist), (int)':');
+    if (cp == NULL) {
+      rprefix = nslist;
+      ruri = Qnil;
+    } else {
+      rprefix = rb_str_new(StringValuePtr(nslist), (int)((long)cp - (long)StringValuePtr(nslist)));
+      ruri = rb_str_new2(&cp[1]);
+    }
+    /* Should test the results of this */
+    ruby_xml_xpath_context_register_namespace(self, rprefix, ruri);
+    break;
+  case T_ARRAY:
+    for (i = 0; i < RARRAY(nslist)->len; i++) {
+      ruby_xml_xpath_context_register_namespaces(self, RARRAY(nslist)->ptr[i]);
+    }
+    break;
+  case T_HASH:
+    st_foreach(RHASH(nslist)->tbl, iterate_ns_hash, self);
+    break;
+  default:
+    rb_raise(rb_eArgError, "Invalid argument type, only accept string, array of strings, or an array of arrays");
+  }
+  return self;
+}
+
+/*
+ * call-seq:
+ *    context.node = node
+ * 
+ * Set the current node used by the XPath engine
+ 
+ *  doc = XML::Document.string('<header><first>hi</first></header>')
+ *  context.node = doc.root.first
+ */
+VALUE
+ruby_xml_xpath_context_node_set(VALUE self, VALUE node) {
+  xmlXPathContextPtr xctxt;
+  xmlNodePtr xnode;
+  
+  Data_Get_Struct(self, xmlXPathContext, xctxt);
+  Data_Get_Struct(node, xmlNode, xnode);
+  xctxt->node = xnode;
+  return node;
+}
+
+/*
+ * call-seq:
+ *    context.find("xpath") -> XML::XPath::Object
+ * 
+ * Find nodes matching the specified XPath expression
+ */
+VALUE
+ruby_xml_xpath_context_find(VALUE self, VALUE xpath_expr) {
+  xmlXPathContextPtr xctxt;
+  xmlXPathObjectPtr xobject;
+  VALUE result;
+
+  Data_Get_Struct(self, xmlXPathContext, xctxt);
+  xobject = xmlXPathEval((xmlChar*)StringValuePtr(xpath_expr), xctxt);
+  
+  if (xobject == NULL)
+    rb_raise(eXMLXPathInvalidPath,
+	     "Invalid XPath expression (expr could not be evaluated)");
+
+  result = ruby_xml_xpath_object_wrap(xobject);
+  rb_iv_set(result, "@context", self);
+  return result;  
+}
+
+
 // Rdoc needs to know 
 #ifdef RDOC_NEVER_DEFINED
   mXML = rb_define_module("XML");
-  cXMLXPath = rb_define_class_under(mXML, "XPath", rb_cObject);
+  mXMLXPath = rb_define_module_under(mXML, "XPath");
 #endif
 
 void
 ruby_init_xml_xpath_context(void) {
-  cXMLXPathContext = rb_define_class_under(cXMLXPath, "Context", rb_cObject);
-
-  rb_define_method(cXMLXPathContext, "register_namespace",
-		   ruby_xml_xpath_context_register_namespace, 2);
-  rb_define_method(cXMLXPathContext, "doc",
-		   ruby_xml_xpath_context_doc_get, 0);
+  cXMLXPathContext = rb_define_class_under(mXMLXPath, "Context", rb_cObject);
+  rb_define_alloc_func(cXMLXPathContext, ruby_xml_xpath_context_alloc);
+  rb_define_method(cXMLXPathContext, "initialize", ruby_xml_xpath_context_initialize, 1);
+  rb_define_method(cXMLXPathContext, "register_namespaces", ruby_xml_xpath_context_register_namespaces, 1);
+  rb_define_method(cXMLXPathContext, "register_namespaces_from_node", ruby_xml_xpath_context_register_namespaces_from_node, 1);
+  rb_define_method(cXMLXPathContext, "register_namespace", ruby_xml_xpath_context_register_namespace, 2);
+  rb_define_method(cXMLXPathContext, "node=", ruby_xml_xpath_context_node_set, 1);
+  rb_define_method(cXMLXPathContext, "find", ruby_xml_xpath_context_find, 1);
+  rb_define_attr(cXMLXPathContext, "doc", 1, 0);
 }

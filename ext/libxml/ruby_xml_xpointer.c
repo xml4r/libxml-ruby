@@ -12,9 +12,12 @@ VALUE
 ruby_xml_xpointer_point(VALUE class, VALUE rnode, VALUE xptr_str) {
 #ifdef LIBXML_XPTR_ENABLED
   xmlNodePtr xnode;
-  xmlXPathContextPtr ctxt;
-  VALUE rxptr_xpth_ctxt, rxxp;
-  xmlXPathObjectPtr xpath;
+  xmlXPathContextPtr xctxt;
+  xmlXPathObjectPtr xpop;
+  
+  VALUE context;
+  VALUE result;
+  VALUE argv[1];
 
   Check_Type(xptr_str, T_STRING);
   if (rb_obj_is_kind_of(rnode, cXMLNode) == Qfalse)
@@ -22,18 +25,18 @@ ruby_xml_xpointer_point(VALUE class, VALUE rnode, VALUE xptr_str) {
 
   Data_Get_Struct(rnode, xmlNode, xnode);
 
-  rxptr_xpth_ctxt =
-    ruby_xml_xpath_context_wrap(ctxt=xmlXPtrNewContext(xnode->doc, xnode, NULL));
+  argv[0] = rb_funcall(rnode, rb_intern("doc"), 0);
+  context = rb_class_new_instance(1, argv, cXMLXPathContext);
+  Data_Get_Struct(context, xmlXPathContext, xctxt);
 
-  if (NIL_P(rxptr_xpth_ctxt))
-    return(Qnil);
+  xpop = xmlXPtrEval((xmlChar*)StringValuePtr(xptr_str), xctxt);
+  if (!xpop)
+    rb_raise(eXMLXPointerInvalidExpression, "Invalid xpointer expression");
 
-  xpath = xmlXPtrEval((xmlChar*)StringValuePtr(xptr_str), ctxt);
-  if (xpath == NULL)
-    rb_raise(eXMLXPointerInvalidExpression, "invalid xpointer expression");
-
-  rxxp = ruby_xml_xpath_object_wrap(xpath);
-  return(rxxp);
+  result = ruby_xml_xpath_object_wrap(xpop);
+  rb_iv_set(result, "@context", context);
+  
+  return(result);
 #else
   rb_warn("libxml was compiled without XPointer support");
   return(Qfalse);

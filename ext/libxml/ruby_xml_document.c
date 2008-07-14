@@ -406,7 +406,7 @@ ruby_xml_document_filename_get(VALUE self) {
 
 /*
  * call-seq:
- *    document.find(xpath_expr, [namespace]) -> XML::Node::Set
+ *    document.find(xpath_expr, namespaces) -> XML::XPath::Object
  * 
  * Find nodes matching the specified xpath expression, optionally
  * using the specified namespace. Returns an XML::Node::Set.  For
@@ -437,7 +437,7 @@ ruby_xml_document_find(int argc, VALUE *argv, VALUE self) {
   if (argc > 2 || argc < 1)
     rb_raise(rb_eArgError, "wrong number of arguments (need 1 or 2)");
 
-  return(ruby_xml_xpath_find2(self,argv[0],(argc==2)?argv[1]:Qnil));
+  return(ruby_xml_xpath_find(mXMLXPath, self,argv[0],(argc==2)?argv[1]:Qnil));
 }
 
 

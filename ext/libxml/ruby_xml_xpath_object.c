@@ -277,12 +277,12 @@ ruby_xml_xpath_object_string(VALUE self)
 // Rdoc needs to know
 #ifdef RDOC_NEVER_DEFINED
   mXML = rb_define_module("XML");
-  cXMLXPath = rb_define_class_under(mXML, "XPath", rb_cObject);
+  mXMLXPath = rb_define_module_under(mXML, "XPath");
 #endif
 
 void
 ruby_init_xml_xpath_object(void) {
-  cXMLXPathObject = rb_define_class_under(cXMLXPath, "Object", rb_cObject);
+  cXMLXPathObject = rb_define_class_under(mXMLXPath, "Object", rb_cObject);
   rb_include_module(cXMLXPathObject, rb_mEnumerable);
 
   rb_define_method(cXMLXPathObject, "each", ruby_xml_xpath_object_each, 0);
@@ -294,12 +294,8 @@ ruby_init_xml_xpath_object(void) {
   rb_define_method(cXMLXPathObject, "to_a", ruby_xml_xpath_object_to_a, 0);
   rb_define_method(cXMLXPathObject, "[]", ruby_xml_xpath_object_aref, 1);
   rb_define_method(cXMLXPathObject, "string", ruby_xml_xpath_object_string, 0);
-  
-  
-  
-  rb_define_method(cXMLXPathObject, "string", ruby_xml_xpath_object_string, 0);
+  rb_define_attr(cXMLXPathObject, "context", 1, 0);
 
   /* Give the NodeSet type, but it is pointless */
   rb_define_method(cXMLXPathObject, "set", ruby_xml_xpath_object_set, 0);
-  
 }

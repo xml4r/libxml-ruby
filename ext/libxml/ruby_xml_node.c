@@ -658,7 +658,7 @@ ruby_xml_node_find(int argc, VALUE *argv, VALUE self) {
   if (argc > 2 || argc < 1)
     rb_raise(rb_eArgError, "wrong number of arguments (need 1 or 2)");
 
-  return(ruby_xml_xpath_find2(self,argv[0],(argc==2)?argv[1]:Qnil));
+  return(ruby_xml_xpath_find(mXMLXPath, self,argv[0],(argc==2)?argv[1]:Qnil));
 }
 
 /*
