@@ -14,7 +14,7 @@ ruby_xml_state_free(int dummy) {
 }
 
 VALUE
-ruby_xml_state_alloc() {
+ruby_xml_state_alloc(VALUE klass) {
   #ifdef DEBUG
   fprintf(stderr, "Allocating state");
   #endif
