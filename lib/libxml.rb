@@ -3,14 +3,14 @@
 
 require 'libxml_ruby'
 
-require 'sibling_enum'
-require 'parser'
-require 'parser_options'
-require 'document'
-require 'node'
-require 'node_set'
-require 'attributes'
-require 'attr'
+require 'libxml/sibling_enum'
+require 'libxml/parser'
+require 'libxml/parser_options'
+require 'libxml/document'
+require 'libxml/node'
+require 'libxml/node_set'
+require 'libxml/attributes'
+require 'libxml/attr'
 
 # Deprecated
-require 'properties'
+require 'libxml/properties'
