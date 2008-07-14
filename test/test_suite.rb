@@ -25,3 +25,4 @@ require 'tc_xml_xpointer'
 
 # Compatibility
 require 'tc_xml_properties'
+require 'tc_deprecated_require'
