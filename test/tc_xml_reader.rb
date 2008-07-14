@@ -7,18 +7,18 @@ class TC_XML_Reader < Test::Unit::TestCase
 
   def test_new_file
     reader = XML::Reader.file(SIMPLE_XML)
-    do_test_simple(reader)
+    verify_simple(reader)
     assert_raises(RuntimeError) { XML::Reader.file('/does/not/exist') }
   end
 
   def test_new_data
     reader = XML::Reader.new(File.read(SIMPLE_XML))
-    do_test_simple(reader)
+    verify_simple(reader)
   end
 
   def test_new_walker
     reader = XML::Reader.walker(XML::Document.file(SIMPLE_XML))
-    do_test_simple(reader)
+    verify_simple(reader)
   end
 
   def test_reader_error
@@ -81,7 +81,7 @@ class TC_XML_Reader < Test::Unit::TestCase
     doc.standalone?
   end
 
-  def do_test_simple(reader)
+  def verify_simple(reader)
     node_types = []
     19.times do
       assert_equal(1, reader.read)
