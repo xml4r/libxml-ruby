@@ -108,12 +108,9 @@ ruby_xml_xpath_find(VALUE class, VALUE node, VALUE xpath_expr, VALUE nslist) {
 #ifdef LIBXML_XPATH_ENABLED
   xmlNodePtr xnode;
   xmlXPathContextPtr xctxt;
-  xmlXPathObjectPtr xobject;
-  
   VALUE document;
   VALUE context;
   VALUE argv[1];
-  VALUE result;
 
   if (rb_obj_is_kind_of(node, cXMLDocument) == Qtrue)
   {
