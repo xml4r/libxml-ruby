@@ -10,6 +10,9 @@ class TestParser < Test::Unit::TestCase
   def teardown
     @xp = nil
     XML::Parser.register_error_handler(nil)
+    # Clear out all the files we opened up in
+    # the test_fd_gc test
+    GC.start
   end
       
   # -----  Constants  ------
@@ -193,7 +196,7 @@ class TestParser < Test::Unit::TestCase
     filename = File.join(File.dirname(__FILE__), 'model/rubynet.xml')
     max_fd.times do
        XML::Document.file(filename)
-     end
+    end
   end
 
   def test_libxml_parser_features
