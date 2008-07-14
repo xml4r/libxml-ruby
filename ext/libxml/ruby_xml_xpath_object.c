@@ -274,7 +274,7 @@ ruby_xml_xpath_object_string(VALUE self)
   return rb_str_new2((const char*) xpop->stringval);
 }
 
-/*
+/* 
  * call-seq:
  *    nodes.debug -> (true|false)
  * 
@@ -285,12 +285,13 @@ VALUE
 ruby_xml_xpath_object_debug(VALUE self) {
   xmlXPathObjectPtr xpop;
   
-  #ifndef LIBXML_XPATH_ENABLED
+  #ifndef LIBXML_DEBUG_ENABLED
   rb_raise(rb_eTypeError, "libxml was not compiled with debug support.");
   #endif
 
   Data_Get_Struct(self, xmlXPathObject, xpop);
   xmlXPathDebugDumpObject(stdout, xpop, 0);
+  return Qnil;
 }
 
 

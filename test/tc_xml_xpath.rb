@@ -93,6 +93,11 @@ class TestXPath < Test::Unit::TestCase
     end
   end
 
+  def test_nodes_debug
+   # nodes = @doc.find('//ns1:IdAndName', 'ns1:http://domain.somewhere.com')
+    #nodes.debug
+  end
+  
   #def test_custom_function
     #xml = Tempfile.new("xxx")
     #xml.puts("<a/>")
