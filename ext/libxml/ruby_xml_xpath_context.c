@@ -261,7 +261,7 @@ ruby_xml_xpath_context_find(VALUE self, VALUE xpath_expr) {
 // Rdoc needs to know 
 #ifdef RDOC_NEVER_DEFINED
   mLibXML = rb_define_module("LibXML");
-  mXMLXPath = rb_define_module_under(mXML, "XPath");
+  mXPath = rb_define_module_under(mLibXML, "XPath");
 #endif
 
 void

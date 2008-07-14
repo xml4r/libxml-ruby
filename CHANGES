@@ -1,5 +1,23 @@
 (See log/ChangeLog for more detailed changes derived directly from source control.)
 
+== 0.7.1 / 2008-07-09 Charlie Savage
+
+* Moved libxml into LibXML namespace, deprecating XML namespace
+
+* Refactored XPath support, providing more user hooks in the 
+* XPath::Context class
+
+* Fixed bug in returning attributes from XPath results
+
+* Added back Node#properties for backwards compatibility
+
+* Updated setup.rb
+
+* Added more tests
+
+* Updated rdocs and README file
+
+
 == 0.7.0 / 2008-07-09 Charlie Savage
 
 * Added new attributes class to provide a more natural way of working with attributes

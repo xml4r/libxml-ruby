@@ -15,7 +15,8 @@ require 'libxml/attr'
 # Deprecated
 require 'libxml/properties'
 
-# Deprecated.  Map to XML module for backwards compatibility
+# The XML namespace is deprecated and should no longer be used.  Instead,
+# please change code to use the LibXML namespace.
 module XML
   include LibXML
 end

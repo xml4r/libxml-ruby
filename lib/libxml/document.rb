@@ -9,9 +9,9 @@ module LibXML
     # to the LibXML::XPath documentation.
     # 
     # Parameters:
-    # xpath - The xpath expression as a string
-    # namespaces - An optional list of namespaces (see LibXML::XPath for information).
-    # returns - LibXML::XPath::Object
+    # * xpath - The xpath expression as a string
+    # * namespaces - An optional list of namespaces (see LibXML::XPath for information).
+    # * Returns - LibXML::XPath::Object
     #
     #  document.find('/foo', 'xlink:http://www.w3.org/1999/xlink')
     #

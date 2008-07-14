@@ -5,9 +5,8 @@
 /*
  * Document-class: LibXML::XPath::Object
  *
- * All XPath and XPointer evals result in this type.
- * nodeset should become entirely virtual and refer back to
- * this class/data structure.
+ * A collection of nodes returned from the evaluation of an XPath
+ * or XPointer expression. 
  *
  */
 VALUE cXMLXPathObject;
@@ -240,9 +239,16 @@ ruby_xml_xpath_object_length(VALUE self) {
  * Possible values are defined as constants
  * on the LibXML::XPath class and include:
  * 
- * UNDEFINED, NODESET, BOOLEAN, NUMBER,
- * STRING, POINT, RANGE, LOCATIONSET,
- * USERS, XSLT_TREE 
+ * * LibXML::XPath::UNDEFINED
+ * * LibXML::XPath::NODESET
+ * * LibXML::XPath::BOOLEAN
+ * * LibXML::XPath::NUMBER
+ * * LibXML::XPath::STRING
+ * * LibXML::XPath::POINT
+ * * LibXML::XPath::RANGE
+ * * LibXML::XPath::LOCATIONSET
+ * * LibXML::XPath::USERS
+ * * LibXML::XPath::XSLT_TREE 
  */
 VALUE
 ruby_xml_xpath_object_get_type(VALUE self)
@@ -298,7 +304,7 @@ ruby_xml_xpath_object_debug(VALUE self) {
 // Rdoc needs to know
 #ifdef RDOC_NEVER_DEFINED
   mLibXML = rb_define_module("LibXML");
-  mXMLXPath = rb_define_module_under(mXML, "XPath");
+  mXPath = rb_define_module_under(mLibXML, "XPath");
 #endif
 
 void
