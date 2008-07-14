@@ -8,12 +8,12 @@
 
 
 /*
- * Document-class: XML::XPath::Context
+ * Document-class: LibXML::XPath::Context
  * 
- * The XML::XPath::Context class is used to by the XPath engine
+ * The LibXML::XPath::Context class is used to by the XPath engine
  * to evaluate an XPath expression.  Generally you should not
- * directly use this class, and instead use either XML::Document#find
- * or XML::Node#find.
+ * directly use this class, and instead use either LibXML::Document#find
+ * or LibXML::Node#find.
  */
 
 VALUE cXMLXPathContext;
@@ -39,7 +39,7 @@ ruby_xml_xpath_context_alloc(VALUE klass) {
  * Creates a new XPath context for the specified document.  The
  * context can then be used to evaluate an XPath expression.
  *
- *  doc = XML::Document.string('<header><first>hi</first></header>')
+ *  doc = LibXML::Document.string('<header><first>hi</first></header>')
  *  context = XPath::Context.new(doc)
  *  nodes = XPath::Object.new('//first', context)
  *  nodes.length == 1
@@ -108,7 +108,7 @@ ruby_xml_xpath_context_register_namespace(VALUE self, VALUE prefix, VALUE uri) {
  * 
  * Helper method to read in namespaces defined on a node.
  *
- *  doc = XML::Document.string('<header><first>hi</first></header>')
+ *  doc = LibXML::Document.string('<header><first>hi</first></header>')
  *  context = XPath::Context.new(doc)
  *  context.register_namespaces_from_node(doc.root)
  */
@@ -219,7 +219,7 @@ ruby_xml_xpath_context_register_namespaces(VALUE self, VALUE nslist) {
  * 
  * Set the current node used by the XPath engine
  
- *  doc = XML::Document.string('<header><first>hi</first></header>')
+ *  doc = LibXML::Document.string('<header><first>hi</first></header>')
  *  context.node = doc.root.first
  */
 VALUE
@@ -235,7 +235,7 @@ ruby_xml_xpath_context_node_set(VALUE self, VALUE node) {
 
 /*
  * call-seq:
- *    context.find("xpath") -> XML::XPath::Object
+ *    context.find("xpath") -> LibXML::XPath::Object
  * 
  * Find nodes matching the specified XPath expression
  */
@@ -260,13 +260,13 @@ ruby_xml_xpath_context_find(VALUE self, VALUE xpath_expr) {
 
 // Rdoc needs to know 
 #ifdef RDOC_NEVER_DEFINED
-  mXML = rb_define_module("XML");
+  mLibXML = rb_define_module("LibXML");
   mXMLXPath = rb_define_module_under(mXML, "XPath");
 #endif
 
 void
 ruby_init_xml_xpath_context(void) {
-  cXMLXPathContext = rb_define_class_under(mXMLXPath, "Context", rb_cObject);
+  cXMLXPathContext = rb_define_class_under(mXPath, "Context", rb_cObject);
   rb_define_alloc_func(cXMLXPathContext, ruby_xml_xpath_context_alloc);
   rb_define_method(cXMLXPathContext, "initialize", ruby_xml_xpath_context_initialize, 1);
   rb_define_method(cXMLXPathContext, "register_namespaces", ruby_xml_xpath_context_register_namespaces, 1);

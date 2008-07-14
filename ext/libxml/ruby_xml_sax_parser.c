@@ -52,9 +52,9 @@ ruby_xml_sax_parser_mark(ruby_xml_sax_parser *nodesp) {
 
 /*
  * call-seq:
- *    XML::SaxParser.new -> sax_parser
+ *    LibXML::SaxParser.new -> sax_parser
  * 
- * Create a new XML::SaxParser instance.
+ * Create a new LibXML::SaxParser instance.
  */
 VALUE
 ruby_xml_sax_parser_new(VALUE class) {
@@ -75,7 +75,7 @@ ruby_xml_sax_parser_new(VALUE class) {
 
 /*
  * call-seq:
- *    sax_parser.callbacks -> #<XML::SaxParser::Callbacks subclass>
+ *    sax_parser.callbacks -> #<LibXML::SaxParser::Callbacks subclass>
  * 
  * Obtain the callbacks used by this parser.
  */
@@ -89,11 +89,11 @@ ruby_xml_sax_parser_callbacks_get(VALUE self) {
 
 /*
  * call-seq:
- *    sax_parser.callbacks = #<XML::SaxParser::Callbacks subclass>
+ *    sax_parser.callbacks = #<LibXML::SaxParser::Callbacks subclass>
  * 
  * Set the callbacks used by this parser. The value assigned to
  * this attributesibute will usually be an object that extends the the 
- * XML::SaxParser::Callbacks module, overriding the callbacks it
+ * LibXML::SaxParser::Callbacks module, overriding the callbacks it
  * wishes to process.
  */
 VALUE
@@ -406,12 +406,12 @@ ruby_xml_sax_callbacks_on_external_subset(int argc, VALUE *argv, VALUE self) {
 
 // Rdoc needs to know 
 #ifdef RDOC_NEVER_DEFINED
-  mXML = rb_define_module("XML");
+  mLibXML = rb_define_module("LibXML");
 #endif
 
 void
 ruby_init_xml_sax_parser(void) {
-  cXMLSaxParser = rb_define_class_under(mXML, "SaxParser", rb_cObject);
+  cXMLSaxParser = rb_define_class_under(mLibXML, "SaxParser", rb_cObject);
   mXMLSaxParserCallbacks = rb_define_module_under(cXMLSaxParser, "Callbacks");
 
   /* SaxParser */

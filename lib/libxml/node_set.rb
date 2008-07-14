@@ -2,7 +2,7 @@
 # Please see the LICENSE file for copyright and distribution information 
 
 
-module XML
+module LibXML
   class Node
     class Set 
       include Enumerable 

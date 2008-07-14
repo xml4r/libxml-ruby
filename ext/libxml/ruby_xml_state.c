@@ -28,13 +28,13 @@ ruby_xml_state_alloc(VALUE klass) {
 
 // Rdoc needs to know 
 #ifdef RDOC_NEVER_DEFINED
-  mXML = rb_define_module("XML");
+  mLibXML = rb_define_module("LibXML");
 #endif
 
 void
 ruby_init_state(void) {	
   VALUE rb_mSingleton;
-  cXMLState = rb_define_class_under(mXML, "State", rb_cObject);
+  cXMLState = rb_define_class_under(mLibXML, "State", rb_cObject);
   
   /* Mixin singleton so only one xml state object can be created. */
   rb_require("singleton");

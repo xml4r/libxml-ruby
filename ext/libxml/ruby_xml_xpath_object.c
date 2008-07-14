@@ -3,7 +3,7 @@
 #include "ruby_libxml.h"
 
 /*
- * Document-class: XML::XPath::Object
+ * Document-class: LibXML::XPath::Object
  *
  * All XPath and XPointer evals result in this type.
  * nodeset should become entirely virtual and refer back to
@@ -238,7 +238,7 @@ ruby_xml_xpath_object_length(VALUE self) {
  * 
  * Returns the XPath type of the result object. 
  * Possible values are defined as constants
- * on the XML::XPath class and include:
+ * on the LibXML::XPath class and include:
  * 
  * UNDEFINED, NODESET, BOOLEAN, NUMBER,
  * STRING, POINT, RANGE, LOCATIONSET,
@@ -297,13 +297,13 @@ ruby_xml_xpath_object_debug(VALUE self) {
 
 // Rdoc needs to know
 #ifdef RDOC_NEVER_DEFINED
-  mXML = rb_define_module("XML");
+  mLibXML = rb_define_module("LibXML");
   mXMLXPath = rb_define_module_under(mXML, "XPath");
 #endif
 
 void
 ruby_init_xml_xpath_object(void) {
-  cXMLXPathObject = rb_define_class_under(mXMLXPath, "Object", rb_cObject);
+  cXMLXPathObject = rb_define_class_under(mXPath, "Object", rb_cObject);
   rb_include_module(cXMLXPathObject, rb_mEnumerable);
 
   rb_define_method(cXMLXPathObject, "each", ruby_xml_xpath_object_each, 0);

@@ -3,8 +3,8 @@ require 'test/unit'
 
 class TestXInclude < Test::Unit::TestCase
   def setup
-    @doc = XML::Document.file(File.join(File.dirname(__FILE__), 'model/xinclude.xml'))
-    assert_instance_of(XML::Document, @doc)
+    @doc = LibXML::Document.file(File.join(File.dirname(__FILE__), 'model/xinclude.xml'))
+    assert_instance_of(LibXML::Document, @doc)
   end
 
   def teardown

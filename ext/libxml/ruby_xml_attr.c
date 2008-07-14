@@ -3,15 +3,15 @@
 /* Please see the LICENSE file for copyright and distribution information */
 
 /*
-* Document-class: XML::Attr
+* Document-class: LibXML::Attr
 *
 * Provides access to an single element attribute.  Accessed by
-* calling XML::Node#attributes method.
+* calling LibXML::Node#attributes method.
 *
 * Basic Usage:
 *  require 'libxml'
 *
-*  doc = XML::Document.new(<some_file>)
+*  doc = LibXML::Document.new(<some_file>)
 *  attribute = doc.root.attributes.get_attribute_ns('http://www.w3.org/1999/xlink', 'href')
 *  attribute.name == 'href'
 *  attribute.value == 'http://www.mydocument.com'
@@ -86,11 +86,11 @@ ruby_xml_attr_alloc(VALUE klass)
  * 
  * Creates a new attribute for the node.
  *
- * node: The XML::Node that will contain the attribute
+ * node: The LibXML::Node that will contain the attribute
  * name: The name of the attribute
  * value: The value of the attribute
  *
- *  attr = XML::Attr.new(doc.root, 'name', 'libxml')
+ *  attr = LibXML::Attr.new(doc.root, 'name', 'libxml')
  */
 VALUE
 ruby_xml_attr_initialize(int argc, VALUE *argv, VALUE self) {
@@ -162,7 +162,7 @@ ruby_xml_attr_child_q(VALUE self) {
 
 /*
  * call-seq:
- *    attr.doc -> XML::Document
+ *    attr.doc -> LibXML::Document
  * 
  * Returns this attribute's document.
  *
@@ -183,7 +183,7 @@ ruby_xml_attr_doc_get(VALUE self) {
  *    attr.doc? -> (true|false)
  * 
  * Determine whether this attribute is associated with an
- * XML::Document.
+ * LibXML::Document.
  */
 VALUE
 ruby_xml_attr_doc_q(VALUE self) {
@@ -296,7 +296,7 @@ ruby_xml_attr_node_type_name(VALUE self) {
  * call-seq:
  *    attr.ns -> namespace
  * 
- * Obtain this attribute's associated XML::NS, if any.
+ * Obtain this attribute's associated LibXML::NS, if any.
  */
 VALUE
 ruby_xml_attr_ns_get(VALUE self) {
@@ -463,12 +463,12 @@ ruby_xml_attr_value_set(VALUE self, VALUE val) {
 
 // Rdoc needs to know 
 #ifdef RDOC_NEVER_DEFINED
-  mXML = rb_define_module("XML");
+  mLibXML = rb_define_module("LibXML");
 #endif
 
 void
 ruby_init_xml_attr(void) {
-  cXMLAttr = rb_define_class_under(mXML, "Attr", rb_cObject);
+  cXMLAttr = rb_define_class_under(mLibXML, "Attr", rb_cObject);
   rb_define_alloc_func(cXMLAttr, ruby_xml_attr_alloc);
   rb_define_method(cXMLAttr, "initialize", ruby_xml_attr_initialize, -1);
   rb_define_method(cXMLAttr, "child", ruby_xml_attr_child_get, 0);

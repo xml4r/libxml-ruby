@@ -21,7 +21,7 @@ ruby_xml_xpointer_point(VALUE class, VALUE rnode, VALUE xptr_str) {
 
   Check_Type(xptr_str, T_STRING);
   if (rb_obj_is_kind_of(rnode, cXMLNode) == Qfalse)
-    rb_raise(rb_eTypeError, "require an XML::Node object");
+    rb_raise(rb_eTypeError, "require an LibXML::Node object");
 
   Data_Get_Struct(rnode, xmlNode, xnode);
 
@@ -52,7 +52,7 @@ ruby_xml_xpointer_point2(VALUE node, VALUE xptr_str) {
 
 /*
  * call-seq:
- *    XML::XPointer.range(start_node, end_node) -> xpath
+ *    LibXML::XPointer.range(start_node, end_node) -> xpath
  * 
  * Create an xpath representing the range between the supplied
  * start and end node.
@@ -65,9 +65,9 @@ ruby_xml_xpointer_range(VALUE class, VALUE rstart, VALUE rend) {
   xmlXPathObjectPtr xpath;
 
   if (rb_obj_is_kind_of(rstart, cXMLNode) == Qfalse)
-    rb_raise(rb_eTypeError, "require an XML::Node object as a starting point");
+    rb_raise(rb_eTypeError, "require an LibXML::Node object as a starting point");
   if (rb_obj_is_kind_of(rend, cXMLNode) == Qfalse)
-    rb_raise(rb_eTypeError, "require an XML::Node object as an ending point");
+    rb_raise(rb_eTypeError, "require an LibXML::Node object as an ending point");
 
   Data_Get_Struct(rstart, xmlNode, start);
   if (start == NULL)
@@ -91,12 +91,12 @@ ruby_xml_xpointer_range(VALUE class, VALUE rstart, VALUE rend) {
 
 // Rdoc needs to know 
 #ifdef RDOC_NEVER_DEFINED
-  mXML = rb_define_module("XML");
+  mLibXML = rb_define_module("LibXML");
 #endif
 
 void
 ruby_init_xml_xpointer(void) {
-  cXMLXPointer = rb_define_class_under(mXML, "XPointer", rb_cObject);
+  cXMLXPointer = rb_define_class_under(mLibXML, "XPointer", rb_cObject);
   eXMLXPointerInvalidExpression = rb_define_class_under(cXMLXPointer, "InvalidExpression", eXMLError);
 
   rb_define_singleton_method(cXMLXPointer, "range", ruby_xml_xpointer_range, 2);

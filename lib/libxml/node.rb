@@ -1,14 +1,14 @@
 # $Id: libxml.rb 374 2008-07-11 04:51:41Z cfis $ 
 # Please see the LICENSE file for copyright and distribution information 
 
-module XML
+module LibXML
   class Node
-    include XML::SiblingEnum
+    include LibXML::SiblingEnum
     include Enumerable
     
     # Return nodes matching the specified xpath expression.
     # For more information, please refer to the documentation
-    # for XML::Document#find.
+    # for LibXML::Document#find.
     def find(xpath, nslist = nil)
       if not self.doc
         raise(TypeError, "A node must belong to a document before " +
@@ -26,7 +26,7 @@ module XML
     
     # Return the first node matching the specified xpath expression.
     # For more information, please refer to the documentation
-    # for XML::Node#find.
+    # for LibXML::Node#find.
     def find_first(xpath, nslist = nil)
       find(xpath, nslist).first
     end

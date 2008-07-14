@@ -9,12 +9,12 @@ VALUE cXMLTree;
 
 // Rdoc needs to know 
 #ifdef RDOC_NEVER_DEFINED
-  mXML = rb_define_module("XML");
+  mLibXML = rb_define_module("LibXML");
 #endif
 
 void
 ruby_init_xml_tree(void) {
-  cXMLTree = rb_define_class_under(mXML, "Tree", rb_cObject);
+  cXMLTree = rb_define_class_under(mLibXML, "Tree", rb_cObject);
 
   rb_define_const(cXMLTree, "ELEMENT_NODE", INT2FIX(XML_ELEMENT_NODE));
   rb_define_const(cXMLTree, "ATTRIBUTE_NODE", INT2FIX(XML_ATTRIBUTE_NODE));

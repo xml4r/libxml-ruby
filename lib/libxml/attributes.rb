@@ -1,7 +1,7 @@
 # $Id: libxml.rb 374 2008-07-11 04:51:41Z cfis $ 
 # Please see the LICENSE file for copyright and distribution information 
 
-module XML
+module LibXML
   class Attributes
     def to_h
       inject({}) do |hash, attr|

@@ -5,7 +5,7 @@ VALUE cXMLSchema;
 
 // Rdoc needs to know 
 #ifdef RDOC_NEVER_DEFINED
-  mXML = rb_define_module("XML");
+  mLibXML = rb_define_module("LibXML");
 #endif
 
 static void
@@ -25,7 +25,7 @@ ruby_xml_schema_free(ruby_xml_schema *rxschema) {
 
 /*
  * call-seq:
- *    XML::Schema.new(schema_uri) -> schema
+ *    LibLibXML::Schema.new(schema_uri) -> schema
  * 
  * Create a new schema from the specified URI.
  */
@@ -46,7 +46,7 @@ ruby_xml_schema_init_from_uri(VALUE class, VALUE uri) {
 
 /*
  * call-seq:
- *    XML::Schema.document(document) -> schema
+ *    LibLibXML::Schema.document(document) -> schema
  * 
  * Create a new schema from the specified URI.
  */
@@ -68,7 +68,7 @@ ruby_xml_schema_init_from_document(VALUE class, VALUE document) {
 
 /*
  * call-seq:
- *    XML::Schema.string("schema_data") -> "value"
+ *    LibLibXML::Schema.string("schema_data") -> "value"
  * 
  * Create a new schema using the specified string.
  */
@@ -136,7 +136,7 @@ ruby_xml_schema_init_from_string(VALUE self, VALUE schema_str) {
 */
 
 void  ruby_init_xml_schema(void) {
-  cXMLSchema = rb_define_class_under(mXML, "Schema", rb_cObject);
+  cXMLSchema = rb_define_class_under(mLibXML, "Schema", rb_cObject);
   rb_define_singleton_method(cXMLSchema, "new",         ruby_xml_schema_init_from_uri, 1);
   rb_define_singleton_method(cXMLSchema, "from_string", ruby_xml_schema_init_from_string, 1);
   rb_define_singleton_method(cXMLSchema, "document",    ruby_xml_schema_init_from_document, 1);

@@ -4,7 +4,7 @@
 
 #include "ruby_libxml.h"
 
-VALUE mXML;
+VALUE mLibXML;
 VALUE eXMLError;
 
 
@@ -26,10 +26,10 @@ Init_libxml_ruby(void) {
     rb_fatal("could not install the memory handlers for libxml");
 #endif
 
-  mXML = rb_define_module("XML");
-  eXMLError = rb_define_class_under(mXML, "Error", rb_eRuntimeError);
+  mLibXML = rb_define_module("LibXML");
+  eXMLError = rb_define_class_under(mLibXML, "Error", rb_eRuntimeError);
 
-  rb_define_const(mXML, "XML_NAMESPACE", rb_str_new2((const char*)XML_XML_NAMESPACE));
+  rb_define_const(mLibXML, "XML_NAMESPACE", rb_str_new2((const char*)XML_XML_NAMESPACE));
 
   ruby_init_state();
   ruby_init_parser();  

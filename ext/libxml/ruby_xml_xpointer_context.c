@@ -10,8 +10,8 @@ VALUE eXMLXPointerContextInvalidPath;
 
 // Rdoc needs to know 
 #ifdef RDOC_NEVER_DEFINED
-  mXML = rb_define_module("XML");
-  cXMLXPointer = rb_define_class_under(mXML, "XPointer", rb_cObject);
+  mLibXML = rb_define_module("LibXML");
+  cXMLXPointer = rb_define_class_under(mLibXML, "XPointer", rb_cObject);
 #endif
 
 void

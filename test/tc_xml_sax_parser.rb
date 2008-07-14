@@ -4,7 +4,7 @@ require 'test/unit'
 # TODO this is woefully inadequate
 
 class TestCaseCallbacks
-  include XML::SaxParser::Callbacks
+  include LibXML::SaxParser::Callbacks
 
   attr_accessor :test
 
@@ -48,7 +48,7 @@ end
 
 class TestSaxParser < Test::Unit::TestCase
   def setup
-    @xp = XML::SaxParser.new
+    @xp = LibXML::SaxParser.new
   end
 
   def teardown

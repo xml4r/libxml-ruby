@@ -7,12 +7,12 @@
 #include "ruby_xml_xpath_context.h"
 
 /*
- * Document-class: XML::XPath
+ * Document-class: LibXML::XPath
  * 
- * The XML::XPath class is used to query XML documents. It is used
- * via the XML::Document#find method.
+ * The LibXML::XPath class is used to query XML documents. It is used
+ * via the LibXML::Document#find method.
  *
- *  document.find('/foo', namespaces) -> XML::XPath::Object
+ *  document.find('/foo', namespaces) -> LibXML::XPath::Object
  *
  * The optional namespaces parameter can be a string, array or
  * hash table.
@@ -59,29 +59,29 @@
              ['ns0:http://services.somewhere.com', 'ns1:http://domain.somewhere.com'])
 */
 
-VALUE mXMLXPath;
+VALUE mXPath;
 VALUE eXMLXPathInvalidPath;
 
 // Rdoc needs to know 
 #ifdef RDOC_NEVER_DEFINED
-  mXML = rb_define_module("XML");
+  mLibXML = rb_define_module("LibXML");
 #endif
 
 void
 ruby_init_xml_xpath(void) {
-  mXMLXPath = rb_define_module_under(mXML, "XPath");
-  eXMLXPathInvalidPath = rb_define_class_under(mXMLXPath, "InvalidPath", eXMLError);
+  mXPath = rb_define_module_under(mLibXML, "XPath");
+  eXMLXPathInvalidPath = rb_define_class_under(mXPath, "InvalidPath", eXMLError);
 
-  rb_define_const(mXMLXPath, "UNDEFINED", INT2NUM(XPATH_UNDEFINED));
-  rb_define_const(mXMLXPath, "NODESET", INT2NUM(XPATH_NODESET));
-  rb_define_const(mXMLXPath, "BOOLEAN", INT2NUM(XPATH_BOOLEAN));
-  rb_define_const(mXMLXPath, "NUMBER", INT2NUM(XPATH_NUMBER));
-  rb_define_const(mXMLXPath, "STRING", INT2NUM(XPATH_STRING));
-  rb_define_const(mXMLXPath, "POINT", INT2NUM(XPATH_POINT));
-  rb_define_const(mXMLXPath, "RANGE", INT2NUM(XPATH_RANGE));
-  rb_define_const(mXMLXPath, "LOCATIONSET", INT2NUM(XPATH_LOCATIONSET));
-  rb_define_const(mXMLXPath, "USERS", INT2NUM(XPATH_USERS));
-  rb_define_const(mXMLXPath, "XSLT_TREE", INT2NUM(XPATH_XSLT_TREE));
+  rb_define_const(mXPath, "UNDEFINED", INT2NUM(XPATH_UNDEFINED));
+  rb_define_const(mXPath, "NODESET", INT2NUM(XPATH_NODESET));
+  rb_define_const(mXPath, "BOOLEAN", INT2NUM(XPATH_BOOLEAN));
+  rb_define_const(mXPath, "NUMBER", INT2NUM(XPATH_NUMBER));
+  rb_define_const(mXPath, "STRING", INT2NUM(XPATH_STRING));
+  rb_define_const(mXPath, "POINT", INT2NUM(XPATH_POINT));
+  rb_define_const(mXPath, "RANGE", INT2NUM(XPATH_RANGE));
+  rb_define_const(mXPath, "LOCATIONSET", INT2NUM(XPATH_LOCATIONSET));
+  rb_define_const(mXPath, "USERS", INT2NUM(XPATH_USERS));
+  rb_define_const(mXPath, "XSLT_TREE", INT2NUM(XPATH_XSLT_TREE));
 
   ruby_init_xml_xpath_object();
 }

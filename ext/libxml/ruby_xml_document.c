@@ -3,21 +3,21 @@
 /* Please see the LICENSE file for copyright and distribution information */
 
 /*
-* Document-class: XML::Document
+* Document-class: LibXML::Document
 *
 * Reads or writes an XML document:
 *
 * Reading:
 *  require 'libxml'
 *
-*  doc = XML::Document.new()
-*  doc.root = XML::Node.new('root_node')
-*  doc.root << XML::Node.new('elem1')
+*  doc = LibXML::Document.new()
+*  doc.root = LibXML::Node.new('root_node')
+*  doc.root << LibXML::Node.new('elem1')
 *  doc.save('output.xml', format)
 * 
 * Writing:
 *  require 'libxml'
-*  doc = XML::Document.file('output.xml')
+*  doc = LibXML::Document.file('output.xml')
 *  root = doc.root
 */
 
@@ -447,9 +447,9 @@ ruby_xml_document_mark(ruby_xml_document_t *rxd) {
 
 /*
  * call-seq:
- *    XML::Document.new(xml_version = 1.0) -> document
+ *    LibXML::Document.new(xml_version = 1.0) -> document
  * 
- * Create a new XML::Document, optionally specifying the
+ * Create a new LibXML::Document, optionally specifying the
  * XML version.
  */
 VALUE
@@ -545,9 +545,9 @@ ruby_xml_document_new_native(VALUE class, VALUE xmlver) {
 
 /*
  * call-seq:
- *    XML::Document.file(filename) -> document
+ *    LibXML::Document.file(filename) -> document
  * 
- * Create a new XML::Document by parsing the specified
+ * Create a new LibXML::Document by parsing the specified
  * file.
  */
 VALUE
@@ -704,7 +704,7 @@ ruby_xml_document_root_set(VALUE self, VALUE node) {
   xmlNodePtr xroot, xnode;
 
   if (rb_obj_is_kind_of(node, cXMLNode) == Qfalse)
-    rb_raise(rb_eTypeError, "must pass an XML::Node type object");
+    rb_raise(rb_eTypeError, "must pass an LibXML::Node type object");
 
   Data_Get_Struct(self, ruby_xml_document_t, rxd);
   Data_Get_Struct(node, xmlNode, xnode);
@@ -931,7 +931,7 @@ LibXML_validity_warning(void * ctxt, const char * msg, va_list ap)
  * call-seq:
  *    document.validate_schema(schema) -> (true|false)
  * 
- * Validate this document against the specified XML::Schema.
+ * Validate this document against the specified LibXML::Schema.
  */
 VALUE
 ruby_xml_document_validate_schema(VALUE self, VALUE schema) {
@@ -962,7 +962,7 @@ ruby_xml_document_validate_schema(VALUE self, VALUE schema) {
  * call-seq:
  *    document.validate(dtd) -> (true|false)
  * 
- * Validate this document against the specified XML::DTD.
+ * Validate this document against the specified LibXML::DTD.
  */
 VALUE
 ruby_xml_document_validate_dtd(VALUE self, VALUE dtd) {
@@ -1037,8 +1037,8 @@ validate(self, ...)
  * call-seq:
  *    document.reader -> reader
  * 
- * Create a XML::Reader from the document. This is a shortcut to
- * XML::Reader.walker().
+ * Create a LibXML::Reader from the document. This is a shortcut to
+ * LibXML::Reader.walker().
  */
 static VALUE
 ruby_xml_document_reader(VALUE self)
@@ -1048,12 +1048,12 @@ ruby_xml_document_reader(VALUE self)
 
 // Rdoc needs to know 
 #ifdef RDOC_NEVER_DEFINED
-  mXML = rb_define_module("XML");
+  mLibXML = rb_define_module("LibXML");
 #endif
 
 void
 ruby_init_xml_document(void) {
-  cXMLDocument = rb_define_class_under(mXML, "Document", rb_cObject);
+  cXMLDocument = rb_define_class_under(mLibXML, "Document", rb_cObject);
   rb_define_singleton_method(cXMLDocument, "file", ruby_xml_document_new_file, 1);
   rb_define_singleton_method(cXMLDocument, "new", ruby_xml_document_new, -1);
 

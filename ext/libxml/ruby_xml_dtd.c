@@ -22,8 +22,8 @@ ruby_xml_dtd_mark(ruby_xml_dtd *rxdtd) {
 
 /*
  * call-seq:
- *    XML::Dtd.new("public system") -> dtd
- *    XML::Dtd.new("public", "system") -> dtd
+ *    LibXML::Dtd.new("public system") -> dtd
+ *    LibXML::Dtd.new("public", "system") -> dtd
  * 
  * Create a new Dtd from the specified public and system
  * identifiers.
@@ -156,12 +156,12 @@ SV * parse_string(CLASS, str, ...)
 
 // Rdoc needs to know 
 #ifdef RDOC_NEVER_DEFINED
-  mXML = rb_define_module("XML");
+  mLibXML = rb_define_module("LibXML");
 #endif
 
 void
 ruby_init_xml_dtd(void) {
-  cXMLDtd = rb_define_class_under(mXML, "Dtd", rb_cObject);
+  cXMLDtd = rb_define_class_under(mLibXML, "Dtd", rb_cObject);
   rb_define_singleton_method(cXMLDtd, "new", ruby_xml_dtd_initialize, -1);
   //rb_define_method(cXMLDocument, "xinclude", ruby_xml_document_xinclude, 0);
 }

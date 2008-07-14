@@ -20,7 +20,7 @@ ruby_xml_ns_alloc(VALUE klass) {
  * Create a new namespace attached to the specified node with the
  * give prefix and namespace.
  *
- *  XML::NS.new(node, "xlink", "http://www.w3.org/1999/xlink")
+ *  LibLibXML::NS.new(node, "xlink", "http://www.w3.org/1999/xlink")
  */
 VALUE
 ruby_xml_ns_initialize(VALUE self, VALUE node, VALUE href, VALUE prefix) {
@@ -127,12 +127,12 @@ ruby_xml_ns_prefix_q(VALUE self) {
 
 // Rdoc needs to know 
 #ifdef RDOC_NEVER_DEFINED
-  mXML = rb_define_module("XML");
+  mLibXML = rb_define_module("LibXML");
 #endif
 
 void
 ruby_init_xml_ns(void) {
-  cXMLNS = rb_define_class_under(mXML, "NS", rb_cObject);
+  cXMLNS = rb_define_class_under(mLibXML, "NS", rb_cObject);
   rb_define_alloc_func(cXMLNS, ruby_xml_ns_alloc);
   rb_define_method(cXMLNS, "initialize", ruby_xml_ns_initialize, 3);
   rb_define_method(cXMLNS, "href", ruby_xml_ns_href_get, 0);

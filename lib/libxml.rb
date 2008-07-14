@@ -14,3 +14,8 @@ require 'libxml/attr'
 
 # Deprecated
 require 'libxml/properties'
+
+# Deprecated.  Map to XML module for backwards compatibility
+module XML
+  include LibXML
+end

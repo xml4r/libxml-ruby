@@ -85,7 +85,7 @@ typedef struct rx_xpath_data {
 #include "ruby_xml_html_parser.h"
 #include "ruby_xml_reader.h"
 
-extern VALUE mXML;
+extern VALUE mLibXML;
 extern VALUE eXMLError;
 
 void ruby_init_parser(void);

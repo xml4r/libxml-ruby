@@ -10,11 +10,11 @@ VALUE eXMLXIncludeError;
 
 // Rdoc needs to know 
 #ifdef RDOC_NEVER_DEFINED
-  mXML = rb_define_module("XML");
+  mLibXML = rb_define_module("LibXML");
 #endif
 
 void
 ruby_init_xml_xinclude(void) {
-  cXMLXInclude = rb_define_class_under(mXML, "XInclude", rb_cObject);
+  cXMLXInclude = rb_define_class_under(mLibXML, "XInclude", rb_cObject);
   eXMLXIncludeError = rb_define_class_under(cXMLXInclude, "Error", rb_eRuntimeError);
 }

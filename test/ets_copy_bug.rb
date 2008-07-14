@@ -1,8 +1,8 @@
 require 'libxml'
 
 def test( doc2 )
-  doc = XML::Document.new('1.0')
-  doc.root = XML::Node.new("ccc")
+  doc = LibXML::Document.new('1.0')
+  doc.root = LibXML::Node.new("ccc")
   doc.root['aaa'] = 'aaa'
   doc.root.child_add(doc2.root.copy(true)) # BUG!
   doc.root << doc2.root.copy(true)
@@ -10,8 +10,8 @@ def test( doc2 )
 end
 
 def test2
-  doc2 = XML::Document.new('1.0')
-  doc2.root = XML::Node.new("aaa")
+  doc2 = LibXML::Document.new('1.0')
+  doc2.root = LibXML::Node.new("aaa")
   test( doc2 )
 end
 

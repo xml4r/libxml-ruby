@@ -3,7 +3,7 @@ require 'test/unit'
 
 class AttributesTest < Test::Unit::TestCase
   def setup()
-    xp = XML::Parser.string(<<-EOS)
+    xp = LibXML::Parser.string(<<-EOS)
     <CityModel
       xmlns="http://www.opengis.net/examples"
       xmlns:city="http://www.opengis.net/examples"
@@ -32,14 +32,14 @@ class AttributesTest < Test::Unit::TestCase
 
   def test_attributes
     attributes = city_member.attributes
-    assert_instance_of(XML::Attributes, attributes)
+    assert_instance_of(LibXML::Attributes, attributes)
     assert_equal(5, attributes.length)
   end
   
   def test_each
     attributes = city_member.attributes
     length = attributes.inject(0) do |result, attr|
-      assert_instance_of(XML::Attr, attr)
+      assert_instance_of(LibXML::Attr, attr)
       result + 1
     end
     assert_equal(5, length)
@@ -49,25 +49,25 @@ class AttributesTest < Test::Unit::TestCase
     attributes = city_member.attributes
     
     attr = attributes.get_attribute('name')
-    assert_instance_of(XML::Attr, attr)
+    assert_instance_of(LibXML::Attr, attr)
     
     attr = attributes.get_attribute('does_not_exist')
     assert_nil(attr)
     
     attr = attributes.get_attribute('name')
-    assert_instance_of(XML::Attr, attr)
+    assert_instance_of(LibXML::Attr, attr)
     
     attr = attributes.get_attribute('href')
-    assert_instance_of(XML::Attr, attr)
-    assert_instance_of(XML::NS, attr.ns)
+    assert_instance_of(LibXML::Attr, attr)
+    assert_instance_of(LibXML::NS, attr.ns)
     assert_equal('xlink', attr.ns.prefix)
     assert_equal('http://www.w3.org/1999/xlink', attr.ns.href)
     
     attr = attributes.get_attribute_ns('http://www.w3.org/1999/xlink', 'href')
-    assert_instance_of(XML::Attr, attr)
+    assert_instance_of(LibXML::Attr, attr)
     
     attr = attributes.get_attribute_ns('http://www.opengis.net/gml', 'remoteSchema')
-    assert_instance_of(XML::Attr, attr)
+    assert_instance_of(LibXML::Attr, attr)
     
     attr = attributes.get_attribute_ns('http://i.dont.exist', 'nor do i')
     assert_nil(attr)

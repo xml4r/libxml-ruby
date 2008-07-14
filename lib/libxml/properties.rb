@@ -3,7 +3,7 @@
 
 
 # This is for backwards compatibility and is DEPRECATED
-module XML
+module LibXML
   class Node
     def properties
       attributes

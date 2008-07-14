@@ -1,4 +1,4 @@
-module XML
+module LibXML
   class Parser
     class << self
       attr_reader :error_handler
