@@ -17,8 +17,7 @@ class TestXPath < Test::Unit::TestCase
     assert_equal(1, nodes.length)
     assert_equal(nodes.xpath_type, XML::XPath::NODESET)
     assert_instance_of(XML::Node::Set, nodes.set)
-    # Why doesn't this work?
-    # assert_equal('/soap:Envelope', nodes.string)
+    assert_instance_of(XML::XPath::Context, nodes.context)
   end    
 
   def test_ns
@@ -61,7 +60,18 @@ class TestXPath < Test::Unit::TestCase
     assert_equal('encodingStyle', nodes.first.name)
     assert_equal('http://www.w3.org/2001/12/soap-encoding', nodes.first.value)
   end
-  
+
+  def test_xpath_node
+    nodes = @doc.find('//ns1:IdAndName', 'ns1:http://domain.somewhere.com')
+    node = nodes.first
+
+    # Since we are searching on the node, don't have to register namespace
+    nodes = node.find('ns1:name')
+    assert_equal(1, nodes.length)
+    assert_equal('name', nodes.first.name)
+    assert_equal('man1', nodes.first.content)
+  end
+    
   #def test_custom_function
     #xml = Tempfile.new("xxx")
     #xml.puts("<a/>")
@@ -69,5 +79,26 @@ class TestXPath < Test::Unit::TestCase
 
     #doc = XML::Document.file(xml.path)
     #assert_nil(doc.find("//*[name(.)=normalize_space(' a ')]"))
+  #end
+  
+  #def test_memory
+    ## This sometimes causes a segmentation fault because 
+    ## an xml document is sometimes freed before the
+    ## xpath_object used to query it.  When the xpath_object
+    ## is free, it iterates over its results which are pointers
+    ## to the document's nodes. A segmentation fault then happens.
+
+    #100.times do 
+      #doc = XML::Document.new('1.0')
+      #doc.root = XML::Node.new("header")
+
+      #1000.times do 
+        #doc.root << XML::Node.new("footer")
+      #end
+  
+      #nodes = doc.find('/header/footer')
+      #nodes.length
+      #nodes = nil
+    #end
   #end
 end
