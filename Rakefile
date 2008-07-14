@@ -125,6 +125,7 @@ Rake::RDocTask.new("rdoc") do |rdoc|
                           'VERSION')
 end
 
+task :package => :rdoc
 task :package => :create_win32_gem
 task :default => :package
 
