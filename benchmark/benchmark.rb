@@ -4,6 +4,9 @@ require 'hpricot'
 require 'rexml/document'
 require 'libxml'
 
+
+# Taken from http://depixelate.com/2008/4/23/ruby-xml-parsing-benchmarks
+
 XML_STRING = DATA.read
 
 class Parse
