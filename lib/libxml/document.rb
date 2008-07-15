@@ -11,7 +11,7 @@ module LibXML
     # Parameters:
     # * xpath - The xpath expression as a string
     # * namespaces - An optional list of namespaces (see XML::XPath for information).
-    # * Returns - XML::XPath::Object
+    # * Returns - LibXML::XPath::Object
     #
     #  document.find('/foo', 'xlink:http://www.w3.org/1999/xlink')
     #
@@ -44,7 +44,7 @@ module LibXML
     
     # Return the first node matching the specified xpath expression.
     # For more information, please refer to the documentation
-    # for XML::Document#find.
+    # for LibXML::Document#find.
     def find_first(xpath, nslist = nil)
       find(xpath, nslist).first
     end
