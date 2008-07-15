@@ -39,14 +39,10 @@ module LibXML
       not parent.nil?
     end
     
-    alias :child :first
-    
     # Determines whether this node has a first node
     def first?
       not first.nil?
     end
-    alias :child? :first?  
-    alias :children? :first?  
     
     # Returns this node's children as an array.
     def children
@@ -125,5 +121,10 @@ module LibXML
     def clone
       copy(false)
     end
+
+    alias :child? :first?  
+    alias :children? :first?  
+    alias :child :first
+    alias :each :each_child
   end
 end
