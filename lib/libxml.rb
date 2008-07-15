@@ -3,7 +3,6 @@
 
 require 'libxml_ruby'
 
-require 'libxml/sibling_enum'
 require 'libxml/parser'
 require 'libxml/parser_options'
 require 'libxml/document'
@@ -11,6 +10,7 @@ require 'libxml/node'
 require 'libxml/node_set'
 require 'libxml/attributes'
 require 'libxml/attr'
+require 'libxml/tree'
 
 # Deprecated
 require 'libxml/properties'

@@ -62,7 +62,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="msvcrt-ruby18.lib libxml2.lib"
-				OutputFile="C:\Development\ruby\lib\ruby\gems\1.8\gems\libxml-ruby-0.7.1-x86-mswin32-60\lib\$(ProjectName).so"
+				OutputFile="C:\Development\ruby\lib\ruby\gems\1.8\gems\libxml-ruby-0.8.0-x86-mswin32-60\lib\$(ProjectName).so"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="C:\Development\ruby\lib;&quot;C:\Development\msys\src\libxml2-2.6.32\win32\lib&quot;"
 				GenerateDebugInformation="true"
@@ -251,10 +251,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\ext\libxml\ruby_xml_tree.c"
-				>
-			</File>
-			<File
 				RelativePath="..\ext\libxml\ruby_xml_xinclude.c"
 				>
 			</File>
@@ -346,10 +342,6 @@
 			</File>
 			<File
 				RelativePath="..\ext\libxml\ruby_xml_state.h"
-				>
-			</File>
-			<File
-				RelativePath="..\ext\libxml\ruby_xml_tree.h"
 				>
 			</File>
 			<File

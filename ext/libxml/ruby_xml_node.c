@@ -35,7 +35,6 @@ ruby_xml_node_attribute_q(VALUE self) {
     return(Qfalse);
 }
 
-
 /*
  * call-seq:
  *    node.attribute_decl? -> (true|false)
@@ -206,91 +205,22 @@ ruby_xml_node_content_stripped_get(VALUE self) {
 
 /*
  * call-seq:
- *    node.child -> node
+ *    node.first -> LibXML::Node
  * 
- * Obtain this node's first child node, if any.
+ * Returns this node's first child node if any.
  */
 VALUE
-ruby_xml_node_child_get(VALUE self) {
+ruby_xml_node_first_get(VALUE self) {
   xmlNodePtr xnode;
-  xmlNodePtr tmp;
 
   Data_Get_Struct(self, xmlNode, xnode);
 
-  switch (xnode->type) {
-  case XML_ELEMENT_NODE:
-  case XML_ENTITY_REF_NODE:
-  case XML_ENTITY_NODE:
-  case XML_PI_NODE:
-  case XML_COMMENT_NODE:
-  case XML_DOCUMENT_NODE:
-#ifdef LIBXML_DOCB_ENABLED
-  case XML_DOCB_DOCUMENT_NODE:
-#endif
-  case XML_HTML_DOCUMENT_NODE:
-  case XML_DTD_NODE:
-    tmp = xnode->children;
-    break;
-  case XML_ATTRIBUTE_NODE:
-    {
-      xmlAttrPtr attr = (xmlAttrPtr) xnode;
-      tmp = attr->children;
-      break;
-    }
-  default:
-    tmp = NULL;
-    break;
-  }
-
-  if (tmp == NULL)
+  if (xnode->children)
+    return(ruby_xml_node2_wrap(cXMLNode, xnode->children));
+  else
     return(Qnil);
-  else
-    return(ruby_xml_node2_wrap(cXMLNode, tmp));
 }
 
-
-/*
- * call-seq:
- *    node.child? -> (true|false)
- * 
- * Determine whether this node has at least one child.
- */
-VALUE
-ruby_xml_node_child_q(VALUE self) {
-  xmlNodePtr xnode;
-  xmlNodePtr node;
-  Data_Get_Struct(self, xmlNode, xnode);
-
-  node = NULL;
-  switch (xnode->type) {
-  case XML_ELEMENT_NODE:
-  case XML_ENTITY_REF_NODE:
-  case XML_ENTITY_NODE:
-  case XML_PI_NODE:
-  case XML_COMMENT_NODE:
-  case XML_DOCUMENT_NODE:
-#ifdef LIBXML_DOCB_ENABLED
-  case XML_DOCB_DOCUMENT_NODE:
-#endif
-  case XML_HTML_DOCUMENT_NODE:
-  case XML_DTD_NODE:
-    node = xnode->children;
-    break;
-  case XML_ATTRIBUTE_NODE:
-    {
-      xmlAttrPtr attr = (xmlAttrPtr) xnode;
-      node = attr->children;
-      break;
-    }
-  default:
-    node = NULL;
-  }
-
-  if (node == NULL)
-    return(Qfalse);
-  else
-    return(Qtrue);
-}
 
 /*
  * underlying for child_set and child_add, difference being
@@ -335,7 +265,7 @@ ruby_xml_node_child_set(VALUE self, VALUE rnode) {
 
 /*
  * call-seq:
- *    node << ("string" | node) -> node
+ *    node << ("string" | node) -> LibXML::Node
  * 
  * Add the specified string or LibXML::Node to this node's
  * content.
@@ -541,6 +471,26 @@ ruby_xml_node_debug_dump(VALUE self) {
 
 /*
  * call-seq:
+ *    node.each -> LibXML::Node
+ * 
+ * Iterate over this node's children
+ */
+VALUE
+ruby_xml_node_each(VALUE self) {
+  xmlNodePtr xnode;
+  xmlNodePtr xchild;
+  Data_Get_Struct(self, xmlNode, xnode);
+
+  xchild = xnode->children;
+  
+  while (xchild) {
+    rb_yield(ruby_xml_node2_wrap(cXMLNode, xchild));
+    xchild = xchild->next;
+  }
+}
+
+/*
+ * call-seq:
  *    node.element? -> (true|false)
  * 
  * Determine whether this is an element node.
@@ -681,7 +631,7 @@ ruby_xml_node_html_doc_q(VALUE self) {
 
 /*
  * call-seq:
- *    LibXML::Node.new_cdata(content = nil) -> node
+ *    LibXML::Node.new_cdata(content = nil) -> LibXML::Node
  * 
  * Create a new #CDATA node, optionally setting
  * the node's content.
@@ -717,7 +667,7 @@ ruby_xml_node_new_cdata(int argc, VALUE *argv, VALUE class) {
 
 /*
  * call-seq:
- *    LibXML::Node.new_comment(content = nil) -> node
+ *    LibXML::Node.new_comment(content = nil) -> LibXML::Node
  * 
  * Create a new comment node, optionally setting
  * the node's content.
@@ -801,91 +751,21 @@ ruby_xml_node_lang_set(VALUE self, VALUE lang) {
 
 /*
  * call-seq:
- *    node.last -> node
+ *    node.last -> LibXML::Node
  * 
  * Obtain the last child node of this node, if any.
  */
 VALUE
 ruby_xml_node_last_get(VALUE self) {
   xmlNodePtr xnode;
-  xmlNodePtr node;
 
   Data_Get_Struct(self, xmlNode, xnode);
 
-  switch (xnode->type) {
-  case XML_ELEMENT_NODE:
-  case XML_ENTITY_REF_NODE:
-  case XML_ENTITY_NODE:
-  case XML_PI_NODE:
-  case XML_COMMENT_NODE:
-  case XML_DOCUMENT_NODE:
-#ifdef LIBXML_DOCB_ENABLED
-  case XML_DOCB_DOCUMENT_NODE:
-#endif
-  case XML_HTML_DOCUMENT_NODE:
-  case XML_DTD_NODE:
-    node = xnode->last;
-    break;
-  case XML_ATTRIBUTE_NODE:
-    {
-      xmlAttrPtr attr = (xmlAttrPtr) xnode;
-      node = attr->last;
-    }
-  default:
-    node = NULL;
-    break;
-  }
-
-  if (node == NULL)
+  if (xnode->last)
+    return(ruby_xml_node2_wrap(cXMLNode, xnode->last));
+  else
     return(Qnil);
-  else
-    return(ruby_xml_node2_wrap(cXMLNode, node));
 }
-
-
-/*
- * call-seq:
- *    node.last? -> (true|false)
- * 
- * Determine whether this node has a last child node.
- */
-VALUE
-ruby_xml_node_last_q(VALUE self) {
-  xmlNodePtr xnode;
-  xmlNodePtr node;
-
-  Data_Get_Struct(self, xmlNode, xnode);
-
-  switch (xnode->type) {
-  case XML_ELEMENT_NODE:
-  case XML_ENTITY_REF_NODE:
-  case XML_ENTITY_NODE:
-  case XML_PI_NODE:
-  case XML_COMMENT_NODE:
-  case XML_DOCUMENT_NODE:
-#ifdef LIBXML_DOCB_ENABLED
-  case XML_DOCB_DOCUMENT_NODE:
-#endif
-  case XML_HTML_DOCUMENT_NODE:
-  case XML_DTD_NODE:
-    node = xnode->last;
-    break;
-  case XML_ATTRIBUTE_NODE:
-    {
-      xmlAttrPtr attr = (xmlAttrPtr) xnode;
-      node = attr->last;
-    }
-  default:
-    node = NULL;
-    break;
-  }
-
-  if (node == NULL)
-    return(Qfalse);
-  else
-    return(Qtrue);
-}
-
 
 /*
  * call-seq:
@@ -1312,8 +1192,8 @@ ruby_xml_node2_new_string(VALUE class, VALUE ns, VALUE name, VALUE val)
 }
 /*
  * call-seq:
- *    LibXML::Node.new(name, content = nil) -> node
- *    LibXML::Node.new_element(name, content = nil) -> node
+ *    LibXML::Node.new(name, content = nil) -> LibXML::Node
+ *    LibXML::Node.new_element(name, content = nil) -> LibXML::Node
  * 
  * Create a new element node with the specified name, optionally setting
  * the node's content.
@@ -1341,90 +1221,20 @@ ruby_xml_node2_new_string_bc(int argc, VALUE *argv, VALUE class)
 
 /*
  * call-seq:
- *    node.next -> node
+ *    node.next -> LibXML::Node
  * 
  * Obtain the next sibling node, if any.
  */
 VALUE
 ruby_xml_node_next_get(VALUE self) {
   xmlNodePtr xnode;
-  xmlNodePtr node;
+
   Data_Get_Struct(self, xmlNode, xnode);
 
-  switch (xnode->type) {
-  case XML_DOCUMENT_NODE:
-#ifdef LIBXML_DOCB_ENABLED
-  case XML_DOCB_DOCUMENT_NODE:
-#endif
-  case XML_HTML_DOCUMENT_NODE:
-    node = NULL;
-    break;
-  case XML_ATTRIBUTE_NODE:
-    {
-      xmlAttrPtr attr = (xmlAttrPtr) xnode;
-      node = (xmlNodePtr) attr->next;
-      break;
-    }
-  case XML_NAMESPACE_DECL:
-    {
-      xmlNsPtr ns = (xmlNsPtr) xnode;
-      node = (xmlNodePtr) ns->next;
-      break;
-    }
-  default:
-    node = xnode->next;
-    break;
-  }
-
-  if (node == NULL) {
-    return(Qnil);
-  } else {
-    return(ruby_xml_node2_wrap(cXMLNode, node));
-  }
-}
-
-
-/*
- * call-seq:
- *    node.next? -> (true|false)
- * 
- * Determine whether this node has a next sibling.
- */
-VALUE
-ruby_xml_node_next_q(VALUE self) {
-  xmlNodePtr xnode;
-  xmlNodePtr node;
-  Data_Get_Struct(self, xmlNode, xnode);
-
-  switch (xnode->type) {
-  case XML_DOCUMENT_NODE:
-#ifdef LIBXML_DOCB_ENABLED
-  case XML_DOCB_DOCUMENT_NODE:
-#endif
-  case XML_HTML_DOCUMENT_NODE:
-    node = NULL;
-    break;
-  case XML_ATTRIBUTE_NODE:
-    {
-      xmlAttrPtr attr = (xmlAttrPtr) xnode;
-      node = (xmlNodePtr) attr->next;
-      break;
-    }
-  case XML_NAMESPACE_DECL:
-    {
-      xmlNsPtr ns = (xmlNsPtr) xnode;
-      node = (xmlNodePtr) ns->next;
-      break;
-    }
-  default:
-    node = xnode->next;
-    break;
-  }
-
-  if (node == NULL)
-    return(Qfalse);
+  if (xnode->next)
+    return(ruby_xml_node2_wrap(cXMLNode, xnode->next));
   else
-    return(Qtrue);
+    return(Qnil);
 }
 
 
@@ -1523,89 +1333,20 @@ ruby_xml_node_ns_def_q(VALUE self) {
 
 /*
  * call-seq:
- *    node.parent -> node
+ *    node.parent -> LibXML::Node
  * 
  * Obtain this node's parent node, if any.
  */
 VALUE
 ruby_xml_node_parent_get(VALUE self) {
   xmlNodePtr xnode;
-  xmlNodePtr node;
 
   Data_Get_Struct(self, xmlNode, xnode);
 
-  switch (xnode->type) {
-  case XML_DOCUMENT_NODE:
-  case XML_HTML_DOCUMENT_NODE:
-#ifdef LIBXML_DOCB_ENABLED
-  case XML_DOCB_DOCUMENT_NODE:
-#endif
-    node = NULL;
-    break;
-  case XML_ATTRIBUTE_NODE:
-    {
-      xmlAttrPtr attr = (xmlAttrPtr) xnode;
-      node = attr->parent;
-    }
-  case XML_ENTITY_DECL:
-  case XML_NAMESPACE_DECL:
-  case XML_XINCLUDE_START:
-  case XML_XINCLUDE_END:
-    node = NULL;
-    break;
-  default:
-    node = xnode->parent;
-    break;
-  }
-
-  if (node == NULL)
+  if (xnode->parent)
+    return(ruby_xml_node2_wrap(cXMLNode, xnode->parent));
+  else
     return(Qnil);
-  else
-    return(ruby_xml_node2_wrap(cXMLNode, node));
-}
-
-
-/*
- * call-seq:
- *    node.parent? -> (true|false)
- * 
- * Determine whether this node has a parent node.
- */
-VALUE
-ruby_xml_node_parent_q(VALUE self) {
-  xmlNodePtr xnode;
-  xmlNodePtr node;
-
-  Data_Get_Struct(self, xmlNode, xnode);
-
-  switch (xnode->type) {
-  case XML_DOCUMENT_NODE:
-  case XML_HTML_DOCUMENT_NODE:
-#ifdef LIBXML_DOCB_ENABLED
-  case XML_DOCB_DOCUMENT_NODE:
-#endif
-    node = NULL;
-    break;
-  case XML_ATTRIBUTE_NODE:
-    {
-      xmlAttrPtr attr = (xmlAttrPtr) xnode;
-      node = attr->parent;
-    }
-  case XML_ENTITY_DECL:
-  case XML_NAMESPACE_DECL:
-  case XML_XINCLUDE_START:
-  case XML_XINCLUDE_END:
-    node = NULL;
-    break;
-  default:
-    node = xnode->parent;
-    break;
-  }
-
-  if (node == NULL)
-    return(Qfalse);
-  else
-    return(Qtrue);
 }
 
 
@@ -1649,7 +1390,7 @@ ruby_xml_node_pi_q(VALUE self) {
 
 /*
  * call-seq:
- *    node.pointer -> node_set
+ *    node.pointer -> LibXML::Node_set
  * 
  * Evaluates an XPointer expression relative to this node.
  */
@@ -1661,7 +1402,7 @@ ruby_xml_node_pointer(VALUE self, VALUE xptr_str) {
 
 /*
  * call-seq:
- *    node.prev -> node
+ *    node.prev -> LibXML::Node
  * 
  * Obtain the previous sibling, if any.
  */
@@ -1695,46 +1436,6 @@ ruby_xml_node_prev_get(VALUE self) {
     return(Qnil);
   else
     return(ruby_xml_node2_wrap(cXMLNode, node));
-}
-
-
-/*
- * call-seq:
- *    node.prev? -> (true|false)
- * 
- * Determines whether this node has a previous sibling node.
- */
-VALUE
-ruby_xml_node_prev_q(VALUE self) {
-  xmlNodePtr xnode;
-  xmlNodePtr node;
-
-  Data_Get_Struct(self, xmlNode, xnode);
-
-  switch (xnode->type) {
-  case XML_DOCUMENT_NODE:
-#ifdef LIBXML_DOCB_ENABLED
-  case XML_DOCB_DOCUMENT_NODE:
-#endif
-  case XML_HTML_DOCUMENT_NODE:
-  case XML_NAMESPACE_DECL:
-    node = NULL;
-    break;
-  case XML_ATTRIBUTE_NODE:
-    {
-      xmlAttrPtr attr = (xmlAttrPtr) xnode;
-      node = (xmlNodePtr) attr->prev;
-    }
-    break;
-  default:
-    node = xnode->prev;
-    break;
-  }
-
-  if (node == NULL)
-    return(Qfalse);
-  else
-    return(Qtrue);
 }
 
 
@@ -1876,7 +1577,7 @@ ruby_xml_node_search_ns(VALUE self, VALUE ns) {
 
 /*
  * call-seq:
- *    node.sibling(node) -> node
+ *    node.sibling(node) -> LibXML::Node
  * 
  * Add the specified node as a sibling of this node.
  */
@@ -1994,69 +1695,6 @@ ruby_xml_node_type(VALUE self) {
 
 /*
  * call-seq:
- *    node.type_name -> num
- * 
- * Obtain this node's type name.
- */
-VALUE
-ruby_xml_node_type_name(VALUE self) {
-  xmlNodePtr xnode;
-  Data_Get_Struct(self, xmlNode, xnode);
-
-  switch(xnode->type) {
-  case XML_ELEMENT_NODE:
-    return(rb_str_new2("element"));
-  case XML_ATTRIBUTE_NODE:
-    return(rb_str_new2("attribute"));
-  case XML_TEXT_NODE:
-    return(rb_str_new2("text"));
-  case XML_CDATA_SECTION_NODE:
-    return(rb_str_new2("cdata"));
-  case XML_ENTITY_REF_NODE:
-    return(rb_str_new2("entity_ref"));
-  case XML_ENTITY_NODE:
-    return(rb_str_new2("entity"));
-  case XML_PI_NODE:
-    return(rb_str_new2("pi"));
-  case XML_COMMENT_NODE:
-    return(rb_str_new2("comment"));
-  case XML_DOCUMENT_NODE:
-    return(rb_str_new2("document_xml"));
-  case XML_DOCUMENT_TYPE_NODE:
-    return(rb_str_new2("doctype"));
-  case XML_DOCUMENT_FRAG_NODE:
-    return(rb_str_new2("fragment"));
-  case XML_NOTATION_NODE:
-    return(rb_str_new2("notation"));
-  case XML_HTML_DOCUMENT_NODE:
-    return(rb_str_new2("document_html"));
-  case XML_DTD_NODE:
-    return(rb_str_new2("dtd"));
-  case XML_ELEMENT_DECL:
-    return(rb_str_new2("elem_decl"));
-  case XML_ATTRIBUTE_DECL:
-    return(rb_str_new2("attribute_decl"));
-  case XML_ENTITY_DECL:
-    return(rb_str_new2("entity_decl"));
-  case XML_NAMESPACE_DECL:
-    return(rb_str_new2("namespace"));
-  case XML_XINCLUDE_START:
-    return(rb_str_new2("xinclude_start"));
-  case XML_XINCLUDE_END:
-    return(rb_str_new2("xinclude_end"));
-#ifdef LIBXML_DOCB_ENABLED
-  case XML_DOCB_DOCUMENT_NODE:
-    return(rb_str_new2("document_docbook"));
-#endif
-  default:
-    rb_raise(eXMLNodeUnknownType, "Unknown node type: %n", xnode->type);
-    return(Qfalse);
-  }
-}
-
-
-/*
- * call-seq:
  *    node.xinclude_end? -> num
  * 
  * Determine whether this node is an xinclude end node.
@@ -2091,7 +1729,7 @@ ruby_xml_node_xinclude_start_q(VALUE self) {
 
 /*
  * call-seq:
- *    node.copy -> node
+ *    node.copy -> LibXML::Node
  * 
  * Create a copy of this node.
  */
@@ -2112,7 +1750,7 @@ ruby_xml_node_copy(VALUE self, VALUE deep) {
 
  /*
  * call-seq: 
- *    LibXML::Node.new_text(content = nil) -> node
+ *    LibXML::Node.new_text(content = nil) -> LibXML::Node
  * 
  * Create a new text node, optionally setting
  * the node's content.
@@ -2184,6 +1822,34 @@ ruby_init_xml_node(void) {
   rb_define_const(cXMLNode, "XLINK_TYPE_EXTENDED_SET", INT2NUM(3));
   rb_define_const(cXMLNode, "XLINK_TYPE_NONE", INT2NUM(0));
   rb_define_const(cXMLNode, "XLINK_TYPE_SIMPLE", INT2NUM(1));
+  
+  rb_define_const(cXMLNode, "ELEMENT_NODE", INT2FIX(XML_ELEMENT_NODE));
+  rb_define_const(cXMLNode, "ATTRIBUTE_NODE", INT2FIX(XML_ATTRIBUTE_NODE));
+  rb_define_const(cXMLNode, "TEXT_NODE", INT2FIX(XML_TEXT_NODE));
+  rb_define_const(cXMLNode, "CDATA_SECTION_NODE", INT2FIX(XML_CDATA_SECTION_NODE));
+  rb_define_const(cXMLNode, "ENTITY_REF_NODE", INT2FIX(XML_ENTITY_REF_NODE));
+  rb_define_const(cXMLNode, "ENTITY_NODE", INT2FIX(XML_ENTITY_NODE));
+  rb_define_const(cXMLNode, "PI_NODE", INT2FIX(XML_PI_NODE));
+  rb_define_const(cXMLNode, "COMMENT_NODE", INT2FIX(XML_COMMENT_NODE));
+  rb_define_const(cXMLNode, "DOCUMENT_NODE", INT2FIX(XML_DOCUMENT_NODE));
+  rb_define_const(cXMLNode, "DOCUMENT_TYPE_NODE", INT2FIX(XML_DOCUMENT_TYPE_NODE));
+  rb_define_const(cXMLNode, "DOCUMENT_FRAG_NODE", INT2FIX(XML_DOCUMENT_FRAG_NODE));
+  rb_define_const(cXMLNode, "NOTATION_NODE", INT2FIX(XML_NOTATION_NODE));
+  rb_define_const(cXMLNode, "HTML_DOCUMENT_NODE", INT2FIX(XML_HTML_DOCUMENT_NODE));
+  rb_define_const(cXMLNode, "DTD_NODE", INT2FIX(XML_DTD_NODE));
+  rb_define_const(cXMLNode, "ELEMENT_DECL", INT2FIX(XML_ELEMENT_DECL));
+  rb_define_const(cXMLNode, "ATTRIBUTE_DECL", INT2FIX(XML_ATTRIBUTE_DECL));
+  rb_define_const(cXMLNode, "ENTITY_DECL", INT2FIX(XML_ENTITY_DECL));
+  rb_define_const(cXMLNode, "NAMESPACE_DECL", INT2FIX(XML_NAMESPACE_DECL));
+  rb_define_const(cXMLNode, "XINCLUDE_START", INT2FIX(XML_XINCLUDE_START));
+  rb_define_const(cXMLNode, "XINCLUDE_END", INT2FIX(XML_XINCLUDE_END));
+
+#ifdef LIBXML_DOCB_ENABLED
+  rb_define_const(cXMLNode, "DOCB_DOCUMENT_NODE", INT2FIX(XML_DOCB_DOCUMENT_NODE));
+#else
+  rb_define_const(cXMLNode, "DOCB_DOCUMENT_NODE", Qnil);
+#endif
+  
 
   rb_define_singleton_method(cXMLNode, "new2", ruby_xml_node2_new_native, 2);
   rb_define_singleton_method(cXMLNode, "new", ruby_xml_node2_new_string_bc, -1);
@@ -2191,9 +1857,27 @@ ruby_init_xml_node(void) {
   rb_define_singleton_method(cXMLNode, "new_comment", ruby_xml_node_new_comment, -1); 
   rb_define_singleton_method(cXMLNode, "new_text", ruby_xml_node_new_text, 1); 
   
-  rb_define_method(cXMLNode, "<<", ruby_xml_node_content_add, 1);
+  /* Traversal */
+  rb_include_module(cXMLNode, rb_mEnumerable);
   rb_define_method(cXMLNode, "[]", ruby_xml_node_property_get, 1);
+  rb_define_method(cXMLNode, "each", ruby_xml_node_each, 0);
+  rb_define_method(cXMLNode, "first", ruby_xml_node_first_get, 0);
+  rb_define_method(cXMLNode, "last", ruby_xml_node_last_get, 0);
+  rb_define_method(cXMLNode, "next", ruby_xml_node_next_get, 0);
+  rb_define_method(cXMLNode, "parent", ruby_xml_node_parent_get, 0);
+  rb_define_method(cXMLNode, "prev", ruby_xml_node_prev_get, 0);
+
+  /* Modification */
+  rb_define_method(cXMLNode, "<<", ruby_xml_node_content_add, 1);
   rb_define_method(cXMLNode, "[]=", ruby_xml_node_property_set, 2);
+  rb_define_method(cXMLNode, "child_add", ruby_xml_node_child_add, 1);
+  rb_define_method(cXMLNode, "child=", ruby_xml_node_child_set, 1);
+  rb_define_method(cXMLNode, "sibling=", ruby_xml_node_sibling_set, 1);
+  rb_define_method(cXMLNode, "next=", ruby_xml_node_next_set, 1);
+  rb_define_method(cXMLNode, "prev=", ruby_xml_node_prev_set, 1);
+
+ 
+  /* Rest of the node api */
   rb_define_method(cXMLNode, "attribute?", ruby_xml_node_attribute_q, 0);
   rb_define_method(cXMLNode, "attribute_decl?", ruby_xml_node_attribute_decl_q, 0);
   rb_define_method(cXMLNode, "attributes", ruby_xml_node_attributes_get, 0);
@@ -2204,12 +1888,6 @@ ruby_init_xml_node(void) {
   rb_define_method(cXMLNode, "cdata?", ruby_xml_node_cdata_q, 0);
   rb_define_method(cXMLNode, "comment?", ruby_xml_node_comment_q, 0);
   rb_define_method(cXMLNode, "copy", ruby_xml_node_copy, 1);
-  rb_define_method(cXMLNode, "child", ruby_xml_node_child_get, 0);
-  rb_define_method(cXMLNode, "child?", ruby_xml_node_child_q, 0);
-  rb_define_method(cXMLNode, "child=", ruby_xml_node_child_set, 1);
-  rb_define_method(cXMLNode, "child_add", ruby_xml_node_child_add, 1);
-  rb_define_method(cXMLNode, "children", ruby_xml_node_child_get, 0);
-  rb_define_method(cXMLNode, "children?", ruby_xml_node_child_q, 0);
   rb_define_method(cXMLNode, "content", ruby_xml_node_content_get, 0);
   rb_define_method(cXMLNode, "content=", ruby_xml_node_content_set, 1);
   rb_define_method(cXMLNode, "content_stripped", ruby_xml_node_content_stripped_get, 0);
@@ -2230,8 +1908,6 @@ ruby_init_xml_node(void) {
   rb_define_method(cXMLNode, "html_doc?", ruby_xml_node_html_doc_q, 0);
   rb_define_method(cXMLNode, "lang", ruby_xml_node_lang_get, 0);
   rb_define_method(cXMLNode, "lang=", ruby_xml_node_lang_set, 1);
-  rb_define_method(cXMLNode, "last", ruby_xml_node_last_get, 0);
-  rb_define_method(cXMLNode, "last?", ruby_xml_node_last_q, 0);
   rb_define_method(cXMLNode, "line_num", ruby_xml_node_line_num, 0);
   rb_define_method(cXMLNode, "name", ruby_xml_node_name_get, 0);
   rb_define_method(cXMLNode, "name=", ruby_xml_node_name_set, 1);
@@ -2239,9 +1915,6 @@ ruby_init_xml_node(void) {
   rb_define_method(cXMLNode, "namespace_node", ruby_xml_node_namespace_get_node, 0);
   rb_define_method(cXMLNode, "namespace?", ruby_xml_node_namespace_q, 0);  
   rb_define_method(cXMLNode, "namespace=", ruby_xml_node_namespace_set, -1);  
-  rb_define_method(cXMLNode, "next", ruby_xml_node_next_get, 0);
-  rb_define_method(cXMLNode, "next?", ruby_xml_node_next_q, 0);
-  rb_define_method(cXMLNode, "next=", ruby_xml_node_next_set, 1);
   rb_define_method(cXMLNode, "node_type", ruby_xml_node_type, 0);
   rb_define_method(cXMLNode, "node_type_name", ruby_xml_node_type_name, 0);
   rb_define_method(cXMLNode, "notation?", ruby_xml_node_notation_q, 0);
@@ -2249,18 +1922,12 @@ ruby_init_xml_node(void) {
   rb_define_method(cXMLNode, "ns?", ruby_xml_node_ns_q, 0);
   rb_define_method(cXMLNode, "ns_def", ruby_xml_node_ns_def_get, 0);
   rb_define_method(cXMLNode, "ns_def?", ruby_xml_node_ns_def_q, 0);
-  rb_define_method(cXMLNode, "parent", ruby_xml_node_parent_get, 0);
-  rb_define_method(cXMLNode, "parent?", ruby_xml_node_parent_q, 0);
   rb_define_method(cXMLNode, "path", ruby_xml_node_path, 0);
   rb_define_method(cXMLNode, "pi?", ruby_xml_node_pi_q, 0);
   rb_define_method(cXMLNode, "pointer", ruby_xml_node_pointer, 1);
-  rb_define_method(cXMLNode, "prev", ruby_xml_node_prev_get, 0);
-  rb_define_method(cXMLNode, "prev?", ruby_xml_node_prev_q, 0);
-  rb_define_method(cXMLNode, "prev=", ruby_xml_node_prev_set, 1);
   rb_define_method(cXMLNode, "remove!", ruby_xml_node_remove_ex, 0);
   rb_define_method(cXMLNode, "search_ns", ruby_xml_node_search_ns, 1);
   rb_define_method(cXMLNode, "search_href", ruby_xml_node_search_href, 1);
-  rb_define_method(cXMLNode, "sibling=", ruby_xml_node_sibling_set, 1);
   rb_define_method(cXMLNode, "space_preserve", ruby_xml_node_space_preserve_get, 0);
   rb_define_method(cXMLNode, "space_preserve=", ruby_xml_node_space_preserve_set, 1);
   rb_define_method(cXMLNode, "text?", ruby_xml_node_text_q, 0);

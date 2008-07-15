@@ -41,7 +41,6 @@ Init_libxml_ruby(void) {
   ruby_init_xml_node_set();
   ruby_init_xml_ns();
   ruby_init_xml_sax_parser();
-  ruby_init_xml_tree();
   ruby_init_xml_xinclude();
   ruby_init_xml_xpath();
   ruby_init_xml_xpath_context();

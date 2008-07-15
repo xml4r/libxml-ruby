@@ -3,9 +3,6 @@
 
 module LibXML
   class Node
-    include LibXML::SiblingEnum
-    include Enumerable
-    
     # Return nodes matching the specified xpath expression.
     # For more information, please refer to the documentation
     # for LibXML::Document#find.
@@ -31,30 +28,95 @@ module LibXML
       find(xpath, nslist).first
     end
     
-    # maybe these don't belong on all nodes...
-    def each_child(&blk)
-      siblings(child, &blk)   
-    end
-
-    def each_attr(&blk)
-      siblings(properties, &blk)
-    end
-
-    # all siblings INCLUDING self
-    def each_sibling(&blk)
-      siblings(self, &blk)
-    end
-  
-    # I guess this is what you'd expect?
-    alias :each :each_child
-
-    def to_a
-      inject([]) do |ary,n|
-        ary << n
-        ary
+    def each_element
+      each do |node|
+        yield(node) if node.node_type == ELEMENT_NODE
       end
     end
 
+    # Determines whether this node has a parent node
+    def parent?
+      parent != Qnil
+    end
+    
+    alias :child :first
+    
+    # Determines whether this node has a first node
+    def first?
+      first != Qnil
+    end
+    alias :child? :first?  
+    alias :children? :first?  
+    
+    # Returns this node's children as an array.
+    def children
+      entries
+    end
+    
+    # Determines whether this node has a previous node
+    def previous?
+      previous != Qnil
+    end
+    
+    # Determines whether this node has a last node
+    def last?
+      last != Qnil
+    end
+
+    # Returns this node's type name    
+    def node_type_name
+      case node_type
+        when ELEMENT_NODE:
+          'element'
+        when ATTRIBUTE_NODE:
+          'attribute'
+        when TEXT_NODE:
+          'text'
+        when CDATA_SECTION_NODE:
+          'cdata'
+        when ENTITY_REF_NODE:
+          'entity_ref'
+        when ENTITY_NODE:
+          'entity'
+        when PI_NODE:
+          'pi'
+        when COMMENT_NODE:
+          'comment'
+        when DOCUMENT_NODE:
+          'document_xml'
+        when DOCUMENT_TYPE_NODE:
+          'doctype'
+        when DOCUMENT_FRAG_NODE:
+          'fragment'
+        when NOTATION_NODE:
+          'notation'
+        when HTML_DOCUMENT_NODE:
+          'document_html'
+        when DTD_NODE:
+          'dtd'
+        when ELEMENT_DECL:
+          'elem_decl'
+        when ATTRIBUTE_DECL:
+          'attribute_decl'
+        when ENTITY_DECL:
+          'entity_decl'
+        when NAMESPACE_DECL:
+          'namespace'
+        when XINCLUDE_START:
+          'xinclude_start'
+        when XINCLUDE_END:
+          'xinclude_end'
+        when DOCB_DOCUMENT_NODE:
+          'document_docbook'
+        else
+          raise(UnknownType, "Unknown node type: %n", node.node_type);
+      end
+    end
+    
+    def dup
+      copy(false)
+    end
+    
     def clone
       copy(false)
     end
