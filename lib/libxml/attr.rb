@@ -3,9 +3,18 @@
 
 module LibXML
   class Attr 
-    include LibXML::SiblingEnum
     include Enumerable
 
+    # Iterates nodes and attributes
+    def siblings(node, &blk)
+      if n = node
+        loop do
+          blk.call(n)
+          break unless n = n.next
+        end
+      end 
+    end
+    
     def each_sibling(&blk)
       siblings(self,&blk)
     end
