@@ -155,7 +155,7 @@ input_callbacks_remove_scheme (VALUE self, VALUE scheme_name) {
 void
 ruby_init_input_callbacks(void) {
   VALUE cInputCallbacks;
-  cInputCallbacks = rb_define_class_under(mLibXML, "InputCallbacks", rb_cObject);
+  cInputCallbacks = rb_define_class_under(mXML, "InputCallbacks", rb_cObject);
 
   /* Class Methods */
   rb_define_singleton_method(cInputCallbacks, "register",      input_callbacks_register_input_callbacks, 0);

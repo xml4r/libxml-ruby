@@ -8,11 +8,11 @@
 
 
 /*
- * Document-class: LibXML::XPath::Context
+ * Document-class: XML::XPath::Context
  * 
- * The LibXML::XPath::Context class is used to evaluate XPath
+ * The XML::XPath::Context class is used to evaluate XPath
  * expressions.  Generally, you should not directly use this class,
- * but instead use the LibXML::Document#find and LibXML::Node#find methods.
+ * but instead use the XML::Document#find and XML::Node#find methods.
  *
  *  doc = XML::Document.string('<header>content</header>')
  *  context = XPath::Context.new(doc)
@@ -239,7 +239,7 @@ ruby_xml_xpath_context_node_set(VALUE self, VALUE node) {
 
 /*
  * call-seq:
- *    context.find("xpath") -> LibXML::XPath::Object
+ *    context.find("xpath") -> XML::XPath::Object
  * 
  * Find nodes matching the specified XPath expression
  */

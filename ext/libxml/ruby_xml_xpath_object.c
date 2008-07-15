@@ -3,7 +3,7 @@
 #include "ruby_libxml.h"
 
 /*
- * Document-class: LibXML::XPath::Object
+ * Document-class: XML::XPath::Object
  *
  * A collection of nodes returned from the evaluation of an XPath
  * or XPointer expression. 
@@ -237,7 +237,7 @@ ruby_xml_xpath_object_length(VALUE self) {
  * 
  * Returns the XPath type of the result object. 
  * Possible values are defined as constants
- * on the LibXML::XPath class and include:
+ * on the XML::XPath class and include:
  * 
  * * XML::XPath::UNDEFINED
  * * XML::XPath::NODESET

@@ -136,7 +136,7 @@ ruby_xml_schema_init_from_string(VALUE self, VALUE schema_str) {
 */
 
 void  ruby_init_xml_schema(void) {
-  cXMLSchema = rb_define_class_under(mLibXML, "Schema", rb_cObject);
+  cXMLSchema = rb_define_class_under(mXML, "Schema", rb_cObject);
   rb_define_singleton_method(cXMLSchema, "new",         ruby_xml_schema_init_from_uri, 1);
   rb_define_singleton_method(cXMLSchema, "from_string", ruby_xml_schema_init_from_string, 1);
   rb_define_singleton_method(cXMLSchema, "document",    ruby_xml_schema_init_from_document, 1);

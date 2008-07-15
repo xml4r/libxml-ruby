@@ -52,7 +52,7 @@ ruby_xml_attributes_new(xmlNodePtr xnode)
 
 /*
  * call-seq:
- *   attributes.node -> LibXML::Node
+ *   attributes.node -> XML::Node
  * 
  * Return the node that owns this attributes list.
  *
@@ -68,7 +68,7 @@ ruby_xml_attributes_node_get(VALUE self) {
 
 /*
  * call-seq:
- *    attributes.get_attribute("name") -> LibXML::Attr
+ *    attributes.get_attribute("name") -> XML::Attr
  * 
  * Returns the specified attribute.
  * 
@@ -95,7 +95,7 @@ ruby_xml_attributes_get_attribute(VALUE self, VALUE name) {
 
 /*
  * call-seq:
- *    attributes.get_attribute_ns("namespace", "name") -> LibXML::Attr
+ *    attributes.get_attribute_ns("namespace", "name") -> XML::Attr
  * 
  * Returns the specified attribute.
  * 
@@ -175,7 +175,7 @@ ruby_xml_attributes_attribute_set(VALUE self, VALUE name, VALUE value) {
 
 /*
  * call-seq:
- *    attributes.each {block} -> LibXML::Attr
+ *    attributes.each {block} -> XML::Attr
  * 
  * Iterates over each attribute.
  *  
@@ -227,7 +227,7 @@ ruby_xml_attributes_length(VALUE self) {
 
 /*
  * call-seq:
- *    attributes.first -> LibXML::Attr
+ *    attributes.first -> XML::Attr
  * 
  * Returns the first attribute.
  *
@@ -255,7 +255,7 @@ ruby_xml_attributes_first(VALUE self) {
     
 void
 ruby_init_xml_attributes(void) {
-  cXMLAttributes = rb_define_class_under(mLibXML, "Attributes", rb_cObject);
+  cXMLAttributes = rb_define_class_under(mXML, "Attributes", rb_cObject);
   rb_include_module(cXMLAttributes, rb_mEnumerable);
   rb_define_method(cXMLAttributes, "node", ruby_xml_attributes_node_get, 0);
   rb_define_method(cXMLAttributes, "get_attribute", ruby_xml_attributes_get_attribute, 1);

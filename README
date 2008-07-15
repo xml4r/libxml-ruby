@@ -69,20 +69,19 @@ of a couple simple benchmarks recently blogged about on the
 Web (you can find them in the benchmark directory of the 
 libxml distribution).
 
-1. http://depixelate.com/2008/4/23/ruby-xml-parsing-benchmarks
+From http://depixelate.com/2008/4/23/ruby-xml-parsing-benchmarks
 
-              user     system      total        real
-libxml    0.032000   0.000000   0.032000 (  0.031000)
-Hpricot   0.640000   0.031000   0.671000 (  0.890000)
-REXML     1.813000   0.047000   1.860000 (  2.031000)
+               user     system      total        real
+ libxml    0.032000   0.000000   0.032000 (  0.031000)
+ Hpricot   0.640000   0.031000   0.671000 (  0.890000)
+ REXML     1.813000   0.047000   1.860000 (  2.031000)
 
+From https://svn.concord.org/svn/projects/trunk/common/ruby/xml_benchmarks/
 
-2. https://svn.concord.org/svn/projects/trunk/common/ruby/xml_benchmarks/
-
-              user     system      total        real
-libxml    0.641000   0.031000   0.672000 (  0.672000)
-hpricot   5.359000   0.062000   5.421000 (  5.516000)
-rexml    22.859000   0.047000  22.906000 ( 23.203000) 
+               user     system      total        real
+ libxml    0.641000   0.031000   0.672000 (  0.672000)
+ hpricot   5.359000   0.062000   5.421000 (  5.516000)
+ rexml    22.859000   0.047000  22.906000 ( 23.203000) 
 
 == USAGE
 

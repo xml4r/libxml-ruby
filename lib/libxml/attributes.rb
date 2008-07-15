@@ -2,11 +2,13 @@
 # Please see the LICENSE file for copyright and distribution information 
 
 module LibXML
-  class Attributes
-    def to_h
-      inject({}) do |hash, attr|
-        hash[attr.name] = attr.value
-        hash
+  module XML
+    class Attributes
+      def to_h
+        inject({}) do |hash, attr|
+          hash[attr.name] = attr.value
+          hash
+        end
       end
     end
   end

@@ -651,7 +651,7 @@ ruby_xml_parser_context_well_formed_q(VALUE self) {
 // Rdoc needs to know 
 #ifdef RDOC_NEVER_DEFINED
   mLibXML = rb_define_module("LibXML");
-  cXMLParser = rb_define_class_under(mLibXML, "Parser", rb_cObject);
+  cXMLParser = rb_define_class_under(mXML, "Parser", rb_cObject);
 #endif
 
 void

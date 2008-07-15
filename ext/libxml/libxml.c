@@ -5,6 +5,7 @@
 #include "ruby_libxml.h"
 
 VALUE mLibXML;
+VALUE mXML;
 VALUE eXMLError;
 
 
@@ -27,7 +28,8 @@ Init_libxml_ruby(void) {
 #endif
 
   mLibXML = rb_define_module("LibXML");
-  eXMLError = rb_define_class_under(mLibXML, "Error", rb_eRuntimeError);
+  mXML = rb_define_module_under(mLibXML, "XML");
+  eXMLError = rb_define_class_under(mXML, "Error", rb_eRuntimeError);
 
   rb_define_const(mLibXML, "XML_NAMESPACE", rb_str_new2((const char*)XML_XML_NAMESPACE));
 

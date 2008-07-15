@@ -6,7 +6,7 @@
 #include "ruby_xml_node_set.h"
 
 /*
- * Document-class: LibXML::Node::Set
+ * Document-class: XML::Node::Set
  * 
  * Includes Enumerable.
  */
@@ -150,7 +150,7 @@ ruby_xml_node_set_xpath_data_get(VALUE self) {
 // Rdoc needs to know 
 #ifdef RDOC_NEVER_DEFINED
 	mLibXML = rb_define_module("LibXML");
-  cXMLNode = rb_define_class_under(mLibXML, "Node", rb_cObject);
+  cXMLNode = rb_define_class_under(mXML, "Node", rb_cObject);
 #endif
 
 void

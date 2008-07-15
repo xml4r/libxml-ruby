@@ -15,6 +15,6 @@ VALUE eXMLXIncludeError;
 
 void
 ruby_init_xml_xinclude(void) {
-  cXMLXInclude = rb_define_class_under(mLibXML, "XInclude", rb_cObject);
+  cXMLXInclude = rb_define_class_under(mXML, "XInclude", rb_cObject);
   eXMLXIncludeError = rb_define_class_under(cXMLXInclude, "Error", rb_eRuntimeError);
 }

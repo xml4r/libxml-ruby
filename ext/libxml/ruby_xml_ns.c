@@ -132,7 +132,7 @@ ruby_xml_ns_prefix_q(VALUE self) {
 
 void
 ruby_init_xml_ns(void) {
-  cXMLNS = rb_define_class_under(mLibXML, "NS", rb_cObject);
+  cXMLNS = rb_define_class_under(mXML, "NS", rb_cObject);
   rb_define_alloc_func(cXMLNS, ruby_xml_ns_alloc);
   rb_define_method(cXMLNS, "initialize", ruby_xml_ns_initialize, 3);
   rb_define_method(cXMLNS, "href", ruby_xml_ns_href_get, 0);

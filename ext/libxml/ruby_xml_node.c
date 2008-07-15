@@ -205,7 +205,7 @@ ruby_xml_node_content_stripped_get(VALUE self) {
 
 /*
  * call-seq:
- *    node.first -> LibXML::Node
+ *    node.first -> XML::Node
  * 
  * Returns this node's first child node if any.
  */
@@ -231,7 +231,7 @@ ruby_xml_node_child_set_aux(VALUE self, VALUE rnode) {
   xmlNodePtr pnode, chld, ret;
 
   if (rb_obj_is_kind_of(rnode, cXMLNode) == Qfalse)
-    rb_raise(rb_eTypeError, "Must pass an LibXML::Node object");
+    rb_raise(rb_eTypeError, "Must pass an XML::Node object");
 
   Data_Get_Struct(self,  xmlNode, pnode);
   Data_Get_Struct(rnode, xmlNode, chld);
@@ -265,9 +265,9 @@ ruby_xml_node_child_set(VALUE self, VALUE rnode) {
 
 /*
  * call-seq:
- *    node << ("string" | node) -> LibXML::Node
+ *    node << ("string" | node) -> XML::Node
  * 
- * Add the specified string or LibXML::Node to this node's
+ * Add the specified string or XML::Node to this node's
  * content.
  */
 VALUE
@@ -289,7 +289,7 @@ ruby_xml_node_content_add(VALUE self, VALUE obj) {
   } else {
     str = rb_obj_as_string(obj);
     if (NIL_P(str) || TYPE(str) != T_STRING)
-      rb_raise(rb_eTypeError, "invalid argument: must be string or LibXML::Node");
+      rb_raise(rb_eTypeError, "invalid argument: must be string or XML::Node");
 
     xmlNodeAddContent(xnode, (xmlChar*)StringValuePtr(str));
     return(self);
@@ -311,7 +311,7 @@ ruby_xml_node_child_add(VALUE self, VALUE rnode) {
  * call-seq:
  *    node.doc -> document
  * 
- * Obtain the LibXML::Document this node belongs to.
+ * Obtain the XML::Document this node belongs to.
  */
 VALUE
 ruby_xml_node_doc(VALUE self) {
@@ -470,11 +470,11 @@ ruby_xml_node_debug_dump(VALUE self) {
 
 /*
  * call-seq:
- *    node.each -> LibXML::Node
+ *    node.each -> XML::Node
  * 
  * Iterates over all of this node's children, including text 
  * nodes, element nodes, etc.  If you wish to iterate
- * only over child elements, use LibXML::Node#each_element.
+ * only over child elements, use XML::Node#each_element.
  *
  *  doc = XML::Document.new('model/books.xml')
  *  doc.root.each {|node| puts node}
@@ -646,7 +646,7 @@ ruby_xml_node_html_doc_q(VALUE self) {
 
 /*
  * call-seq:
- *    LibXML::Node.new_cdata(content = nil) -> LibXML::Node
+ *    XML::Node.new_cdata(content = nil) -> XML::Node
  * 
  * Create a new #CDATA node, optionally setting
  * the node's content.
@@ -682,7 +682,7 @@ ruby_xml_node_new_cdata(int argc, VALUE *argv, VALUE class) {
 
 /*
  * call-seq:
- *    LibXML::Node.new_comment(content = nil) -> LibXML::Node
+ *    XML::Node.new_comment(content = nil) -> XML::Node
  * 
  * Create a new comment node, optionally setting
  * the node's content.
@@ -766,7 +766,7 @@ ruby_xml_node_lang_set(VALUE self, VALUE lang) {
 
 /*
  * call-seq:
- *    node.last -> LibXML::Node
+ *    node.last -> XML::Node
  * 
  * Obtain the last child node of this node, if any.
  */
@@ -797,7 +797,7 @@ ruby_xml_node_line_num(VALUE self) {
   Data_Get_Struct(self, xmlNode, xnode);
 
   if (!xmlLineNumbersDefaultValue)
-    rb_warn("Line numbers were not retained: use LibXML::Parser::default_line_numbers=true");
+    rb_warn("Line numbers were not retained: use XML::Parser::default_line_numbers=true");
 
   line_num = xmlGetLineNo(xnode);
   if (line_num == -1)
@@ -950,7 +950,7 @@ ruby_xml_node_name_set(VALUE self, VALUE name) {
  * call-seq:
  *    node.namespace -> [namespace, ..., namespace]
  * 
- * Obtain an array of +LibXML::NS+ objects representing
+ * Obtain an array of +XML::NS+ objects representing
  * this node's xmlns attributes
  */
 VALUE
@@ -1010,7 +1010,7 @@ ruby_xml_node_namespace_get_node(VALUE self) {
  * call-seq:
  *    node.namespace = namespace
  * 
- * Add the specified LibXML::NS object to this node's xmlns attributes.
+ * Add the specified XML::NS object to this node's xmlns attributes.
  */
 VALUE
 ruby_xml_node_namespace_set(int argc, VALUE *argv, VALUE self) {
@@ -1037,7 +1037,7 @@ ruby_xml_node_namespace_set(int argc, VALUE *argv, VALUE self) {
       xmlSetNs(xnode, xns);
       return(rns);
     } else
-      rb_raise(rb_eTypeError, "must pass a string or an LibXML::Ns object");
+      rb_raise(rb_eTypeError, "must pass a string or an XML::Ns object");
 
     /* Fall through to next case because when argc == 1, we need to
      * manually setup the additional args unless the arg passed is of
@@ -1207,8 +1207,8 @@ ruby_xml_node2_new_string(VALUE class, VALUE ns, VALUE name, VALUE val)
 }
 /*
  * call-seq:
- *    LibXML::Node.new(name, content = nil) -> LibXML::Node
- *    LibXML::Node.new_element(name, content = nil) -> LibXML::Node
+ *    XML::Node.new(name, content = nil) -> XML::Node
+ *    XML::Node.new_element(name, content = nil) -> XML::Node
  * 
  * Create a new element node with the specified name, optionally setting
  * the node's content.
@@ -1236,7 +1236,7 @@ ruby_xml_node2_new_string_bc(int argc, VALUE *argv, VALUE class)
 
 /*
  * call-seq:
- *    node.next -> LibXML::Node
+ *    node.next -> XML::Node
  * 
  * Obtain the next sibling node, if any.
  */
@@ -1264,7 +1264,7 @@ ruby_xml_node_next_set(VALUE self, VALUE rnode) {
   xmlNodePtr cnode, pnode, ret;
 
   if (rb_obj_is_kind_of(rnode, cXMLNode) == Qfalse)
-    rb_raise(rb_eTypeError, "Must pass an LibXML::Node object");
+    rb_raise(rb_eTypeError, "Must pass an XML::Node object");
 
   Data_Get_Struct(self,  xmlNode, pnode);
   Data_Get_Struct(rnode, xmlNode, cnode);
@@ -1332,7 +1332,7 @@ ruby_xml_node_ns_def_get(VALUE self) {
  * call-seq:
  *    node.ns_def? -> (true|false)
  * 
- * Obtain an array of +LibXML::NS+ objects representing
+ * Obtain an array of +XML::NS+ objects representing
  * this node's xmlns attributes
  */
 VALUE
@@ -1348,7 +1348,7 @@ ruby_xml_node_ns_def_q(VALUE self) {
 
 /*
  * call-seq:
- *    node.parent -> LibXML::Node
+ *    node.parent -> XML::Node
  * 
  * Obtain this node's parent node, if any.
  */
@@ -1405,7 +1405,7 @@ ruby_xml_node_pi_q(VALUE self) {
 
 /*
  * call-seq:
- *    node.pointer -> LibXML::Node_set
+ *    node.pointer -> XML::Node_set
  * 
  * Evaluates an XPointer expression relative to this node.
  */
@@ -1417,7 +1417,7 @@ ruby_xml_node_pointer(VALUE self, VALUE xptr_str) {
 
 /*
  * call-seq:
- *    node.prev -> LibXML::Node
+ *    node.prev -> XML::Node
  * 
  * Obtain the previous sibling, if any.
  */
@@ -1465,7 +1465,7 @@ ruby_xml_node_prev_set(VALUE self, VALUE rnode) {
   xmlNodePtr cnode, pnode, ret;
 
   if (rb_obj_is_kind_of(rnode, cXMLNode) == Qfalse)
-    rb_raise(rb_eTypeError, "Must pass an LibXML::Node object");
+    rb_raise(rb_eTypeError, "Must pass an XML::Node object");
 
   Data_Get_Struct(self,  xmlNode, pnode);
   Data_Get_Struct(rnode, xmlNode, cnode);
@@ -1482,7 +1482,7 @@ ruby_xml_node_prev_set(VALUE self, VALUE rnode) {
  * call-seq:
  *    node.attributes -> attributes
  * 
- * Returns the LibXML::Attributes for this node. 
+ * Returns the XML::Attributes for this node. 
  */
 VALUE
 ruby_xml_node_attributes_get(VALUE self) {
@@ -1592,7 +1592,7 @@ ruby_xml_node_search_ns(VALUE self, VALUE ns) {
 
 /*
  * call-seq:
- *    node.sibling(node) -> LibXML::Node
+ *    node.sibling(node) -> XML::Node
  * 
  * Add the specified node as a sibling of this node.
  */
@@ -1602,7 +1602,7 @@ ruby_xml_node_sibling_set(VALUE self, VALUE rnode) {
   VALUE obj;
 
   if (rb_obj_is_kind_of(rnode, cXMLNode) == Qfalse)
-    rb_raise(rb_eTypeError, "Must pass an LibXML::Node object");
+    rb_raise(rb_eTypeError, "Must pass an XML::Node object");
 
   Data_Get_Struct(self,  xmlNode, pnode);
   Data_Get_Struct(rnode, xmlNode, cnode);
@@ -1744,7 +1744,7 @@ ruby_xml_node_xinclude_start_q(VALUE self) {
 
 /*
  * call-seq:
- *    node.copy -> LibXML::Node
+ *    node.copy -> XML::Node
  * 
  * Creates a copy of this node.  To create a 
  * shallow copy set the deep parameter to false.
@@ -1769,7 +1769,7 @@ ruby_xml_node_copy(VALUE self, VALUE deep) {
 
  /*
  * call-seq: 
- *    LibXML::Node.new_text(content = nil) -> LibXML::Node
+ *    XML::Node.new_text(content = nil) -> XML::Node
  * 
  * Create a new text node, optionally setting
  * the node's content.
@@ -1822,7 +1822,7 @@ ruby_init_xml_node(void) {
   xmlRegisterNodeDefault(ruby_xml_node_registerNode);
   xmlDeregisterNodeDefault(ruby_xml_node_deregisterNode);
 
-  cXMLNode = rb_define_class_under(mLibXML, "Node", rb_cObject);
+  cXMLNode = rb_define_class_under(mXML, "Node", rb_cObject);
   eXMLNodeSetNamespace = rb_define_class_under(cXMLNode, "SetNamespace", eXMLError);
   eXMLNodeFailedModify = rb_define_class_under(cXMLNode, "FailedModify", eXMLError);
   eXMLNodeUnknownType = rb_define_class_under(cXMLNode, "UnknownType", eXMLError);

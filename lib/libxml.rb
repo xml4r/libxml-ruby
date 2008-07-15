@@ -18,5 +18,5 @@ require 'libxml/properties'
 # Map the LibXML module into the XML module for both backwards
 # compatibility and ease of use.
 module XML
-  include LibXML
+  include LibXML::XML
 end

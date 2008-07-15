@@ -4,14 +4,16 @@
 
 # This is for backwards compatibility and is DEPRECATED
 module LibXML
-  class Node
-    def properties
-      attributes
+  module XML
+    class Node
+      def properties
+        attributes
+      end
     end
-  end
   
-  class Attributes
-    alias :each_attr :each
-    alias :each_sibling :each
+    class Attributes
+      alias :each_attr :each
+      alias :each_sibling :each
+    end
   end
 end

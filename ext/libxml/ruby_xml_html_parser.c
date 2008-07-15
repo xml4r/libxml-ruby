@@ -209,7 +209,7 @@ ruby_xml_html_parser_mark(ruby_xml_html_parser *rxp) {
 
 /*
  * call-seq:
- *    LibXML::HTMLParser.new -> parser
+ *    XML::HTMLParser.new -> parser
  * 
  * Create a new parser instance with no pre-determined source.
  */
@@ -230,7 +230,7 @@ ruby_xml_html_parser_new(VALUE class) {
 
 /*
  * call-seq:
- *    LibXML::HTMLParser.file -> parser
+ *    XML::HTMLParser.file -> parser
  * 
  * Create a new parser instance that will read the specified file.
  */
@@ -256,7 +256,7 @@ ruby_xml_html_parser_new_file(VALUE class, VALUE filename) {
 
 /*
  * call-seq:
- *    LibXML::HTMLParser.io -> parser
+ *    XML::HTMLParser.io -> parser
  * 
  * Create a new parser instance that will read from the
  * specified IO object.
@@ -283,7 +283,7 @@ ruby_xml_html_parser_new_io(VALUE class, VALUE io) {
 
 /*
  * call-seq:
- *    LibXML::HTMLParser.string -> parser
+ *    XML::HTMLParser.string -> parser
  * 
  * Create a new parser instance that will parse the given
  * string.
@@ -311,8 +311,8 @@ ruby_xml_html_parser_new_string(VALUE class, VALUE str) {
  * call-seq:
  *    parser.parse -> document
  * 
- * Parse the input XML and create an LibXML::Document with
- * it's content. If an error occurs, LibXML::Parser::ParseError
+ * Parse the input XML and create an XML::Document with
+ * it's content. If an error occurs, XML::Parser::ParseError
  * is thrown.
  */
 VALUE
@@ -353,7 +353,7 @@ ruby_xml_html_parser_parse(VALUE self) {
  * call-seq:
  *    parser.context -> context
  * 
- * Obtain the LibXML::Parser::Context associated with this
+ * Obtain the XML::Parser::Context associated with this
  * parser.
  */
 VALUE
@@ -429,7 +429,7 @@ ruby_xml_html_parser_str_set(VALUE self, VALUE str) {
 
 void
 ruby_init_html_parser(void) {	
-  cXMLHTMLParser = rb_define_class_under(mLibXML, "HTMLParser", rb_cObject);
+  cXMLHTMLParser = rb_define_class_under(mXML, "HTMLParser", rb_cObject);
 
   rb_define_singleton_method(cXMLHTMLParser, "new", ruby_xml_html_parser_new, 0);
   rb_define_singleton_method(cXMLHTMLParser, "string", ruby_xml_html_parser_new_string, 1);

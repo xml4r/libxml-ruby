@@ -34,7 +34,7 @@ ruby_xml_state_alloc(VALUE klass) {
 void
 ruby_init_state(void) {	
   VALUE rb_mSingleton;
-  cXMLState = rb_define_class_under(mLibXML, "State", rb_cObject);
+  cXMLState = rb_define_class_under(mXML, "State", rb_cObject);
   
   /* Mixin singleton so only one xml state object can be created. */
   rb_require("singleton");

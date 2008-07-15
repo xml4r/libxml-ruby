@@ -7,13 +7,13 @@
 #include "ruby_xml_xpath_context.h"
 
 /*
- * Document-class: LibXML::XPath
+ * Document-class: XML::XPath
  * 
- * The LibXML::XPath module is used to query XML documents. It is 
- * usually accessed via the LibXML::Document#find or 
- * LibXML::Node#find methods.  For example:
+ * The XML::XPath module is used to query XML documents. It is 
+ * usually accessed via the XML::Document#find or 
+ * XML::Node#find methods.  For example:
  *
- *  document.find('/foo', namespaces) -> LibXML::XPath::Object
+ *  document.find('/foo', namespaces) -> XML::XPath::Object
  *
  * The optional namespaces parameter can be a string, array or
  * hash table.

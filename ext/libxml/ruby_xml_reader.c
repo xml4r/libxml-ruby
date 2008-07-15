@@ -39,7 +39,7 @@ ruby_xml_text_reader_get(VALUE obj)
 
 /*
  * call-seq:
- *    LibXML::Reader.file(path, encoding=nil, options=0) -> reader
+ *    XML::Reader.file(path, encoding=nil, options=0) -> reader
  *
  * Parse an XML file from the filesystem or the network. The parsing flags 
  * options are a combination of xmlParserOption. 
@@ -65,8 +65,8 @@ ruby_xml_reader_new_file(int argc, VALUE *argv, VALUE self)
 
 /*
  * call-seq:
- *    LibXML::Reader.walker(doc) -> reader
- *    LibXML::Reader.document(doc) -> reader
+ *    XML::Reader.walker(doc) -> reader
+ *    XML::Reader.document(doc) -> reader
  *
  * Create an XML text reader for a preparsed document.
  */
@@ -87,8 +87,8 @@ ruby_xml_reader_new_walker(VALUE self, VALUE doc)
 
 /*
  * call-seq:
- *    LibXML::Reader.new(data, url=nil, encoding=nil, options=0) -> reader
- *    LibXML::Reader.string(data, url=nil, encoding=nil, options=0) -> reader
+ *    XML::Reader.new(data, url=nil, encoding=nil, options=0) -> reader
+ *    XML::Reader.string(data, url=nil, encoding=nil, options=0) -> reader
  *
  * Create an XML text reader for an XML in-memory document. The parsing flags
  * options are a combination of xmlParserOption.
@@ -670,7 +670,7 @@ ruby_xml_reader_lookup_namespace(VALUE self, VALUE prefix)
  * Read the contents of the current node and the full subtree. It then makes 
  * the subtree available until the next read call.
  *
- * Return an LibXML::Node object, or nil in case of error.
+ * Return an XML::Node object, or nil in case of error.
  */
 static VALUE
 ruby_xml_reader_expand(VALUE self)
@@ -795,7 +795,7 @@ ruby_xml_reader_valid(VALUE self)
 void
 ruby_init_xml_reader(void)
 {
-  cXMLReader = rb_define_class_under(mLibXML, "Reader", rb_cObject);
+  cXMLReader = rb_define_class_under(mXML, "Reader", rb_cObject);
   error_handler_block_ivar_id = rb_intern("@__error_handler_callback__"); 
  
   rb_define_singleton_method(cXMLReader, "file", ruby_xml_reader_new_file, -1);
