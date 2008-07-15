@@ -53,9 +53,14 @@ module LibXML
       entries
     end
     
+    # Determines whether this node has a next node
+    def next?
+      not self.next.nil?
+    end
+    
     # Determines whether this node has a previous node
-    def previous?
-      not previous.nil?
+    def prev?
+      not prev.nil?
     end
     
     # Determines whether this node has a last node

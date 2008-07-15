@@ -60,6 +60,14 @@ class TestTranversal < Test::Unit::TestCase
     end
     assert_equal(ROOT_NODES_LENGTH, nodes.length)
   end
+
+  def test_next?
+    first_node = @doc.root.first
+    assert(first_node.next?)
+    
+    last_node = @doc.root.last
+    assert(!last_node.next?)
+  end
     
   def test_prev
     nodes = []
@@ -71,6 +79,24 @@ class TestTranversal < Test::Unit::TestCase
       node = node.prev
     end
     assert_equal(ROOT_NODES_LENGTH, nodes.length)
+  end
+  
+  def test_prev?
+    first_node = @doc.root.first
+    assert(!first_node.prev?)
+    
+    last_node = @doc.root.last
+    assert(last_node.prev?)
+  end
+
+  def test_parent?
+    assert(!@doc.parent?)
+    assert(@doc.root.parent?)
+  end
+   
+  def test_child?
+    assert(@doc.child?)
+    assert(!@doc.root.first.child?)
   end
   
   def test_next_prev_equivalence
