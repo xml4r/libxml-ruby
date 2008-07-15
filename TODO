@@ -1,8 +1,3 @@
-==== BUGS
-
-* Some C funcs need more NULL checking, they're throwing wierd 
-  ArgumentErrors into RubyLand. See TODOs in source.
-  
 ==== ENHANCEMENTS
 
 * Add warnings to each of the xpath functions if xpath isn't compiled
@@ -31,10 +26,10 @@
     it doesn't mean it's not possible or useful to someone.  It's
     the weird shit that makes a library powerful. 
 
-	      rnode  -> node
-	      rdoc   -> doc
-	      rctxt  -> ctxt
-	      rxpath -> xpath
+        rnode  -> node
+        rdoc   -> doc
+        rctxt  -> ctxt
+        rxpath -> xpath
 
 * Should sweep through the code and remove all instances of
   'return(Qnil)' with exceptions if 'return(Qnil)' is being used for

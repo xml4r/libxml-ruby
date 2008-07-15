@@ -2,20 +2,25 @@
 
 == 0.7.1 / 2008-07-09 Charlie Savage
 
-* Moved libxml into LibXML namespace, deprecating XML namespace
+* Fixed bug in returning attributes from XPath results
 
-* Refactored XPath support, providing more user hooks in the 
-* XPath::Context class
+* Fixed DOM traversal methods
+
+* Changed Node#children to return an array of nodes
 
 * Fixed bug in returning attributes from XPath results
 
-* Added back Node#properties for backwards compatibility
+* Refactored XPath support, providing more user hooks in the XPath::Context class
+
+* Added Node#properties for backwards compatibility
 
 * Updated setup.rb
 
 * Added more tests
 
 * Updated rdocs and README file
+
+* Moved libxml into LibXML namespace
 
 
 == 0.7.0 / 2008-07-09 Charlie Savage

@@ -1,9 +1,0 @@
-
-[Put Current Release Notes here]
-
-==== BUGS
-
-* Some C funcs need more NULL checking, they're throwing wierd 
-  ArgumentErrors into RubyLand. See TODOs in source.
-
-
