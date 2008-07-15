@@ -7,7 +7,7 @@
 #include "ruby_xml_xpath_context.h"
 
 /*
- * Document-class: XML::XPath
+ * Document-class: LibXML::XML::XPath
  * 
  * The XML::XPath module is used to query XML documents. It is 
  * usually accessed via the XML::Document#find or 
@@ -66,11 +66,12 @@ VALUE eXMLXPathInvalidPath;
 // Rdoc needs to know 
 #ifdef RDOC_NEVER_DEFINED
   mLibXML = rb_define_module("LibXML");
+  mXML = rb_define_module_under(mLibXML, "XML");
 #endif
 
 void
 ruby_init_xml_xpath(void) {
-  mXPath = rb_define_module_under(mLibXML, "XPath");
+  mXPath = rb_define_module_under(mXML, "XPath");
   eXMLXPathInvalidPath = rb_define_class_under(mXPath, "InvalidPath", eXMLError);
 
   rb_define_const(mXPath, "UNDEFINED", INT2NUM(XPATH_UNDEFINED));

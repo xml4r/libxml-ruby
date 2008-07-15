@@ -3,7 +3,7 @@
 /* Please see the LICENSE file for copyright and distribution information */
 
 /*
-* Document-class: XML::Attr
+* Document-class: LibXML::XML::Attr
 *
 * Provides access to an single element attribute.  Accessed by
 * calling XML::Node#attributes method.
@@ -464,6 +464,7 @@ ruby_xml_attr_value_set(VALUE self, VALUE val) {
 // Rdoc needs to know 
 #ifdef RDOC_NEVER_DEFINED
   mLibXML = rb_define_module("LibXML");
+  mXML = rb_define_module_under(mLibXML, "XML");
 #endif
 
 void

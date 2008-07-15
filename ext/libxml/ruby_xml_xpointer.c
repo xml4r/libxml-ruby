@@ -92,6 +92,7 @@ ruby_xml_xpointer_range(VALUE class, VALUE rstart, VALUE rend) {
 // Rdoc needs to know 
 #ifdef RDOC_NEVER_DEFINED
   mLibXML = rb_define_module("LibXML");
+  mXML = rb_define_module_under(mLibXML, "XML");
 #endif
 
 void

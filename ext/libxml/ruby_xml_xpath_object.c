@@ -3,10 +3,10 @@
 #include "ruby_libxml.h"
 
 /*
- * Document-class: XML::XPath::Object
+ * Document-class: LibXML::XML::XPath::Object
  *
- * A collection of nodes returned from the evaluation of an XPath
- * or XPointer expression. 
+ * A collection of nodes returned from the evaluation of an XML::XPath
+ * or XML::XPointer expression. 
  *
  */
 VALUE cXMLXPathObject;
@@ -304,7 +304,8 @@ ruby_xml_xpath_object_debug(VALUE self) {
 // Rdoc needs to know
 #ifdef RDOC_NEVER_DEFINED
   mLibXML = rb_define_module("LibXML");
-  mXPath = rb_define_module_under(mLibXML, "XPath");
+  mXML = rb_define_module_under(mLibXML, "XML");
+  mXPath = rb_define_module_under(mXML, "XPath");
 #endif
 
 void

@@ -3,7 +3,7 @@
 /* Please see the LICENSE file for copyright and distribution information */
 
 /*
-* Document-class: XML::Attributes
+* Document-class: LibXML::XML::Attributes
 *
 * Provides access to an elements attributes (XML::Attr).
 *
@@ -251,6 +251,7 @@ ruby_xml_attributes_first(VALUE self) {
 // Rdoc needs to know 
 #ifdef RDOC_NEVER_DEFINED
   mLibXML = rb_define_module("LibXML");
+  mXML = rb_define_module_under(mLibXML, "XML");
 #endif
     
 void

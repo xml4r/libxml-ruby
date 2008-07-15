@@ -8,7 +8,7 @@
 
 
 /*
- * Document-class: XML::XPath::Context
+ * Document-class: LibXML::XML::XPath::Context
  * 
  * The XML::XPath::Context class is used to evaluate XPath
  * expressions.  Generally, you should not directly use this class,
@@ -265,7 +265,8 @@ ruby_xml_xpath_context_find(VALUE self, VALUE xpath_expr) {
 // Rdoc needs to know 
 #ifdef RDOC_NEVER_DEFINED
   mLibXML = rb_define_module("LibXML");
-  mXPath = rb_define_module_under(mLibXML, "XPath");
+  mXML = rb_define_module_under(mLibXML, "XML");
+  mXPath = rb_define_module_under(mXML, "XPath");
 #endif
 
 void
