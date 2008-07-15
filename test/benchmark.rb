@@ -13,9 +13,8 @@ class Parse
     doc.find('/*/*/*').each do |node|
       case node.name
       when 'ItemQueryRs'
-        node.each do |child|
-          id_node = child.find_first('./ListID')
-          ary << id_node if id_node
+        node.each_element do |child|
+          ary << child.find_first('./ListID')
         end
       end
     end
