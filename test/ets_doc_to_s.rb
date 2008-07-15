@@ -2,13 +2,13 @@ require 'libxml'
 
 100.times do |count|
 
-  xml_doc = LibXML::Document.new()
+  xml_doc = XML::Document.new()
   xml_doc.encoding = "UTF-8"
-  xml_doc.root = LibXML::Node.new("Request")
+  xml_doc.root = XML::Node.new("Request")
 
   1000.times do |index|
 
-    xml_doc.root << node = LibXML::Node.new("row")
+    xml_doc.root << node = XML::Node.new("row")
     node["user_id"] = index.to_s
     node << "600445"
 

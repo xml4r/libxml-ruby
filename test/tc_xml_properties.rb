@@ -6,7 +6,7 @@ require 'test/unit'
 
 class TestProperties < Test::Unit::TestCase
   def setup()
-    xp = LibXML::Parser.string('<ruby_array uga="booga" foo="bar"><fixnum>one</fixnum><fixnum>two</fixnum></ruby_array>')
+    xp = XML::Parser.string('<ruby_array uga="booga" foo="bar"><fixnum>one</fixnum><fixnum>two</fixnum></ruby_array>')
     @doc = xp.parse
   end
 
@@ -17,26 +17,26 @@ class TestProperties < Test::Unit::TestCase
   def test_traversal
     properties = @doc.root.properties
     
-    assert_instance_of(LibXML::Attributes, properties)
+    assert_instance_of(XML::Attributes, properties)
     attribute = properties.first
     assert_equal('uga', attribute.name)
     assert_equal('booga', attribute.value)
 
     attribute = attribute.next
-    assert_instance_of(LibXML::Attr, attribute)
+    assert_instance_of(XML::Attr, attribute)
     assert_equal('foo', attribute.name)
     assert_equal('bar', attribute.value)
   end
   
   def test_each_attr
     @doc.root.properties.each_attr do |attribute|
-      assert_instance_of(LibXML::Attr, attribute)
+      assert_instance_of(XML::Attr, attribute)
     end
   end
   
   def test_no_properties
     properties = @doc.root.child.properties
-    assert_instance_of(LibXML::Attributes, properties)
+    assert_instance_of(XML::Attributes, properties)
     assert_equal(0, properties.length)
   end
 end

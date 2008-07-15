@@ -476,7 +476,7 @@ ruby_xml_node_debug_dump(VALUE self) {
  * nodes, element nodes, etc.  If you wish to iterate
  * only over child elements, use LibXML::Node#each_element.
  *
- *  doc = LibXML::Document.new('model/books.xml')
+ *  doc = XML::Document.new('model/books.xml')
  *  doc.root.each {|node| puts node}
  */
 VALUE

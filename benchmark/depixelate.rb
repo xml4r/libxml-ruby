@@ -11,7 +11,7 @@ XML_STRING = DATA.read
 
 class Parse
   def self.libxml
-    doc = LibXML::Parser.string(XML_STRING).parse
+    doc = XML::Parser.string(XML_STRING).parse
     ary = []
     doc.find('/*/*/*').each do |node|
       case node.name

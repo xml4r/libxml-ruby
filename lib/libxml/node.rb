@@ -5,7 +5,7 @@ module LibXML
   class Node
     # Return nodes matching the specified xpath expression.
     # For more information, please refer to the documentation
-    # for LibXML::Document#find.
+    # for XML::Document#find.
     def find(xpath, nslist = nil)
       if not self.doc
         raise(TypeError, "A node must belong to a document before " +
@@ -23,7 +23,7 @@ module LibXML
     
     # Return the first node matching the specified xpath expression.
     # For more information, please refer to the documentation
-    # for LibXML::Node#find.
+    # for XML::Node#find.
     def find_first(xpath, nslist = nil)
       find(xpath, nslist).first
     end

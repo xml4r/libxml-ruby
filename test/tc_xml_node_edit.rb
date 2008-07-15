@@ -3,7 +3,7 @@ require 'test/unit'
 
 class TestNodeEdit < Test::Unit::TestCase
   def setup
-    xp = LibXML::Parser.new()
+    xp = XML::Parser.new()
     xp.string = '<test><num>one</num><num>two</num><num>three</num></test>'
     @doc = xp.parse
   end
@@ -25,37 +25,37 @@ class TestNodeEdit < Test::Unit::TestCase
   end
  
   def test_add_next_01
-    first_node.next = LibXML::Node.new('num', 'one-and-a-half')
+    first_node.next = XML::Node.new('num', 'one-and-a-half')
     assert_equal('<test><num>one</num><num>one-and-a-half</num><num>two</num><num>three</num></test>',
                  @doc.root.to_s.gsub(/\n\s*/,''))
   end
 
   def test_add_next_02
-    second_node.next = LibXML::Node.new('num', 'two-and-a-half')
+    second_node.next = XML::Node.new('num', 'two-and-a-half')
     assert_equal('<test><num>one</num><num>two</num><num>two-and-a-half</num><num>three</num></test>',
                  @doc.root.to_s.gsub(/\n\s*/,''))
   end
 
   def test_add_next_03
-    third_node.next = LibXML::Node.new('num', 'four')
+    third_node.next = XML::Node.new('num', 'four')
     assert_equal '<test><num>one</num><num>two</num><num>three</num><num>four</num></test>',
       @doc.root.to_s.gsub(/\n\s*/,'')
   end
 
   def test_add_prev_01
-    first_node.prev = LibXML::Node.new('num', 'half')
+    first_node.prev = XML::Node.new('num', 'half')
     assert_equal '<test><num>half</num><num>one</num><num>two</num><num>three</num></test>',
       @doc.root.to_s.gsub(/\n\s*/,'')
   end
 
   def test_add_prev_02
-    second_node.prev = LibXML::Node.new('num', 'one-and-a-half')
+    second_node.prev = XML::Node.new('num', 'one-and-a-half')
     assert_equal '<test><num>one</num><num>one-and-a-half</num><num>two</num><num>three</num></test>',
       @doc.root.to_s.gsub(/\n\s*/,'')
   end
 
   def test_add_prev_03
-    third_node.prev = LibXML::Node.new('num', 'two-and-a-half')
+    third_node.prev = XML::Node.new('num', 'two-and-a-half')
     assert_equal '<test><num>one</num><num>two</num><num>two-and-a-half</num><num>three</num></test>',
       @doc.root.to_s.gsub(/\n\s*/,'')
   end
@@ -72,7 +72,7 @@ class TestNodeEdit < Test::Unit::TestCase
 
     # Read in 500 documents
     500.times do
-      documents << LibXML::Parser.string(File.read(File.join(File.dirname(__FILE__), 'model', 'merge_bug_data.xml'))).parse
+      documents << XML::Parser.string(File.read(File.join(File.dirname(__FILE__), 'model', 'merge_bug_data.xml'))).parse
     end
 
     master_doc = documents.shift

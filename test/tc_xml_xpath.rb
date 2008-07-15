@@ -4,7 +4,7 @@ require "test/unit"
 
 class TestXPath < Test::Unit::TestCase
   def setup
-    @doc = LibXML::Document.file(File.join(File.dirname(__FILE__), 'model/soap.xml'))
+    @doc = XML::Document.file(File.join(File.dirname(__FILE__), 'model/soap.xml'))
   end
   
   def teardown
@@ -13,16 +13,16 @@ class TestXPath < Test::Unit::TestCase
   
   def test_doc_find
     nodes = @doc.find('/soap:Envelope')
-    assert_instance_of(LibXML::XPath::Object, nodes)
+    assert_instance_of(XML::XPath::Object, nodes)
     assert_equal(1, nodes.length)
-    assert_equal(nodes.xpath_type, LibXML::XPath::NODESET)
-    assert_instance_of(LibXML::Node::Set, nodes.set)
-    assert_instance_of(LibXML::XPath::Context, nodes.context)
+    assert_equal(nodes.xpath_type, XML::XPath::NODESET)
+    assert_instance_of(XML::Node::Set, nodes.set)
+    assert_instance_of(XML::XPath::Context, nodes.context)
   end    
 
   def test_doc_find_first
     node = @doc.find_first('/soap:Envelope/soap:Body')
-    assert_instance_of(LibXML::Node, node)
+    assert_instance_of(XML::Node, node)
   end    
 
   def test_ns
@@ -87,7 +87,7 @@ class TestXPath < Test::Unit::TestCase
   end
   
   def test_node_no_doc
-    node = LibXML::Node.new('header', 'some content')
+    node = XML::Node.new('header', 'some content')
     assert_raise(TypeError) do
       node = node.find_first('/header')
     end
@@ -103,7 +103,7 @@ class TestXPath < Test::Unit::TestCase
     #xml.puts("<a/>")
     #xml.close
 
-    #doc = LibXML::Document.file(xml.path)
+    #doc = XML::Document.file(xml.path)
     #assert_nil(doc.find("//*[name(.)=normalize_space(' a ')]"))
   #end
   
@@ -115,11 +115,11 @@ class TestXPath < Test::Unit::TestCase
     ## to the document's nodes. A segmentation fault then happens.
 
     #100.times do 
-      #doc = LibXML::Document.new('1.0')
-      #doc.root = LibXML::Node.new("header")
+      #doc = XML::Document.new('1.0')
+      #doc.root = XML::Node.new("header")
 
       #1000.times do 
-        #doc.root << LibXML::Node.new("footer")
+        #doc.root << XML::Node.new("footer")
       #end
   
       #nodes = doc.find('/header/footer')

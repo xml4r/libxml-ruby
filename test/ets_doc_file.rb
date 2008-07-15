@@ -6,7 +6,7 @@ require 'libxml'
 Process.setrlimit(Process::RLIMIT_NOFILE,10005)
 
 (1..10000).each{|time|
-  LibXML::Document.file(File.join(File.dirname(__FILE__),'ets_test.xml'))
+  XML::Document.file(File.join(File.dirname(__FILE__),'ets_test.xml'))
   if time % 100 == 0
     print "\r#{time}"  
     $stdout.flush

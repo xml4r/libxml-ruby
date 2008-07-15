@@ -10,8 +10,8 @@ class TestXPathContext < Test::Unit::TestCase
   NS0_URI = 'http://services.somewhere.com'
   
   def setup()
-    doc = LibXML::Document.file(File.join(File.dirname(__FILE__), 'model/soap.xml'))
-    @context = LibXML::XPath::Context.new(doc)
+    doc = XML::Document.file(File.join(File.dirname(__FILE__), 'model/soap.xml'))
+    @context = XML::XPath::Context.new(doc)
   end
   
   def teardown()
@@ -19,7 +19,7 @@ class TestXPathContext < Test::Unit::TestCase
   end
   
   #def test_no_ns
-    #assert_raise(LibXML::XPath::InvalidPath) do
+    #assert_raise(XML::XPath::InvalidPath) do
       #@context.find('/soap:Envelope')
     #end
   #end    

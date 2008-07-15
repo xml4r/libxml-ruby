@@ -14,7 +14,7 @@
  * expressions.  Generally, you should not directly use this class,
  * but instead use the LibXML::Document#find and LibXML::Node#find methods.
  *
- *  doc = LibXML::Document.string('<header>content</header>')
+ *  doc = XML::Document.string('<header>content</header>')
  *  context = XPath::Context.new(doc)
  *  context.node = doc.root  
  *  context.register_namespaces_from_node(doc.root)
@@ -43,7 +43,7 @@ ruby_xml_xpath_context_alloc(VALUE klass) {
  * Creates a new XPath context for the specified document.  The
  * context can then be used to evaluate an XPath expression.
  *
- *  doc = LibXML::Document.string('<header><first>hi</first></header>')
+ *  doc = XML::Document.string('<header><first>hi</first></header>')
  *  context = XPath::Context.new(doc)
  *  nodes = XPath::Object.new('//first', context)
  *  nodes.length == 1
@@ -112,7 +112,7 @@ ruby_xml_xpath_context_register_namespace(VALUE self, VALUE prefix, VALUE uri) {
  * 
  * Helper method to read in namespaces defined on a node.
  *
- *  doc = LibXML::Document.string('<header><first>hi</first></header>')
+ *  doc = XML::Document.string('<header><first>hi</first></header>')
  *  context = XPath::Context.new(doc)
  *  context.register_namespaces_from_node(doc.root)
  */
@@ -223,7 +223,7 @@ ruby_xml_xpath_context_register_namespaces(VALUE self, VALUE nslist) {
  * 
  * Set the current node used by the XPath engine
  
- *  doc = LibXML::Document.string('<header><first>hi</first></header>')
+ *  doc = XML::Document.string('<header><first>hi</first></header>')
  *  context.node = doc.root.first
  */
 VALUE

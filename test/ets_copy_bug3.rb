@@ -15,8 +15,8 @@ str = <<-STR
   </html>
 STR
 
-LibXML::Parser.default_keep_blanks = false
-xp = LibXML::Parser.new
+XML::Parser.default_keep_blanks = false
+xp = XML::Parser.new
 xp.string = str
 doc = xp.parse
 

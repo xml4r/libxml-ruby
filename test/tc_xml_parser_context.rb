@@ -4,12 +4,12 @@ require 'test/unit'
 class TestParserContext < Test::Unit::TestCase
   def setup
     str = '<ruby_array uga="booga" foo="bar"><fixnum>one</fixnum><fixnum>two</fixnum></ruby_array>'
-    xp = LibXML::Parser.string(str)
+    xp = XML::Parser.string(str)
     assert_equal(str, xp.string = str)
     doc = xp.parse
-    assert_instance_of(LibXML::Document, doc)
+    assert_instance_of(XML::Document, doc)
     @ctxt = xp.context
-    assert_instance_of(LibXML::Parser::Context, @ctxt)
+    assert_instance_of(XML::Parser::Context, @ctxt)
   end
 
   def teardown
@@ -83,10 +83,10 @@ class TestParserContext < Test::Unit::TestCase
   end
 
   def test_parse_error
-    xp = LibXML::Parser.new
+    xp = XML::Parser.new
     xp.string = '<foo><bar/></foz>'
     
-    assert_raise(LibXML::Parser::ParseError) do
+    assert_raise(XML::Parser::ParseError) do
       xp.parse
     end
     

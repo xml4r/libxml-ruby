@@ -239,16 +239,16 @@ ruby_xml_xpath_object_length(VALUE self) {
  * Possible values are defined as constants
  * on the LibXML::XPath class and include:
  * 
- * * LibXML::XPath::UNDEFINED
- * * LibXML::XPath::NODESET
- * * LibXML::XPath::BOOLEAN
- * * LibXML::XPath::NUMBER
- * * LibXML::XPath::STRING
- * * LibXML::XPath::POINT
- * * LibXML::XPath::RANGE
- * * LibXML::XPath::LOCATIONSET
- * * LibXML::XPath::USERS
- * * LibXML::XPath::XSLT_TREE 
+ * * XML::XPath::UNDEFINED
+ * * XML::XPath::NODESET
+ * * XML::XPath::BOOLEAN
+ * * XML::XPath::NUMBER
+ * * XML::XPath::STRING
+ * * XML::XPath::POINT
+ * * XML::XPath::RANGE
+ * * XML::XPath::LOCATIONSET
+ * * XML::XPath::USERS
+ * * XML::XPath::XSLT_TREE 
  */
 VALUE
 ruby_xml_xpath_object_get_type(VALUE self)

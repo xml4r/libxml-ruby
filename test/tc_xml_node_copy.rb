@@ -14,7 +14,7 @@ class TC_XML_Node_Copy < Test::Unit::TestCase
       </body></html>
     STR
 
-    doc = LibXML::Parser.string(str).parse
+    doc = XML::Parser.string(str).parse
 
     xpath = "//div"
     @div1 = doc.find(xpath).to_a[0]

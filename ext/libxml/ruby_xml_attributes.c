@@ -3,14 +3,14 @@
 /* Please see the LICENSE file for copyright and distribution information */
 
 /*
-* Document-class: LibLibXML::Attributes
+* Document-class: XML::Attributes
 *
-* Provides access to an elements attributes (LibLibXML::Attr).
+* Provides access to an elements attributes (XML::Attr).
 *
 * Basic Usage:
 *  require 'libxml'
 *
-*  doc = LibXML::Document.new(<some_file>)
+*  doc = XML::Document.new(<some_file>)
 *  attributes = doc.root.attributes
 *
 *  attributes.each do |attribute|

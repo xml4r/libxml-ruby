@@ -6,16 +6,16 @@ module LibXML
     # Return the nodes matching the specified xpath expression, 
     # optionally using the specified namespace.  For more 
     # information about working with namespaces, please refer
-    # to the LibXML::XPath documentation.
+    # to the XML::XPath documentation.
     # 
     # Parameters:
     # * xpath - The xpath expression as a string
-    # * namespaces - An optional list of namespaces (see LibXML::XPath for information).
-    # * Returns - LibXML::XPath::Object
+    # * namespaces - An optional list of namespaces (see XML::XPath for information).
+    # * Returns - XML::XPath::Object
     #
     #  document.find('/foo', 'xlink:http://www.w3.org/1999/xlink')
     #
-    # IMPORTANT - The returned LibXML::Node::Set must be freed before
+    # IMPORTANT - The returned XML::Node::Set must be freed before
     # its associated document.  In a running Ruby program this will
     # happen automatically via Ruby's mark and sweep garbage collector.
     # However, if the program exits, Ruby does not guarantee the order
@@ -44,7 +44,7 @@ module LibXML
     
     # Return the first node matching the specified xpath expression.
     # For more information, please refer to the documentation
-    # for LibXML::Document#find.
+    # for XML::Document#find.
     def find_first(xpath, nslist = nil)
       find(xpath, nslist).first
     end

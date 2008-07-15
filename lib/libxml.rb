@@ -15,8 +15,8 @@ require 'libxml/tree'
 # Deprecated
 require 'libxml/properties'
 
-# The XML namespace is deprecated and should no longer be used.  Instead,
-# please change code to use the LibXML namespace.
+# Map the LibXML module into the XML module for both backwards
+# compatibility and ease of use.
 module XML
   include LibXML
 end

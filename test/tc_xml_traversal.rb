@@ -7,7 +7,7 @@ class TestTranversal < Test::Unit::TestCase
   
   def setup
     filename = File.join(File.dirname(__FILE__), 'model/books.xml')
-    @doc = LibXML::Document.file(filename)
+    @doc = XML::Document.file(filename)
   end
   
   def teardown
@@ -135,7 +135,7 @@ class TestTranversal < Test::Unit::TestCase
     #  puts 1
     #end
    # @doc.root.children do |node|
-    #  if node.node_type == LibXML::Node::ELEMENT_NODE
+    #  if node.node_type == XML::Node::ELEMENT_NODE
      #   puts node.name
       #end
     #end
@@ -143,33 +143,33 @@ class TestTranversal < Test::Unit::TestCase
   #end
 
   #def test_doc_class
-    #assert_instance_of(LibXML::Document, @doc)
+    #assert_instance_of(XML::Document, @doc)
   #end
   
   #def test_root_class
-    #assert_instance_of(LibXML::Node, @doc.root)
+    #assert_instance_of(XML::Node, @doc.root)
   #end
   
   #def test_node_class
     #for n in nodes
-      #assert_instance_of(LibXML::Node, n)
+      #assert_instance_of(XML::Node, n)
     #end
   #end
 
   #def test_find_class
     #set = @doc.find('/ruby_array/fixnum')
-    #assert_instance_of(LibXML::XPath::Object, set)
+    #assert_instance_of(XML::XPath::Object, set)
   #end
 
   #def test_node_child_get
     #assert_instance_of(TrueClass, @doc.root.child?)
-    #assert_instance_of(LibXML::Node, @doc.root.child)
+    #assert_instance_of(XML::Node, @doc.root.child)
     #assert_equal('fixnum', @doc.root.child.name)
   #end
 
   #def test_node_doc
     #for n in nodes
-      #assert_instance_of(LibXML::Document, n.doc) if n.document?
+      #assert_instance_of(XML::Document, n.doc) if n.document?
     #end
   #end
 
@@ -180,9 +180,9 @@ class TestTranversal < Test::Unit::TestCase
 
   #def test_node_find
     #set = @doc.root.find('./fixnum').set
-    #assert_instance_of(LibXML::Node::Set, set)
+    #assert_instance_of(XML::Node::Set, set)
     #for node in set
-      #assert_instance_of(LibXML::Node, node)
+      #assert_instance_of(XML::Node, node)
     #end
   #end
   
@@ -193,7 +193,7 @@ class TestTranversal < Test::Unit::TestCase
     #assert(node_a.eql?(node_b))
     #assert(node_a.equal?(node_b))
     
-    #xp2 = LibXML::Parser.new()
+    #xp2 = XML::Parser.new()
     #xp2.string = '<ruby_array uga="booga" foo="bar"><fixnum>one</fixnum><fixnum>two</fixnum></ruby_array>'
     #doc2 = xp2.parse
 
@@ -214,7 +214,7 @@ class TestTranversal < Test::Unit::TestCase
   #end
   
   #def test_base
-    #doc = LibXML::Parser.string('<person />').parse
+    #doc = XML::Parser.string('<person />').parse
     #assert_nil(doc.root.base)
   #end
 end

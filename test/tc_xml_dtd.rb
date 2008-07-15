@@ -3,7 +3,7 @@ require 'test/unit'
 
 class TestDtd < Test::Unit::TestCase
   def setup
-    xp = LibXML::Parser.string(<<-EOS)
+    xp = XML::Parser.string(<<-EOS)
       <root>
         <head a="ee" id="1">Colorado</head>
         <descr>Lots of nice mountains</descr>
@@ -17,7 +17,7 @@ class TestDtd < Test::Unit::TestCase
   end
   
   def dtd
-    LibXML::Dtd.new(<<-EOS)
+    XML::Dtd.new(<<-EOS)
       <!ELEMENT root (head, descr)>
       <!ELEMENT head (#PCDATA)>
       <!ATTLIST head
@@ -33,7 +33,7 @@ class TestDtd < Test::Unit::TestCase
   end
   
   def test_invalid
-    new_node = LibXML::Node.new('invalid', 'this will mess up validation')
+    new_node = XML::Node.new('invalid', 'this will mess up validation')
     @doc.root.child_add(new_node)
     
     messages = Hash.new
@@ -56,14 +56,14 @@ class TestDtd < Test::Unit::TestCase
     EOS
     
     messages = Array.new
-    LibXML::Parser.register_error_handler(lambda { |msg| messages << msg })
+    XML::Parser.register_error_handler(lambda { |msg| messages << msg })
     
-    LibXML::Parser.default_load_external_dtd = false
-    doc = LibXML::Parser.string(xml).parse
+    XML::Parser.default_load_external_dtd = false
+    doc = XML::Parser.string(xml).parse
     assert_equal(Array.new, messages)
     
-    LibXML::Parser.default_load_external_dtd = true
-    doc = LibXML::Parser.string(xml).parse
+    XML::Parser.default_load_external_dtd = true
+    doc = XML::Parser.string(xml).parse
     assert_equal('I/O warning : failed to load external entity "test.dtd" <!DOCTYPE test PUBLIC "-//TEST" "test.dtd" []> ^',
                  messages.map{|msg| msg.strip}.join(' ')) 
   end

@@ -4,12 +4,12 @@ require 'test/unit'
 
 class TC_XML_Document < Test::Unit::TestCase
   def setup
-    xp = LibXML::Parser.new
-    assert_instance_of(LibXML::Parser, xp)
+    xp = XML::Parser.new
+    assert_instance_of(XML::Parser, xp)
     str = '<ruby_array uga="booga" foo="bar"><fixnum>one</fixnum><fixnum>two</fixnum></ruby_array>'
     assert_equal(str, xp.string = str)
     @doc = xp.parse
-    assert_instance_of(LibXML::Document, @doc)
+    assert_instance_of(XML::Document, @doc)
   end
 
   def teardown
@@ -18,14 +18,14 @@ class TC_XML_Document < Test::Unit::TestCase
 
   def test_libxml_document_find
     set = @doc.find('/ruby_array/fixnum')
-    assert_instance_of(LibXML::XPath::Object, set)
+    assert_instance_of(XML::XPath::Object, set)
     assert_raise(NoMethodError) {
       xpt = set.xpath
     }
   end
 
   def test_ruby_xml_document_compression
-    if LibXML::Parser::enabled_zlib?
+    if XML::Parser::enabled_zlib?
       0.upto(9) do |i|
         assert_equal(i, @doc.compression = i)
         assert_equal(i, @doc.compression)

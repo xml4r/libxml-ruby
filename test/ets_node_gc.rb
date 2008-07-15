@@ -4,13 +4,13 @@ require 'libxml'
 
 include GC
 
-inner = LibXML::Node.new('inner')
+inner = XML::Node.new('inner')
 save = nil
 1.times do
-  outer = LibXML::Node.new('outer')
+  outer = XML::Node.new('outer')
   outer.child = inner
   1.times do
-    doc = LibXML::Document.new
+    doc = XML::Document.new
     doc.root = outer
     # Uncomment the following line and it won't crash
     save = doc

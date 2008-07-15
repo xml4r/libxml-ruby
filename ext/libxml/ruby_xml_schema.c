@@ -25,7 +25,7 @@ ruby_xml_schema_free(ruby_xml_schema *rxschema) {
 
 /*
  * call-seq:
- *    LibLibXML::Schema.new(schema_uri) -> schema
+ *    XML::Schema.new(schema_uri) -> schema
  * 
  * Create a new schema from the specified URI.
  */
@@ -46,7 +46,7 @@ ruby_xml_schema_init_from_uri(VALUE class, VALUE uri) {
 
 /*
  * call-seq:
- *    LibLibXML::Schema.document(document) -> schema
+ *    XML::Schema.document(document) -> schema
  * 
  * Create a new schema from the specified URI.
  */
@@ -68,7 +68,7 @@ ruby_xml_schema_init_from_document(VALUE class, VALUE document) {
 
 /*
  * call-seq:
- *    LibLibXML::Schema.string("schema_data") -> "value"
+ *    XML::Schema.string("schema_data") -> "value"
  * 
  * Create a new schema using the specified string.
  */

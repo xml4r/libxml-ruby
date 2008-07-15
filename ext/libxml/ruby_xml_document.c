@@ -10,14 +10,14 @@
 * Reading:
 *  require 'libxml'
 *
-*  doc = LibXML::Document.new()
-*  doc.root = LibXML::Node.new('root_node')
+*  doc = XML::Document.new()
+*  doc.root = XML::Node.new('root_node')
 *  doc.root << LibXML::Node.new('elem1')
 *  doc.save('output.xml', format)
 * 
 * Writing:
 *  require 'libxml'
-*  doc = LibXML::Document.file('output.xml')
+*  doc = XML::Document.file('output.xml')
 *  root = doc.root
 */
 

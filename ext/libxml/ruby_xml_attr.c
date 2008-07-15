@@ -11,7 +11,7 @@
 * Basic Usage:
 *  require 'libxml'
 *
-*  doc = LibXML::Document.new(<some_file>)
+*  doc = XML::Document.new(<some_file>)
 *  attribute = doc.root.attributes.get_attribute_ns('http://www.w3.org/1999/xlink', 'href')
 *  attribute.name == 'href'
 *  attribute.value == 'http://www.mydocument.com'
@@ -90,7 +90,7 @@ ruby_xml_attr_alloc(VALUE klass)
  * name: The name of the attribute
  * value: The value of the attribute
  *
- *  attr = LibXML::Attr.new(doc.root, 'name', 'libxml')
+ *  attr = XML::Attr.new(doc.root, 'name', 'libxml')
  */
 VALUE
 ruby_xml_attr_initialize(int argc, VALUE *argv, VALUE self) {

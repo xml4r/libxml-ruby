@@ -20,7 +20,7 @@ ruby_xml_ns_alloc(VALUE klass) {
  * Create a new namespace attached to the specified node with the
  * give prefix and namespace.
  *
- *  LibLibXML::NS.new(node, "xlink", "http://www.w3.org/1999/xlink")
+ *  XML::NS.new(node, "xlink", "http://www.w3.org/1999/xlink")
  */
 VALUE
 ruby_xml_ns_initialize(VALUE self, VALUE node, VALUE href, VALUE prefix) {
