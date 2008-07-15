@@ -80,6 +80,19 @@ class TestNode < Test::Unit::TestCase
     assert(!node_a.equal?(node_a2))
   end
       
+  def test_equality_nil
+    node = @doc.root
+    assert(node != nil)
+  end
+  
+  def test_equality_wrong_type
+    node = @doc.root
+    
+    assert_raises(TypeError) do
+      assert(node != 'abc')
+    end
+  end
+
   def test_content()
     assert_equal('onetwo', @doc.root.content)
     

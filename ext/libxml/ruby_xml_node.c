@@ -468,12 +468,16 @@ ruby_xml_node_debug_dump(VALUE self) {
   return(Qtrue);
 }
 
-
 /*
  * call-seq:
  *    node.each -> LibXML::Node
  * 
- * Iterate over this node's children
+ * Iterates over all of this node's children, including text 
+ * nodes, element nodes, etc.  If you wish to iterate
+ * only over child elements, use LibXML::Node#each_element.
+ *
+ *  doc = LibXML::Document.new('model/books.xml')
+ *  doc.root.each {|node| puts node}
  */
 VALUE
 ruby_xml_node_each(VALUE self) {
@@ -487,6 +491,7 @@ ruby_xml_node_each(VALUE self) {
     rb_yield(ruby_xml_node2_wrap(cXMLNode, xchild));
     xchild = xchild->next;
   }
+  return Qnil;
 }
 
 /*
@@ -587,10 +592,20 @@ ruby_xml_node_eql_q(VALUE self, VALUE other) {
   {
     return Qtrue;
   }
+  else if NIL_P(other)
+  {
+    return Qfalse;
+  }
   else      
   {
-    VALUE self_xml = ruby_xml_node_to_s(self);
-    VALUE other_xml = ruby_xml_node_to_s(other);
+    VALUE self_xml;
+    VALUE other_xml;
+    
+    if (rb_obj_is_kind_of(other, cXMLNode) == Qfalse)
+      rb_raise(rb_eTypeError, "Nodes can only be compared against other nodes");
+    
+    self_xml = ruby_xml_node_to_s(self);
+    other_xml = ruby_xml_node_to_s(other);
     return(rb_funcall(self_xml, rb_intern("=="), 1, other_xml));
   }    
 }
@@ -1731,7 +1746,11 @@ ruby_xml_node_xinclude_start_q(VALUE self) {
  * call-seq:
  *    node.copy -> LibXML::Node
  * 
- * Create a copy of this node.
+ * Creates a copy of this node.  To create a 
+ * shallow copy set the deep parameter to false.
+ * To create a deep copy set the deep parameter
+ * to true. 
+ *
  */
 VALUE
 ruby_xml_node_copy(VALUE self, VALUE deep) {
@@ -1916,7 +1935,6 @@ ruby_init_xml_node(void) {
   rb_define_method(cXMLNode, "namespace?", ruby_xml_node_namespace_q, 0);  
   rb_define_method(cXMLNode, "namespace=", ruby_xml_node_namespace_set, -1);  
   rb_define_method(cXMLNode, "node_type", ruby_xml_node_type, 0);
-  rb_define_method(cXMLNode, "node_type_name", ruby_xml_node_type_name, 0);
   rb_define_method(cXMLNode, "notation?", ruby_xml_node_notation_q, 0);
   rb_define_method(cXMLNode, "ns", ruby_xml_node_namespace_get, 0);
   rb_define_method(cXMLNode, "ns?", ruby_xml_node_ns_q, 0);

@@ -36,14 +36,14 @@ module LibXML
 
     # Determines whether this node has a parent node
     def parent?
-      parent != Qnil
+      not parent.nil?
     end
     
     alias :child :first
     
     # Determines whether this node has a first node
     def first?
-      first != Qnil
+      not first.nil?
     end
     alias :child? :first?  
     alias :children? :first?  
@@ -55,12 +55,12 @@ module LibXML
     
     # Determines whether this node has a previous node
     def previous?
-      previous != Qnil
+      not previous.nil?
     end
     
     # Determines whether this node has a last node
     def last?
-      last != Qnil
+      not last.nil?
     end
 
     # Returns this node's type name    
