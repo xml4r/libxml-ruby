@@ -31,7 +31,7 @@ Init_libxml_ruby(void) {
   mXML = rb_define_module_under(mLibXML, "XML");
   eXMLError = rb_define_class_under(mXML, "Error", rb_eRuntimeError);
 
-  rb_define_const(mLibXML, "XML_NAMESPACE", rb_str_new2((const char*)XML_XML_NAMESPACE));
+  rb_define_const(mXML, "XML_NAMESPACE", rb_str_new2((const char*)XML_XML_NAMESPACE));
 
   ruby_init_state();
   ruby_init_parser();  
