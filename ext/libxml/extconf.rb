@@ -11,147 +11,105 @@ def method_missing(s, *args)
   end
 end
 
+require 'mkmf'
 
-if RUBY_PLATFORM =~ /win32/  # FIXME: Make more robust
+# For FreeBSD add /usr/local/include
+$INCFLAGS << "-I/usr/local/include"
 
-  # We can't use Ruby's standard build procedures
-  # on Windows because the Ruby executable is
-  # built with VC++ while here we want to build
-  # with MingW.  So just roll our own...
-
-  target = "libxml"
-
-  #RUBY_INCLUDE_DIR = Config::CONFIG["archdir"]
-  #RUBY_BIN_DIR = Config::CONFIG["bindir"]
-  #RUBY_LIB_DIR = Config::CONFIG["libdir"]
-  #RUBY_SHARED_LIB = Config::CONFIG["LIBRUBY"]
-  #RUBY_SHARED_DLL = RUBY_SHARED_LIB.gsub(/lib$/, 'dll')
-
-  #CLEAN.include('*.o')
-  #CLOBBER.include('ruby_prof.so')
-
-  srcs = Dir['../ext/*.c']
-
-  objs = srcs.collect do |srcfile|
-    srcfile = File.basename(srcfile)
-    srcfile.chomp(File.extname(srcfile) + '.o')
+if defined?(CFLAGS)
+  if CFLAGS.index(CONFIG['CCDLFLAGS'])
+    $CFLAGS = CFLAGS
+  else
+    $CFLAGS = CFLAGS + ' ' + CONFIG['CCDLFLAGS']
   end
-
-  #srcs.each do |srcfile|
-  #  srcfile = File.basename(srcfile)
-  #  objfile = srcfile.chomp(File.extname(srcfile) + '.o')
-  #
-  #  if File.mtime(objfile) < File.mtime(srcfile)
-  #    system "gcc -c -fPIC -O2 -Wall -o #{objfile} #{srcfile} -I#{RUBY_INCLUDE_DIR}"
-  #  end
-  #end
-
-  #system "gcc -shared -o #{LIBNAME} #{obj} #{RUBY_BIN_DIR}/#{RUBY_SHARED_DLL}"
-
-  makefile_template = DATA.read
-  makefile = eval(makefile_template)
-
-  File.open('Makefile', 'w'){ |f| f << makefile }
-
 else
+  $CFLAGS = CONFIG['CFLAGS']
+end
+$LDFLAGS = CONFIG['LDFLAGS']
+$LIBPATH.push(Config::CONFIG['libdir'])
 
-  require 'mkmf'
+def crash(str)
+  printf(" extconf failure: %s\n", str)
+  exit 1
+end
 
-  if defined?(CFLAGS)
-    if CFLAGS.index(CONFIG['CCDLFLAGS'])
-      $CFLAGS = CFLAGS
-    else
-      $CFLAGS = CFLAGS + ' ' + CONFIG['CCDLFLAGS']
-    end
-  else
-    $CFLAGS = CONFIG['CFLAGS']
-  end
-  $LDFLAGS = CONFIG['LDFLAGS']
-  $LIBPATH.push(Config::CONFIG['libdir'])
+dir_config('iconv')
+dir_config('xml2')
+dir_config('zlib')
 
-  def crash(str)
-    printf(" extconf failure: %s\n", str)
-    exit 1
-  end
+have_library('socket','socket')
+have_library('nsl','gethostbyname')
 
-  dir_config('iconv')
-  dir_config('xml2')
-  dir_config('zlib')
-
-  have_library('socket','socket')
-  have_library('nsl','gethostbyname')
-
+unless have_library('m', 'atan')
+  # try again for gcc 4.0
+  saveflags = $CFLAGS
+  $CFLAGS += ' -fno-builtin'
   unless have_library('m', 'atan')
-    # try again for gcc 4.0
-    saveflags = $CFLAGS
-    $CFLAGS += ' -fno-builtin'
-    unless have_library('m', 'atan')
-      crash('need libm')
-    end
-    $CFLAGS = saveflags
+    crash('need libm')
   end
+  $CFLAGS = saveflags
+end
 
-  unless have_library('z', 'inflate') or
-         have_library('zlib', 'inflate') or
-         have_library('zlib1', 'inflate')
-    crash('need zlib')
-  else
-    $defs.push('-DHAVE_ZLIB_H')
-  end
+unless have_library('z', 'inflate') or
+       have_library('zlib', 'inflate') or
+       have_library('zlib1', 'inflate')
+  crash('need zlib')
+else
+  $defs.push('-DHAVE_ZLIB_H')
+end
 
-  unless have_library('iconv','iconv_open') or 
-         have_library('iconv','libiconv_open') or
-         have_library('libiconv', 'libiconv_open') or
-         have_library('libiconv', 'iconv_open') or
-         have_library('c','iconv_open') or
-         have_library('recode','iconv_open') or
-         have_library('iconv')
-    crash(<<EOL)
+unless have_library('iconv','iconv_open') or 
+       have_library('iconv','libiconv_open') or
+       have_library('libiconv', 'libiconv_open') or
+       have_library('libiconv', 'iconv_open') or
+       have_library('c','iconv_open') or
+       have_library('recode','iconv_open') or
+       have_library('iconv')
+  crash(<<EOL)
 need libiconv.
 
-  Install the libiconv or try passing one of the following options
-  to extconf.rb:
+Install the libiconv or try passing one of the following options
+to extconf.rb:
 
-    --with-iconv-dir=/path/to/iconv
-    --with-iconv-lib=/path/to/iconv/lib
-    --with-iconv-include=/path/to/iconv/include
+  --with-iconv-dir=/path/to/iconv
+  --with-iconv-lib=/path/to/iconv/lib
+  --with-iconv-include=/path/to/iconv/include
 EOL
-  end
+end
 
-  unless (have_library('xml2', 'xmlParseDoc') or
-          have_library('libxml2', 'xmlParseDoc') or
-          find_library('xml2', 'xmlParseDoc', '/opt/lib', '/usr/local/lib', '/usr/lib')) and 
-         (have_header('libxml/xmlversion.h') or
-          find_header('libxml/xmlversion.h',
-                      "#{CONFIG['prefix']}/include", 
-                      '/opt/include/libxml2', 
-                      '/usr/local/include/libxml2', 
-                      '/usr/include/libxml2'))
-    crash(<<EOL)
+unless (have_library('xml2', 'xmlParseDoc') or
+        have_library('libxml2', 'xmlParseDoc') or
+        find_library('xml2', 'xmlParseDoc', '/opt/lib', '/usr/local/lib', '/usr/lib')) and 
+       (have_header('libxml/xmlversion.h') or
+        find_header('libxml/xmlversion.h',
+                    "#{CONFIG['prefix']}/include", 
+                    '/opt/include/libxml2', 
+                    '/usr/local/include/libxml2', 
+                    '/usr/include/libxml2'))
+  crash(<<EOL)
 need libxml2.
 
-      Install the library or try one of the following options to extconf.rb:
+    Install the library or try one of the following options to extconf.rb:
 
-        --with-xml2-dir=/path/to/libxml2
-        --with-xml2-lib=/path/to/libxml2/lib
-        --with-xml2-include=/path/to/libxml2/include
+      --with-xml2-dir=/path/to/libxml2
+      --with-xml2-lib=/path/to/libxml2/lib
+      --with-xml2-include=/path/to/libxml2/include
 EOL
-  end
-
-  unless have_func('xmlDocFormatDump')
-    crash('Your version of libxml2 is too old.  Please upgrade.')
-  end
-
-  unless have_func('docbCreateFileParserCtxt')
-    crash('Need docbCreateFileParserCtxt')
-  end
-
-  $CFLAGS << ' ' << $INCFLAGS
-  #$INSTALLFILES = [["libxml.rb", "$(RUBYLIBDIR)", "../xml"]]
-
-  create_header()
-  create_makefile('libxml_ruby')
 end
+
+unless have_func('xmlDocFormatDump')
+  crash('Your version of libxml2 is too old.  Please upgrade.')
+end
+
+unless have_func('docbCreateFileParserCtxt')
+  crash('Need docbCreateFileParserCtxt')
+end
+
+$CFLAGS << ' ' << $INCFLAGS
+#$INSTALLFILES = [["libxml.rb", "$(RUBYLIBDIR)", "../xml"]]
+
+create_header()
+create_makefile('libxml_ruby')
 
 __END__
 
