@@ -7,7 +7,7 @@
 
     <html>
       <head>
-        <title>Libxml</title>
+        <title>LibXML-Ruby</title>
         <link rel="stylesheet" href="css/normal.css" />
         <link REL='SHORTCUT ICON' HREF="img/xml-ruby.png" />
       </head>
@@ -41,7 +41,7 @@
               <li><a href="http://xmlsoft.org/">Libxml2 project</a></li>
             </td>
             <td style="padding: 10px;">
-              <h1 class="title"><span style="color: red;">LibXml</span> Ruby Project</h1>
+              <h1 class="title"><span style="color: red;">LibXML</span> Ruby Project</h1>
 
               <xsl:apply-templates />
             </td>
@@ -49,7 +49,7 @@
         </table>
 
         <div class='copyright'>
-          Copyright &#x00A9; 2001-2006 Libxml-Ruby project contributors.<br/>
+          Copyright &#x00A9; 2001-2006 LibXML-Ruby project contributors.<br/>
           Website is, yea baby!, pure XML/XSLT<br/>
         </div>
 

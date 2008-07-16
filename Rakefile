@@ -1,3 +1,7 @@
+#!/usr/bin/env ruby
+
+# Be sure to set ENV['RUBYFORGE_USERNAME'] to use publish.
+
 require 'rubygems'
 require 'date'
 require 'rake/gempackagetask'
@@ -108,11 +112,11 @@ task :create_win32_gem do
 end
 
 
-# ---------  RDoc Documentation ------
+# ---------  RDoc Documentation ---------
 desc "Generate rdoc documentation"
 Rake::RDocTask.new("rdoc") do |rdoc|
-  rdoc.rdoc_dir = 'doc'
-  rdoc.title    = "libxml-ruby"
+  rdoc.rdoc_dir = 'doc/rdoc'
+  rdoc.title    = "LibXML"
   # Show source inline with line numbers
   rdoc.options << "--inline-source" << "--line-numbers"
   # Make the readme file the start page for the generated html
@@ -161,3 +165,50 @@ file "ext/libxml/Makefile" => ["ext/libxml/extconf.rb"] do
   command = ["ruby"] + $:.map{|dir| "-I#{File.expand_path dir}"} + ["extconf.rb"]
   Dir.chdir("ext/libxml") { sh *command }
 end
+
+# ---------  Publish Website to Rubyforge ---------
+desc "publish website (uses rsync)"
+task :publish => [:publish_website, :publish_rdoc]
+
+task :publish_website do
+  unixname = 'libxml'
+  username = ENV['RUBYFORGE_USERNAME']
+
+  dir = 'admin/web'
+  url = "#{username}@rubyforge.org:/var/www/gforge-projects/#{unixname}"
+
+  dir = dir.chomp('/') + '/'
+
+  # Using commandline filter options didn't seem to work, so
+  # I opted for creating an .rsync_filter file for all cases.
+
+  protect = %w{usage statcvs statsvn robot.txt wiki}
+  exclude = %w{.svn}
+
+  rsync_file = File.join(dir,'.rsync-filter')
+  unless File.file?(rsync_file)
+    File.open(rsync_file, 'w') do |f|
+      exclude.each{|e| f << "- #{e}\n"}
+      protect.each{|e| f << "P #{e}\n"}
+    end
+  end
+
+  # maybe -p ?
+  cmd = "rsync -rLvz --delete-after --filter='dir-merge #{rsync_file}' #{dir} #{url}"
+  sh cmd
+end
+
+task :publish_rdoc do
+  unixname = 'libxml'
+  username = ENV['RUBYFORGE_USERNAME']
+
+  dir = 'doc/rdoc'
+  url = "#{username}@rubyforge.org:/var/www/gforge-projects/#{unixname}/rdoc"
+
+  dir = dir.chomp('/') + '/'
+
+  # maybe -p ?
+  cmd = "rsync -rLvz --delete-after #{dir} #{url}"
+  sh cmd
+end
+

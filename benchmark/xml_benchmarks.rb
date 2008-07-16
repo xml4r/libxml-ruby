@@ -134,6 +134,11 @@
 # jdom_document_builder   0.412000   0.000000   0.412000 (  0.412000)
 #
 
+$:.unshift 'lib'
+$:.unshift 'ext/libxml'
+
+__DIR__ = File.dirname(__FILE__)
+
 require 'benchmark'
 require "rexml/document"
 require 'hpricot'
@@ -152,7 +157,7 @@ if RUBY_PLATFORM =~ /java/
     @ruby_info << ", platform: #{RUBY_PLATFORM}"
 end
 
-@bundle_with_466_sock_entries = File.read("sock_entries.xml")
+@bundle_with_466_sock_entries = File.read(File.join(__DIR__,"sock_entries.xml"))
 
 def rexml_count_socks
   doc = REXML::Document.new(@bundle_with_466_sock_entries).root

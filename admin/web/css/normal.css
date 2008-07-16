@@ -17,6 +17,10 @@ body {
   margin: 0 auto;
 }
 
+td {
+  padding: 4px 20px;
+}
+
 /* ** links ** */
 a {
 	color: red;

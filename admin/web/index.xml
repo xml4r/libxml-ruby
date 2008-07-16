@@ -3,13 +3,13 @@
 
 <content>
 
-  <h2> Welcome to LibXml Ruby </h2>
+  <h2> Welcome to LibXML Ruby </h2>
 
-  <p>The <span style="color: red;">Libxml-Ruby</span> project provides Ruby
+  <p>The <span style="color: red;">LibXML-Ruby</span> project provides Ruby
   language bindings for the <a href="http://xmlsoft.org">GNOME Libxml2 XML toolkit</a>.
   It is free software, released under the <a href="license.xml">MIT License</a>.</p>
 
-  <p>Libxml-ruby's primary advantage over REXML is performance - if speed is your need,
+  <p>LibXML's primary advantage over REXML is performance - if speed is your need,
   these are good libraries to consider, as demonstrated by the informal benchmark below.</p>
 
   <table border="1" style="border: 1px solid red; margin: 30px;">
