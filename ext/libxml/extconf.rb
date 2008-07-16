@@ -15,9 +15,9 @@ require 'mkmf'
 
 if defined?(CFLAGS)
   if CFLAGS.index(CONFIG['CCDLFLAGS'])
-    $CFLAGS = CFLAGS
-  else
     $CFLAGS = CFLAGS + ' ' + CONFIG['CCDLFLAGS']
+  else
+    $CFLAGS = CFLAGS
   end
 else
   $CFLAGS = CONFIG['CFLAGS']
