@@ -13,9 +13,6 @@ end
 
 require 'mkmf'
 
-# For FreeBSD add /usr/local/include
-$INCFLAGS << "-I/usr/local/include"
-
 if defined?(CFLAGS)
   if CFLAGS.index(CONFIG['CCDLFLAGS'])
     $CFLAGS = CFLAGS
@@ -104,6 +101,9 @@ end
 unless have_func('docbCreateFileParserCtxt')
   crash('Need docbCreateFileParserCtxt')
 end
+
+# For FreeBSD add /usr/local/include
+$INCFLAGS << " -I/usr/local/include"
 
 $CFLAGS << ' ' << $INCFLAGS
 #$INSTALLFILES = [["libxml.rb", "$(RUBYLIBDIR)", "../xml"]]
