@@ -1,4 +1,4 @@
-require "libxml"
+require "xml"
 require 'test/unit'
 
 # Properties is deprecated - use attributes instead.

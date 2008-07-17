@@ -1,4 +1,4 @@
-require "libxml"
+require "xml"
 require "tempfile"
 require "test/unit"
 

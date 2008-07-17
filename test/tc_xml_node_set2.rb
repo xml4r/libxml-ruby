@@ -1,4 +1,4 @@
-require "libxml"
+require "xml"
 require 'test/unit'
 
 class TC_XML_Node_Set2 < Test::Unit::TestCase

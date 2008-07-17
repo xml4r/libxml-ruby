@@ -1,4 +1,4 @@
-require "libxml"
+require "xml"
 require 'test/unit'
 
 class TestTranversal < Test::Unit::TestCase

@@ -1,4 +1,4 @@
-require "libxml"
+require "xml"
 require 'test/unit'
 
 class TC_XML_Document_Write < Test::Unit::TestCase

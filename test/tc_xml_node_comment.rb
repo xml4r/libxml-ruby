@@ -1,4 +1,4 @@
-require "libxml"
+require "xml"
 require 'test/unit'
 
 class NodeCommentTest < Test::Unit::TestCase

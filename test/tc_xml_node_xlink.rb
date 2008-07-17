@@ -1,5 +1,5 @@
 # $Id$
-require "libxml"
+require "xml"
 require 'test/unit'
 
 class TC_XML_Node_XLink < Test::Unit::TestCase

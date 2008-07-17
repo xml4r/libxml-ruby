@@ -1,4 +1,4 @@
-require 'libxml'
+require 'xml'
 require 'test/unit'
 
 # TODO this is woefully inadequate
