@@ -135,7 +135,8 @@ task :package => :create_win32_gem
 
 Rake::TestTask.new do |t|
   t.libs << "test"
-  t.libs << "ext"
+  t.libs << "lib"
+  t.libs << "ext/libxml"
 end
 
 if not RUBY_PLATFORM.match(/mswin32/i)
