@@ -1,8 +1,8 @@
 # This is here for backward compatibility.
-# Ultimately we can deprecate it.
+#
+# TODO: DEPRECATE!
 
 require 'libxml.rb'
 
 include LibXML
-
 
