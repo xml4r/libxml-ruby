@@ -3,3 +3,6 @@
 
 require 'libxml.rb'
 
+include LibXML
+
+
