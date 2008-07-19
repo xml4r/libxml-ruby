@@ -1489,12 +1489,7 @@ ruby_xml_node_attributes_get(VALUE self) {
   xmlNodePtr xnode;
 
   Data_Get_Struct(self, xmlNode, xnode);
-
-  if (xnode->type == XML_ELEMENT_NODE) {
-    return ruby_xml_attributes_new(xnode);
-  } else {
-    return(Qnil);
-  }
+  return ruby_xml_attributes_new(xnode);
 }
 
 /*
