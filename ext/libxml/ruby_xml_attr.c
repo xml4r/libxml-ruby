@@ -109,6 +109,9 @@ ruby_xml_attr_initialize(int argc, VALUE *argv, VALUE self) {
   Check_Type(value, T_STRING);
   
   Data_Get_Struct(node, xmlNode, xnode);
+
+  if (xnode->type != XML_ELEMENT_NODE)
+    rb_raise(rb_eArgError, "Attributes can only be created on element nodes.");
   
   if NIL_P(ns)
   {
@@ -120,6 +123,9 @@ ruby_xml_attr_initialize(int argc, VALUE *argv, VALUE self) {
     Data_Get_Struct(ns, xmlNs, xns);
     xattr = xmlNewNsProp(xnode, xns, (xmlChar*)StringValuePtr(name), (xmlChar*)StringValuePtr(value));
   }
+
+  if (!xattr)
+    rb_raise(rb_eRuntimeError, "Could not create attribute.");
   
   xattr->_private = (void *)self;
   DATA_PTR(self) = xattr;
