@@ -11,9 +11,14 @@ RUBY_BIN_DIR = Config::CONFIG["bindir"]
 RUBY_LIB_DIR = Config::CONFIG["libdir"]
 RUBY_SHARED_LIB = Config::CONFIG["LIBRUBY"]
 RUBY_SHARED_DLL = RUBY_SHARED_LIB.gsub(/lib$/, 'dll')
-    
+
+EXTENSION_NAME = "libxml_ruby.#{Config::CONFIG["DLEXT"]}"
+# MingW insists the import library is .dll.a
+EXTENSION_LIB_NAME = "libxml_ruby.dll.a"
+
 CLEAN.include('*.o')
-CLOBBER.include('libxml.so')
+CLOBBER.include(EXTENSION_NAME)
+CLOBBER.include(EXTENSION_LIB_NAME)
 
 task :default => "libxml"
 
@@ -31,6 +36,6 @@ SRC.each do |srcfile|
 end
 
 file "libxml" => OBJ do
-  command = "libtool --mode=link gcc -shared -o libxml_ruby.so -L/usr/local/lib -lxml2 #{OBJ} #{RUBY_BIN_DIR}/#{RUBY_SHARED_DLL}" 
+  command = "gcc -shared -o #{EXTENSION_NAME} -Wl,--out-implib,#{EXTENSION_LIB_NAME} -L/usr/local/lib #{OBJ} -lxml2 #{RUBY_BIN_DIR}/#{RUBY_SHARED_DLL}" 
   sh "sh -c '#{command}'" 
 end
