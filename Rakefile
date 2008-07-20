@@ -9,9 +9,6 @@ require 'rake/rdoctask'
 require 'rake/testtask'
 require 'date'
 
-# what sort of extension are we building?
-ext = Config::CONFIG["DLEXT"]
-SO_NAME = "libxml_ruby.so"
 
 # ------- Default Package ----------
 FILES = FileList[
@@ -22,9 +19,7 @@ FILES = FileList[
   'doc/**/*',
   'ext/**/*',
   'lib/**/*',
-  'mingw/*.rake',
-  'mingw/*.dll',
-  'mingw/*.so',
+  'mingw/Rakefile',
   'benchmark/**/*',
   'test/**/*',
   'vc/*.sln',
@@ -79,13 +74,16 @@ end
 
 # ------- Windows Package ----------
 
-libraries = [SO_NAME]
+# Use *.dll* to get import libraries
+binaries = (FileList['mingw/*.so',
+                     'mingw/*.dll*']).pathmap('%f')
 
 # Windows specification
 win_spec = default_spec.clone
 win_spec.extensions = []
 win_spec.platform = Gem::Platform::CURRENT
-win_spec.files += libraries.map {|lib_name| "lib/#{lib_name}"}
+win_spec.files += binaries.map {|binary_name| "lib/#{File.basename(binary_name)}"}
+
 
 desc "Create Windows Gem"
 task :create_win32_gem do
@@ -93,9 +91,9 @@ task :create_win32_gem do
   # since there are no dependencies of msvcr80.dll
   current_dir = File.expand_path(File.dirname(__FILE__))
 
-  libraries.each do |file_name|
-    source = File.join(current_dir, 'mingw', file_name)
-    target = File.join(current_dir, 'lib', file_name)
+  binaries.each do |filename|
+    source = File.join(current_dir, 'mingw', filename)
+    target = File.join(current_dir, 'lib', filename)
     cp(source, target)
   end
   
@@ -105,8 +103,8 @@ task :create_win32_gem do
   mv(gem_file, "admin/pkg/#{gem_file}")
 
   # Remove win extension from top level directory  
-  libraries.each do |file_name|
-    target = File.join(current_dir, 'lib', file_name)
+  binaries.each do |filename|
+    target = File.join(current_dir, 'lib', filename)
     rm(target)
   end
 end
@@ -146,6 +144,7 @@ end
 task :build => :extensions
 task :extension => :build
 
+ext = Config::CONFIG["DLEXT"]
 task :extensions => ["ext/libxml/libxml_ruby.#{ext}"]
 file "ext/libxml/libxml_ruby.#{ext}" =>
   ["ext/libxml/Makefile"] + FileList["ext/libxml/*.{c,h}"].to_a do |t|
@@ -212,4 +211,3 @@ task :publish_rdoc do
   cmd = "rsync -rLvz --delete-after #{dir} #{url}"
   sh cmd
 end
-
