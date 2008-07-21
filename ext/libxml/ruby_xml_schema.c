@@ -49,7 +49,7 @@ ruby_xml_schema_init_from_uri(VALUE class, VALUE uri) {
  * call-seq:
  *    XML::Schema.document(document) -> schema
  * 
- * Create a new schema from the specified URI.
+ * Create a new schema from the specified document.
  */
 VALUE
 ruby_xml_schema_init_from_document(VALUE class, VALUE document) {

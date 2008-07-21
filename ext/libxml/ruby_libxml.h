@@ -81,6 +81,7 @@ typedef struct rx_xpath_data {
 #include "ruby_xml_input_cbg.h"
 #include "ruby_xml_dtd.h"
 #include "ruby_xml_schema.h"
+#include "ruby_xml_relaxng.h"
 #include "ruby_xml_html_parser.h"
 #include "ruby_xml_reader.h"
 

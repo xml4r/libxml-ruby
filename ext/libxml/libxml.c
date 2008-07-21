@@ -52,6 +52,7 @@ Init_libxml_ruby(void) {
   ruby_init_input_callbacks(); 
   ruby_init_xml_dtd();         
   ruby_init_xml_schema();      
+  ruby_init_xml_relaxng();      
   ruby_init_xml_reader();      
 
   ruby_xml_parser_default_substitute_entities_set(cXMLParser, Qtrue);

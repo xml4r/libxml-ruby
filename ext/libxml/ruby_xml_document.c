@@ -932,6 +932,10 @@ LibXML_validity_warning(void * ctxt, const char * msg, va_list ap)
  *    document.validate_schema(schema) -> (true|false)
  * 
  * Validate this document against the specified XML::Schema.
+ * 
+ * If a block is provided it is used as an error handler for validaten errors.
+ * The block is called with two argument, the message and a flag indication
+ * if the message is an error (true) or a warning (false).
  */
 VALUE
 ruby_xml_document_validate_schema(VALUE self, VALUE schema) {
@@ -950,6 +954,40 @@ ruby_xml_document_validate_schema(VALUE self, VALUE schema) {
   
   is_invalid = xmlSchemaValidateDoc(vptr, c_doc->doc);
   xmlSchemaFreeValidCtxt(vptr);
+  if (is_invalid) {
+	return Qfalse;
+  } else {
+	return Qtrue;
+  }
+}
+
+/*
+ * call-seq:
+ *    document.validate_schema(relaxng) -> (true|false)
+ * 
+ * Validate this document against the specified XML::RelaxNG.
+ *
+ * If a block is provided it is used as an error handler for validaten errors.
+ * The block is called with two argument, the message and a flag indication
+ * if the message is an error (true) or a warning (false).
+ */
+VALUE
+ruby_xml_document_validate_relaxng(VALUE self, VALUE relaxng) {
+  xmlRelaxNGValidCtxtPtr vptr;
+  ruby_xml_document_t     *c_doc;
+  ruby_xml_relaxng       *c_relaxng;
+  int is_invalid;
+
+  Data_Get_Struct(self,   ruby_xml_document_t, c_doc);
+  Data_Get_Struct(relaxng, ruby_xml_relaxng,   c_relaxng);
+
+  vptr = xmlRelaxNGNewValidCtxt(c_relaxng->relaxng);
+
+  xmlRelaxNGSetValidErrors(vptr, (xmlRelaxNGValidityErrorFunc)LibXML_validity_error,
+                                (xmlRelaxNGValidityWarningFunc)LibXML_validity_warning, NULL);
+  
+  is_invalid = xmlRelaxNGValidateDoc(vptr, c_doc->doc);
+  xmlRelaxNGFreeValidCtxt(vptr);
   if (is_invalid) {
 	return Qfalse;
   } else {
@@ -1092,5 +1130,6 @@ ruby_init_xml_document(void) {
   rb_define_method(cXMLDocument, "xinclude", ruby_xml_document_xinclude, 0);
   rb_define_method(cXMLDocument, "validate", ruby_xml_document_validate_dtd, 1);
   rb_define_method(cXMLDocument, "validate_schema", ruby_xml_document_validate_schema, 1);
+  rb_define_method(cXMLDocument, "validate_relaxng", ruby_xml_document_validate_relaxng, 1);
   rb_define_method(cXMLDocument, "reader", ruby_xml_document_reader, 0);
 }
