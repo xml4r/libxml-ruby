@@ -17,13 +17,14 @@ FILES = FileList[
   'CHANGES',
   'setup.rb',
   'doc/**/*',
-  'ext/**/*',
-  'lib/**/*',
-  'mingw/Rakefile',
-  'benchmark/**/*',
-  'test/**/*',
+  'ext/libxml/*.h',
+  'ext/libxml/*.c',
+  'ext/mingw/Rakefile',
   'vc/*.sln',
-  'vc/*.vcproj'
+  'vc/*.vcproj',
+  'lib/**/*',
+  'benchmark/**/*',
+  'test/**/*'
 ]
 
 # Default GEM Specification
@@ -75,14 +76,14 @@ end
 # ------- Windows Package ----------
 
 # Use *.dll* to get import libraries
-binaries = (FileList['mingw/*.so',
-                     'mingw/*.dll*']).pathmap('%f')
+binaries = (FileList['ext/mingw/*.so',
+                     'ext/mingw/*.dll*'])
 
 # Windows specification
 win_spec = default_spec.clone
 win_spec.extensions = []
 win_spec.platform = Gem::Platform::CURRENT
-win_spec.files += binaries.map {|binary_name| "lib/#{File.basename(binary_name)}"}
+win_spec.files += binaries.map {|binaryname| "lib/#{File.basename(binaryname)}"}
 
 
 desc "Create Windows Gem"
@@ -91,10 +92,9 @@ task :create_win32_gem do
   # since there are no dependencies of msvcr80.dll
   current_dir = File.expand_path(File.dirname(__FILE__))
 
-  binaries.each do |filename|
-    source = File.join(current_dir, 'mingw', filename)
-    target = File.join(current_dir, 'lib', filename)
-    cp(source, target)
+  binaries.each do |binaryname|
+    target = File.join(current_dir, 'lib', File.basename(binaryname))
+    cp(binaryname, target)
   end
   
   # Create the gem, then move it to admin/pkg
@@ -103,9 +103,8 @@ task :create_win32_gem do
   mv(gem_file, "admin/pkg/#{gem_file}")
 
   # Remove win extension from top level directory  
-  binaries.each do |filename|
-    target = File.join(current_dir, 'lib', filename)
-    rm(target)
+  binaries.each do |binaryname|
+    rm(binaryname)
   end
 end
 

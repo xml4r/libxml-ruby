@@ -22,7 +22,7 @@ CLOBBER.include(EXTENSION_LIB_NAME)
 
 task :default => "libxml"
 
-SRC = FileList['../ext/libxml/*.c']
+SRC = FileList['../libxml/*.c']
 OBJ = SRC.collect do |file_name|
   File.basename(file_name).ext('o')
 end
