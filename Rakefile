@@ -104,7 +104,8 @@ task :create_win32_gem do
 
   # Remove win extension from top level directory  
   binaries.each do |binaryname|
-    rm(binaryname)
+    target = File.join(current_dir, 'lib', File.basename(binaryname))
+    rm(target)
   end
 end
 
