@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="9.00"
 	Name="libxml_ruby"
 	ProjectGUID="{0B65CD1D-EEB9-41AE-93BB-75496E504152}"
 	RootNamespace="libxml"
 	Keyword="Win32Proj"
+	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform
@@ -67,6 +68,8 @@
 				AdditionalLibraryDirectories="C:\Development\ruby\lib;&quot;C:\Development\msys\src\libxml2-2.6.32\win32\lib&quot;"
 				GenerateDebugInformation="true"
 				SubSystem="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -86,9 +89,6 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -146,6 +146,8 @@
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -167,9 +169,6 @@
 				Name="VCAppVerifierTool"
 			/>
 			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
 				Name="VCPostBuildEventTool"
 			/>
 		</Configuration>
@@ -183,95 +182,99 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\ext\libxml\cbg.c"
+				RelativePath="..\libxml\cbg.c"
 				>
 			</File>
 			<File
-				RelativePath="..\ext\libxml\libxml.c"
+				RelativePath="..\libxml\libxml.c"
 				>
 			</File>
 			<File
-				RelativePath="..\ext\libxml\ruby_xml_attr.c"
+				RelativePath="..\libxml\ruby_xml_attr.c"
 				>
 			</File>
 			<File
-				RelativePath="..\ext\libxml\ruby_xml_attributes.c"
+				RelativePath="..\libxml\ruby_xml_attributes.c"
 				>
 			</File>
 			<File
-				RelativePath="..\ext\libxml\ruby_xml_document.c"
+				RelativePath="..\libxml\ruby_xml_document.c"
 				>
 			</File>
 			<File
-				RelativePath="..\ext\libxml\ruby_xml_dtd.c"
+				RelativePath="..\libxml\ruby_xml_dtd.c"
 				>
 			</File>
 			<File
-				RelativePath="..\ext\libxml\ruby_xml_html_parser.c"
+				RelativePath="..\libxml\ruby_xml_html_parser.c"
 				>
 			</File>
 			<File
-				RelativePath="..\ext\libxml\ruby_xml_input_cbg.c"
+				RelativePath="..\libxml\ruby_xml_input_cbg.c"
 				>
 			</File>
 			<File
-				RelativePath="..\ext\libxml\ruby_xml_node.c"
+				RelativePath="..\libxml\ruby_xml_node.c"
 				>
 			</File>
 			<File
-				RelativePath="..\ext\libxml\ruby_xml_node_set.c"
+				RelativePath="..\libxml\ruby_xml_node_set.c"
 				>
 			</File>
 			<File
-				RelativePath="..\ext\libxml\ruby_xml_ns.c"
+				RelativePath="..\libxml\ruby_xml_ns.c"
 				>
 			</File>
 			<File
-				RelativePath="..\ext\libxml\ruby_xml_parser.c"
+				RelativePath="..\libxml\ruby_xml_parser.c"
 				>
 			</File>
 			<File
-				RelativePath="..\ext\libxml\ruby_xml_parser_context.c"
+				RelativePath="..\libxml\ruby_xml_parser_context.c"
 				>
 			</File>
 			<File
-				RelativePath="..\ext\libxml\ruby_xml_reader.c"
+				RelativePath="..\libxml\ruby_xml_reader.c"
 				>
 			</File>
 			<File
-				RelativePath="..\ext\libxml\ruby_xml_sax_parser.c"
+				RelativePath="..\libxml\ruby_xml_relaxng.c"
 				>
 			</File>
 			<File
-				RelativePath="..\ext\libxml\ruby_xml_schema.c"
+				RelativePath="..\libxml\ruby_xml_sax_parser.c"
 				>
 			</File>
 			<File
-				RelativePath="..\ext\libxml\ruby_xml_state.c"
+				RelativePath="..\libxml\ruby_xml_schema.c"
 				>
 			</File>
 			<File
-				RelativePath="..\ext\libxml\ruby_xml_xinclude.c"
+				RelativePath="..\libxml\ruby_xml_state.c"
 				>
 			</File>
 			<File
-				RelativePath="..\ext\libxml\ruby_xml_xpath.c"
+				RelativePath="..\libxml\ruby_xml_xinclude.c"
 				>
 			</File>
 			<File
-				RelativePath="..\ext\libxml\ruby_xml_xpath_context.c"
+				RelativePath="..\libxml\ruby_xml_xpath.c"
 				>
 			</File>
 			<File
-				RelativePath="..\ext\libxml\ruby_xml_xpath_object.c"
+				RelativePath="..\libxml\ruby_xml_xpath_context.c"
 				>
 			</File>
 			<File
-				RelativePath="..\ext\libxml\ruby_xml_xpointer.c"
+				RelativePath="..\libxml\ruby_xml_xpath_object.c"
 				>
 			</File>
 			<File
-				RelativePath="..\ext\libxml\ruby_xml_xpointer_context.c"
+				RelativePath="..\libxml\ruby_xml_xpointer.c"
+				>
+			</File>
+			<File
+				RelativePath="..\libxml\ruby_xml_xpointer_context.c"
 				>
 			</File>
 		</Filter>
@@ -281,95 +284,99 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\ext\libxml\ruby_libxml.h"
+				RelativePath="..\libxml\ruby_libxml.h"
 				>
 			</File>
 			<File
-				RelativePath="..\ext\libxml\ruby_xml_attr.h"
+				RelativePath="..\libxml\ruby_xml_attr.h"
 				>
 			</File>
 			<File
-				RelativePath="..\ext\libxml\ruby_xml_attributes.h"
+				RelativePath="..\libxml\ruby_xml_attributes.h"
 				>
 			</File>
 			<File
-				RelativePath="..\ext\libxml\ruby_xml_document.h"
+				RelativePath="..\libxml\ruby_xml_document.h"
 				>
 			</File>
 			<File
-				RelativePath="..\ext\libxml\ruby_xml_dtd.h"
+				RelativePath="..\libxml\ruby_xml_dtd.h"
 				>
 			</File>
 			<File
-				RelativePath="..\ext\libxml\ruby_xml_html_parser.h"
+				RelativePath="..\libxml\ruby_xml_html_parser.h"
 				>
 			</File>
 			<File
-				RelativePath="..\ext\libxml\ruby_xml_input_cbg.h"
+				RelativePath="..\libxml\ruby_xml_input_cbg.h"
 				>
 			</File>
 			<File
-				RelativePath="..\ext\libxml\ruby_xml_node.h"
+				RelativePath="..\libxml\ruby_xml_node.h"
 				>
 			</File>
 			<File
-				RelativePath="..\ext\libxml\ruby_xml_node_set.h"
+				RelativePath="..\libxml\ruby_xml_node_set.h"
 				>
 			</File>
 			<File
-				RelativePath="..\ext\libxml\ruby_xml_ns.h"
+				RelativePath="..\libxml\ruby_xml_ns.h"
 				>
 			</File>
 			<File
-				RelativePath="..\ext\libxml\ruby_xml_parser.h"
+				RelativePath="..\libxml\ruby_xml_parser.h"
 				>
 			</File>
 			<File
-				RelativePath="..\ext\libxml\ruby_xml_parser_context.h"
+				RelativePath="..\libxml\ruby_xml_parser_context.h"
 				>
 			</File>
 			<File
-				RelativePath="..\ext\libxml\ruby_xml_reader.h"
+				RelativePath="..\libxml\ruby_xml_reader.h"
 				>
 			</File>
 			<File
-				RelativePath="..\ext\libxml\ruby_xml_sax_parser.h"
+				RelativePath="..\libxml\ruby_xml_relaxng.h"
 				>
 			</File>
 			<File
-				RelativePath="..\ext\libxml\ruby_xml_schema.h"
+				RelativePath="..\libxml\ruby_xml_sax_parser.h"
 				>
 			</File>
 			<File
-				RelativePath="..\ext\libxml\ruby_xml_state.h"
+				RelativePath="..\libxml\ruby_xml_schema.h"
 				>
 			</File>
 			<File
-				RelativePath="..\ext\libxml\ruby_xml_xinclude.h"
+				RelativePath="..\libxml\ruby_xml_state.h"
 				>
 			</File>
 			<File
-				RelativePath="..\ext\libxml\ruby_xml_xpath.h"
+				RelativePath="..\libxml\ruby_xml_xinclude.h"
 				>
 			</File>
 			<File
-				RelativePath="..\ext\libxml\ruby_xml_xpath_context.h"
+				RelativePath="..\libxml\ruby_xml_xpath.h"
 				>
 			</File>
 			<File
-				RelativePath="..\ext\libxml\ruby_xml_xpath_object.h"
+				RelativePath="..\libxml\ruby_xml_xpath_context.h"
 				>
 			</File>
 			<File
-				RelativePath="..\ext\libxml\ruby_xml_xpointer.h"
+				RelativePath="..\libxml\ruby_xml_xpath_object.h"
 				>
 			</File>
 			<File
-				RelativePath="..\ext\libxml\ruby_xml_xpointer_context.h"
+				RelativePath="..\libxml\ruby_xml_xpointer.h"
 				>
 			</File>
 			<File
-				RelativePath="..\ext\libxml\version.h"
+				RelativePath="..\libxml\ruby_xml_xpointer_context.h"
+				>
+			</File>
+			<File
+				RelativePath="..\libxml\version.h"
 				>
 			</File>
 		</Filter>
