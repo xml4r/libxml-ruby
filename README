@@ -39,10 +39,10 @@ libxml2 version 2.6.32 and iconv version 1.12.  Both of these are also
 included as pre-built binaries, and should be put either in the 
 libxml/lib directory or on the Windows path.
 
-The Windows binaries are biult with MingW.  The gem also includes 
-a Microsoft VC++ 2005 solution.  If you wish to run a debug version
-of libxml-ruby on Windows, then it is highly recommended
-you use VC++.
+The Windows binaries are built with MingW and include libxml-ruby, 
+libxml2 and iconv.  The gem also includes a Microsoft VC++ 2008
+solution.  If you wish to run a debug version of libxml-ruby on
+Windows, then it is highly recommended you use VC++.
 
 
 == Functionality
@@ -52,11 +52,13 @@ functionality such as:
 
 * SAX
 * DOM
+* HTML Parsing
 * XMLReader
 * XPath
 * XPointer
-* XML Schema
 * DTDs 
+* RelaxNG Schemas
+* XML Schema
 * XSLT (split into the libxslt-ruby bindings) 
 
 libxml-ruby provides impressive coverage of libxml's functionality 
@@ -84,10 +86,29 @@ From https://svn.concord.org/svn/projects/trunk/common/ruby/xml_benchmarks/
  rexml    22.859000   0.047000  22.906000 ( 23.203000) 
 
 == USAGE
-
 For in-depth information about using libxml-ruby please refer
-to its online Rdoc documentation.  Some simple examples
-are shown below.
+to its online Rdoc documentation.  
+
+All libxml classes are in the LibXML::XML module. The simplest
+way to use libxml is to require 'xml'.  This will mixin the 
+LibXML module into the global namespace, allowing you to 
+write code like this: 
+
+require 'xml'
+document = XML::Document.new
+
+If you prefer not to add the LibXML module to the global namepace, then
+write your code like this:
+
+require 'libxml'
+
+class MyClass
+  def some_method
+    document = LibXML::XML::Document.new
+  end
+end
+
+Some simple examples are shown below.
 
 === READING
 
