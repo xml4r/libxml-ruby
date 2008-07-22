@@ -20,8 +20,8 @@ FILES = FileList[
   'doc/**/*',
   'ext/libxml/*',
   'ext/mingw/Rakefile',
-  'vc/*.sln',
-  'vc/*.vcproj',
+  'ext/vc/*.sln',
+  'ext/vc/*.vcproj',
   'lib/**/*',
   'benchmark/**/*',
   'test/**/*'

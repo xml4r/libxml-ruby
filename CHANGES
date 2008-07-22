@@ -1,5 +1,9 @@
 (See log/ChangeLog for more detailed changes derived directly from source control.)
 
+== 0.8.3 / 2008-07-21 Charlie Savage
+
+* Missed several files in last release
+
 == 0.8.2 / 2008-07-21 Charlie Savage
 
 * To use LibXML you can either require 'xml' or require 'libxml'. 
