@@ -8,7 +8,7 @@
 * Reads or writes an XML document:
 *
 * Reading:
-*  require 'libxml'
+*  require 'xml'
 *
 *  doc = XML::Document.new()
 *  doc.root = XML::Node.new('root_node')

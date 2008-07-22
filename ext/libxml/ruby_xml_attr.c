@@ -9,7 +9,7 @@
 * calling XML::Node#attributes method.
 *
 * Basic Usage:
-*  require 'libxml'
+*  require 'xml'
 *
 *  doc = XML::Document.new(<some_file>)
 *  attribute = doc.root.attributes.get_attribute_ns('http://www.w3.org/1999/xlink', 'href')

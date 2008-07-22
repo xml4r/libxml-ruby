@@ -93,7 +93,7 @@ are shown below.
 
 There are several ways to read xml documents.
 
-  require 'libxml'
+  require 'xml'
   doc = XML::Document.file('output.xml')
   root = doc.root
   
@@ -126,7 +126,7 @@ And your terminal should look like:
 
 To write a simple document:
 
-  require 'libxml'
+  require 'xml'
   
   doc = XML::Document.new()
   doc.root = XML::Node.new('root_node')

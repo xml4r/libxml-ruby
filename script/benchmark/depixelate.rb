@@ -2,7 +2,7 @@ require 'rubygems'
 require 'benchmark'
 require 'hpricot'
 require 'rexml/document'
-require 'libxml'
+require 'xml'
 
 
 # Taken from http://depixelate.com/2008/4/23/ruby-xml-parsing-benchmarks

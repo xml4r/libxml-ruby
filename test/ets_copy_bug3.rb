@@ -1,4 +1,4 @@
-require 'libxml'
+require 'xml'
 
 str = <<-STR
   <html>

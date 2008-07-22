@@ -1,4 +1,4 @@
-require 'libxml'
+require 'xml'
 
 100.times do |count|
 

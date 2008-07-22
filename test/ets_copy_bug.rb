@@ -1,4 +1,4 @@
-require 'libxml'
+require 'xml'
 
 def test( doc2 )
   doc = XML::Document.new('1.0')

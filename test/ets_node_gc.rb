@@ -1,4 +1,4 @@
-require 'libxml'
+require 'xml'
 
 # test of bug 13310, clears MEM2
 

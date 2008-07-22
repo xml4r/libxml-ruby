@@ -1,4 +1,4 @@
-require 'libxml'
+require 'xml'
 
 10_000.times {|n|
 j=XML::Node.new2(nil,"happy#{n}")

@@ -8,7 +8,7 @@
 * Provides access to an elements attributes (XML::Attr).
 *
 * Basic Usage:
-*  require 'libxml'
+*  require 'xml'
 *
 *  doc = XML::Document.new(<some_file>)
 *  attributes = doc.root.attributes

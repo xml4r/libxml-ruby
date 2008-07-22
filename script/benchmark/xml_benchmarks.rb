@@ -140,7 +140,7 @@ $:.unshift 'ext/libxml'
 __DIR__ = File.dirname(__FILE__)
 
 require 'benchmark'
-require "rexml/document"
+require 'rexml/document'
 require 'hpricot'
 
 if RUBY_PLATFORM =~ /java/ 
@@ -151,7 +151,7 @@ if RUBY_PLATFORM =~ /java/
     @ruby_info = "Ruby version: JRuby #{RUBY_VERSION} (#{RUBY_RELEASE_DATE} rev #{RUBY_PATCHLEVEL}) [i386-jruby#{JRUBY_VERSION}]"
     @ruby_info << ", platform: Java, version #{java.lang.System.getProperty('java.version')}"
   else
-    require 'libxml'
+    require 'xml'
     @xml_parser = XML::Parser.new
     @ruby_info = "Ruby version: MRI #{RUBY_VERSION} (#{RUBY_RELEASE_DATE}"# rev #{RUBY_PATCHLEVEL})"
     @ruby_info << ", platform: #{RUBY_PLATFORM}"

@@ -1,6 +1,6 @@
 require 'rubygems'
 require 'hpricot'
-require 'libxml'
+require 'xml'
 require 'rexml/document'
 
 ITERATIONS = 3

@@ -1,4 +1,4 @@
-require 'libxml'
+require 'xml'
 
 1.times do |count|
 
