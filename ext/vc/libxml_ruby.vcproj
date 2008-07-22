@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;C:\Development\ruby\lib\ruby\1.8\i386-mswin32&quot;;&quot;C:\Development\msys\src\libiconv-1.12\include&quot;;C:\Development\msys\local\include\libxml2"
+				AdditionalIncludeDirectories="&quot;C:\Development\ruby\lib\ruby\1.8\i386-mswin32&quot;;C:\Development\msys\local\include;C:\Development\msys\local\include\libxml2"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;LIBXML_EXPORTS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"

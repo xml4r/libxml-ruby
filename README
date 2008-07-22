@@ -35,7 +35,7 @@ The easiest way to install libxml-ruby is via Ruby Gems.  To install:
 
 If you are running Windows, make sure to install the Win32 RubyGem which 
 includes an already built binary file.  The binary is built against
-libxml2 version 2.6.32 and iconv version 1.12.  Both of these are also 
+libxml2 version 2.6.32 and iconv version 1.11.  Both of these are also 
 included as pre-built binaries, and should be put either in the 
 libxml/lib directory or on the Windows path.
 
