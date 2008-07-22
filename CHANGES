@@ -1,5 +1,12 @@
 (See log/ChangeLog for more detailed changes derived directly from source control.)
 
+== 0.8.1 / 2008-07-09 Charlie Savage
+
+* Reimplmented Node#each_attr for backwards compatability
+
+* Moved node type test to Ruby.
+
+
 == 0.8.0 / 2008-07-09 Charlie Savage
 
 * Fixed bug in returning attributes from XPath results
