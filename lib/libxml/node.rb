@@ -4,6 +4,23 @@
 module LibXML
   module XML
     class Node
+      # Determines whether this node has attributes
+      def attributes?
+        attributes.length > 0
+      end
+      
+      # Create a shallow copy of the node.  To create
+      # a deep copy call Node#copy(true)
+      def clone
+        copy(false)
+      end
+      
+      # Create a shallow copy of the node.  To create
+      # a deep copy call Node#copy(true)
+      def dup
+        copy(false)
+      end
+    
       # Return nodes matching the specified xpath expression.
       # For more information, please refer to the documentation
       # for XML::Document#find.
@@ -29,12 +46,28 @@ module LibXML
         find(xpath, nslist).first
       end
     
+      # -------  Traversal  ----------------
+      # Iterates over this node's attributes.
+      #
+      #  doc = XML::Document.new('model/books.xml')
+      #  doc.root.each_attr {|attr| puts attr}
+      def each_attr
+        attributes.each do |attr|
+          yield(attr)
+        end
+      end
+      
+      # Iterates over this node's child elements (nodes
+      # that have a node_type == ELEMENT_NODE).
+      #
+      #  doc = XML::Document.new('model/books.xml')
+      #  doc.root.each_element {|element| puts element}
       def each_element
         each do |node|
           yield(node) if node.node_type == ELEMENT_NODE
         end
       end
-
+      
       # Determines whether this node has a parent node
       def parent?
         not parent.nil?
@@ -65,62 +98,161 @@ module LibXML
         not last.nil?
       end
 
+
+      # -------  Node Types  ----------------
+      
       # Returns this node's type name    
       def node_type_name
         case node_type
-          when ELEMENT_NODE:
-            'element'
+          # Most common choices first
           when ATTRIBUTE_NODE:
             'attribute'
-          when TEXT_NODE:
-            'text'
-          when CDATA_SECTION_NODE:
-            'cdata'
-          when ENTITY_REF_NODE:
-            'entity_ref'
-          when ENTITY_NODE:
-            'entity'
-          when PI_NODE:
-            'pi'
-          when COMMENT_NODE:
-            'comment'
           when DOCUMENT_NODE:
             'document_xml'
-          when DOCUMENT_TYPE_NODE:
-            'doctype'
+          when ELEMENT_NODE:
+            'element'
+          when TEXT_NODE:
+            'text'
+          
+          # Now the rest  
+          when ATTRIBUTE_DECL:
+            'attribute_decl'
+          when CDATA_SECTION_NODE:
+            'cdata'
+          when COMMENT_NODE:
+            'comment'
+          when DOCB_DOCUMENT_NODE:
+            'document_docbook'
           when DOCUMENT_FRAG_NODE:
             'fragment'
-          when NOTATION_NODE:
-            'notation'
-          when HTML_DOCUMENT_NODE:
-            'document_html'
+          when DOCUMENT_TYPE_NODE:
+            'doctype'
           when DTD_NODE:
             'dtd'
           when ELEMENT_DECL:
             'elem_decl'
-          when ATTRIBUTE_DECL:
-            'attribute_decl'
           when ENTITY_DECL:
             'entity_decl'
+          when ENTITY_NODE:
+            'entity'
+          when ENTITY_REF_NODE:
+            'entity_ref'
+          when HTML_DOCUMENT_NODE:
+            'document_html'
           when NAMESPACE_DECL:
             'namespace'
+          when NOTATION_NODE:
+            'notation'
+          when PI_NODE:
+            'pi'
           when XINCLUDE_START:
             'xinclude_start'
           when XINCLUDE_END:
             'xinclude_end'
-          when DOCB_DOCUMENT_NODE:
-            'document_docbook'
           else
             raise(UnknownType, "Unknown node type: %n", node.node_type);
         end
       end
-    
-      def dup
-        copy(false)
+      
+      # Specifies if this is an attribute node
+      def attribute?
+        node_type == ATTRIBUTE_NODE
       end
-    
-      def clone
-        copy(false)
+      
+      # Specifies if this is an attribute declaration node
+      def attribute_decl?
+        node_type == ATTRIBUTE_DECL
+      end
+
+      # Specifies if this is an CDATA node
+      def cdata?
+        node_type == CDATA_SECTION_NODE
+      end
+
+      # Specifies if this is an comment node
+      def comment?
+        node_type == COMMENT_NODE
+      end
+
+      # Specifies if this is an docbook node
+      def docbook_doc?
+        node_type == DOCB_DOCUMENT_NODE
+      end
+
+      # Specifies if this is an docbook node
+      def doctype?
+        node_type == DOCUMENT_TYPE_NODE
+      end
+
+      # Specifies if this is an DOCTYPE node
+      def document?
+        node_type == DOCUMENT_NODE
+      end
+
+      # Specifies if this is an DTD node
+      def dtd?
+        node_type == DTD_NODE
+      end
+
+      # Specifies if this is an element node
+      def element?
+        node_type == ELEMENT_NODE
+      end
+
+      # Specifies if this is an entity node
+      def entity?
+        node_type == ENTITY_NODE
+      end
+
+      # Specifies if this is an element declaration node
+      def element_decl?
+        node_type == ELEMENT_DECL
+      end
+
+      # Specifies if this is an entity reference node
+      def entity_ref?
+        node_type == ENTITY_REF_NODE
+      end
+
+      # Specifies if this is a fragment node
+      def fragment?
+        node_type == DOCUMENT_FRAG_NODE
+      end
+
+      # Specifies if this is a html document node
+      def html_doc?
+        node_type == HTML_DOCUMENT_NODE
+      end
+
+      # Specifies if this is a namespace node (not if it
+      # has a namepsace)
+      def namespace?
+        node_type == NAMESPACE_DECL
+      end
+
+      # Specifies if this is a notation node
+      def notation?
+        node_type == NOTATION_NODE
+      end
+
+      # Specifies if this is a processiong instruction node
+      def pi?
+        node_type == PI_NODE
+      end
+
+      # Specifies if this is a text node
+      def text?
+        node_type == TEXT_NODE
+      end
+      
+      # Specifies if this is an xinclude end node
+      def xinclude_end?
+        node_type == XINCLUDE_END
+      end
+      
+      # Specifies if this is an xinclude start node
+      def xinclude_start?
+        node_type == XINCLUDE_START
       end
 
       alias :child? :first?  
