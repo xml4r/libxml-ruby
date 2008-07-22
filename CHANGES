@@ -2,7 +2,11 @@
 
 == 0.8.2 / 2008-07-21 Charlie Savage
 
-* A new shortcut for using libxml - simply write require 'xml'
+* To use LibXML you can either require 'xml' or require 'libxml'. 
+  The differences is that require 'xml' mixes the LibXML module into
+  the global namespace, thereby allowing you to write code such
+  as document = XML::Document.new.  Note that this is different 
+  from 0.8.0 and 0.8.1 and may require updating your code.
 
 * Support RelaxNG validation (thanks to Morus Walter)
 
