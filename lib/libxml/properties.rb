@@ -6,14 +6,8 @@
 module LibXML
   module XML
     class Node
-      def properties
-        attributes
-      end
-    end
-  
-    class Attributes
-      alias :each_attr :each
-      alias :each_sibling :each
+      alias :properties :attributes
+      alias :properties? :attributes?
     end
   end
 end
