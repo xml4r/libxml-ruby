@@ -23,6 +23,11 @@ __rb_str_new_and_free(xmlChar *x)
 VALUE cXMLReader;
 static ID error_handler_block_ivar_id;
 
+static int
+ctxtRead(FILE *f, char * buf, size_t len) {
+    return(fread(buf, 1, len, f));
+}
+
 static VALUE
 ruby_xml_reader_new(VALUE class, xmlTextReaderPtr reader)
 {
@@ -59,6 +64,44 @@ ruby_xml_reader_new_file(int argc, VALUE *argv, VALUE self)
     rb_raise(rb_eRuntimeError, 
              "cannot create text reader for given XML file at path '%s'", 
              RVAL2CSTR(path));
+
+  return ruby_xml_reader_new(self, reader); 
+}
+
+/*
+ * call-seq:
+ *    XML::Reader.io(io, url=nil, encoding=nil, options=0) -> reader
+ *
+ * Parse an XML file from a file handle. The parsing flags options are
+ * a combination of xmlParserOption. 
+ */
+static VALUE
+ruby_xml_reader_new_io(int argc, VALUE *argv, VALUE self)
+{
+  xmlTextReaderPtr reader;
+  VALUE io, url, encoding, options;
+  OpenFile *fptr;
+  FILE *f;
+
+  #ifdef _WIN32
+    rb_raise(rb_eRuntimeError, "Reading an io stream is not supported on Windows");
+  #endif             
+
+  rb_scan_args(argc, argv, "13", &io, &url, &encoding, &options);
+
+  if (!rb_obj_is_kind_of(io, rb_cIO))
+    rb_raise(rb_eTypeError, "need an IO object");
+
+  GetOpenFile(io, fptr);
+  rb_io_check_readable(fptr);
+  f = GetWriteFile(fptr);
+
+  reader = xmlReaderForIO((xmlInputReadCallback) ctxtRead, NULL, f,
+                          NIL_P(url) ? NULL : RVAL2CSTR(url),
+                          NIL_P(encoding) ? NULL : RVAL2CSTR(encoding), 
+                          NIL_P(options) ? 0 : FIX2INT(options));
+  if (reader == NULL)
+    rb_raise(rb_eRuntimeError, "cannot create text reader for given stream");
 
   return ruby_xml_reader_new(self, reader); 
 }
@@ -800,6 +843,7 @@ ruby_init_xml_reader(void)
   error_handler_block_ivar_id = rb_intern("@__error_handler_callback__"); 
  
   rb_define_singleton_method(cXMLReader, "file", ruby_xml_reader_new_file, -1);
+  rb_define_singleton_method(cXMLReader, "io", ruby_xml_reader_new_io, -1);
   rb_define_singleton_method(cXMLReader, "walker", ruby_xml_reader_new_walker, 1);
   rb_define_alias(CLASS_OF(cXMLReader), "document", "walker");
   rb_define_singleton_method(cXMLReader, "new", ruby_xml_reader_new_data, -1);
