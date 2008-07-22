@@ -1,5 +1,20 @@
 (See log/ChangeLog for more detailed changes derived directly from source control.)
 
+== 0.8.2 / 2008-07-21 Charlie Savage
+
+* A new shortcut for using libxml - simply write require 'xml'
+
+* Support RelaxNG validation (thanks to Morus Walter)
+
+* Support passing IO objects to XmlReaders (thanks to Tom Hughes)
+
+* Fix segmentation fault caused by adding an attribute to a CDATA node
+
+* Moved node checking functions from C to Ruby
+
+* Improved Windows support - libxml-ruby should now work out of the box.
+
+
 == 0.8.1 / 2008-07-09 Charlie Savage
 
 * Reimplmented Node#each_attr for backwards compatability
