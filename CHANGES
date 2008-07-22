@@ -18,6 +18,8 @@
 
 * Improved Windows support - libxml-ruby should now work out of the box.
 
+* Improved Windows support - turned on libxml's zlib and iconv support.
+
 
 == 0.8.1 / 2008-07-09 Charlie Savage
 
