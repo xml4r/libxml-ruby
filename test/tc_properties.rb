@@ -28,12 +28,6 @@ class TestProperties < Test::Unit::TestCase
     assert_equal('bar', attribute.value)
   end
   
-  def test_each_attr
-    @doc.root.properties.each_attr do |attribute|
-      assert_instance_of(XML::Attr, attribute)
-    end
-  end
-  
   def test_no_properties
     properties = @doc.root.child.properties
     assert_instance_of(XML::Attributes, properties)
