@@ -1,6 +1,49 @@
 #include "ruby_libxml.h"
 #include "ruby_xml_dtd.h"
 
+/*
+ * Document-class: LibXML::XML::Dtd
+ *
+ * The XML::Dtd class is used to prepare DTD's for validation of xml
+ * documents.
+ *
+ * DTDs can be created from a string or a pair of public and system identifiers.
+ * Once a Dtd object is instantiated, an XML document can be validated by the
+ * XML::Document#validate method providing the XML::Dtd object as parameeter.
+ * The method returns true if the document validates, false otherwise.
+ *
+ * If a block is provided to the XML::Document#validate method,
+ * it functions as an error handler that is called with two parameters for
+ * all errors and warnings. The first parameter is the error or warning message 
+ * while the second indicates if the message is an error (true) or a warning (false).
+ * If no error handler is provided then errors are written to stderr.
+ *
+ * E.g.
+ *  # parse DTD
+ *  dtd = XML::Dtd.new(<<EOF)
+ *  <!ELEMENT root (item*) >
+ *  <!ELEMENT item (#PCDATA) >
+ *  EOF
+ * 
+ *  # parse xml document to be validated 
+ *  instance = XML::Document.file('instance.xml')
+ *
+ *  # validate without error handler
+ *  validates = instance.validate(dtd)
+ *  puts validates ? 'valid' : 'invalid'
+ * 
+ *  # validate with error handler
+ *  messages = { :errors => [], :warnings => [] }
+ *  validates = instance.validate(dtd) { | msg, error | messages[ error ? :errors : :warnings ] << msg }
+ *  puts validates ? 'valid' : 'invalid'
+ *  puts "warnings: #{messages[:warnings].join("\n")}"
+ *  puts "errors  : #{messages[:errors].join("\n")}"
+ *
+ * For "normal" DTD validation during parsing the xml documents
+ * see XML::Parser.default_validity_checking.
+ * Keep in mind though this flag is global.
+ */
+
 VALUE cXMLDtd;
 
 void

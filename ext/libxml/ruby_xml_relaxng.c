@@ -1,6 +1,47 @@
 #include "ruby_libxml.h"
 #include "ruby_xml_relaxng.h"
 
+/* 
+ * Document-class: LibXML::XML::RelaxNG
+ *
+ * The XML::RelaxNG class is used to prepare RelaxNG schemas for validation 
+ * of xml documents.
+ * 
+ * Schemas can be created from XML documents, strings or URIs using the
+ * corresponding methods (new for URIs).
+ *
+ * Once a schema is prepared, an XML document can be validated by the
+ * XML::Document#validate_relaxng method providing the XML::RelaxNG object
+ * as parameter. The method return true if the document validates, false 
+ * otherwise.
+ *
+ * If a block is provided to the XML::Document#validate_relaxng method,
+ * it functions as an error handler that is called with two parameters for
+ * all errors and warnings. The first parameter is the error or warning message 
+ * the second indicates if the message is an error (true) or a warning (false).
+ * If no error handler is provided errors are written to stderr.
+ *
+ * E.g.
+ *  # parse schema as xml document
+ *  relaxng_document = XML::Document.file('schema.rng')
+ *  # prepare schema for validation
+ *  relaxng_schema = XML::RelaxNG.document(relaxng_document)
+ *
+ *  # parse xml document to be validated
+ *  instance = XML::Document.file('instance.xml')
+ *
+ *  # validate without error handler
+ *  validates = instance.validate_relaxng(relaxng_schema)
+ *  puts validates ? 'valid' : 'invalid'
+ *
+ *  # validate with error handler
+ *  messages = { :errors => [], :warnings => [] }
+ *  validates = instance.validate_relaxng(relaxng_schema) { | msg, error | messages[ error ? :errors : :warnings ] << msg }
+ *  puts validates ? 'valid' : 'invalid'
+ *  puts "warnings: #{messages[:warnings].join("\n")}"
+ *  puts "errors  : #{messages[:errors].join("\n")}"
+ */
+
 VALUE cXMLRelaxNG;
 
 // Rdoc needs to know 
