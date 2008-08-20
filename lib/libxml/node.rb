@@ -105,49 +105,49 @@ module LibXML
       def node_type_name
         case node_type
           # Most common choices first
-          when ATTRIBUTE_NODE:
+          when ATTRIBUTE_NODE
             'attribute'
-          when DOCUMENT_NODE:
+          when DOCUMENT_NODE
             'document_xml'
-          when ELEMENT_NODE:
+          when ELEMENT_NODE
             'element'
-          when TEXT_NODE:
+          when TEXT_NODE
             'text'
           
           # Now the rest  
-          when ATTRIBUTE_DECL:
+          when ATTRIBUTE_DECL
             'attribute_decl'
-          when CDATA_SECTION_NODE:
+          when CDATA_SECTION_NODE
             'cdata'
-          when COMMENT_NODE:
+          when COMMENT_NODE
             'comment'
-          when DOCB_DOCUMENT_NODE:
+          when DOCB_DOCUMENT_NODE
             'document_docbook'
-          when DOCUMENT_FRAG_NODE:
+          when DOCUMENT_FRAG_NODE
             'fragment'
-          when DOCUMENT_TYPE_NODE:
+          when DOCUMENT_TYPE_NODE
             'doctype'
-          when DTD_NODE:
+          when DTD_NODE
             'dtd'
-          when ELEMENT_DECL:
+          when ELEMENT_DECL
             'elem_decl'
-          when ENTITY_DECL:
+          when ENTITY_DECL
             'entity_decl'
-          when ENTITY_NODE:
+          when ENTITY_NODE
             'entity'
-          when ENTITY_REF_NODE:
+          when ENTITY_REF_NODE
             'entity_ref'
-          when HTML_DOCUMENT_NODE:
+          when HTML_DOCUMENT_NODE
             'document_html'
-          when NAMESPACE_DECL:
+          when NAMESPACE_DECL
             'namespace'
-          when NOTATION_NODE:
+          when NOTATION_NODE
             'notation'
-          when PI_NODE:
+          when PI_NODE
             'pi'
-          when XINCLUDE_START:
+          when XINCLUDE_START
             'xinclude_start'
-          when XINCLUDE_END:
+          when XINCLUDE_END
             'xinclude_end'
           else
             raise(UnknownType, "Unknown node type: %n", node.node_type);
