@@ -12,7 +12,7 @@ VALUE eXMLParserParseError;
 
 static int
 ctxtRead(FILE *f, char * buf, size_t len) {
-    return(fread(buf, 1, len, f));
+    return(rb_io_fread(buf, len, f));
 }
 
 /*
@@ -902,12 +902,8 @@ ruby_xml_parser_io_set(VALUE self, VALUE io) {
   OpenFile *fptr;
   FILE *f;
   
-  #ifdef _WIN32
-    rb_raise(rb_eRuntimeError, "Setting an io buffer is not supported on Windows");
-  #endif             
-
   if (!rb_obj_is_kind_of(io, rb_cIO))
-    rb_raise(rb_eTypeError, "need an IO object");
+    rb_raise(rb_eTypeError, "Need an IO object");
 
   Data_Get_Struct(self, ruby_xml_parser, rxp);
 
@@ -928,7 +924,7 @@ ruby_xml_parser_io_set(VALUE self, VALUE io) {
 
   GetOpenFile(io, fptr);
   rb_io_check_readable(fptr);
-  f = GetWriteFile(fptr);
+  f = GetReadFile(fptr);
 
   Data_Get_Struct(rxp->ctxt, ruby_xml_parser_context, rxpc);
   rxpc->ctxt = xmlCreateIOParserCtxt(NULL, NULL,
