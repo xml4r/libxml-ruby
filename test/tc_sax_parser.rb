@@ -91,14 +91,23 @@ class TestSaxParser < Test::Unit::TestCase
     verify
   end
 
+  class DocTypeCallback
+    include XML::SaxParser::Callbacks
+    def on_start_element(element, attributes)
+      puts element
+    end
+  end
+  
   def test_doctype
-    @xp.callbacks = TestCaseCallbacks.new
+    @xp.callbacks = DocTypeCallback.new
     @xp.string = <<-EOS
       <?xml version="1.0" encoding="UTF-8"?>
-      <!DOCTYPE ONIXmessage SYSTEM "http://www.editeur.org/onix/2.1/short/onix-international.dtd">
-      <ONIXmessage release="2.1">
-      </ONIXmessage>
+      <!DOCTYPE Results SYSTEM "results.dtd">
+      <Results>
+        <a>a1</a>
+      </Results>
     EOS
-    @xp.parse
+    doc = @xp.parse
+    assert_not_nil(doc)
   end
-end # TC_XML_Sax_Parser
+end
