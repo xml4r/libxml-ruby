@@ -3,7 +3,6 @@
 # Be sure to set ENV['RUBYFORGE_USERNAME'] to use publish.
 
 require 'rubygems'
-require 'date'
 require 'rake/gempackagetask'
 require 'rake/rdoctask'
 require 'rake/testtask'
