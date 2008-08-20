@@ -25,10 +25,13 @@ ruby_xml_ns_alloc(VALUE klass) {
 VALUE
 ruby_xml_ns_initialize(VALUE self, VALUE node, VALUE href, VALUE prefix) {
   xmlNodePtr xnode;
-  xmlNsPtr xns;
+  xmlChar *xmlPrefix;
+	xmlNsPtr xns;
 
   Data_Get_Struct(node, xmlNode, xnode);
-  xns = xmlNewNs(xnode, (xmlChar*)StringValuePtr(href), (xmlChar*)StringValuePtr(prefix));
+	/* Prefix can be null - that means its the default namespace */
+	xmlPrefix = NIL_P(prefix) ? NULL : StringValuePtr(prefix);
+	xns = xmlNewNs(xnode, (xmlChar*)StringValuePtr(href), xmlPrefix);
 
   DATA_PTR(self) = xns;
   return self;  
