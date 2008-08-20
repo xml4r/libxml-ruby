@@ -175,8 +175,16 @@ class TestParser < Test::Unit::TestCase
       assert_kind_of(IO, f)
       assert_kind_of(IO, @xp.io = f)
       assert_instance_of(XML::Document, @xp.parse)
-    end # File.open
-  end # def test_libxml_parser_io
+    end
+  end
+
+  def test_string_io
+    data = File.read(File.join(File.dirname(__FILE__), 'model/rubynet.xml'))
+    string_io = StringIO.new(data)
+    assert_raises(TypeError) do
+      assert_kind_of(StringIO, @xp.io = string_io)
+    end
+  end
 
   def test_fd_gc
     # Test opening # of documents up to the file limit for the OS.
