@@ -202,7 +202,9 @@ ruby_xml_node_child_set(VALUE self, VALUE rnode) {
  *    node << ("string" | node) -> XML::Node
  * 
  * Add the specified string or XML::Node to this node's
- * content.
+ * content.  The returned node is the node that was
+ * added and not self, thereby allowing << calls to
+ * be chained.
  */
 VALUE
 ruby_xml_node_content_add(VALUE self, VALUE obj) {
@@ -216,17 +218,15 @@ ruby_xml_node_content_add(VALUE self, VALUE obj) {
    */
   if (rb_obj_is_kind_of(obj, cXMLNode)) {
     ruby_xml_node_child_set(self, obj);
-    return(self);
-  } else if (TYPE(obj) == T_STRING) {
-    xmlNodeAddContent(xnode, (xmlChar*)StringValuePtr(obj));
-    return(self);
+    return(obj);
   } else {
     str = rb_obj_as_string(obj);
     if (NIL_P(str) || TYPE(str) != T_STRING)
       rb_raise(rb_eTypeError, "invalid argument: must be string or XML::Node");
 
-    xmlNodeAddContent(xnode, (xmlChar*)StringValuePtr(str));
-    return(self);
+		xmlNodeAddContent(xnode, (xmlChar*)StringValuePtr(str));
+		/* Return the last child node */
+		return ruby_xml_node_last_get(self);
   }
 }
 
