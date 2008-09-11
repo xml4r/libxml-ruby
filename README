@@ -1,7 +1,6 @@
 = LibXML Ruby
 
 == Overview
-
 The libxml gem provides Ruby language bindings for GNOME's Libxml2
 XML toolkit. It is free software, released under the MIT License.
 
@@ -13,7 +12,6 @@ libxml-ruby provides several advantages over REXML:
 
 
 == Requirements
-
 libxml-ruby requires Ruby 1.8.4 or higher.  It is dependent on 
 the following libraries to function properly:
 
@@ -22,22 +20,22 @@ the following libraries to function properly:
 * libiconv
 * libxml2
 
-If you are running Linux or Unix you'll need a C compiler so the extension
-can be compiled when it is installed.  If you are running Windows, then install the Windows specific RubyGem which
+If you are running Linux or Unix you'll need a C compiler so the
+extension can be compiled when it is installed.  If you are running
+Windows, then install the Windows specific RubyGem which
 includes an already built extension.
 
 
 == INSTALLATION
-
 The easiest way to install libxml-ruby is via Ruby Gems.  To install:
 
 <tt>gem install libxml-ruby</tt>
 
-If you are running Windows, make sure to install the Win32 RubyGem which 
-includes an already built binary file.  The binary is built against
-libxml2 version 2.6.32 and iconv version 1.11.  Both of these are also 
-included as pre-built binaries, and should be put either in the 
-libxml/lib directory or on the Windows path.
+If you are running Windows, make sure to install the Win32 RubyGem
+which includes an already built binary file.  The binary is built
+against libxml2 version 2.6.32 and iconv version 1.11.  Both of these
+are also included as pre-built binaries, and should be put either in
+the libxml/lib directory or on the Windows path.
 
 The Windows binaries are built with MingW and include libxml-ruby, 
 libxml2 and iconv.  The gem also includes a Microsoft VC++ 2008
@@ -46,7 +44,7 @@ Windows, then it is highly recommended you use VC++.
 
 
 == Functionality
-libxml is a highly conformant XML parser, passing all 1800+ tests 
+LibXML is a highly conformant XML parser, passing all 1800+ tests 
 from the OASIS XML Tests Suite.  In addition, it includes rich
 functionality such as: 
 
@@ -63,6 +61,7 @@ functionality such as:
 
 libxml-ruby provides impressive coverage of libxml's functionality 
 through an easy-to-use C api.  
+
 
 == Performance
 In addition to being feature rich and conformation, the main reason
@@ -85,33 +84,45 @@ From https://svn.concord.org/svn/projects/trunk/common/ruby/xml_benchmarks/
  hpricot   5.359000   0.062000   5.421000 (  5.516000)
  rexml    22.859000   0.047000  22.906000 ( 23.203000) 
 
+
 == USAGE
 For in-depth information about using libxml-ruby please refer
 to its online Rdoc documentation.  
 
-All libxml classes are in the LibXML::XML module. The simplest
-way to use libxml is to require 'xml'.  This will mixin the 
-LibXML module into the global namespace, allowing you to 
+All libxml classes are in the LibXML::XML module. The most
+expedient way to use libxml is to require 'xml'.  This will mixin
+the LibXML module into the global namespace, allowing you to 
 write code like this: 
 
-require 'xml'
-document = XML::Document.new
+  require 'xml'
+  document = XML::Document.new
 
-If you prefer not to add the LibXML module to the global namepace, then
-write your code like this:
+However, when creating an application or library you plan to 
+redistribute, it is best to not add the LibXML module to the global
+namepace, in which case you can either write your code like this:
 
-require 'libxml'
+  require 'libxml'
+  document = LibXML::XML::Document.new
 
-class MyClass
-  def some_method
-    document = LibXML::XML::Document.new
+or, more conveniently, utilize a proper namespace for you own work
+and include LibXML into it. For example:
+
+  require 'libxml'
+
+  mdoule MyApplication
+    include LibXML
+
+    class MyClass
+      def some_method
+        document = XML::Document.new
+      end
+    end
   end
-end
 
-Some simple examples are shown below.
+For simplicity's sake we will use require 'xml in the basic examples
+shown below.
 
 === READING
-
 There are several ways to read xml documents.
 
   require 'xml'
@@ -142,9 +153,7 @@ And your terminal should look like:
   Node path: /root_node/foo/bar[9]         Contents: 9
   Node path: /root_node/foo/bar[10]        Contents: 10
 
-
 === WRITING
-
 To write a simple document:
 
   require 'xml'
@@ -199,18 +208,19 @@ The file output.xml contains:
     </foo>
   </root_node>
 
-== DOCUMENTATION
 
+== DOCUMENTATION
 RDoc comments are included - run 'rake doc' to generate documentation.
 You can find the latest documentation at:
 
 * http://libxml.rubyforge.org/rdoc/
 
-== License
 
+== License
 See LICENSE for license information.
 
-== MORE INFORMATION
 
+== MORE INFORMATION
 For more information please refer to the documentation.  If you have any
 questions, please send email to libxml-devel@rubyforge.org.
+
