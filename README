@@ -99,7 +99,7 @@ write code like this:
 
 However, when creating an application or library you plan to 
 redistribute, it is best to not add the LibXML module to the global
-namepace, in which case you can either write your code like this:
+namespace, in which case you can either write your code like this:
 
   require 'libxml'
   document = LibXML::XML::Document.new
