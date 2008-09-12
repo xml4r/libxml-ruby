@@ -218,16 +218,14 @@ ruby_xml_node_content_add(VALUE self, VALUE obj) {
    */
   if (rb_obj_is_kind_of(obj, cXMLNode)) {
     ruby_xml_node_child_set(self, obj);
-    return(obj);
   } else {
     str = rb_obj_as_string(obj);
     if (NIL_P(str) || TYPE(str) != T_STRING)
       rb_raise(rb_eTypeError, "invalid argument: must be string or XML::Node");
 
 		xmlNodeAddContent(xnode, (xmlChar*)StringValuePtr(str));
-		/* Return the last child node */
-		return ruby_xml_node_last_get(self);
   }
+  return(self);
 }
 
 /*
