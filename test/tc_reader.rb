@@ -21,24 +21,27 @@ class TC_XML_Reader < Test::Unit::TestCase
     verify_simple(reader)
   end
 
-  def test_reader_error
-    reader = XML::Reader.new('<foo/>')
-    assert_raises(RuntimeError) { reader.set_error_handler }
+  def test_deprecated_error_handler
     called = false
-    reader.set_error_handler { |*a| called = true }
-    while reader.read > 0; end
-    assert(!called)
     reader = XML::Reader.new('<foo blah')
-    reader.set_error_handler do |*a|
-      assert_equal(5, a.size)
-      assert_equal(reader, a[0])
-      assert_equal(XML::Reader::SEVERITY_ERROR, a[2])
-      assert_nil(a[3])
-      assert_equal(1, a[4])
+    reader.set_error_handler do |error|
       called = true
     end
-    while reader.read > 0; end
+
+    reader.read
     assert(called)
+  end
+
+  def test_deprecated_reset_error_handler
+    called = false
+    reader = XML::Reader.new('<foo blah')
+    reader.set_error_handler do |error|
+      called = true
+    end
+    reader.reset_error_handler
+
+    reader.read
+    assert(!called)
   end
 
   def test_attr

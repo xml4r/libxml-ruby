@@ -27,13 +27,26 @@ class TestSchema < Test::Unit::TestCase
   def test_invalid
     new_node = XML::Node.new('invalid', 'this will mess up validation')
     @doc.root.child_add(new_node)
-    
-    messages = Hash.new
-    assert(!@doc.validate_schema(schema) do |message, error|
-      messages[message] = error
-    end)
 
-    expected = {"Element 'invalid': This element is not expected. Expected is ( item ).\n" => true}
-    assert_equal(expected, messages)
+    error = assert_raise(XML::Error) do
+      @doc.validate_schema(schema)
+    end
+
+    assert_not_nil(error)
+    assert_kind_of(XML::Error, error)
+    assert_equal("Error: Element 'invalid': This element is not expected. Expected is ( item ). at C:/Development/src/libxml-ruby/test/model/shiporder.xml:0.",
+                 error.message)
+    assert_equal(XML::Error::XML_FROM_SCHEMASV, error.domain)
+    assert_equal(XML::Error::XML_SCHEMAV_ELEMENT_CONTENT, error.code)
+    assert_equal(XML::Error::XML_ERR_ERROR, error.level)
+    assert_equal("C:/Development/src/libxml-ruby/test/model/shiporder.xml", error.file)
+    assert_nil(error.line)
+    assert_nil(error.str1)
+    assert_nil(error.str2)
+    assert_nil(error.str3)
+    assert_equal(0, error.int1)
+    assert_equal(0, error.int2)
+    assert_not_nil(error.node)
+    assert_equal('invalid', error.node.name)
   end
 end

@@ -6,8 +6,6 @@
 
 VALUE mLibXML;
 VALUE mXML;
-VALUE eXMLError;
-
 
 #if defined(_WIN32)
 __declspec(dllexport) 
@@ -29,10 +27,10 @@ Init_libxml_ruby(void) {
 
   mLibXML = rb_define_module("LibXML");
   mXML = rb_define_module_under(mLibXML, "XML");
-  eXMLError = rb_define_class_under(mXML, "Error", rb_eRuntimeError);
 
   rb_define_const(mXML, "XML_NAMESPACE", rb_str_new2((const char*)XML_XML_NAMESPACE));
 
+  ruby_init_xml_error();
   ruby_init_state();
   ruby_init_parser();  
   ruby_init_xml_parser_context();

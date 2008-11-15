@@ -28,12 +28,25 @@ class TestRelaxNG < Test::Unit::TestCase
     new_node = XML::Node.new('invalid', 'this will mess up validation')
     @doc.root.child_add(new_node)
     
-    messages = Hash.new
-    assert(!@doc.validate_relaxng(relaxng) do |message, error|
-      messages[message] = error
-    end)
+    error = assert_raise(XML::Error) do
+      @doc.validate_relaxng(relaxng)
+    end
 
-    expected = {"Did not expect element invalid there\n" => true}
-    assert_equal(expected, messages)
+    assert_not_nil(error)
+    assert_kind_of(XML::Error, error)
+    assert_equal("Error: Did not expect element invalid there at C:/Development/src/libxml-ruby/test/model/shiporder.xml:0.",
+                 error.message)
+    assert_equal(XML::Error::XML_FROM_RELAXNGV, error.domain)
+    assert_equal(XML::Error::XML_ERR_LT_IN_ATTRIBUTE, error.code)
+    assert_equal(XML::Error::XML_ERR_ERROR, error.level)
+    assert_equal("C:/Development/src/libxml-ruby/test/model/shiporder.xml", error.file)
+    assert_nil(error.line)
+    assert_equal('invalid', error.str1)
+    assert_nil(error.str2)
+    assert_nil(error.str3)
+    assert_equal(0, error.int1)
+    assert_equal(0, error.int2)
+    assert_not_nil(error.node)
+    assert_equal('invalid', error.node.name)
   end
 end

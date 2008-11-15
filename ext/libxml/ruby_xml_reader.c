@@ -21,7 +21,6 @@ __rb_str_new_and_free(xmlChar *x)
 #define CSTR2RVAL2(x) (__rb_str_new_and_free(x))
 
 VALUE cXMLReader;
-static ID error_handler_block_ivar_id;
 
 static int
 ctxtRead(FILE *f, char * buf, size_t len) {
@@ -380,71 +379,6 @@ static VALUE
 ruby_xml_reader_read_string(VALUE self)
 {
   return CSTR2RVAL2(xmlTextReaderReadString(ruby_xml_text_reader_get(self)));
-}
-
-static void
-__xml_reader_error_cb(void *arg, 
-                      const char *msg, xmlParserSeverities severity, 
-                      xmlTextReaderLocatorPtr locator)
-{
-  VALUE reader;
-  VALUE block;
-
-  reader = (VALUE)arg;
-  block = rb_ivar_get(reader, error_handler_block_ivar_id); 
-  if (NIL_P(block))
-    rb_bug("no ivar block");
-  
-  rb_funcall(block, 
-             rb_intern("call"), 
-             5, 
-             reader, 
-             CSTR2RVAL(msg), 
-             INT2FIX(severity), 
-             CSTR2RVAL2(xmlTextReaderLocatorBaseURI(locator)), 
-             INT2FIX(xmlTextReaderLocatorLineNumber(locator))); 
-}
-
-/*
- * call-seq:
- *    reader.set_error_handler { ... }
- *
- * Register a callback block that will be called on error and warnings. The
- * block will be called with 5 parameters: the reader, the error message, the 
- * severity, the base URI and the line number.
- */
-static VALUE
-ruby_xml_reader_set_error_handler(VALUE self)
-{
-  VALUE block;
-  xmlTextReaderPtr reader;
-
-  if (rb_block_given_p() == Qfalse)
-    rb_raise(rb_eRuntimeError, "No block given");
-
-  block = rb_block_proc();
- 
-  /* Embed the block within the parser object to avoid it to be collected.
-   * Previous handler if exits is overwritten. 
-   */
-  rb_ivar_set(self, error_handler_block_ivar_id, block); 
-  reader = ruby_xml_text_reader_get(self);
-  xmlTextReaderSetErrorHandler(reader, __xml_reader_error_cb, (void *)self); 
-  
-  return self;
-}
-
-/*
- * call-seq:
- *    reader.reset_error_handler
- *
- * Restore the default error and warning handlers.
- */
-static VALUE
-ruby_xml_reader_reset_error_handler(VALUE self)
-{
-  xmlTextReaderSetErrorHandler(ruby_xml_text_reader_get(self), NULL, NULL);
-  return self;
 }
 
 /*
@@ -840,7 +774,6 @@ void
 ruby_init_xml_reader(void)
 {
   cXMLReader = rb_define_class_under(mXML, "Reader", rb_cObject);
-  error_handler_block_ivar_id = rb_intern("@__error_handler_callback__"); 
  
   rb_define_singleton_method(cXMLReader, "file", ruby_xml_reader_new_file, -1);
   rb_define_singleton_method(cXMLReader, "io", ruby_xml_reader_new_io, -1);
@@ -863,9 +796,6 @@ ruby_init_xml_reader(void)
   rb_define_method(cXMLReader, "read_outer_xml", ruby_xml_reader_read_outer_xml, 0);
   rb_define_method(cXMLReader, "read_state", ruby_xml_reader_read_state, 0);
   rb_define_method(cXMLReader, "read_string", ruby_xml_reader_read_string, 0);
-
-  rb_define_method(cXMLReader, "set_error_handler", ruby_xml_reader_set_error_handler, 0);
-  rb_define_method(cXMLReader, "reset_error_handler", ruby_xml_reader_reset_error_handler, 0);
 
   rb_define_method(cXMLReader, "relax_ng_validate", ruby_xml_reader_relax_ng_validate, 1);
 #if LIBXML_VERSION >= 20620

@@ -6,7 +6,6 @@
 #define __RUBY_XML_XPATH__
 
 extern VALUE mXPath;
-extern VALUE eXMLXPathInvalidPath;
 
 typedef struct ruby_xml_xpath {
   VALUE xd;

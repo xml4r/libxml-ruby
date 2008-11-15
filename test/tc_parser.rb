@@ -3,13 +3,12 @@ require 'test/unit'
 
 class TestParser < Test::Unit::TestCase
   def setup
-    XML::Parser.register_error_handler(nil)
+    XML::Error.set_handler(&XML::Error::QUIET_HANDLER)
     @xp = XML::Parser.new
   end
 
   def teardown
     @xp = nil
-    XML::Parser.register_error_handler(nil)
     # Clear out all the files we opened up in
     # the test_fd_gc test
     GC.start
@@ -193,7 +192,7 @@ class TestParser < Test::Unit::TestCase
     # re-open the same doc `limit descriptors` times. 
     # If we make it to the end, then we've succeeded, 
     # otherwise an exception will be thrown.
-    XML::Parser.register_error_handler(lambda {|msg| nil })
+    XML::Error.set_handler {|error|}
     
     max_fd = if RUBY_PLATFORM.match(/mswin32/i)
       500
@@ -205,6 +204,7 @@ class TestParser < Test::Unit::TestCase
     max_fd.times do
        XML::Document.file(filename)
     end
+    XML::Error.reset_handler {|error|}
   end
 
   def test_libxml_parser_features
@@ -212,89 +212,64 @@ class TestParser < Test::Unit::TestCase
   end
 
   # -----  Errors  ------
-  def test_error_handler
-    assert_raise(XML::Parser::ParseError) do
+  def test_error
+    error = assert_raise(XML::Error) do
       XML::Parser.string('<foo><bar/></foz>').parse
     end
 
-    ary = []
-    XML::Parser.register_error_handler do |msg|
-      ary << msg
-    end
-
-    # this will use our error handler
-    assert_raise(XML::Parser::ParseError) do
-      XML::Parser.string('<foo><bar/></foz>').parse
-    end
-    
-    assert_equal(["Entity: line 1: ",
-                  "parser ",
-                  "error : ",
-                  "Opening and ending tag mismatch: foo line 1 and foz\n",
-                  "<foo><bar/></foz>\n",
-                  "                 ^\n"], ary)
-
-    assert_instance_of(Proc, XML::Parser.register_error_handler(nil))
-
-    # this will go to stderr again
-    assert_raise(XML::Parser::ParseError) do
-      d = XML::Parser.string('<foo><bar/></foz>').parse
-    end
-  end
-  
-  def test_error_handler_lambda
-    XML::Parser.register_error_handler(nil)
-    assert_raise(XML::Parser::ParseError) do
-      XML::Parser.string('<foo><bar/></foz>').parse
-    end
-
-    ary = []
-    assert_nil XML::Parser.register_error_handler(lambda { |msg| ary << msg })
-
-    # this will use our error handler
-    assert_raise(XML::Parser::ParseError) do
-      XML::Parser.string('<foo><bar/></foz>').parse
-    end
-    
-    assert_equal(["Entity: line 1: ",
-                  "parser ",
-                  "error : ",
-                  "Opening and ending tag mismatch: foo line 1 and foz\n",
-                  "<foo><bar/></foz>\n",
-                  "                 ^\n"], ary)
-
-    assert_instance_of(Proc, XML::Parser.register_error_handler(nil))
-
-    # this will go to stderr again
-    assert_raise(XML::Parser::ParseError) do
-      d = XML::Parser.string('<foo><bar/></foz>').parse
-    end
+    assert_not_nil(error)
+    assert_kind_of(XML::Error, error)
+    assert_equal("Fatal error: Opening and ending tag mismatch: foo line 1 and foz at :1.", error.message)
+    assert_equal(XML::Error::XML_FROM_PARSER, error.domain)
+    assert_equal(XML::Error::XML_ERR_TAG_NAME_MISMATCH, error.code)
+    assert_equal(XML::Error::XML_ERR_FATAL, error.level)
+    assert_nil(error.file)
+    assert_equal(1, error.line)
+    assert_equal('foo', error.str1)
+    assert_equal('foz', error.str2)
+    assert_nil(error.str3)
+    assert_equal(1, error.int1)
+    assert_equal(20, error.int2)
+    assert_nil(error.node)
   end
   
   def test_bad_xml
     @xp.string = '<ruby_array uga="booga" foo="bar"<fixnum>one</fixnum><fixnum>two</fixnum></ruby_array>'
-    XML::Parser.register_error_handler(lambda {|msg| nil })
-    assert_raise(XML::Parser::ParseError) do
+    error = assert_raise(XML::Error) do
       assert_not_nil(@xp.parse)
     end
+
+    assert_not_nil(error)
+    assert_kind_of(XML::Error, error)
+    assert_equal("Fatal error: Extra content at the end of the document at :1.", error.message)
+    assert_equal(XML::Error::XML_FROM_PARSER, error.domain)
+    assert_equal(XML::Error::XML_ERR_DOCUMENT_END, error.code)
+    assert_equal(XML::Error::XML_ERR_FATAL, error.level)
+    assert_nil(error.file)
+    assert_equal(1, error.line)
+    assert_nil(error.str1)
+    assert_nil(error.str2)
+    assert_nil(error.str3)
+    assert_equal(0, error.int1)
+    assert_equal(20, error.int2)
+    assert_nil(error.node)
   end
   
   def test_double_parse
-    XML::Parser.register_error_handler(lambda {|msg| nil })
     parser = XML::Parser.string("<test>something</test>")
     doc = parser.parse
-    
-    assert_raise(XML::Parser::ParseError) do
+
+    assert_raise(XML::Error) do
       parser.parse
     end
   end
-  
+
   def test_libxml_parser_empty_string
-    assert_raise(XML::Parser::ParseError) do
+    assert_raise(XML::Error) do
       @xp.string = ''
       @xp.parse
     end
-    
+
     assert_raise(TypeError) do
       @xp.string = nil
     end

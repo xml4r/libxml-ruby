@@ -253,9 +253,14 @@ ruby_xml_xpath_context_find(VALUE self, VALUE xpath_expr) {
   xobject = xmlXPathEval((xmlChar*)StringValuePtr(xpath_expr), xctxt);
   
   if (xobject == NULL)
-    rb_raise(eXMLXPathInvalidPath,
-	     "Invalid XPath expression (expr could not be evaluated)");
-
+  {
+    /* xmlLastError is differnet than xctxt->lastError.  Use 
+       xmlLastError since it has the message set while xctxt->lastError
+       does not. */
+    xmlErrorPtr xerror = xmlGetLastError();
+    ruby_xml_raise(xerror);
+  }
+    
   result = ruby_xml_xpath_object_wrap(xobject);
   rb_iv_set(result, "@context", self);
   return result;  

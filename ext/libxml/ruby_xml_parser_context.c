@@ -353,7 +353,6 @@ ruby_xml_parser_context_new() {
 			  rxpc);
 }
 
-
 VALUE
 ruby_xml_parser_context_options_set(VALUE self, VALUE options) {
   ruby_xml_parser_context *rxpc;

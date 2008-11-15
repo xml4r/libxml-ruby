@@ -91,8 +91,7 @@ class TestNodeEdit < Test::Unit::TestCase
   
   def test_append_chain
     node = XML::Node.new('foo') << XML::Node.new('bar') << "bars contents"
-    assert_equal('bars contents',
+    assert_equal('<foo><bar/>bars contents</foo>',
                  node.to_s)
-    assert_equal("<foo>\n  <bar>bars contents</bar>\n</foo>", node.parent.parent.to_s)
   end
 end

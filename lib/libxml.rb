@@ -12,6 +12,7 @@ end
 require 'libxml_ruby'
 
 # Load Ruby supporting code.
+require 'libxml/error'
 require 'libxml/parser'
 require 'libxml/parser_options'
 require 'libxml/document'
@@ -20,6 +21,7 @@ require 'libxml/node_set'
 require 'libxml/attributes'
 require 'libxml/attr'
 require 'libxml/tree'
+require 'libxml/reader'
 
 # Deprecated
 require 'libxml/properties'

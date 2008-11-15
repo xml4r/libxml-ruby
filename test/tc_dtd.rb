@@ -31,20 +31,32 @@ class TestDtd < Test::Unit::TestCase
   def test_valid
     assert(@doc.validate(dtd))
   end
-  
+
   def test_invalid
     new_node = XML::Node.new('invalid', 'this will mess up validation')
     @doc.root.child_add(new_node)
-    
-    messages = Hash.new
-    assert(!@doc.validate(dtd) do |message, error|
-      messages[message] = error
-    end)
 
-    expected = {"No declaration for element invalid\n" => true,
-                "Element root content does not follow the DTD, expecting (head , descr), got (head descr invalid)\n" => true}
-      
-    assert_equal(expected, messages)
+    messages = Hash.new
+    error = assert_raise(XML::Error) do
+      @doc.validate(dtd)
+    end
+
+    # Check the error worked
+    assert_not_nil(error)
+    assert_kind_of(XML::Error, error)
+    assert_equal("Error: No declaration for element invalid at :0.", error.message)
+    assert_equal(XML::Error::XML_FROM_VALID, error.domain)
+    assert_equal(XML::Error::XML_DTD_UNKNOWN_ELEM, error.code)
+    assert_equal(XML::Error::XML_ERR_ERROR, error.level)
+    assert_nil(error.file)
+    assert_nil(error.line)
+    assert_equal('invalid', error.str1)
+    assert_equal('invalid', error.str2)
+    assert_nil(error.str3)
+    assert_equal(0, error.int1)
+    assert_equal(0, error.int2)
+    assert_not_nil(error.node)
+    assert_equal('invalid', error.node.name)
   end
   
   def test_external_dtd
@@ -54,17 +66,21 @@ class TestDtd < Test::Unit::TestCase
         <title>T1</title>
       </test>
     EOS
-    
-    messages = Array.new
-    XML::Parser.register_error_handler(lambda { |msg| messages << msg })
-    
+
+    errors = Array.new
+    XML::Error.set_handler do |error|
+      errors << error
+    end
+
     XML::Parser.default_load_external_dtd = false
     doc = XML::Parser.string(xml).parse
-    assert_equal(Array.new, messages)
-    
+    assert_equal(Array.new, errors)
+
     XML::Parser.default_load_external_dtd = true
     doc = XML::Parser.string(xml).parse
-    assert_equal('I/O warning : failed to load external entity "test.dtd" <!DOCTYPE test PUBLIC "-//TEST" "test.dtd" []> ^',
-                 messages.map{|msg| msg.strip}.join(' ')) 
+    assert_equal("Warning: failed to load external entity \"test.dtd\" at :1.",
+                  errors.map do |error|
+                    error.to_s
+                  end.join(' '))
   end
 end

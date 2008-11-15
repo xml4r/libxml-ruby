@@ -12,7 +12,7 @@ class TestNS < Test::Unit::TestCase
   def test_default_ns
     node = XML::Node.new('foo')
     ns = XML::NS.new(node, 'http://www.mynamespace.com', nil)
-    assert(ns.prefix, nil)
-    assert(ns.href, 'http://www.mynamespace.com')
+    assert_equal(ns.prefix, nil)
+    assert_equal(ns.href, 'http://www.mynamespace.com')
   end
 end

@@ -5,10 +5,7 @@
 #include <stdarg.h>
 #include "ruby_libxml.h"
 
-static int id_call;
-
 VALUE cXMLParser;
-VALUE eXMLParserParseError;
 
 static int
 ctxtRead(FILE *f, char * buf, size_t len) {
@@ -421,7 +418,7 @@ ruby_xml_parser_default_keep_blanks_set(VALUE class, VALUE bool) {
     xmlKeepBlanksDefaultValue = 1;
     return(Qtrue);
   } else {
-    rb_raise(rb_eArgError, "invalid argument, must be a boolean");
+    rb_raise(rb_eArgError, "Invalid argument, must be a boolean");
   }
 }
 
@@ -859,7 +856,7 @@ ruby_xml_parser_indent_tree_output_set(VALUE class, VALUE bool) {
     xmlIndentTreeOutput = 0;
     return(Qfalse);
   } else {
-    rb_raise(rb_eArgError, "invalid argument, must be boolean");
+    rb_raise(rb_eArgError, "Invalid argument, must be boolean");
   }
 }
 
@@ -903,7 +900,7 @@ ruby_xml_parser_io_set(VALUE self, VALUE io) {
   FILE *f;
   
   if (!rb_obj_is_kind_of(io, rb_cIO))
-    rb_raise(rb_eTypeError, "Need an IO object");
+    rb_raise(rb_eTypeError, "Invalid argument, must be an IO object");
 
   Data_Get_Struct(self, ruby_xml_parser, rxp);
 
@@ -1132,14 +1129,14 @@ ruby_xml_parser_parse(VALUE self) {
     Data_Get_Struct(rxp->ctxt, ruby_xml_parser_context, rxpc);
     if (xmlParseDocument(rxpc->ctxt) == -1) {
       xmlFreeDoc(rxpc->ctxt->myDoc);
-      rb_raise(eXMLParserParseError, "Document didn't parse");
+      ruby_xml_raise(&rxpc->ctxt->lastError);
     }
 
     xdp = rxpc->ctxt->myDoc;
     if (!rxpc->ctxt->wellFormed) {
       xmlFreeDoc(xdp);
       xdp = NULL;
-      rb_raise(eXMLParserParseError, "Document did not contain well-formed XML");
+      ruby_xml_raise(&rxpc->ctxt->lastError);
     } else {
       rxp->parsed = 1;
     }
@@ -1223,36 +1220,10 @@ ruby_xml_parser_str_set(VALUE self, VALUE str) {
   Data_Get_Struct(rxp->ctxt, ruby_xml_parser_context, rxpc);
   rxpc->ctxt = xmlCreateMemoryParserCtxt(StringValuePtr(data->str), RSTRING_LEN(data->str));
   if ( rxpc->ctxt == NULL )
-    rb_raise(eXMLParserParseError,"Cannot initialize parser with given string (maybe empty?)");
+    rb_raise(eXMLError, "Cannot initialize parser with given string (maybe empty?)");
 
   return(data->str);
 }
-
-static void
-libxml_xmlErrorFuncHandler(ATTRIBUTE_UNUSED void *ctx, const char *msg, ...)
-{
-  VALUE message;
-  va_list ap;
-  char str[1000];
-
-  va_start(ap, msg);
-  if (vsnprintf(str, 999, msg, ap) >= 998) str[999] = 0;
-  va_end(ap);
-
-  message = rb_str_new2(str);
-  rb_funcall(cXMLParser, rb_intern("xml_error_func_handler"), 1, message);
-}
-
-/* #define RUBY_XML_PARSER_ENABLED_INIT(func, method) \
- rb_define_singleton_method(cXMLParser, method, \
-			   ruby_xml_parser_enabled_##func##_q, 0); */
-
-///#include "cbg.c"
-///
-///VALUE ruby_register_deb(VALUE self) {
-///  deb_register_cbg();
-///  return(Qtrue);
-///}
 
 // Rdoc needs to know 
 #ifdef RDOC_NEVER_DEFINED
@@ -1263,8 +1234,6 @@ libxml_xmlErrorFuncHandler(ATTRIBUTE_UNUSED void *ctx, const char *msg, ...)
 void
 ruby_init_parser(void) {	
   cXMLParser = rb_define_class_under(mXML, "Parser", rb_cObject);
-  eXMLParserParseError = rb_define_class_under(cXMLParser, "ParseError",
-					       rb_eRuntimeError);
                  
   /* Constants */
   rb_define_const(cXMLParser, "LIBXML_VERSION",
@@ -1385,10 +1354,4 @@ ruby_init_parser(void) {
   rb_define_method(cXMLParser, "context", ruby_xml_parser_context_get, 0);
   rb_define_method(cXMLParser, "string", ruby_xml_parser_str_get, 0);
   rb_define_method(cXMLParser, "string=", ruby_xml_parser_str_set, 1);
-  
-  // set up error handling
-  xmlSetGenericErrorFunc(NULL, libxml_xmlErrorFuncHandler);
-  xmlThrDefSetGenericErrorFunc(NULL, libxml_xmlErrorFuncHandler);
-
-  id_call = rb_intern("call");
 }

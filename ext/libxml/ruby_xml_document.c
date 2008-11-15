@@ -955,9 +955,9 @@ ruby_xml_document_validate_schema(VALUE self, VALUE schema) {
   is_invalid = xmlSchemaValidateDoc(vptr, c_doc->doc);
   xmlSchemaFreeValidCtxt(vptr);
   if (is_invalid) {
-	return Qfalse;
+    ruby_xml_raise(&xmlLastError);
   } else {
-	return Qtrue;
+	  return Qtrue;
   }
 }
 
@@ -989,9 +989,9 @@ ruby_xml_document_validate_relaxng(VALUE self, VALUE relaxng) {
   is_invalid = xmlRelaxNGValidateDoc(vptr, c_doc->doc);
   xmlRelaxNGFreeValidCtxt(vptr);
   if (is_invalid) {
-	return Qfalse;
+    ruby_xml_raise(&xmlLastError);
   } else {
-	return Qtrue;
+	  return Qtrue;
   }
 }
 
@@ -1004,72 +1004,29 @@ ruby_xml_document_validate_relaxng(VALUE self, VALUE relaxng) {
  */
 VALUE
 ruby_xml_document_validate_dtd(VALUE self, VALUE dtd) {
-  xmlValidCtxt cvp;
+  VALUE error = Qnil;
+  xmlValidCtxt ctxt;
   ruby_xml_document_t *c_doc;
   ruby_xml_dtd *c_dtd;
 
   Data_Get_Struct(self, ruby_xml_document_t, c_doc);
   Data_Get_Struct(dtd,  ruby_xml_dtd,      c_dtd);
 
-  cvp.userData = NULL;
-  cvp.error = (xmlValidityErrorFunc)LibXML_validity_error;
-  cvp.warning = (xmlValidityWarningFunc)LibXML_validity_warning;
+  ctxt.userData = &error;
+  ctxt.error = (xmlValidityErrorFunc)LibXML_validity_error;
+  ctxt.warning = (xmlValidityWarningFunc)LibXML_validity_warning;
 
-  cvp.nodeNr = 0;
-  cvp.nodeTab = NULL;
-  cvp.vstateNr = 0;
-  cvp.vstateTab = NULL;
+  ctxt.nodeNr = 0;
+  ctxt.nodeTab = NULL;
+  ctxt.vstateNr = 0;
+  ctxt.vstateTab = NULL;
 
-  if ( xmlValidateDtd(&cvp, c_doc->doc, c_dtd->dtd) )
+  if (xmlValidateDtd(&ctxt, c_doc->doc, c_dtd->dtd))
     return(Qtrue);
   else
-    return(Qfalse);
-
-//    int	xmlValidateDtd(xmlValidCtxtPtr ctxt, xmlDocPtr doc, xmlDtdPtr dtd)
-/*
-int
-validate(self, ...)
-        xmlDocPtr self
-    PREINIT:
-        xmlValidCtxt cvp;
-        xmlDtdPtr dtd;
-        SV * dtd_sv;
-        STRLEN n_a, len;
-    CODE:
-        LibXML_init_error();
-        cvp.userData = (void*)PerlIO_stderr();
-        cvp.error = (xmlValidityErrorFunc)LibXML_validity_error;
-        cvp.warning = (xmlValidityWarningFunc)LibXML_validity_warning;
-        // we need to initialize the node stack, because perl might 
-        // already messed it up.
-        //
-        cvp.nodeNr = 0;
-        cvp.nodeTab = NULL;
-        cvp.vstateNr = 0;
-        cvp.vstateTab = NULL;
-
-        if (items > 1) {
-            dtd_sv = ST(1);
-            if ( sv_isobject(dtd_sv) && (SvTYPE(SvRV(dtd_sv)) == SVt_PVMG) ) {
-                dtd = (xmlDtdPtr)PmmSvNode(dtd_sv);
-            }
-            else {
-                croak("is_valid: argument must be a DTD object");
-            }
-            RETVAL = xmlValidateDtd(&cvp, self , dtd);
-        }
-        else {
-            RETVAL = xmlValidateDocument(&cvp, self);
-        }
-        sv_2mortal(LibXML_error);
-
-        if (RETVAL == 0) {
-            LibXML_croak_error();
-        }
-    OUTPUT:
-        RETVAL
-*/
+    ruby_xml_raise(&xmlLastError);
 }
+
 
 /*
  * call-seq:

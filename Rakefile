@@ -19,6 +19,7 @@ FILES = FileList[
   'doc/**/*',
   'ext/libxml/*',
   'ext/mingw/Rakefile',
+  'ext/mingw/build.rake',
   'ext/vc/*.sln',
   'ext/vc/*.vcproj',
   'lib/**/*',
@@ -68,46 +69,25 @@ end
 Rake::GemPackageTask.new(default_spec) do |pkg|
   pkg.package_dir = 'admin/pkg'
   pkg.need_tar = true
-  pkg.need_zip = true
 end
 
 
-# ------- Windows Package ----------
+# ------- Windows GEM ----------
+if RUBY_PLATFORM.match(/win32/)
+  binaries = (FileList['ext/mingw/*.so',
+                       'ext/mingw/*.dll*'])
 
-# Use *.dll* to get import libraries
-binaries = (FileList['ext/mingw/*.so',
-                     'ext/mingw/*.dll*'])
+  # Windows specification
+  win_spec = default_spec.clone
+  win_spec.extensions = ['ext/mingw/Rakefile']
+  win_spec.platform = Gem::Platform::CURRENT
+  win_spec.files += binaries.to_a
 
-# Windows specification
-win_spec = default_spec.clone
-win_spec.extensions = []
-win_spec.platform = Gem::Platform::CURRENT
-win_spec.files += binaries.map {|binaryname| "lib/#{File.basename(binaryname)}"}
-
-
-desc "Create Windows Gem"
-task :create_win32_gem do
-  # Copy the win32 extension built by MingW - easier to install
-  # since there are no dependencies of msvcr80.dll
-  current_dir = File.expand_path(File.dirname(__FILE__))
-
-  binaries.each do |binaryname|
-    target = File.join(current_dir, 'lib', File.basename(binaryname))
-    cp(binaryname, target)
-  end
-  
-  # Create the gem, then move it to admin/pkg
-  Gem::Builder.new(win_spec).build
-  gem_file = "#{win_spec.name}-#{win_spec.version}-#{win_spec.platform}.gem"
-  mv(gem_file, "admin/pkg/#{gem_file}")
-
-  # Remove win extension from top level directory  
-  binaries.each do |binaryname|
-    target = File.join(current_dir, 'lib', File.basename(binaryname))
-    rm(target)
+  # Rake task to build the windows package
+  Rake::GemPackageTask.new(win_spec) do |pkg|
+    pkg.package_dir = 'admin/pkg'
   end
 end
-
 
 # ---------  RDoc Documentation ---------
 desc "Generate rdoc documentation"
@@ -128,7 +108,6 @@ Rake::RDocTask.new("rdoc") do |rdoc|
 end
 
 task :default => :package
-task :package => :create_win32_gem
 
 Rake::TestTask.new do |t|
   t.libs << "test"

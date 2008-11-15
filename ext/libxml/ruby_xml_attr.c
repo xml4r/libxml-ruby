@@ -103,7 +103,7 @@ ruby_xml_attr_initialize(int argc, VALUE *argv, VALUE self) {
   xmlAttrPtr xattr;
   
   if ( argc < 3 || argc > 4 )
-    rb_raise(rb_eArgError, "wrong number of arguments (3 or 4)");
+    rb_raise(rb_eArgError, "Wrong number of arguments (3 or 4)");
 
   Check_Type(name, T_STRING);
   Check_Type(value, T_STRING);

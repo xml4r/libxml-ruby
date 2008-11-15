@@ -86,7 +86,7 @@ class TestParserContext < Test::Unit::TestCase
     xp = XML::Parser.new
     xp.string = '<foo><bar/></foz>'
     
-    assert_raise(XML::Parser::ParseError) do
+    assert_raise(XML::Error) do
       xp.parse
     end
     

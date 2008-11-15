@@ -62,6 +62,7 @@ typedef struct rx_xpath_data {
   VALUE ctxt;
 } rx_xpath_data;
 
+#include "ruby_xml_error.h"
 #include "ruby_xml_state.h"
 #include "ruby_xml_attributes.h"
 #include "ruby_xml_attr.h"
@@ -87,7 +88,6 @@ typedef struct rx_xpath_data {
 
 extern VALUE mLibXML;
 extern VALUE mXML;
-extern VALUE eXMLError;
 
 void ruby_init_parser(void);
 void ruby_xml_parser_free(ruby_xml_parser *rxp);

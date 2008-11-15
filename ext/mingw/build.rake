@@ -30,7 +30,7 @@ end
 SRC.each do |srcfile|
   objfile = File.basename(srcfile).ext('o')
   file objfile => srcfile do
-    command = "gcc -c -fPIC -O2 -Wall -o #{objfile} -I/usr/local/include #{srcfile} -I#{RUBY_INCLUDE_DIR}"
+    command = "gcc -c -O2 -Wall -o #{objfile} -I/usr/local/include #{srcfile} -I#{RUBY_INCLUDE_DIR}"
     sh "sh -c '#{command}'" 
   end
 end

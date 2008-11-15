@@ -61,7 +61,6 @@
 */
 
 VALUE mXPath;
-VALUE eXMLXPathInvalidPath;
 
 // Rdoc needs to know 
 #ifdef RDOC_NEVER_DEFINED
@@ -72,7 +71,6 @@ VALUE eXMLXPathInvalidPath;
 void
 ruby_init_xml_xpath(void) {
   mXPath = rb_define_module_under(mXML, "XPath");
-  eXMLXPathInvalidPath = rb_define_class_under(mXPath, "InvalidPath", eXMLError);
 
   rb_define_const(mXPath, "UNDEFINED", INT2NUM(XPATH_UNDEFINED));
   rb_define_const(mXPath, "NODESET", INT2NUM(XPATH_NODESET));
