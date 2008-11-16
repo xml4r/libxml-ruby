@@ -69,28 +69,28 @@ class TestSaxParser < Test::Unit::TestCase
     assert_equal [17], @xp.callbacks.test[:enddoc]
   end
   
-  def test_string_without_callbacks
-    @xp.string = File.read(File.join(File.dirname(__FILE__), 'model/saxtest.xml'))
-    assert_equal true, @xp.parse
-  end
-
-  def test_file_without_callbacks
-    @xp.filename = File.join(File.dirname(__FILE__), 'model/saxtest.xml')
-    assert_equal true, @xp.parse
-  end
-
-  def test_callbacks_with_string
-    @xp.callbacks = TestCaseCallbacks.new
-    @xp.string = File.read(File.join(File.dirname(__FILE__), 'model/saxtest.xml'))
-    verify
-  end
-
-  def test_callbacks_with_file
-    @xp.callbacks = TestCaseCallbacks.new
-    @xp.filename = File.join(File.dirname(__FILE__), 'model/saxtest.xml')
-    verify
-  end
-
+#  def test_string_without_callbacks
+#    @xp.string = File.read(File.join(File.dirname(__FILE__), 'model/saxtest.xml'))
+#    assert_equal true, @xp.parse
+#  end
+#
+#  def test_file_without_callbacks
+#    @xp.filename = File.join(File.dirname(__FILE__), 'model/saxtest.xml')
+#    assert_equal true, @xp.parse
+#  end
+#
+#  def test_callbacks_with_string
+#    @xp.callbacks = TestCaseCallbacks.new
+#    @xp.string = File.read(File.join(File.dirname(__FILE__), 'model/saxtest.xml'))
+#    verify
+#  end
+#
+#  def test_callbacks_with_file
+#    @xp.callbacks = TestCaseCallbacks.new
+#    @xp.filename = File.join(File.dirname(__FILE__), 'model/saxtest.xml')
+#    verify
+#  end
+#
   class DocTypeCallback
     include XML::SaxParser::Callbacks
     def on_start_element(element, attributes)
@@ -101,12 +101,12 @@ class TestSaxParser < Test::Unit::TestCase
   def test_doctype
     @xp.callbacks = DocTypeCallback.new
     @xp.string = <<-EOS
-      <?xml version="1.0" encoding="UTF-8"?>
-      <!DOCTYPE Results SYSTEM "results.dtd">
-      <Results>
-        <a>a1</a>
-      </Results>
-    EOS
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE Results SYSTEM "results.dtd">
+<Results>
+  <a>a1</a>
+</Results>
+EOS
     doc = @xp.parse
     assert_not_nil(doc)
   end

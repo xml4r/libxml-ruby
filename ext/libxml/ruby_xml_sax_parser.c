@@ -153,10 +153,8 @@ ruby_xml_sax_parser_parse(VALUE self) {
   if (nodesp->filename != Qnil) {
     status = xmlSAXUserParseFile(nodesp->xsh, nodesp, StringValuePtr(nodesp->filename));
   } else if (nodesp->str != Qnil) {
-    str = StringValuePtr(nodesp->str);
-    status = //ruby_xml_document_new(cXMLDocument,
-				   xmlSAXUserParseMemory(nodesp->xsh, nodesp,
-                 str, strlen(str)); //);
+    str = StringValueCStr(nodesp->str);
+    status = xmlSAXUserParseMemory(nodesp->xsh, NULL, str, strlen(str));
   }
   
   /* XXX This should return an exception for the various error codes
