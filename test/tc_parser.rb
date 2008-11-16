@@ -1,5 +1,6 @@
-require "xml"
+require 'xml'
 require 'test/unit'
+require 'stringio'
 
 class TestParser < Test::Unit::TestCase
   def setup
