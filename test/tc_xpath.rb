@@ -66,6 +66,20 @@ class TestXPath < Test::Unit::TestCase
     assert_equal('http://www.w3.org/2001/12/soap-encoding', nodes.first.value)
   end
 
+  def test_register_default_ns
+    doc = XML::Document.file(File.join(File.dirname(__FILE__), 'model/atom.xml'))
+
+    # No namespace has been yet defined
+    assert_raise(XML::Error) do
+      node = doc.find("atom:title")
+    end
+
+    # Register namespace
+    doc.root.register_default_namespace('atom')
+    node = doc.find("atom:title")
+    assert_not_nil(node)
+  end
+
   def test_node_find
     nodes = @doc.find('//ns1:IdAndName', 'ns1:http://domain.somewhere.com')
     node = nodes.first
