@@ -4,6 +4,18 @@
 module LibXML
   module XML
     class Node
+      def register_default_namespace(prefix)
+        ns = self.namespace.find do |ns|
+          ns.prefix.nil?
+        end
+
+        if ns
+            NS.new(self, ns.href, prefix)
+        else
+          raise(ArgumentError, "No default namespace was found")
+        end
+      end
+
       # Determines whether this node has attributes
       def attributes?
         attributes.length > 0
