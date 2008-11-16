@@ -25,10 +25,31 @@
  *                             'xi' => 'http://www.w3.org/2001/XInclude')
  *
  *
- * === Working With Namespaces
+ * === Working With Default Namespaces
  *
  * Finding namespaced elements and attributes can be tricky.  
- * Lets work through some examples using the following xml document:
+ * Lets work through an example of a document with a default
+ * namespace:
+ *
+ *  <?xml version="1.0" encoding="utf-8"?>
+ *  <feed xmlns="http://www.w3.org/2005/Atom">
+ *    <title type="text">Phil Bogle's Contacts</title>
+ *  </feed>
+ *
+ * To find nodes you must define the atom namespace for
+ * libxml.  One way to do this is:
+ *
+ *   node = doc.find('atom:title', 'atom:http://www.w3.org/2005/Atom')
+ *
+ * Alternatively, you can register the default namespace like this:
+ *
+ *   doc.root.register_default_namespace('atom')
+ *   node = doc.find('atom:title')
+ *
+ * === More Complex Namespace Examples
+ *
+ * Lets work through some more complex examples using the 
+ * following xml document:
  *
  *  <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
  *    <soap:Body>
@@ -58,7 +79,8 @@
  *  # xpath expression.
  *  doc.find('/soap:Envelope/soap:Body/ns0:getManufacturerNamesResponse/ns0:IDAndNameList/ns1:IdAndName', 
              ['ns0:http://services.somewhere.com', 'ns1:http://domain.somewhere.com'])
-*/
+ *
+ */
 
 VALUE mXPath;
 
