@@ -1203,10 +1203,10 @@ ruby_xml_node_attributes_get(VALUE self) {
  *    node.property("name") -> "string"
  *    node["name"]          -> "string"
  * 
- * Obtain the named property.
+ * Obtain the named pyroperty.
  */
 VALUE
-ruby_xml_node_property_get(VALUE self, VALUE name) {
+ruby_xml_node_attribute_get(VALUE self, VALUE name) {
   VALUE attributes = ruby_xml_node_attributes_get(self);
   return ruby_xml_attributes_attribute_get(attributes, name);
 }
@@ -1512,7 +1512,7 @@ ruby_init_xml_node(void) {
   
   /* Traversal */
   rb_include_module(cXMLNode, rb_mEnumerable);
-  rb_define_method(cXMLNode, "[]", ruby_xml_node_property_get, 1);
+  rb_define_method(cXMLNode, "[]", ruby_xml_node_attribute_get, 1);
   rb_define_method(cXMLNode, "each", ruby_xml_node_each, 0);
   rb_define_method(cXMLNode, "first", ruby_xml_node_first_get, 0);
   rb_define_method(cXMLNode, "last", ruby_xml_node_last_get, 0);
