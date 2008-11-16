@@ -1,7 +1,11 @@
 require 'xml'
 require 'test/unit'
 
-# TODO this is woefully inadequate
+class DocTypeCallback
+  include XML::SaxParser::Callbacks
+  def on_start_element(element, attributes)
+  end
+end
 
 class TestCaseCallbacks
   include XML::SaxParser::Callbacks
@@ -56,7 +60,6 @@ class TestSaxParser < Test::Unit::TestCase
   end
 
   def verify
-    @xp.parse
     assert_equal [1], @xp.callbacks.test[:startdoc]
     assert_equal [[2,'test',{'uga'=>'booga','foo'=>'bar'}],[3,'fixnum',{}],[6,'fixnum',{}]],
                  @xp.callbacks.test[:startel]
@@ -69,35 +72,30 @@ class TestSaxParser < Test::Unit::TestCase
     assert_equal [17], @xp.callbacks.test[:enddoc]
   end
   
-#  def test_string_without_callbacks
-#    @xp.string = File.read(File.join(File.dirname(__FILE__), 'model/saxtest.xml'))
-#    assert_equal true, @xp.parse
-#  end
-#
-#  def test_file_without_callbacks
-#    @xp.filename = File.join(File.dirname(__FILE__), 'model/saxtest.xml')
-#    assert_equal true, @xp.parse
-#  end
-#
-#  def test_callbacks_with_string
-#    @xp.callbacks = TestCaseCallbacks.new
-#    @xp.string = File.read(File.join(File.dirname(__FILE__), 'model/saxtest.xml'))
-#    verify
-#  end
-#
-#  def test_callbacks_with_file
-#    @xp.callbacks = TestCaseCallbacks.new
-#    @xp.filename = File.join(File.dirname(__FILE__), 'model/saxtest.xml')
-#    verify
-#  end
-#
-  class DocTypeCallback
-    include XML::SaxParser::Callbacks
-    def on_start_element(element, attributes)
-      puts element
-    end
+  def test_string_without_callbacks
+    @xp.string = File.read(File.join(File.dirname(__FILE__), 'model/saxtest.xml'))
+    assert_equal true, @xp.parse
   end
-  
+
+  def test_file_without_callbacks
+    @xp.filename = File.join(File.dirname(__FILE__), 'model/saxtest.xml')
+    assert_equal true, @xp.parse
+  end
+
+  def test_string_with_callbacks
+    @xp.callbacks = TestCaseCallbacks.new
+    @xp.string = File.read(File.join(File.dirname(__FILE__), 'model/saxtest.xml'))
+    @xp.parse
+    verify
+  end
+
+  def test_file_with_callbacks
+    @xp.callbacks = TestCaseCallbacks.new
+    @xp.filename = File.join(File.dirname(__FILE__), 'model/saxtest.xml')
+    @xp.parse
+    verify
+  end
+
   def test_doctype
     @xp.callbacks = DocTypeCallback.new
     @xp.string = <<-EOS
@@ -109,5 +107,33 @@ class TestSaxParser < Test::Unit::TestCase
 EOS
     doc = @xp.parse
     assert_not_nil(doc)
+  end
+
+  def test_parse_error
+    @xp.callbacks = TestCaseCallbacks.new
+    @xp.string = <<-EOS
+      <Results>
+        <a>a1
+      </Results>
+    EOS
+
+    error = assert_raise(XML::Error) do
+      doc = @xp.parse
+    end
+
+    assert_not_nil(error)
+    assert_kind_of(XML::Error, error)
+    assert_equal("Fatal error: Premature end of data in tag Results line 1 at :4.", error.message)
+    assert_equal(XML::Error::XML_FROM_PARSER, error.domain)
+    assert_equal(XML::Error::XML_ERR_TAG_NOT_FINISHED, error.code)
+    assert_equal(XML::Error::XML_ERR_FATAL, error.level)
+    assert_nil(error.file)
+    assert_equal(4, error.line)
+    assert_equal('Results', error.str1)
+    assert_nil(error.str2)
+    assert_nil(error.str3)
+    assert_equal(1, error.int1)
+    assert_equal(1, error.int2)
+    assert_nil(error.node)
   end
 end

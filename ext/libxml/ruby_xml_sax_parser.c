@@ -29,47 +29,37 @@ VALUE cbidOnExternalSubset;
 #include "sax_parser_callbacks.inc"
 
 void
-ruby_xml_sax_parser_free(ruby_xml_sax_parser *nodesp) {
-  /* Apparently this isn't needed: time will tell */
-  /* if (nodesp->xsh != NULL) */
-  /* xmlFreeSax_Parser(nodesp->sax_parser); */
+ruby_xml_sax_parser_free(ruby_xml_sax_parser *rxsp) {
+  xfree(rxsp);
 }
 
 void
-ruby_xml_sax_parser_mark(ruby_xml_sax_parser *nodesp) {
-  if (nodesp->callbackHandler && (nodesp->callbackHandler != Qnil)) {
-    rb_gc_mark(nodesp->callbackHandler);
+ruby_xml_sax_parser_mark(ruby_xml_sax_parser *rxsp) {
+  if (rxsp->callbackHandler != Qnil) {
+    rb_gc_mark(rxsp->callbackHandler);
   }
   
-  if (nodesp->filename && (nodesp->filename != Qnil)) {
-    rb_gc_mark(nodesp->filename);
+  if (rxsp->filename != Qnil) {
+    rb_gc_mark(rxsp->filename);
   }
 
-  if (nodesp->str && (nodesp->str != Qnil)) {
-    rb_gc_mark(nodesp->str);
+  if (rxsp->str != Qnil) {
+    rb_gc_mark(rxsp->str);
   }
 }
 
-/*
- * call-seq:
- *    XML::SaxParser.new -> sax_parser
- * 
- * Create a new XML::SaxParser instance.
- */
 VALUE
-ruby_xml_sax_parser_new(VALUE class) {
-  ruby_xml_sax_parser *nodesp;
-  
-  nodesp = ALLOC(ruby_xml_sax_parser);
-  nodesp->xsh = &rubySAXHandlerStruct;
+ruby_xml_sax_parser_alloc(VALUE klass) {
+  ruby_xml_sax_parser *rxsp = ALLOC(ruby_xml_sax_parser);
+  rxsp->xsh = &rubySAXHandlerStruct;
+  rxsp->callbackHandler = Qnil;  
+  rxsp->xpc = NULL;
+  rxsp->filename = Qnil;
+  rxsp->str = Qnil;
 
-  nodesp->callbackHandler = Qnil;  
-  nodesp->xpc = NULL;
-  nodesp->filename = Qnil;
-  nodesp->str = Qnil;
-
-  return(Data_Wrap_Struct(class, ruby_xml_sax_parser_mark, 
-                              ruby_xml_sax_parser_free, nodesp));
+  return Data_Wrap_Struct(cXMLSaxParser, 
+                          ruby_xml_sax_parser_mark, ruby_xml_sax_parser_free,
+                          rxsp);
 }
 
 
@@ -81,9 +71,9 @@ ruby_xml_sax_parser_new(VALUE class) {
  */
 VALUE
 ruby_xml_sax_parser_callbacks_get(VALUE self) {
-  ruby_xml_sax_parser *nodesp;
-  Data_Get_Struct(self, ruby_xml_sax_parser, nodesp);
-  return(nodesp->callbackHandler);
+  ruby_xml_sax_parser *rxsp;
+  Data_Get_Struct(self, ruby_xml_sax_parser, rxsp);
+  return(rxsp->callbackHandler);
 }
 
 
@@ -98,10 +88,10 @@ ruby_xml_sax_parser_callbacks_get(VALUE self) {
  */
 VALUE
 ruby_xml_sax_parser_callbacks_set(VALUE self, VALUE callbacks) {
-  ruby_xml_sax_parser *nodesp;
-  Data_Get_Struct(self, ruby_xml_sax_parser, nodesp);
-  nodesp->callbackHandler = callbacks;
-  return(nodesp->callbackHandler);
+  ruby_xml_sax_parser *rxsp;
+  Data_Get_Struct(self, ruby_xml_sax_parser, rxsp);
+  rxsp->callbackHandler = callbacks;
+  return(rxsp->callbackHandler);
 }
 
 
@@ -113,9 +103,9 @@ ruby_xml_sax_parser_callbacks_set(VALUE self, VALUE callbacks) {
  */
 VALUE
 ruby_xml_sax_parser_filename_get(VALUE self) {
-  ruby_xml_sax_parser *nodesp;
-  Data_Get_Struct(self, ruby_xml_sax_parser, nodesp);
-  return(nodesp->filename);
+  ruby_xml_sax_parser *rxsp;
+  Data_Get_Struct(self, ruby_xml_sax_parser, rxsp);
+  return(rxsp->filename);
 }
 
 
@@ -127,11 +117,11 @@ ruby_xml_sax_parser_filename_get(VALUE self) {
  */
 VALUE
 ruby_xml_sax_parser_filename_set(VALUE self, VALUE filename) {
-  ruby_xml_sax_parser *nodesp;
+  ruby_xml_sax_parser *rxsp;
   Check_Type(filename, T_STRING);
-  Data_Get_Struct(self, ruby_xml_sax_parser, nodesp);
-  nodesp->filename = filename;
-  return(nodesp->filename);
+  Data_Get_Struct(self, ruby_xml_sax_parser, rxsp);
+  rxsp->filename = filename;
+  return(rxsp->filename);
 }
 
  
@@ -146,22 +136,22 @@ VALUE
 ruby_xml_sax_parser_parse(VALUE self) {
   char *str;
   int status = 1;
-  ruby_xml_sax_parser *nodesp;
+  ruby_xml_sax_parser *rxsp;
 
-  Data_Get_Struct(self, ruby_xml_sax_parser, nodesp);
+  Data_Get_Struct(self, ruby_xml_sax_parser, rxsp);
 
-  if (nodesp->filename != Qnil) {
-    status = xmlSAXUserParseFile(nodesp->xsh, nodesp, StringValuePtr(nodesp->filename));
-  } else if (nodesp->str != Qnil) {
-    str = StringValueCStr(nodesp->str);
-    status = xmlSAXUserParseMemory(nodesp->xsh, NULL, str, strlen(str));
+  if (rxsp->filename != Qnil) {
+    status = xmlSAXUserParseFile(rxsp->xsh, rxsp, StringValuePtr(rxsp->filename));
+  } else if (rxsp->str != Qnil) {
+    str = StringValueCStr(rxsp->str);
+    status = xmlSAXUserParseMemory(rxsp->xsh, rxsp, str, strlen(str));
   }
   
   /* XXX This should return an exception for the various error codes
    * that can come back in status, but I'm too lazy to do that right
    * now. */
   if (status)
-    return(Qfalse);
+    ruby_xml_raise(&xmlLastError);
   else
     return(Qtrue);
 }
@@ -175,9 +165,9 @@ ruby_xml_sax_parser_parse(VALUE self) {
  */
 VALUE
 ruby_xml_sax_parser_str_get(VALUE self) {
-  ruby_xml_sax_parser *nodesp;
-  Data_Get_Struct(self, ruby_xml_sax_parser, nodesp);
-  return(nodesp->str);
+  ruby_xml_sax_parser *rxsp;
+  Data_Get_Struct(self, ruby_xml_sax_parser, rxsp);
+  return(rxsp->str);
 }
 
 
@@ -189,218 +179,12 @@ ruby_xml_sax_parser_str_get(VALUE self) {
  */
 VALUE
 ruby_xml_sax_parser_str_set(VALUE self, VALUE str) {
-  ruby_xml_sax_parser *nodesp;
+  ruby_xml_sax_parser *rxsp;
   Check_Type(str, T_STRING);
-  Data_Get_Struct(self, ruby_xml_sax_parser, nodesp);
-  nodesp->str = str;
-  return(nodesp->str);
+  Data_Get_Struct(self, ruby_xml_sax_parser, rxsp);
+  rxsp->str = str;
+  return(rxsp->str);
 }
-
-
-/****** SaxCallbacks ******/
-/* These are all the same. Bloody Rdoc... */
-
-/*
- * call-seq:
- *    callbacks.on_internal_subset(name, external_id, system_id)
- *
- * Called for an internal subset event.
- */
-VALUE
-ruby_xml_sax_callbacks_on_internal_subset(int argc, VALUE *argv, VALUE self) {
-  return Qnil;
-}
- 
- 
-/*
- * call-seq:
- *    callbacks.on_is_standalone()
- *
- * Called for 'is standalone' event.
- */
-VALUE
-ruby_xml_sax_callbacks_on_is_standalone(int argc, VALUE *argv, VALUE self) {
-  return Qnil;
-}
- 
- 
-/*
- * call-seq:
- *    callbacks.on_has_internal_subset()
- *
- * Called for an internal subset notification event.
- */
-VALUE
-ruby_xml_sax_callbacks_on_has_internal_subset(int argc, VALUE *argv, VALUE self) {
-  return Qnil;
-}
- 
- 
-/*
- * call-seq:
- *    callbacks.on_has_external_subset()
- *
- * Called for an external subset notification event.
- */
-VALUE
-ruby_xml_sax_callbacks_on_has_external_subset(int argc, VALUE *argv, VALUE self) {
-  return Qnil;
-}
- 
- 
-/*
- * call-seq:
- *    callbacks.on_start_document()
- *
- * Called for a start document event.
- */
-VALUE
-ruby_xml_sax_callbacks_on_start_document(int argc, VALUE *argv, VALUE self) {
-  return Qnil;
-}
- 
- 
-/*
- * call-seq:
- *    callbacks.on_end_document()
- *
- * Called for an end document event.
- */
-VALUE
-ruby_xml_sax_callbacks_on_end_document(int argc, VALUE *argv, VALUE self) {
-  return Qnil;
-}
- 
- 
-/*
- * call-seq:
- *    callbacks.on_start_element(name, attributes_hash)
- * 
- * Called for an element start event.
- */
-VALUE
-ruby_xml_sax_callbacks_on_start_element(int argc, VALUE *argv, VALUE self) {
-  return Qnil;
-}
- 
- 
-/*
- * call-seq:
- *    callbacks.on_end_element(name)
- *
- * Called for an element end event.
- */
-VALUE
-ruby_xml_sax_callbacks_on_end_element(int argc, VALUE *argv, VALUE self) {
-  return Qnil;
-}
- 
- 
-/*
- * call-seq:
- *    callbacks.on_reference(name)
- *
- * Called for a reference event.
- */
-VALUE
-ruby_xml_sax_callbacks_on_reference(int argc, VALUE *argv, VALUE self) {
-  return Qnil;
-}
- 
- 
-/*
- * call-seq:
- *    callbacks.on_characters(chars)
- *
- * Called for a characters event.
- */
-VALUE
-ruby_xml_sax_callbacks_on_characters(int argc, VALUE *argv, VALUE self) {
-  return Qnil;
-}
- 
- 
-/*
- * call-seq:
- *    callbacks.on_processing_instruction(target, data)
- *
- * Called for an processing instruction event.
- */
-VALUE
-ruby_xml_sax_callbacks_on_processing_instruction(int argc, VALUE *argv, VALUE self) {
-  return Qnil;
-}
- 
- 
-/*
- * call-seq:
- *    callbacks.on_comment(msg)
- *
- * Called for a comment event.
- */
-VALUE
-ruby_xml_sax_callbacks_on_comment(int argc, VALUE *argv, VALUE self) {
-  return Qnil;
-}
-
-
-/*
- * call-seq:
- *    callbacks.on_parser_warning(msg)
- *
- * Called for parser warnings.
- */
-VALUE
-ruby_xml_sax_callbacks_on_parser_warning(int argc, VALUE *argv, VALUE self) {
-  return Qnil;
-}
- 
- 
-/*
- * call-seq:
- *    callbacks.on_parser_error(msg)
- *
- * Called for parser errors.
- */
-VALUE
-ruby_xml_sax_callbacks_on_parser_error(int argc, VALUE *argv, VALUE self) {
-  return Qnil;
-}
- 
-  
-/*
- * call-seq:
- *    callbacks.on_parser_fatal_error(msg)
- *
- * Called for fatal parser errors.
- */
-VALUE
-ruby_xml_sax_callbacks_on_parser_fatal_error(int argc, VALUE *argv, VALUE self) {
-  return Qnil;
-}
- 
-/*
- * call-seq:
- *    callbacks.on_cdata_block(cdata)
- *
- * Called for a CDATA block event.
- */
-VALUE
-ruby_xml_sax_callbacks_on_cdata_block(int argc, VALUE *argv, VALUE self) {
-  return Qnil;
-}
- 
-/*
- * call-seq:
- *    callbacks.on_external_subset(name, external_id, system_id)
- *
- * Called for an external subset event.
- */
-VALUE
-ruby_xml_sax_callbacks_on_external_subset(int argc, VALUE *argv, VALUE self) {
-  return Qnil;
-}
-
 
 // Rdoc needs to know 
 #ifdef RDOC_NEVER_DEFINED
@@ -410,20 +194,13 @@ ruby_xml_sax_callbacks_on_external_subset(int argc, VALUE *argv, VALUE self) {
 
 void
 ruby_init_xml_sax_parser(void) {
-  cXMLSaxParser = rb_define_class_under(mXML, "SaxParser", rb_cObject);
-  mXMLSaxParserCallbacks = rb_define_module_under(cXMLSaxParser, "Callbacks");
-
   /* SaxParser */
-  rb_define_singleton_method(cXMLSaxParser, "new", ruby_xml_sax_parser_new, 0);
-
-  rb_define_method(cXMLSaxParser, "filename",
-       ruby_xml_sax_parser_filename_get, 0);
-  rb_define_method(cXMLSaxParser, "filename=",
-       ruby_xml_sax_parser_filename_set, 1);
-  rb_define_method(cXMLSaxParser, "callbacks",
-       ruby_xml_sax_parser_callbacks_get, 0);
-  rb_define_method(cXMLSaxParser, "callbacks=",
-       ruby_xml_sax_parser_callbacks_set, 1);
+  cXMLSaxParser = rb_define_class_under(mXML, "SaxParser", rb_cObject);
+  rb_define_alloc_func(cXMLSaxParser, ruby_xml_sax_parser_alloc);
+  rb_define_method(cXMLSaxParser, "filename", ruby_xml_sax_parser_filename_get, 0);
+  rb_define_method(cXMLSaxParser, "filename=", ruby_xml_sax_parser_filename_set, 1);
+  rb_define_method(cXMLSaxParser, "callbacks", ruby_xml_sax_parser_callbacks_get, 0);
+  rb_define_method(cXMLSaxParser, "callbacks=", ruby_xml_sax_parser_callbacks_set, 1);
   rb_define_method(cXMLSaxParser, "parse", ruby_xml_sax_parser_parse, 0);
   rb_define_method(cXMLSaxParser, "string", ruby_xml_sax_parser_str_get, 0);
   rb_define_method(cXMLSaxParser, "string=", ruby_xml_sax_parser_str_set, 1);
@@ -446,39 +223,4 @@ ruby_init_xml_sax_parser(void) {
   cbidOnXmlParserFatalError = rb_intern("on_parser_fatal_error");
   cbidOnCdataBlock = rb_intern("on_cdata_block");
   cbidOnExternalSubset = rb_intern("on_external_subset");
-
-  rb_define_method(mXMLSaxParserCallbacks, "on_internal_subset", 
-      ruby_xml_sax_callbacks_on_internal_subset, -1);        
-  rb_define_method(mXMLSaxParserCallbacks, "on_is_standalone", 
-      ruby_xml_sax_callbacks_on_is_standalone, -1);        
-  rb_define_method(mXMLSaxParserCallbacks, "on_has_internal_subset", 
-      ruby_xml_sax_callbacks_on_has_internal_subset, -1);        
-  rb_define_method(mXMLSaxParserCallbacks, "on_has_external_subset", 
-      ruby_xml_sax_callbacks_on_has_external_subset, -1);        
-  rb_define_method(mXMLSaxParserCallbacks, "on_start_document", 
-      ruby_xml_sax_callbacks_on_start_document, -1);  
-  rb_define_method(mXMLSaxParserCallbacks, "on_end_document", 
-      ruby_xml_sax_callbacks_on_end_document, -1);  
-  rb_define_method(mXMLSaxParserCallbacks, "on_start_element", 
-      ruby_xml_sax_callbacks_on_start_element, -1);  
-  rb_define_method(mXMLSaxParserCallbacks, "on_end_element", 
-      ruby_xml_sax_callbacks_on_end_element, -1);        
-  rb_define_method(mXMLSaxParserCallbacks, "on_reference", 
-      ruby_xml_sax_callbacks_on_reference, -1);        
-  rb_define_method(mXMLSaxParserCallbacks, "on_characters", 
-      ruby_xml_sax_callbacks_on_characters, -1);        
-  rb_define_method(mXMLSaxParserCallbacks, "on_processing_instruction", 
-      ruby_xml_sax_callbacks_on_processing_instruction, -1);        
-  rb_define_method(mXMLSaxParserCallbacks, "on_comment", 
-      ruby_xml_sax_callbacks_on_comment, -1);        
-  rb_define_method(mXMLSaxParserCallbacks, "on_parser_warning", 
-      ruby_xml_sax_callbacks_on_parser_warning, -1);        
-  rb_define_method(mXMLSaxParserCallbacks, "on_parser_error", 
-      ruby_xml_sax_callbacks_on_parser_error, -1);        
-  rb_define_method(mXMLSaxParserCallbacks, "on_parser_fatal_error", 
-      ruby_xml_sax_callbacks_on_parser_fatal_error, -1);        
-  rb_define_method(mXMLSaxParserCallbacks, "on_cdata_block", 
-      ruby_xml_sax_callbacks_on_cdata_block, -1);        
-  rb_define_method(mXMLSaxParserCallbacks, "on_external_subset", 
-      ruby_xml_sax_callbacks_on_external_subset, -1);              
 }

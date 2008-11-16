@@ -139,9 +139,8 @@ namespace :extensions do
 end
 
 file "ext/libxml/Makefile" => ["ext/libxml/extconf.rb"] do
-
   command = ["ruby"] + $:.map{|dir| "-I#{File.expand_path dir}"} + ["extconf.rb"]
-  Dir.chdir("ext/libxml") { sh *command }
+  Dir.chdir("ext/libxml") { sh(*command) }
 end
 
 # ---------  Publish Website to Rubyforge ---------

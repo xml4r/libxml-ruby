@@ -22,6 +22,7 @@ require 'libxml/attributes'
 require 'libxml/attr'
 require 'libxml/tree'
 require 'libxml/reader'
+require 'libxml/sax_callbacks'
 
 # Deprecated
 require 'libxml/properties'
