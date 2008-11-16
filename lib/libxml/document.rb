@@ -33,7 +33,7 @@ module LibXML
       #
       #  nodes = nil
       #  GC.start
-      #
+
       def find(xpath, nslist = nil)
         context = XPath::Context.new(self)
         context.node = self.root  
