@@ -4,13 +4,15 @@
 module LibXML
   module XML
     class Node
+      # Register the prefix (i.e., name) of the default namespace to
+      # make xpath searches easier
       def register_default_namespace(prefix)
         ns = self.namespace.find do |ns|
           ns.prefix.nil?
         end
 
         if ns
-            NS.new(self, ns.href, prefix)
+          NS.new(self, ns.href, prefix)
         else
           raise(ArgumentError, "No default namespace was found")
         end
