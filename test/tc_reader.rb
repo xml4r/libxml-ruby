@@ -112,4 +112,11 @@ class TC_XML_Reader < Test::Unit::TestCase
        XML::Reader::TYPE_SIGNIFICANT_WHITESPACE,
        XML::Reader::TYPE_END_ELEMENT])
   end
+
+  def test_mode
+    reader = XML::Reader.string('<xml/>')
+    assert_equal(XML::Reader::MODE_INITIAL, reader.read_state)
+    reader.read
+    assert_equal(XML::Reader::MODE_EOF, reader.read_state)
+  end
 end
