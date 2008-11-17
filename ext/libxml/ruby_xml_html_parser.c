@@ -9,12 +9,6 @@ ID INPUT_ATTR;
 ID CONTEXT_ATTR;
 
 
-static int
-ctxtRead(FILE *f, char * buf, int len) {
-    return(fread(buf, 1, len, f));
-}
-
-
 /*
  * call-seq:
  *    XML::HTMLParser.initialize -> parser
@@ -23,7 +17,7 @@ ctxtRead(FILE *f, char * buf, int len) {
  */
 VALUE
 ruby_xml_html_parser_initialize(VALUE self) {
-  VALUE input = rb_class_new_instance(0, Qnil, cXMLInput);
+  VALUE input = rb_class_new_instance(0, NULL, cXMLInput);
   rb_iv_set(self, "@input", input);
   rb_iv_set(self, "@context", Qnil);
   return self;
@@ -41,7 +35,6 @@ ruby_xml_html_parser_file_ctxt(VALUE input) {
 htmlParserCtxtPtr
 ruby_xml_html_parser_str_ctxt(VALUE input) {
   VALUE data = rb_ivar_get(input, STRING_ATTR);
-  VALUE encoding = rb_ivar_get(input, ENCODING_ATTR);
   return htmlCreateMemoryParserCtxt(StringValuePtr(data), RSTRING_LEN(data));
 }
 
@@ -77,8 +70,6 @@ VALUE
 ruby_xml_html_parser_parse(VALUE self) {
   xmlParserCtxtPtr ctxt;
   VALUE context;
-  VALUE source;
-  VALUE doc;
   VALUE input = rb_ivar_get(self, INPUT_ATTR);
 
   context = rb_ivar_get(self, CONTEXT_ATTR);

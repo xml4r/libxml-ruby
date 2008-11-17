@@ -22,36 +22,105 @@
 */
 
 #include <stdarg.h>
+#include <st.h>
 #include "ruby_libxml.h"
 #include "ruby_xml_document.h"
 
 
 VALUE cXMLDocument;
 
-/* When shutting down, ruby does not honor gc_mark calls. 
-   That can cause segmentation faults if a documents is
-   freed before a referencing xpathobject result.  So
-   implement a simple reference counting scheme to avoid
-   the problem. */
-int
-ruby_xml_document_incr(xmlDocPtr xdoc) {
-  //return rdoc->ref_count++;
-  return 0;
-}
 
-int
-ruby_xml_document_decr(xmlDocPtr xdoc) {
- // return rdoc->ref_count--;
-  return 0;
-}
+/* We have to make sure that documents are freed after
+   XPathObjects.  The Ruby gc does not guarantee this
+   at shutdown or in normal operation when a document,
+   xpath context and xpath object form a cycle.  So
+   we implement this simple reference counting scheme.
+   It works as you'd expect, except with a simple twist.
+   If a document is freed, but still has outstanding
+   references, its reference count is made negative.  Thus
+   if it has ref_count of 1, then its becomes -1.  At that
+   point, decrement will increase the account to 0, and 
+   once it reaches 0, the document is freed. */
+
+static st_table *ref_count_table = 0;
 
 void
-ruby_xml_document_free(xmlDocPtr xdoc) {
-//  if (rdoc->ref_count > 0) return;
+ruby_xml_document_internal_free(xmlDocPtr xdoc) {
+  st_delete(ref_count_table, &xdoc, 0);
   xdoc->_private = NULL;
   xmlFreeDoc(xdoc);
 }
 
+int
+ruby_xml_document_incr(xmlDocPtr xdoc) {
+  int ref_count;
+
+  if (st_lookup(ref_count_table, xdoc, &ref_count))
+  {
+    ref_count++;
+    st_insert(ref_count_table, xdoc, ref_count);
+  }
+  else
+  {
+    ref_count = 1;
+    st_add_direct(ref_count_table, xdoc, ref_count);
+  }
+  
+  return ref_count;
+}
+
+int
+ruby_xml_document_decr(xmlDocPtr xdoc) {
+  int ref_count = 0;
+
+  if (!st_lookup(ref_count_table, xdoc, &ref_count)) 
+    rb_raise(rb_eRuntimeError, "Document does not have a reference count.");
+
+  if (ref_count == 0)
+  {
+    rb_raise(rb_eRuntimeError, "Document already has no references.");
+  }
+  else if (ref_count > 0)
+  {
+    ref_count--;
+  }
+  else
+  {
+    ref_count++;
+    if (ref_count == 0)
+    {
+      ruby_xml_document_internal_free(xdoc);
+      return ref_count;
+    }
+  }
+
+  st_insert(ref_count_table, xdoc, ref_count);
+  return ref_count;
+}
+
+void
+ruby_xml_document_free(xmlDocPtr xdoc) {
+  int ref_count;
+
+  if (!st_lookup(ref_count_table, xdoc, &ref_count))
+  {
+    ruby_xml_document_internal_free(xdoc);
+  }
+  else if (ref_count == 0)
+  {
+    ruby_xml_document_internal_free(xdoc);
+  }
+  else if (ref_count > 0)
+  {
+    ref_count *= -1;
+    st_insert(ref_count_table, xdoc, ref_count);
+  }
+  else 
+  {
+    rb_raise(rb_eRuntimeError, "Ruby is attempting to free document twice.");
+  }
+}   
+ 
 void
 ruby_xml_document_mark(xmlDocPtr xdoc) {
   rb_gc_mark(LIBXML_STATE);
@@ -113,7 +182,7 @@ ruby_xml_document_initialize(int argc, VALUE *argv, VALUE self) {
 
   Check_Type(xmlver, T_STRING);
   xdoc = xmlNewDoc((xmlChar*)StringValuePtr(xmlver));
-  xdoc->_private = self;
+  xdoc->_private = (void*)self;
   DATA_PTR(self) = xdoc; 
   
   return self;
@@ -918,9 +987,12 @@ ruby_xml_document_validate_schema(VALUE self, VALUE schema) {
   
   is_invalid = xmlSchemaValidateDoc(vptr, xdoc);
   xmlSchemaFreeValidCtxt(vptr);
-  if (is_invalid) {
+  if (is_invalid) 
+  {
     ruby_xml_raise(&xmlLastError);
-  } else {
+    return Qfalse;
+  } else
+  {
 	  return Qtrue;
   }
 }
@@ -952,9 +1024,12 @@ ruby_xml_document_validate_relaxng(VALUE self, VALUE relaxng) {
   
   is_invalid = xmlRelaxNGValidateDoc(vptr, xdoc);
   xmlRelaxNGFreeValidCtxt(vptr);
-  if (is_invalid) {
+  if (is_invalid) 
+  {
     ruby_xml_raise(&xmlLastError);
-  } else {
+    return Qfalse;
+  } else 
+  {
 	  return Qtrue;
   }
 }
@@ -986,9 +1061,14 @@ ruby_xml_document_validate_dtd(VALUE self, VALUE dtd) {
   ctxt.vstateTab = NULL;
 
   if (xmlValidateDtd(&ctxt, xdoc, c_dtd->dtd))
+  {
     return(Qtrue);
+  }
   else
+  {
     ruby_xml_raise(&xmlLastError);
+    return Qfalse;
+  }
 }
 
 
@@ -1013,6 +1093,8 @@ ruby_xml_document_reader(VALUE self)
 
 void
 ruby_init_xml_document(void) {
+  ref_count_table = st_init_numtable();
+
   cXMLDocument = rb_define_class_under(mXML, "Document", rb_cObject);
   rb_define_alloc_func(cXMLDocument, ruby_xml_document_alloc);
 

@@ -7,6 +7,7 @@
 
 extern VALUE eXMLError;
 
+void ruby_init_xml_error();
 void ruby_xml_raise(xmlErrorPtr xerror);
 
 #endif

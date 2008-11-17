@@ -6,7 +6,8 @@
 #define __RUBY_XML_INPUT__
 
 extern VALUE cXMLInput;
-void ruby_init_xml_input(void);
+
+void ruby_init_xml_input();
 
 extern ID ENCODING_ATTR;
 extern ID FILE_ATTR;

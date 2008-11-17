@@ -49,6 +49,15 @@ ruby_xml_xpath_object_mark(xmlXPathObjectPtr xpop)
 void
 ruby_xml_xpath_object_free(xmlXPathObjectPtr xpop)
 {
+  if (xpop->type == XPATH_NODESET)
+  {
+    if (xpop->nodesetval && xpop->nodesetval->nodeTab)
+    {
+      xmlNodePtr *node = xpop->nodesetval->nodeTab;
+      if (*node)
+        ruby_xml_document_decr((*node)->doc);
+    }
+  }
   xmlXPathFreeObject(xpop);
 }
 
@@ -62,6 +71,13 @@ ruby_xml_xpath_object_wrap(xmlXPathObjectPtr xpop)
 
   switch(xpop->type) {
   case XPATH_NODESET:
+    if (xpop->nodesetval && xpop->nodesetval->nodeTab)
+    {
+      xmlNodePtr *node = xpop->nodesetval->nodeTab;
+      if (*node)
+        ruby_xml_document_incr((*node)->doc);
+    }
+
     rval = Data_Wrap_Struct(cXMLXPathObject,
                             ruby_xml_xpath_object_mark,
                             ruby_xml_xpath_object_free,
@@ -312,7 +328,7 @@ void
 ruby_init_xml_xpath_object(void) {
   cXMLXPathObject = rb_define_class_under(mXPath, "Object", rb_cObject);
   rb_include_module(cXMLXPathObject, rb_mEnumerable);
-
+  rb_define_attr(cXMLXPathObject, "context", 1, 0);
   rb_define_method(cXMLXPathObject, "each", ruby_xml_xpath_object_each, 0);
   rb_define_method(cXMLXPathObject, "xpath_type", ruby_xml_xpath_object_get_type, 0);
   rb_define_method(cXMLXPathObject, "empty?", ruby_xml_xpath_object_empty_q, 0);
@@ -322,7 +338,6 @@ ruby_init_xml_xpath_object(void) {
   rb_define_method(cXMLXPathObject, "to_a", ruby_xml_xpath_object_to_a, 0);
   rb_define_method(cXMLXPathObject, "[]", ruby_xml_xpath_object_aref, 1);
   rb_define_method(cXMLXPathObject, "string", ruby_xml_xpath_object_string, 0);
-  rb_define_attr(cXMLXPathObject, "context", 1, 0);
   rb_define_method(cXMLXPathObject, "debug", ruby_xml_xpath_object_debug, 0);
   
   /* Give the NodeSet type, but it is pointless */

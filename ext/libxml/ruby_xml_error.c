@@ -8,20 +8,6 @@ VALUE eXMLError;
 static ID ERROR_HANDLER_ID;
 
 
-/* Hook that receives xml error message */
-static void
-structuredErrorFunc(void *userData, xmlErrorPtr xerror)
-{
-  /* Wrap error up as Ruby object and send it off to ruby */
-  VALUE block = rb_cvar_get(eXMLError, ERROR_HANDLER_ID);
-
-  if (block != Qnil)
-  {
-    VALUE error = ruby_xml_error_wrap(xerror);
-    rb_funcall(block, rb_intern("call"), 1, error);
-  }
-}
-
 /*
  * call-seq:
  *    Error.set_error_handler { ... }
@@ -98,6 +84,19 @@ ruby_xml_error_wrap(xmlErrorPtr xerror) {
   return result;
 }
 
+/* Hook that receives xml error message */
+static void
+structuredErrorFunc(void *userData, xmlErrorPtr xerror)
+{
+  /* Wrap error up as Ruby object and send it off to ruby */
+  VALUE block = rb_cvar_get(eXMLError, ERROR_HANDLER_ID);
+
+  if (block != Qnil)
+  {
+    VALUE error = ruby_xml_error_wrap(xerror);
+    rb_funcall(block, rb_intern("call"), 1, error);
+  }
+}
 
 // Rdoc needs to know 
 #ifdef RDOC_NEVER_DEFINED

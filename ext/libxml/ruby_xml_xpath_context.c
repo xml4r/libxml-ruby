@@ -60,7 +60,7 @@ ruby_xml_xpath_context_initialize(VALUE self, VALUE node) {
   {
     document = rb_funcall(node, rb_intern("doc"), 0);
     if NIL_P(document)
-     rb_raise(rb_eTypeError, "Supplied node must belong to a document.");
+      rb_raise(rb_eTypeError, "Supplied node must belong to a document.");
   }
   else if (rb_obj_is_kind_of(node, cXMLDocument) == Qtrue)
   {
@@ -278,11 +278,11 @@ void
 ruby_init_xml_xpath_context(void) {
   cXMLXPathContext = rb_define_class_under(mXPath, "Context", rb_cObject);
   rb_define_alloc_func(cXMLXPathContext, ruby_xml_xpath_context_alloc);
+  rb_define_attr(cXMLXPathContext, "doc", 1, 0);
   rb_define_method(cXMLXPathContext, "initialize", ruby_xml_xpath_context_initialize, 1);
   rb_define_method(cXMLXPathContext, "register_namespaces", ruby_xml_xpath_context_register_namespaces, 1);
   rb_define_method(cXMLXPathContext, "register_namespaces_from_node", ruby_xml_xpath_context_register_namespaces_from_node, 1);
   rb_define_method(cXMLXPathContext, "register_namespace", ruby_xml_xpath_context_register_namespace, 2);
   rb_define_method(cXMLXPathContext, "node=", ruby_xml_xpath_context_node_set, 1);
   rb_define_method(cXMLXPathContext, "find", ruby_xml_xpath_context_find, 1);
-  rb_define_attr(cXMLXPathContext, "doc", 1, 0);
 }

@@ -73,7 +73,7 @@ ruby_xml_sax_parser_alloc(VALUE klass) {
  */
 VALUE
 ruby_xml_sax_parser_initialize(VALUE self) {
-  VALUE input = rb_class_new_instance(0, Qnil, cXMLInput);
+  VALUE input = rb_class_new_instance(0, NULL, cXMLInput);
   rb_iv_set(self, "@input", input);
 }
 

@@ -10,7 +10,6 @@ VALUE mXMLEncoding;
 VALUE
 ruby_xml_encoding_to_s(VALUE self, VALUE encoding)
 {
-  int encodingInt = NUM2INT(encoding);
   char* encodingStr = NULL;
 
   switch (NUM2INT(encoding))

@@ -808,7 +808,7 @@ ruby_xml_parser_memory_used(VALUE self) {
  */
 VALUE
 ruby_xml_parser_initialize(VALUE self) {
-  VALUE input = rb_class_new_instance(0, Qnil, cXMLInput);
+  VALUE input = rb_class_new_instance(0, NULL, cXMLInput);
   rb_iv_set(self, "@input", input);
   rb_iv_set(self, "@context", Qnil);
   return self;
@@ -818,7 +818,6 @@ ruby_xml_parser_initialize(VALUE self) {
 xmlParserCtxtPtr
 ruby_xml_parser_filename_ctxt(VALUE input) {
   xmlParserCtxtPtr ctxt;
-  VALUE context;
   int retry_count = 0;
   VALUE filename = rb_ivar_get(input, FILE_ATTR);
   
@@ -845,8 +844,6 @@ ruby_xml_parser_str_ctxt(VALUE input) {
 
 xmlParserCtxtPtr
 ruby_xml_parser_io_ctxt(VALUE input) {
-  xmlParserCtxtPtr ctxt;
-  VALUE context;
   VALUE io = rb_ivar_get(input, IO_ATTR);
   VALUE encoding = rb_ivar_get(input, ENCODING_ATTR);
   xmlCharEncoding xmlEncoding = NUM2INT(encoding);
@@ -875,8 +872,6 @@ VALUE
 ruby_xml_parser_parse(VALUE self) {
   xmlParserCtxtPtr ctxt;
   VALUE context;
-  VALUE source;
-  VALUE doc;
   VALUE input = rb_ivar_get(self, INPUT_ATTR);
 
   context = rb_ivar_get(self, CONTEXT_ATTR);

@@ -7,18 +7,13 @@
 
 #define MAX_LIBXML_FEATURES_LEN 50
 
-extern int ruby_xml_parser_count;
-extern VALUE cXMLParser;
-extern VALUE eXMLParserParseError;
 
-VALUE ruby_xml_parser_default_load_external_dtd_set(VALUE class, VALUE bool);
+extern VALUE cXMLParser;
+
+void ruby_init_parser();
+
 VALUE ruby_xml_parser_default_substitute_entities_set(VALUE class, VALUE bool);
-VALUE ruby_xml_parser_features(VALUE self);
-VALUE ruby_xml_parser_filename_get(VALUE self);
-VALUE ruby_xml_parser_filename_set(VALUE self, VALUE filename);
-VALUE ruby_xml_parser_new(VALUE class);
-VALUE ruby_xml_parser_parse(VALUE self);
-VALUE ruby_xml_parser_str_get(VALUE self);
-VALUE ruby_xml_parser_str_set(VALUE self, VALUE str);
+VALUE ruby_xml_parser_default_load_external_dtd_set(VALUE class, VALUE bool);
+
 
 #endif
