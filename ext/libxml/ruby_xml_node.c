@@ -1112,7 +1112,7 @@ ruby_xml_node_path(VALUE self) {
 
 /*
  * call-seq:
- *    node.pointer -> XML::Node_set
+ *    node.pointer -> XML::NodeSet
  * 
  * Evaluates an XPointer expression relative to this node.
  */

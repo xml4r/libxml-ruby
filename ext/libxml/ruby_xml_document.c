@@ -28,6 +28,98 @@
 
 VALUE cXMLDocument;
 
+/* When shutting down, ruby does not honor gc_mark calls. 
+   That can cause segmentation faults if a documents is
+   freed before a referencing xpathobject result.  So
+   implement a simple reference counting scheme to avoid
+   the problem. */
+int
+ruby_xml_document_incr(xmlDocPtr xdoc) {
+  //return rdoc->ref_count++;
+  return 0;
+}
+
+int
+ruby_xml_document_decr(xmlDocPtr xdoc) {
+ // return rdoc->ref_count--;
+  return 0;
+}
+
+void
+ruby_xml_document_free(xmlDocPtr xdoc) {
+//  if (rdoc->ref_count > 0) return;
+  xdoc->_private = NULL;
+  xmlFreeDoc(xdoc);
+}
+
+void
+ruby_xml_document_mark(xmlDocPtr xdoc) {
+  rb_gc_mark(LIBXML_STATE);
+}
+
+VALUE
+ruby_xml_document_wrap(xmlDocPtr xdoc) {
+  VALUE result;
+
+  // This node is already wrapped
+  if (xdoc->_private != NULL)
+  {
+    result = (VALUE)xdoc->_private;
+  }
+  else  
+  {
+    result = Data_Wrap_Struct(cXMLDocument, ruby_xml_document_mark, ruby_xml_document_free, xdoc);
+    xdoc->_private = (void*)result;
+  }
+     
+  return result;
+}
+
+
+/*
+ * call-seq:
+ *    XML::Document.alloc(xml_version = 1.0) -> document
+ * 
+ * Alocates a new XML::Document, optionally specifying the
+ * XML version.
+ */
+VALUE
+ruby_xml_document_alloc(VALUE klass) {
+  return Data_Wrap_Struct(klass, ruby_xml_document_mark, ruby_xml_document_free, NULL);
+}
+
+/*
+ * call-seq:
+ *    XML::Document.initialize(xml_version = 1.0) -> document
+ * 
+ * Initializes a new XML::Document, optionally specifying the
+ * XML version.
+ */
+VALUE
+ruby_xml_document_initialize(int argc, VALUE *argv, VALUE self) {
+  xmlDocPtr xdoc;
+  VALUE docobj, xmlver;
+
+  switch (argc) {
+    case 0:
+      xmlver = rb_str_new2("1.0");
+      break;
+    case 1:
+      rb_scan_args(argc, argv, "01", &xmlver);
+      break;
+    default:
+      rb_raise(rb_eArgError, "wrong number of arguments (need 0 or 1)");
+  }
+
+  Check_Type(xmlver, T_STRING);
+  xdoc = xmlNewDoc((xmlChar*)StringValuePtr(xmlver));
+  xdoc->_private = self;
+  DATA_PTR(self) = xdoc; 
+  
+  return self;
+}
+
+
 /*
  * call-seq:
  *    document.compression -> num
@@ -380,54 +472,6 @@ ruby_xml_document_encoding_set(VALUE self, VALUE encoding) {
   return(ruby_xml_document_encoding_get(self));
 }
 
-void
-ruby_xml_document_free(xmlDocPtr xdoc) {
-  void *data;
-
-  if (xdoc == NULL) return;
-  xdoc->_private=NULL;
-#ifdef NODE_DEBUG
-  fprintf(stderr,"ruby_xml_document_free 0x%x/0x%x\n",rxd,xdoc);
-#endif
-  xmlFreeDoc(xdoc);
-}
-
-void
-ruby_xml_document_mark(xmlDocPtr xdoc) {
-  rb_gc_mark(LIBXML_STATE);
-}
-
-/*
- * call-seq:
- *    XML::Document.initialize(xml_version = 1.0) -> document
- * 
- * Initializes a new XML::Document, optionally specifying the
- * XML version.
- */
-VALUE
-ruby_xml_document_new(int argc, VALUE *argv, VALUE class) {
-  xmlDocPtr xdoc;
-  VALUE docobj, xmlver;
-
-  switch (argc) {
-  case 0:
-    xmlver = rb_str_new2("1.0");
-    break;
-  case 1:
-    rb_scan_args(argc, argv, "01", &xmlver);
-    break;
-  default:
-    rb_raise(rb_eArgError, "wrong number of arguments (need 0 or 1)");
-  }
-
-  Check_Type(xmlver, T_STRING);
-
-  xdoc = xmlNewDoc((xmlChar*)StringValuePtr(xmlver));
-  xdoc->_private=NULL;
-
-  return ruby_xml_document_wrap(xdoc);
-}
-
 /*
  * call-seq:
  *    document.last -> node
@@ -464,24 +508,6 @@ ruby_xml_document_last_q(VALUE self) {
     return(Qfalse);
   else
     return(Qtrue);
-}
-
-VALUE
-ruby_xml_document_wrap(xmlDocPtr xdoc) {
-  VALUE obj;
-
-  // This node is already wrapped
-  if (xdoc->_private != NULL)
-    return (VALUE)xdoc->_private;
-    
-  obj = Data_Wrap_Struct(cXMLDocument, ruby_xml_document_mark, ruby_xml_document_free, xdoc);
-  
-  xdoc->_private = (void*)obj;
-  
-#ifdef NODE_DEBUG
-  fprintf(stderr,"wrap rxn=0x%x xn=0x%x o=0x%x\n",(long)rxn,(long)xnode,(long)obj);
-#endif
-  return obj;
 }
 
 
@@ -988,12 +1014,9 @@ ruby_xml_document_reader(VALUE self)
 void
 ruby_init_xml_document(void) {
   cXMLDocument = rb_define_class_under(mXML, "Document", rb_cObject);
-  rb_define_singleton_method(cXMLDocument, "new", ruby_xml_document_new, -1);
+  rb_define_alloc_func(cXMLDocument, ruby_xml_document_alloc);
 
-  //rb_raise(eXMLNodeFailedModify, "unable to add a child to the document");
-  //eDTDValidityWarning = rb_define_class_under(cXMLNode, "ValidityWarning", eXMLError);
-  //eDTDValidityError   = rb_define_class_under(cXMLNode, "ValidityWarning", eXMLError);
-
+  rb_define_method(cXMLDocument, "initialize", ruby_xml_document_initialize, -1);
   rb_define_method(cXMLDocument, "child", ruby_xml_document_child_get, 0);
   rb_define_method(cXMLDocument, "child?", ruby_xml_document_child_q, 0);
   rb_define_method(cXMLDocument, "compression", ruby_xml_document_compression_get, 0);
