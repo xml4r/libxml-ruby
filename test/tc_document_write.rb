@@ -1,7 +1,7 @@
 require "xml"
 require 'test/unit'
 
-class TC_XML_Document_Write < Test::Unit::TestCase
+class TestDocumentWrite < Test::Unit::TestCase
   def setup
     @doc = XML::Document.new('1.0')
   end
@@ -33,13 +33,6 @@ class TC_XML_Document_Write < Test::Unit::TestCase
     assert_instance_of(XML::Node, @doc.root)
     assert_instance_of(XML::Document, @doc.root.doc)
     assert_equal("<?xml version=\"1.0\"?>\n<rubynet/>\n", @doc.to_s(false))
-  end
-
-  def test_encoding
-    @doc.root = XML::Node.new('rubynet')
-    @doc.encoding = 'UTF-8'
-    assert_instance_of(XML::Node, @doc.root)
-    assert_equal("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<rubynet/>\n", @doc.to_s)
   end
 
   def test_child()
@@ -135,5 +128,19 @@ class TC_XML_Document_Write < Test::Unit::TestCase
     meta = pkg.child = XML::Node.new('meta')
     pkgname = meta.child = XML::Node.new('pkgname', 'libxml')
     assert_equal(xml, @doc.to_s)
+  end
+
+  def test_encoding_utf
+    @doc.root = XML::Node.new('rubynet')
+    @doc.encoding = XML::Encoding.encoding_to_s(XML::Encoding::UTF8)
+    assert_instance_of(XML::Node, @doc.root)
+    assert_equal("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<rubynet/>\n", @doc.to_s)
+  end
+
+  def test_encoding_latin1
+    @doc.root = XML::Node.new('rubynet')
+    @doc.encoding = XML::Encoding.encoding_to_s(XML::Encoding::ISO_8859_1)
+    assert_instance_of(XML::Node, @doc.root)
+    assert_equal("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n<rubynet/>\n", @doc.to_s)
   end
 end

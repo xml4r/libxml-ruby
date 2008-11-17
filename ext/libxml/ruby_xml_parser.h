@@ -11,13 +11,6 @@ extern int ruby_xml_parser_count;
 extern VALUE cXMLParser;
 extern VALUE eXMLParserParseError;
 
-typedef struct ruby_xml_parser {
-  VALUE ctxt;
-  int parsed;
-  void *data;
-  int data_type;
-} ruby_xml_parser;
-
 VALUE ruby_xml_parser_default_load_external_dtd_set(VALUE class, VALUE bool);
 VALUE ruby_xml_parser_default_substitute_entities_set(VALUE class, VALUE bool);
 VALUE ruby_xml_parser_features(VALUE self);

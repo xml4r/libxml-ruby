@@ -10,8 +10,8 @@ class TestParser < Test::Unit::TestCase
 
   def teardown
     @xp = nil
-    # Clear out all the files we opened up in
-    # the test_fd_gc test
+    GC.start
+    GC.start
     GC.start
   end
       
@@ -33,7 +33,7 @@ class TestParser < Test::Unit::TestCase
 
   def test_default_compression
     return unless XML::Parser::default_compression
-    
+
     0.upto(9) do |i|
       XML::Parser::default_compression = i
       assert_equal(i, XML::Parser::default_compression)
@@ -146,35 +146,85 @@ class TestParser < Test::Unit::TestCase
     assert_instance_of(Fixnum, XML::Parser::VERNUM)
   end
 
-  # -----  IO  ------
+  def test_libxml_parser_features
+    assert_instance_of(Array, XML::Parser::features)
+  end
+
+  # -----  Sources  ------
+  def test_file
+    file = File.expand_path(File.join(File.dirname(__FILE__), 'model/rubynet.xml'))
+
+    @xp.file = file
+    assert_equal(file, @xp.file)
+    assert_equal(file, @xp.input.file)
+
+    doc = @xp.parse
+    assert_instance_of(XML::Document, doc)
+    assert_instance_of(XML::Parser::Context, @xp.context)
+    GC.start
+    GC.start
+    GC.start
+ end
+
+  def test_file_class
+    file = File.expand_path(File.join(File.dirname(__FILE__), 'model/rubynet.xml'))
+
+    xp = XML::Parser.file(file)
+    assert_instance_of(XML::Parser, xp)
+    assert_equal(file, xp.file)
+    assert_equal(file, xp.input.file)
+  end
+
   def test_string
     str = '<ruby_array uga="booga" foo="bar"><fixnum>one</fixnum><fixnum>two</fixnum></ruby_array>'
-    assert_equal(str, @xp.string = str)
-    assert_instance_of(XML::Document, @xp.parse)
-  end
-  
-  def test_context
-    @xp = XML::Parser.string('<rubynet><testing>uga</testing><uga>foo</uga></rubynet>')
+
+    @xp.string = str
+    assert_equal(str, @xp.string)
+    assert_equal(str, @xp.input.string)
+
     doc = @xp.parse
     assert_instance_of(XML::Document, doc)
     assert_instance_of(XML::Parser::Context, @xp.context)
   end
 
-  def test_file
-    file = File.expand_path(File.join(File.dirname(__FILE__), 'model/rubynet.xml'))
-    
-    @xp.filename = file
-    assert_equal(file, @xp.filename)
-    
-    doc = @xp.parse
-    assert_instance_of(XML::Document, doc)
+  def test_string_empty
+    assert_raise(XML::Error) do
+      @xp.string = ''
+      @xp.parse
+    end
+
+    assert_raise(TypeError) do
+      @xp.string = nil
+    end
+  end
+
+  def test_string_class
+    str = '<ruby_array uga="booga" foo="bar"><fixnum>one</fixnum><fixnum>two</fixnum></ruby_array>'
+
+    xp = XML::Parser.string(str)
+    assert_instance_of(XML::Parser, xp)
+    assert_equal(str, xp.string)
+    assert_equal(str, xp.input.string)
   end
 
   def test_io
-    File.open(File.join(File.dirname(__FILE__), 'model/rubynet.xml')) do |f|
-      assert_kind_of(IO, f)
-      assert_kind_of(IO, @xp.io = f)
-      assert_instance_of(XML::Document, @xp.parse)
+    File.open(File.join(File.dirname(__FILE__), 'model/rubynet.xml')) do |io|
+      @xp.io = io
+      assert_equal(io, @xp.io)
+      assert_equal(io, @xp.input.io)
+
+      doc = @xp.parse
+      assert_instance_of(XML::Document, doc)
+      assert_instance_of(XML::Parser::Context, @xp.context)
+    end
+  end
+
+  def test_io_class
+    File.open(File.join(File.dirname(__FILE__), 'model/rubynet.xml')) do |io|
+      xp = XML::Parser.io(io)
+      assert_instance_of(XML::Parser, xp)
+      assert_equal(io, xp.io)
+      assert_equal(io, xp.input.io)
     end
   end
 
@@ -182,35 +232,32 @@ class TestParser < Test::Unit::TestCase
     data = File.read(File.join(File.dirname(__FILE__), 'model/rubynet.xml'))
     string_io = StringIO.new(data)
     assert_raises(TypeError) do
-      assert_kind_of(StringIO, @xp.io = string_io)
+      @xp.io = string_io
     end
   end
 
   def test_fd_gc
     # Test opening # of documents up to the file limit for the OS.
-    # Ideally it should run until libxml emits a warning, 
+    # Ideally it should run until libxml emits a warning,
     # thereby knowing we've done a GC sweep. For the time being,
-    # re-open the same doc `limit descriptors` times. 
-    # If we make it to the end, then we've succeeded, 
+    # re-open the same doc `limit descriptors` times.
+    # If we make it to the end, then we've succeeded,
     # otherwise an exception will be thrown.
     XML::Error.set_handler {|error|}
-    
+
     max_fd = if RUBY_PLATFORM.match(/mswin32/i)
       500
     else
       (`ulimit -n`.chomp.to_i) + 1
     end
-    
-    filename = File.join(File.dirname(__FILE__), 'model/rubynet.xml')
+
+    file = File.join(File.dirname(__FILE__), 'model/rubynet.xml')
     max_fd.times do
-       XML::Document.file(filename)
+       XML::Parser.file(file).parse
     end
     XML::Error.reset_handler {|error|}
   end
 
-  def test_libxml_parser_features
-    assert_instance_of(Array, XML::Parser::features)
-  end
 
   # -----  Errors  ------
   def test_error
@@ -233,7 +280,7 @@ class TestParser < Test::Unit::TestCase
     assert_equal(20, error.int2)
     assert_nil(error.node)
   end
-  
+
   def test_bad_xml
     @xp.string = '<ruby_array uga="booga" foo="bar"<fixnum>one</fixnum><fixnum>two</fixnum></ruby_array>'
     error = assert_raise(XML::Error) do
@@ -255,24 +302,13 @@ class TestParser < Test::Unit::TestCase
     assert_equal(20, error.int2)
     assert_nil(error.node)
   end
-  
+
   def test_double_parse
     parser = XML::Parser.string("<test>something</test>")
     doc = parser.parse
 
-    assert_raise(XML::Error) do
+    assert_raise(RuntimeError) do
       parser.parse
-    end
-  end
-
-  def test_libxml_parser_empty_string
-    assert_raise(XML::Error) do
-      @xp.string = ''
-      @xp.parse
-    end
-
-    assert_raise(TypeError) do
-      @xp.string = nil
     end
   end
 end

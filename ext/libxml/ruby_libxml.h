@@ -40,29 +40,9 @@
 #include <libxml/xpointer.h>
 #endif
 
-#define RUBY_LIBXML_SRC_TYPE_NULL    0
-#define RUBY_LIBXML_SRC_TYPE_FILE    1
-#define RUBY_LIBXML_SRC_TYPE_STRING  2
-#define RUBY_LIBXML_SRC_TYPE_IO      3
-#define RUBY_LIBXML_SRC_TYPE_XPATH   4
-
-typedef struct rx_file_data {
-  VALUE filename; /* Filename/path to self */
-} rx_file_data;
-
-typedef struct rx_io_data {
-  VALUE io;
-} rx_io_data;
-
-typedef struct rx_string_data {
-  VALUE str;
-} rx_string_data;
-
-typedef struct rx_xpath_data {
-  VALUE ctxt;
-} rx_xpath_data;
 
 #include "ruby_xml_error.h"
+#include "ruby_xml_input.h"
 #include "ruby_xml_state.h"
 #include "ruby_xml_attributes.h"
 #include "ruby_xml_attr.h"
@@ -88,8 +68,5 @@ typedef struct rx_xpath_data {
 
 extern VALUE mLibXML;
 extern VALUE mXML;
-
-void ruby_init_parser(void);
-void ruby_xml_parser_free(ruby_xml_parser *rxp);
 
 #endif

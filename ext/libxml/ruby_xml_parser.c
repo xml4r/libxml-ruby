@@ -6,6 +6,8 @@
 #include "ruby_libxml.h"
 
 VALUE cXMLParser;
+ID INPUT_ATTR;
+ID CONTEXT_ATTR;
 
 static int
 ctxtRead(FILE *f, char * buf, size_t len) {
@@ -728,104 +730,6 @@ ruby_xml_parser_features(VALUE class) {
 
 /*
  * call-seq:
- *    parser.filename -> "filename"
- * 
- * Obtain the filename this parser will read from.
- */
-VALUE
-ruby_xml_parser_filename_get(VALUE self) {
-  ruby_xml_parser *rxp;
-  rx_file_data *data;
-
-  Data_Get_Struct(self, ruby_xml_parser, rxp);
-  if (rxp->data == NULL)
-    return(Qnil);
-
-  if (rxp->data_type != RUBY_LIBXML_SRC_TYPE_FILE)
-    return(Qnil);
-
-  data = (rx_file_data *)rxp->data;
-  return(data->filename);
-}
-
-
-/*
- * call-seq:
- *    parser.filename = "filename"
- * 
- * Set the filename this parser will read from.
- */
-VALUE
-ruby_xml_parser_filename_set(VALUE self, VALUE filename) {
-  ruby_xml_parser *rxp;
-  ruby_xml_parser_context *rxpc;
-  rx_file_data *data;
-  int retry_count = 0;
-
-  Check_Type(filename, T_STRING);
-  Data_Get_Struct(self, ruby_xml_parser, rxp);
-
-  if (rxp->data_type == RUBY_LIBXML_SRC_TYPE_NULL) {
-    if (rxp->data != NULL)
-      rb_fatal("crap, this should be null");
-
-    rxp->data_type = RUBY_LIBXML_SRC_TYPE_FILE;
-    data = ALLOC(rx_file_data);
-    rxp->data = data;
-  } else if (rxp->data_type != RUBY_LIBXML_SRC_TYPE_FILE) {
-    return(Qnil);
-  }
-
-  rxp->ctxt = ruby_xml_parser_context_new();
-  data = (rx_file_data *)rxp->data;
-  data->filename = filename;
-
-  Data_Get_Struct(rxp->ctxt, ruby_xml_parser_context, rxpc);
-  retry:
-  rxpc->ctxt = xmlCreateFileParserCtxt(StringValuePtr(filename));
-  if (rxpc->ctxt == NULL) {
-    if ((errno == EMFILE || errno == ENFILE) && retry_count == 0) {
-      retry_count++;
-      rb_gc();
-      goto retry;
-    } else {
-      rb_raise(rb_eIOError, StringValuePtr(filename));
-    }
-  }
-
-  return(data->filename);
-}
-
-
-void
-ruby_xml_parser_free(ruby_xml_parser *rxp) {
-  void *data;
-
-  switch(rxp->data_type) {
-  case RUBY_LIBXML_SRC_TYPE_NULL:
-    break;
-  case RUBY_LIBXML_SRC_TYPE_FILE:
-    data = (void *)(rx_file_data *)rxp->data;
-    ruby_xfree((rx_file_data *)data);
-    break;
-  case RUBY_LIBXML_SRC_TYPE_STRING:
-    data = (void *)(rx_string_data *)rxp->data;
-    ruby_xfree((rx_string_data *)data);
-    break;
-  case RUBY_LIBXML_SRC_TYPE_IO:
-    data = (void *)(rx_io_data *)rxp->data;
-    ruby_xfree((rx_io_data *)data);
-    break;
-  default:
-    rb_fatal("Unknown data type, %d", rxp->data_type);
-  }
-
-  ruby_xfree(rxp);
-}
-
-
-/*
- * call-seq:
  *    XML::Parser.indent_tree_output -> (true|false)
  * 
  * Determines whether XML output will be indented 
@@ -859,109 +763,6 @@ ruby_xml_parser_indent_tree_output_set(VALUE class, VALUE bool) {
     rb_raise(rb_eArgError, "Invalid argument, must be boolean");
   }
 }
-
-
-/*
- * call-seq:
- *    parser.io -> IO
- * 
- * Obtain the IO instance this parser works with.
- */
-VALUE
-ruby_xml_parser_io_get(VALUE self, VALUE io) {
-  ruby_xml_parser *rxp;
-  rx_io_data *data;
-
-  Data_Get_Struct(self, ruby_xml_parser, rxp);
-
-  if (rxp->data_type == RUBY_LIBXML_SRC_TYPE_NULL ||
-      rxp->data_type != RUBY_LIBXML_SRC_TYPE_IO ||
-      rxp->data == NULL)
-    return(Qnil);
-
-  data = (rx_io_data *)rxp->data;
-
-  return(data->io);
-}
-
-
-/*
- * call-seq:
- *    parser.io = IO
- * 
- * Set the IO instance this parser works with.
- */
-VALUE
-ruby_xml_parser_io_set(VALUE self, VALUE io) {
-  ruby_xml_parser *rxp;
-  ruby_xml_parser_context *rxpc;
-  rx_io_data *data;
-  OpenFile *fptr;
-  FILE *f;
-  
-  if (!rb_obj_is_kind_of(io, rb_cIO))
-    rb_raise(rb_eTypeError, "Invalid argument, must be an IO object");
-
-  Data_Get_Struct(self, ruby_xml_parser, rxp);
-
-  if (rxp->data_type == RUBY_LIBXML_SRC_TYPE_NULL) {
-    if (rxp->data != NULL)
-      rb_fatal("crap, this should be null");
-
-    rxp->data_type = RUBY_LIBXML_SRC_TYPE_IO;
-    data = ALLOC(rx_io_data);
-    rxp->data = data;
-  } else if (rxp->data_type != RUBY_LIBXML_SRC_TYPE_IO) {
-    return(Qnil);
-  }
-
-  rxp->ctxt = ruby_xml_parser_context_new();
-  data = (rx_io_data *)rxp->data;
-  data->io = io;
-
-  GetOpenFile(io, fptr);
-  rb_io_check_readable(fptr);
-  f = GetReadFile(fptr);
-
-  Data_Get_Struct(rxp->ctxt, ruby_xml_parser_context, rxpc);
-  rxpc->ctxt = xmlCreateIOParserCtxt(NULL, NULL,
-				     (xmlInputReadCallback) ctxtRead,
-				     NULL, f, XML_CHAR_ENCODING_NONE);
-  if (!rxpc->ctxt)
-    rb_sys_fail(0);
-
-  return(data->io);
-}
-
-
-void
-ruby_xml_parser_mark(ruby_xml_parser *rxp) {
-  if (rxp == NULL) return;
-  if (!NIL_P(rxp->ctxt))
-    rb_gc_mark(rxp->ctxt);
-
-  rb_gc_mark(LIBXML_STATE);
-
-  switch(rxp->data_type) {
-  case RUBY_LIBXML_SRC_TYPE_NULL:
-    break;
-  case RUBY_LIBXML_SRC_TYPE_FILE:
-    if (!NIL_P(((rx_file_data *)rxp->data)->filename))
-      rb_gc_mark(((rx_file_data *)rxp->data)->filename);
-    break;
-  case RUBY_LIBXML_SRC_TYPE_STRING:
-    if (!NIL_P(((rx_string_data *)rxp->data)->str))
-      rb_gc_mark(((rx_string_data *)rxp->data)->str);
-    break;
-  case RUBY_LIBXML_SRC_TYPE_IO:
-    if (!NIL_P(((rx_io_data *)rxp->data)->io))
-      rb_gc_mark(((rx_io_data *)rxp->data)->io);
-    break;
-  default:
-    rb_fatal("unknown datatype: %d", rxp->data_type);
-  }
-}
-
 
 /*
  * call-seq:
@@ -999,107 +800,66 @@ ruby_xml_parser_memory_used(VALUE self) {
 #endif
 }
 
-
 /*
  * call-seq:
- *    XML::Parser.new -> parser
+ *    parser.initialize -> parser
  * 
- * Create a new parser instance with no pre-determined source.
+ * Initiliazes instance of parser.
  */
 VALUE
-ruby_xml_parser_new(VALUE class) {
-  ruby_xml_parser *rxp;
-  VALUE r;
-
-  r=Data_Make_Struct(class,
-		     ruby_xml_parser,
-		     ruby_xml_parser_mark,
-		     ruby_xml_parser_free,
-		     rxp);
-
-  rxp->ctxt = Qnil;
-  rxp->data_type = RUBY_LIBXML_SRC_TYPE_NULL;
-  rxp->data = NULL;
-  rxp->parsed = 0;
-
-  return r;
+ruby_xml_parser_initialize(VALUE self) {
+  VALUE input = rb_class_new_instance(0, Qnil, cXMLInput);
+  rb_iv_set(self, "@input", input);
+  rb_iv_set(self, "@context", Qnil);
+  return self;
 }
 
 
-/*
- * call-seq:
- *    XML::Parser.file -> parser
- * 
- * Create a new parser instance that will read the specified file.
- */
-VALUE
-ruby_xml_parser_new_file(VALUE class, VALUE filename) {
-  VALUE obj;
-  ruby_xml_parser *rxp;
-  rx_file_data *data;
+xmlParserCtxtPtr
+ruby_xml_parser_filename_ctxt(VALUE input) {
+  xmlParserCtxtPtr ctxt;
+  VALUE context;
+  int retry_count = 0;
+  VALUE filename = rb_ivar_get(input, FILE_ATTR);
+  
+  retry:
+  ctxt = xmlCreateFileParserCtxt(StringValuePtr(filename));
+  if (ctxt == NULL) {
+    if ((errno == EMFILE || errno == ENFILE) && retry_count == 0) {
+      retry_count++;
+      rb_gc();
+      goto retry;
+    } else {
+      rb_raise(rb_eIOError, StringValuePtr(filename));
+    }
+  }
 
-  obj = ruby_xml_parser_new(class);
-  Data_Get_Struct(obj, ruby_xml_parser, rxp);
-
-  data = ALLOC(rx_file_data);
-  rxp->data_type = RUBY_LIBXML_SRC_TYPE_FILE;
-  rxp->data = data;
-
-  ruby_xml_parser_filename_set(obj, filename);
-
-  return(obj);
+  return ctxt;
 }
 
-
-/*
- * call-seq:
- *    XML::Parser.io -> parser
- * 
- * Create a new parser instance that will read from the
- * specified IO object.
- */
-VALUE
-ruby_xml_parser_new_io(VALUE class, VALUE io) {
-  VALUE obj;
-  ruby_xml_parser *rxp;
-  rx_io_data *data;
-
-  obj = ruby_xml_parser_new(class);
-  Data_Get_Struct(obj, ruby_xml_parser, rxp);
-
-  data = ALLOC(rx_io_data);
-  rxp->data_type = RUBY_LIBXML_SRC_TYPE_IO;
-  rxp->data = data;
-
-  ruby_xml_parser_io_set(obj, io);
-
-  return(obj);
+xmlParserCtxtPtr
+ruby_xml_parser_str_ctxt(VALUE input) {
+  VALUE str = rb_ivar_get(input, STRING_ATTR);
+  return xmlCreateMemoryParserCtxt(StringValuePtr(str), RSTRING_LEN(str));
 }
 
+xmlParserCtxtPtr
+ruby_xml_parser_io_ctxt(VALUE input) {
+  xmlParserCtxtPtr ctxt;
+  VALUE context;
+  VALUE io = rb_ivar_get(input, IO_ATTR);
+  VALUE encoding = rb_ivar_get(input, ENCODING_ATTR);
+  xmlCharEncoding xmlEncoding = NUM2INT(encoding);
+  OpenFile *fptr;
+  FILE *f;
 
-/*
- * call-seq:
- *    XML::Parser.string -> parser
- * 
- * Create a new parser instance that will parse the given
- * string.
- */
-VALUE
-ruby_xml_parser_new_string(VALUE class, VALUE str) {
-  VALUE obj;
-  ruby_xml_parser *rxp;
-  rx_string_data *data;
+  GetOpenFile(io, fptr);
+  rb_io_check_readable(fptr);
+  f = GetReadFile(fptr);
 
-  obj = ruby_xml_parser_new(class);
-  Data_Get_Struct(obj, ruby_xml_parser, rxp);
-
-  data = ALLOC(rx_string_data);
-  rxp->data_type = RUBY_LIBXML_SRC_TYPE_STRING;
-  rxp->data = data;
-
-  ruby_xml_parser_str_set(obj, str);
-
-  return(obj);
+  return xmlCreateIOParserCtxt(NULL, NULL,
+	 			                      (xmlInputReadCallback) ctxtRead,
+				                      NULL, f, xmlEncoding);
 }
 
 
@@ -1113,117 +873,41 @@ ruby_xml_parser_new_string(VALUE class, VALUE str) {
  */
 VALUE
 ruby_xml_parser_parse(VALUE self) {
-  ruby_xml_parser *rxp;
-  ruby_xml_parser_context *rxpc;
-  xmlDocPtr xdp;
+  xmlParserCtxtPtr ctxt;
+  VALUE context;
+  VALUE source;
   VALUE doc;
+  VALUE input = rb_ivar_get(self, INPUT_ATTR);
 
-  Data_Get_Struct(self, ruby_xml_parser, rxp);
+  context = rb_ivar_get(self, CONTEXT_ATTR);
+  if (context != Qnil)
+    rb_raise(rb_eRuntimeError, "You cannot parse a data source twice");
 
-  switch (rxp->data_type) {
-  case RUBY_LIBXML_SRC_TYPE_NULL:
-    return(Qnil);
-  case RUBY_LIBXML_SRC_TYPE_STRING:
-  case RUBY_LIBXML_SRC_TYPE_FILE:
-  case RUBY_LIBXML_SRC_TYPE_IO:
-    Data_Get_Struct(rxp->ctxt, ruby_xml_parser_context, rxpc);
-    if (xmlParseDocument(rxpc->ctxt) == -1) {
-      xmlFreeDoc(rxpc->ctxt->myDoc);
-      ruby_xml_raise(&rxpc->ctxt->lastError);
-    }
-
-    xdp = rxpc->ctxt->myDoc;
-    if (!rxpc->ctxt->wellFormed) {
-      xmlFreeDoc(xdp);
-      xdp = NULL;
-      ruby_xml_raise(&rxpc->ctxt->lastError);
-    } else {
-      rxp->parsed = 1;
-    }
-
-    doc = ruby_xml_document_wrap(xdp);
-    break;
-  default:
-    rb_fatal("Unknown data type, %d", rxp->data_type);
-  }
-
-  return(doc);
-}
-
-
-/*
- * call-seq:
- *    parser.context -> context
- * 
- * Obtain the XML::Parser::Context associated with this
- * parser.
- */
-VALUE
-ruby_xml_parser_context_get(VALUE self) {
-  ruby_xml_parser *rxp;
-
-  Data_Get_Struct(self, ruby_xml_parser, rxp);
-  if (rxp->ctxt == Qnil)
-    return(Qnil);
+  if (rb_ivar_get(input, FILE_ATTR) != Qnil)
+    ctxt = ruby_xml_parser_filename_ctxt(input);
+  else if (rb_ivar_get(input, STRING_ATTR) != Qnil)
+    ctxt = ruby_xml_parser_str_ctxt(input);
+  /*else if (rb_ivar_get(input, DOCUMENT_ATTR) != Qnil)
+    ctxt = ruby_xml_parser_parse_document(input);*/
+  else if (rb_ivar_get(input, IO_ATTR) != Qnil)
+    ctxt = ruby_xml_parser_io_ctxt(input);
   else
-    return(rxp->ctxt);
-}
+    rb_raise(rb_eArgError, "You must specify a parser data source");
+  
+  if (!ctxt)
+    ruby_xml_raise(&xmlLastError);
 
-
-/*
- * call-seq:
- *    parser.string -> "string"
- * 
- * Obtain the string this parser works with.
- */
-VALUE
-ruby_xml_parser_str_get(VALUE self) {
-  ruby_xml_parser *rxp;
-  rx_string_data *data;
-
-  Data_Get_Struct(self, ruby_xml_parser, rxp);
-  if (rxp->data == NULL || rxp->data_type != RUBY_LIBXML_SRC_TYPE_STRING)
-    return(Qnil);
-
-  data = (rx_string_data *)rxp->data;
-  return(data->str);
-}
-
-
-/*
- * call-seq:
- *    parser.string = "string"
- * 
- * Set the string this parser works with.
- */
-VALUE
-ruby_xml_parser_str_set(VALUE self, VALUE str) {
-  ruby_xml_parser *rxp;
-  ruby_xml_parser_context *rxpc;
-  rx_string_data *data;
-
-  Check_Type(str, T_STRING);
-  Data_Get_Struct(self, ruby_xml_parser, rxp);
-
-  if (rxp->data_type == RUBY_LIBXML_SRC_TYPE_NULL) {
-    rxp->data_type = RUBY_LIBXML_SRC_TYPE_STRING;
-    data = ALLOC(rx_string_data);
-    rxp->data = data;
-  } else if (rxp->data_type != RUBY_LIBXML_SRC_TYPE_STRING) {
-    return(Qnil);
+  context = ruby_xml_parser_context_wrap(ctxt);
+  rb_ivar_set(self, CONTEXT_ATTR, context);
+ 
+  if (xmlParseDocument(ctxt) == -1 || !ctxt->wellFormed) {
+    xmlFreeDoc(ctxt->myDoc);
+    ruby_xml_raise(&ctxt->lastError);
   }
 
-  rxp->ctxt = ruby_xml_parser_context_new();
-  data = (rx_string_data *)rxp->data;
-  data->str = str;
-
-  Data_Get_Struct(rxp->ctxt, ruby_xml_parser_context, rxpc);
-  rxpc->ctxt = xmlCreateMemoryParserCtxt(StringValuePtr(data->str), RSTRING_LEN(data->str));
-  if ( rxpc->ctxt == NULL )
-    rb_raise(eXMLError, "Cannot initialize parser with given string (maybe empty?)");
-
-  return(data->str);
+  return ruby_xml_document_wrap(ctxt->myDoc);
 }
+
 
 // Rdoc needs to know 
 #ifdef RDOC_NEVER_DEFINED
@@ -1233,6 +917,9 @@ ruby_xml_parser_str_set(VALUE self, VALUE str) {
 
 void
 ruby_init_parser(void) {	
+  INPUT_ATTR = rb_intern("@input");
+  CONTEXT_ATTR = rb_intern("@context");
+
   cXMLParser = rb_define_class_under(mXML, "Parser", rb_cObject);
                  
   /* Constants */
@@ -1280,10 +967,6 @@ ruby_init_parser(void) {
   rb_define_singleton_method(cXMLParser, "enabled_zlib?",
 			     ruby_xml_parser_enabled_zlib_q, 0);
 
-  /* Other Class Methods */
-///  rb_define_singleton_method(cXMLParser, "register_deb",
-///			     ruby_register_deb, 0);
-
 	// TODO Maybe a set of 'xxxx_catalog' aliases might be more Ruby?
   rb_define_singleton_method(cXMLParser, "catalog_dump",
 			     ruby_xml_parser_catalog_dump, 0);
@@ -1330,28 +1013,20 @@ ruby_init_parser(void) {
 			     ruby_xml_parser_default_validity_checking_get, 0);
   rb_define_singleton_method(cXMLParser, "default_validity_checking=",
 			     ruby_xml_parser_default_validity_checking_set, 1);
-  rb_define_singleton_method(cXMLParser, "default_warnings",
-			     ruby_xml_parser_default_warnings_get, 0);
-  rb_define_singleton_method(cXMLParser, "default_warnings=",
-			     ruby_xml_parser_default_warnings_set, 1);
-			     
-  rb_define_singleton_method(cXMLParser, "features", ruby_xml_parser_features, 0);
-  rb_define_singleton_method(cXMLParser, "file", ruby_xml_parser_new_file, 1);
+  
+  rb_define_singleton_method(cXMLParser, "default_warnings", ruby_xml_parser_default_warnings_get, 0);
+  rb_define_singleton_method(cXMLParser, "default_warnings=", ruby_xml_parser_default_warnings_set, 1);
+	rb_define_singleton_method(cXMLParser, "features", ruby_xml_parser_features, 0);
   rb_define_singleton_method(cXMLParser, "indent_tree_output", ruby_xml_parser_indent_tree_output_get, 0);
   rb_define_singleton_method(cXMLParser, "indent_tree_output=", ruby_xml_parser_indent_tree_output_set, 1);
-  rb_define_singleton_method(cXMLParser, "io", ruby_xml_parser_new_io, 1);
-  rb_define_singleton_method(cXMLParser, "memory_dump",
-			     ruby_xml_parser_memory_dump, 0);
-  rb_define_singleton_method(cXMLParser, "memory_used",
-			     ruby_xml_parser_memory_used, 0);
-  rb_define_singleton_method(cXMLParser, "new", ruby_xml_parser_new, 0);
-  rb_define_singleton_method(cXMLParser, "string", ruby_xml_parser_new_string, 1);
-  rb_define_method(cXMLParser, "filename", ruby_xml_parser_filename_get, 0);
-  rb_define_method(cXMLParser, "filename=", ruby_xml_parser_filename_set, 1);
-  rb_define_method(cXMLParser, "io", ruby_xml_parser_io_get, 0);
-  rb_define_method(cXMLParser, "io=", ruby_xml_parser_io_set, 1);
+  rb_define_singleton_method(cXMLParser, "memory_dump", ruby_xml_parser_memory_dump, 0);
+  rb_define_singleton_method(cXMLParser, "memory_used", ruby_xml_parser_memory_used, 0);
+
+  /* Atributes */
+  rb_define_attr(cXMLParser, "input", 1, 0);
+  rb_define_attr(cXMLParser, "context", 1, 0);
+
+  /* Instance Methods */
+  rb_define_method(cXMLParser, "initialize", ruby_xml_parser_initialize, 0);
   rb_define_method(cXMLParser, "parse", ruby_xml_parser_parse, 0);
-  rb_define_method(cXMLParser, "context", ruby_xml_parser_context_get, 0);
-  rb_define_method(cXMLParser, "string", ruby_xml_parser_str_get, 0);
-  rb_define_method(cXMLParser, "string=", ruby_xml_parser_str_set, 1);
 }

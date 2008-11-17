@@ -1,7 +1,7 @@
 require 'xml'
 require 'test/unit'
 
-class TC_XML_Reader < Test::Unit::TestCase
+class TextReader < Test::Unit::TestCase
 
   SIMPLE_XML = File.join(File.dirname(__FILE__), 'model/simple.xml')
 

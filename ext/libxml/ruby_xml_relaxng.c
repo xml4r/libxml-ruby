@@ -94,13 +94,13 @@ ruby_xml_relaxng_init_from_uri(VALUE class, VALUE uri) {
  */
 VALUE
 ruby_xml_relaxng_init_from_document(VALUE class, VALUE document) {
-  ruby_xml_document_t *rdoc;
+  xmlDocPtr xdoc;
   ruby_xml_relaxng *relaxng;
   xmlRelaxNGParserCtxtPtr parser;
 
-  Data_Get_Struct(document, ruby_xml_document_t, rdoc);
+  Data_Get_Struct(document, xmlDoc, xdoc);
 
-  parser = xmlRelaxNGNewDocParserCtxt(rdoc->doc);
+  parser = xmlRelaxNGNewDocParserCtxt(xdoc);
   relaxng = ALLOC(ruby_xml_relaxng);
   relaxng->relaxng = xmlRelaxNGParse(parser);
   xmlRelaxNGFreeParserCtxt(parser);

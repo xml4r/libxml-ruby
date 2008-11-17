@@ -115,12 +115,12 @@ ruby_xml_reader_new_io(int argc, VALUE *argv, VALUE self)
 VALUE
 ruby_xml_reader_new_walker(VALUE self, VALUE doc)
 {
-  ruby_xml_document_t *rxd;
+  xmlDocPtr xdoc;
   xmlTextReaderPtr reader;
   
-  Data_Get_Struct(doc, ruby_xml_document_t, rxd);
+  Data_Get_Struct(doc, xmlDoc, xdoc);
  
-  reader = xmlReaderWalker(rxd->doc);  
+  reader = xmlReaderWalker(xdoc);  
   if (reader == NULL)
     rb_raise(rb_eRuntimeError, "cannot create text reader for given document");
 

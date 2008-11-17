@@ -8,6 +8,8 @@
 VALUE cXMLSaxParser;
 VALUE mXMLSaxParserCallbacks;
 
+ID INPUT_ATTR;
+
 VALUE cbidOnInternalSubset;
 VALUE cbidOnIsStandalone;
 VALUE cbidOnHasInternalSubset;
@@ -65,6 +67,18 @@ ruby_xml_sax_parser_alloc(VALUE klass) {
 
 /*
  * call-seq:
+ *    sax_parser.initialize -> sax_parser
+ * 
+ * Initiliazes instance of parser.
+ */
+VALUE
+ruby_xml_sax_parser_initialize(VALUE self) {
+  VALUE input = rb_class_new_instance(0, Qnil, cXMLInput);
+  rb_iv_set(self, "@input", input);
+}
+
+/*
+ * call-seq:
  *    sax_parser.callbacks -> #<XML::SaxParser::Callbacks subclass>
  * 
  * Obtain the callbacks used by this parser.
@@ -94,37 +108,6 @@ ruby_xml_sax_parser_callbacks_set(VALUE self, VALUE callbacks) {
   return(rxsp->callbackHandler);
 }
 
-
-/*
- * call-seq:
- *    sax_parser.filename -> "filename"
- * 
- * Obtain the filename this parser reads from.
- */
-VALUE
-ruby_xml_sax_parser_filename_get(VALUE self) {
-  ruby_xml_sax_parser *rxsp;
-  Data_Get_Struct(self, ruby_xml_sax_parser, rxsp);
-  return(rxsp->filename);
-}
-
-
-/*
- * call-seq:
- *    sax_parser.filename = "filename"
- * 
- * Set the filename this parser reads from.
- */
-VALUE
-ruby_xml_sax_parser_filename_set(VALUE self, VALUE filename) {
-  ruby_xml_sax_parser *rxsp;
-  Check_Type(filename, T_STRING);
-  Data_Get_Struct(self, ruby_xml_sax_parser, rxsp);
-  rxsp->filename = filename;
-  return(rxsp->filename);
-}
-
- 
 /*
  * call-seq:
  *    parser.parse -> (true|false)
@@ -137,53 +120,31 @@ ruby_xml_sax_parser_parse(VALUE self) {
   char *str;
   int status = 1;
   ruby_xml_sax_parser *rxsp;
+  VALUE source;
+  VALUE input = rb_ivar_get(self, INPUT_ATTR);
 
   Data_Get_Struct(self, ruby_xml_sax_parser, rxsp);
 
-  if (rxsp->filename != Qnil) {
-    status = xmlSAXUserParseFile(rxsp->xsh, rxsp, StringValuePtr(rxsp->filename));
-  } else if (rxsp->str != Qnil) {
-    str = StringValueCStr(rxsp->str);
+  if (rb_ivar_get(input, FILE_ATTR) != Qnil)
+  {
+    source = rb_ivar_get(input, FILE_ATTR);
+    status = xmlSAXUserParseFile(rxsp->xsh, rxsp, StringValuePtr(source));
+  }
+  else if (rb_ivar_get(input, STRING_ATTR) != Qnil)
+  {
+    source = rb_ivar_get(input, STRING_ATTR);
+    str = StringValueCStr(source);
     status = xmlSAXUserParseMemory(rxsp->xsh, rxsp, str, strlen(str));
   }
+  else
+  {
+    rb_raise(rb_eArgError, "You must specify a parser data source");
+  }
   
-  /* XXX This should return an exception for the various error codes
-   * that can come back in status, but I'm too lazy to do that right
-   * now. */
   if (status)
     ruby_xml_raise(&xmlLastError);
   else
     return(Qtrue);
-}
-
-
-/*
- * call-seq:
- *    parser.string -> "xml"
- * 
- * Obtain the parser's input string.
- */
-VALUE
-ruby_xml_sax_parser_str_get(VALUE self) {
-  ruby_xml_sax_parser *rxsp;
-  Data_Get_Struct(self, ruby_xml_sax_parser, rxsp);
-  return(rxsp->str);
-}
-
-
-/*
- * call-seq:
- *    parser.string = "xml"
- * 
- * Set the parser's input string.
- */
-VALUE
-ruby_xml_sax_parser_str_set(VALUE self, VALUE str) {
-  ruby_xml_sax_parser *rxsp;
-  Check_Type(str, T_STRING);
-  Data_Get_Struct(self, ruby_xml_sax_parser, rxsp);
-  rxsp->str = str;
-  return(rxsp->str);
 }
 
 // Rdoc needs to know 
@@ -197,13 +158,18 @@ ruby_init_xml_sax_parser(void) {
   /* SaxParser */
   cXMLSaxParser = rb_define_class_under(mXML, "SaxParser", rb_cObject);
   rb_define_alloc_func(cXMLSaxParser, ruby_xml_sax_parser_alloc);
-  rb_define_method(cXMLSaxParser, "filename", ruby_xml_sax_parser_filename_get, 0);
-  rb_define_method(cXMLSaxParser, "filename=", ruby_xml_sax_parser_filename_set, 1);
   rb_define_method(cXMLSaxParser, "callbacks", ruby_xml_sax_parser_callbacks_get, 0);
   rb_define_method(cXMLSaxParser, "callbacks=", ruby_xml_sax_parser_callbacks_set, 1);
   rb_define_method(cXMLSaxParser, "parse", ruby_xml_sax_parser_parse, 0);
-  rb_define_method(cXMLSaxParser, "string", ruby_xml_sax_parser_str_get, 0);
-  rb_define_method(cXMLSaxParser, "string=", ruby_xml_sax_parser_str_set, 1);
+
+  /* Atributes */
+  rb_define_attr(cXMLSaxParser, "input", 1, 0);
+
+  /* Instance Methods */
+  rb_define_method(cXMLSaxParser, "initialize", ruby_xml_sax_parser_initialize, 0);
+
+
+  INPUT_ATTR = rb_intern("@input");
 
   /* SaxCallbacks */
   cbidOnInternalSubset = rb_intern("on_internal_subset");

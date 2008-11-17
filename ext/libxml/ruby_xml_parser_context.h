@@ -7,14 +7,7 @@
 
 extern VALUE cXMLParserContext;
 
-typedef struct ruby_xml_parser_context {
-  xmlParserCtxtPtr ctxt;
-  int is_ptr;
-} ruby_xml_parser_context;
-
-void ruby_xml_parser_context_free(ruby_xml_parser_context *ctxt);
 void ruby_init_xml_parser_context(void);
-VALUE ruby_xml_parser_context_new();
-VALUE ruby_xml_parser_context_each(VALUE self);
+VALUE ruby_xml_parser_context_wrap(xmlParserCtxtPtr ctxt);
 
 #endif

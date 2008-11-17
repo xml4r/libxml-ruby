@@ -48,6 +48,6 @@ ruby_init_state(void) {
      to initalize and cleanup libxml. Then register it with
      the garbage collector so its not freed until the process
      exists.*/
-  LIBXML_STATE = rb_class_new_instance(0, NULL, cXMLState);
+  LIBXML_STATE = rb_class_new_instance(0, Qnil, cXMLState);
   rb_global_variable(&LIBXML_STATE);  
 }

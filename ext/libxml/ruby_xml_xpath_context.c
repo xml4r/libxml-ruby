@@ -50,7 +50,7 @@ ruby_xml_xpath_context_alloc(VALUE klass) {
  */
 VALUE
 ruby_xml_xpath_context_initialize(VALUE self, VALUE node) {
-  ruby_xml_document_t *rxd;
+  xmlDocPtr xdoc;
   VALUE document;
   #ifndef LIBXML_XPATH_ENABLED
   rb_raise(rb_eTypeError, "libxml was not compiled with XPath support.");
@@ -71,8 +71,8 @@ ruby_xml_xpath_context_initialize(VALUE self, VALUE node) {
     rb_raise(rb_eTypeError, "Supplied argument must be a document or node.");
   }
   
-  Data_Get_Struct(document, ruby_xml_document_t, rxd);
-  DATA_PTR(self) = xmlXPathNewContext(rxd->doc);
+  Data_Get_Struct(document, xmlDoc, xdoc);
+  DATA_PTR(self) = xmlXPathNewContext(xdoc);
   
   /* Save the doc as an attribute, this will expose it to Ruby's GC. */
   rb_iv_set(self, "@doc", document);    
@@ -126,9 +126,9 @@ ruby_xml_xpath_context_register_namespaces_from_node(VALUE self, VALUE node) {
   
   if (rb_obj_is_kind_of(node, cXMLDocument) == Qtrue)
   {
-    ruby_xml_document_t *rdoc;
-    Data_Get_Struct(node, ruby_xml_document_t, rdoc);
-    xnode = xmlDocGetRootElement(rdoc->doc);
+    xmlDocPtr xdoc;
+    Data_Get_Struct(node, xmlDoc, xdoc);
+    xnode = xmlDocGetRootElement(xdoc);
   }
   else if (rb_obj_is_kind_of(node, cXMLNode) == Qtrue)
   {

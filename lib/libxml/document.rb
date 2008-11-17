@@ -4,6 +4,22 @@
 module LibXML
   module XML
     class Document
+      def self.file(value)
+        Parser.file(value).parse
+      end
+
+      def self.string(value)
+        Parser.string(value).parse
+      end
+
+      def self.document(value)
+        Parser.document(value).parse
+      end
+
+      def self.io(value)
+        Parser.io(value).parse
+      end
+
       # Return the nodes matching the specified xpath expression, 
       # optionally using the specified namespace.  For more 
       # information about working with namespaces, please refer
@@ -33,7 +49,6 @@ module LibXML
       #
       #  nodes = nil
       #  GC.start
-
       def find(xpath, nslist = nil)
         context = XPath::Context.new(self)
         context.node = self.root  

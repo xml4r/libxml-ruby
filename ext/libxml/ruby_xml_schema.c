@@ -94,13 +94,13 @@ ruby_xml_schema_init_from_uri(VALUE class, VALUE uri) {
  */
 VALUE
 ruby_xml_schema_init_from_document(VALUE class, VALUE document) {
-  ruby_xml_document_t *rdoc;
+  xmlDocPtr xdoc;
   ruby_xml_schema *schema;
   xmlSchemaParserCtxtPtr parser;
 
-  Data_Get_Struct(document, ruby_xml_document_t, rdoc);
+  Data_Get_Struct(document, xmlDoc, xdoc);
 
-  parser = xmlSchemaNewDocParserCtxt(rdoc->doc);
+  parser = xmlSchemaNewDocParserCtxt(xdoc);
   schema = ALLOC(ruby_xml_schema);
   schema->schema = xmlSchemaParse(parser);
   xmlSchemaFreeParserCtxt(parser);

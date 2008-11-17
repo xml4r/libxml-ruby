@@ -16,6 +16,17 @@
  */
 VALUE cXMLParserContext;
 
+void
+ruby_xml_parser_context_free(xmlParserCtxtPtr ctxt) {
+  if (ctxt != NULL)
+    xmlFreeParserCtxt(ctxt);
+}
+
+VALUE
+ruby_xml_parser_context_wrap(xmlParserCtxtPtr ctxt) {
+  return Data_Wrap_Struct(cXMLParserContext, NULL, ruby_xml_parser_context_free, ctxt);
+}
+
 /*
  * call-seq:
  *    context.data_directory -> "dir"
@@ -24,13 +35,13 @@ VALUE cXMLParserContext;
  */
 VALUE
 ruby_xml_parser_context_data_directory_get(VALUE self) {
-  ruby_xml_parser_context *rxpc;
-  Data_Get_Struct(self, ruby_xml_parser_context, rxpc);
+  xmlParserCtxtPtr ctxt;
+  Data_Get_Struct(self, xmlParserCtxt, ctxt);
 
-  if (rxpc->ctxt->directory == NULL)
+  if (ctxt->directory == NULL)
     return(Qnil);
   else
-    return(rb_str_new2(rxpc->ctxt->directory));
+    return(rb_str_new2(ctxt->directory));
 }
 
 
@@ -42,10 +53,10 @@ ruby_xml_parser_context_data_directory_get(VALUE self) {
  */
 VALUE
 ruby_xml_parser_context_depth_get(VALUE self) {
-  ruby_xml_parser_context *rxpc;
-  Data_Get_Struct(self, ruby_xml_parser_context, rxpc);
+  xmlParserCtxtPtr ctxt;
+  Data_Get_Struct(self, xmlParserCtxt, ctxt);
 
-  return(INT2NUM(rxpc->ctxt->depth));
+  return(INT2NUM(ctxt->depth));
 }
 
 
@@ -58,10 +69,10 @@ ruby_xml_parser_context_depth_get(VALUE self) {
  */
 VALUE
 ruby_xml_parser_context_disable_sax_q(VALUE self) {
-  ruby_xml_parser_context *rxpc;
-  Data_Get_Struct(self, ruby_xml_parser_context, rxpc);
+  xmlParserCtxtPtr ctxt;
+  Data_Get_Struct(self, xmlParserCtxt, ctxt);
 
-  if (rxpc->ctxt->disableSAX)
+  if (ctxt->disableSAX)
     return(Qtrue);
   else
     return(Qfalse);
@@ -77,10 +88,10 @@ ruby_xml_parser_context_disable_sax_q(VALUE self) {
  */
 VALUE
 ruby_xml_parser_context_docbook_q(VALUE self) {
-  ruby_xml_parser_context *rxpc;
-  Data_Get_Struct(self, ruby_xml_parser_context, rxpc);
+  xmlParserCtxtPtr ctxt;
+  Data_Get_Struct(self, xmlParserCtxt, ctxt);
 
-  if (rxpc->ctxt->html == 2)    // TODO check this
+  if (ctxt->html == 2)    // TODO check this
     return(Qtrue);
   else
     return(Qfalse);
@@ -96,13 +107,13 @@ ruby_xml_parser_context_docbook_q(VALUE self) {
  */
 VALUE
 ruby_xml_parser_context_encoding_get(VALUE self) {
-  ruby_xml_parser_context *rxpc;
-  Data_Get_Struct(self, ruby_xml_parser_context, rxpc);
+  xmlParserCtxtPtr ctxt;
+  Data_Get_Struct(self, xmlParserCtxt, ctxt);
 
-  if (rxpc->ctxt->encoding == NULL)
+  if (ctxt->encoding == NULL)
     return(Qnil);
   else
-    return(rb_str_new2((const char*)rxpc->ctxt->encoding));
+    return(rb_str_new2((const char*)ctxt->encoding));
 }
 
 
@@ -114,22 +125,12 @@ ruby_xml_parser_context_encoding_get(VALUE self) {
  */
 VALUE
 ruby_xml_parser_context_errno_get(VALUE self) {
-  ruby_xml_parser_context *rxpc;
-  Data_Get_Struct(self, ruby_xml_parser_context, rxpc);
+  xmlParserCtxtPtr ctxt;
+  Data_Get_Struct(self, xmlParserCtxt, ctxt);
 
-  return(INT2NUM(rxpc->ctxt->errNo));
+  return(INT2NUM(ctxt->errNo));
 }
 
-
-void
-ruby_xml_parser_context_free(ruby_xml_parser_context *rxpc) {
-  if (rxpc->ctxt != NULL) {
-    xmlFreeParserCtxt(rxpc->ctxt);
-    rxpc->ctxt = NULL;
-  }
-
-  ruby_xfree(rxpc);
-}
 
 
 /*
@@ -140,10 +141,10 @@ ruby_xml_parser_context_free(ruby_xml_parser_context *rxpc) {
  */
 VALUE
 ruby_xml_parser_context_html_q(VALUE self) {
-  ruby_xml_parser_context *rxpc;
-  Data_Get_Struct(self, ruby_xml_parser_context, rxpc);
+  xmlParserCtxtPtr ctxt;
+  Data_Get_Struct(self, xmlParserCtxt, ctxt);
 
-  if (rxpc->ctxt->html == 1)
+  if (ctxt->html == 1)
     return(Qtrue);
   else
     return(Qfalse);
@@ -160,10 +161,10 @@ ruby_xml_parser_context_html_q(VALUE self) {
 VALUE
 ruby_xml_parser_context_io_max_num_streams_get(VALUE self) {
   // TODO alias to max_streams and dep this? 
-  ruby_xml_parser_context *rxpc;
-  Data_Get_Struct(self, ruby_xml_parser_context, rxpc);
+  xmlParserCtxtPtr ctxt;
+  Data_Get_Struct(self, xmlParserCtxt, ctxt);
 
-  return(INT2NUM(rxpc->ctxt->inputMax));
+  return(INT2NUM(ctxt->inputMax));
 }
 
 
@@ -176,10 +177,10 @@ ruby_xml_parser_context_io_max_num_streams_get(VALUE self) {
  */
 VALUE
 ruby_xml_parser_context_io_num_streams_get(VALUE self) {
-  ruby_xml_parser_context *rxpc;
-  Data_Get_Struct(self, ruby_xml_parser_context, rxpc);
+  xmlParserCtxtPtr ctxt;
+  Data_Get_Struct(self, xmlParserCtxt, ctxt);
 
-  return(INT2NUM(rxpc->ctxt->inputNr));
+  return(INT2NUM(ctxt->inputNr));
 }
 
 
@@ -192,10 +193,10 @@ ruby_xml_parser_context_io_num_streams_get(VALUE self) {
  */
 VALUE
 ruby_xml_parser_context_keep_blanks_q(VALUE self) {
-  ruby_xml_parser_context *rxpc;
-  Data_Get_Struct(self, ruby_xml_parser_context, rxpc);
+  xmlParserCtxtPtr ctxt;
+  Data_Get_Struct(self, xmlParserCtxt, ctxt);
 
-  if (rxpc->ctxt->keepBlanks)
+  if (ctxt->keepBlanks)
     return(Qtrue);
   else
     return(Qfalse);
@@ -210,10 +211,10 @@ ruby_xml_parser_context_keep_blanks_q(VALUE self) {
  */
 VALUE
 ruby_xml_parser_context_name_depth_get(VALUE self) {
-  ruby_xml_parser_context *rxpc;
-  Data_Get_Struct(self, ruby_xml_parser_context, rxpc);
+  xmlParserCtxtPtr ctxt;
+  Data_Get_Struct(self, xmlParserCtxt, ctxt);
 
-  return(INT2NUM(rxpc->ctxt->nameNr));
+  return(INT2NUM(ctxt->nameNr));
 }
 
 
@@ -225,10 +226,10 @@ ruby_xml_parser_context_name_depth_get(VALUE self) {
  */
 VALUE
 ruby_xml_parser_context_name_depth_max_get(VALUE self) {
-  ruby_xml_parser_context *rxpc;
-  Data_Get_Struct(self, ruby_xml_parser_context, rxpc);
+  xmlParserCtxtPtr ctxt;
+  Data_Get_Struct(self, xmlParserCtxt, ctxt);
 
-  return(INT2NUM(rxpc->ctxt->nameMax));
+  return(INT2NUM(ctxt->nameMax));
 }
 
 
@@ -240,13 +241,13 @@ ruby_xml_parser_context_name_depth_max_get(VALUE self) {
  */
 VALUE
 ruby_xml_parser_context_name_node_get(VALUE self) {
-  ruby_xml_parser_context *rxpc;
-  Data_Get_Struct(self, ruby_xml_parser_context, rxpc);
+  xmlParserCtxtPtr ctxt;
+  Data_Get_Struct(self, xmlParserCtxt, ctxt);
 
-  if (rxpc->ctxt->name == NULL)
+  if (ctxt->name == NULL)
     return(Qnil);
   else
-    return(rb_str_new2((const char*)rxpc->ctxt->name));
+    return(rb_str_new2((const char*)ctxt->name));
 }
 
 
@@ -259,21 +260,21 @@ ruby_xml_parser_context_name_node_get(VALUE self) {
 VALUE
 ruby_xml_parser_context_name_tab_get(VALUE self) {
   int i;
-  ruby_xml_parser_context *rxpc;
+  xmlParserCtxtPtr ctxt;
   VALUE tab_ary;
 
-  Data_Get_Struct(self, ruby_xml_parser_context, rxpc);
+  Data_Get_Struct(self, xmlParserCtxt, ctxt);
 
-  if (rxpc->ctxt->nameTab == NULL)
+  if (ctxt->nameTab == NULL)
     return(Qnil);
 
   tab_ary = rb_ary_new();
 
-  for (i = (rxpc->ctxt->nameNr - 1); i >= 0; i--) {
-    if (rxpc->ctxt->nameTab[i] == NULL)
+  for (i = (ctxt->nameNr - 1); i >= 0; i--) {
+    if (ctxt->nameTab[i] == NULL)
       continue;
     else
-      rb_ary_push(tab_ary, rb_str_new2((const char*)rxpc->ctxt->nameTab[i]));
+      rb_ary_push(tab_ary, rb_str_new2((const char*)ctxt->nameTab[i]));
   }
 
   return(tab_ary);
@@ -288,10 +289,10 @@ ruby_xml_parser_context_name_tab_get(VALUE self) {
  */
 VALUE
 ruby_xml_parser_context_node_depth_get(VALUE self) {
-  ruby_xml_parser_context *rxpc;
-  Data_Get_Struct(self, ruby_xml_parser_context, rxpc);
+  xmlParserCtxtPtr ctxt;
+  Data_Get_Struct(self, xmlParserCtxt, ctxt);
 
-  return(INT2NUM(rxpc->ctxt->nodeNr));
+  return(INT2NUM(ctxt->nodeNr));
 }
 
 
@@ -303,14 +304,14 @@ ruby_xml_parser_context_node_depth_get(VALUE self) {
  */
 VALUE
 ruby_xml_parser_context_node_get(VALUE self) {
-  ruby_xml_parser_context *rxpc;
-  Data_Get_Struct(self, ruby_xml_parser_context, rxpc);
+  xmlParserCtxtPtr ctxt;
+  Data_Get_Struct(self, xmlParserCtxt, ctxt);
 
-  if (rxpc->ctxt->node == NULL)
+  if (ctxt->node == NULL)
     return(Qnil);
   else
     return(ruby_xml_node2_wrap(cXMLNode,
-			      rxpc->ctxt->node));
+			      ctxt->node));
 }
 
 
@@ -322,10 +323,10 @@ ruby_xml_parser_context_node_get(VALUE self) {
  */
 VALUE
 ruby_xml_parser_context_node_depth_max_get(VALUE self) {
-  ruby_xml_parser_context *rxpc;
-  Data_Get_Struct(self, ruby_xml_parser_context, rxpc);
+  xmlParserCtxtPtr ctxt;
+  Data_Get_Struct(self, xmlParserCtxt, ctxt);
 
-  return(INT2NUM(rxpc->ctxt->nodeMax));
+  return(INT2NUM(ctxt->nodeMax));
 }
 
 
@@ -337,28 +338,19 @@ ruby_xml_parser_context_node_depth_max_get(VALUE self) {
  */
 VALUE
 ruby_xml_parser_context_num_chars_get(VALUE self) {
-  ruby_xml_parser_context *rxpc;
-  Data_Get_Struct(self, ruby_xml_parser_context, rxpc);
+  xmlParserCtxtPtr ctxt;
+  Data_Get_Struct(self, xmlParserCtxt, ctxt);
 
-  return(LONG2NUM(rxpc->ctxt->nbChars));
+  return(LONG2NUM(ctxt->nbChars));
 }
 
-
-VALUE
-ruby_xml_parser_context_new() {
-  ruby_xml_parser_context *rxpc = ALLOC(ruby_xml_parser_context);
-  return Data_Wrap_Struct(cXMLParserContext,
-			  NULL,
-			  ruby_xml_parser_context_free,
-			  rxpc);
-}
 
 VALUE
 ruby_xml_parser_context_options_set(VALUE self, VALUE options) {
-  ruby_xml_parser_context *rxpc;
-  Data_Get_Struct(self, ruby_xml_parser_context, rxpc);
+  xmlParserCtxtPtr ctxt;
+  Data_Get_Struct(self, xmlParserCtxt, ctxt);
 
-  if (xmlCtxtUseOptions(rxpc->ctxt, NUM2INT(options)))
+  if (xmlCtxtUseOptions(ctxt, NUM2INT(options)))
        return Qfalse;
   else
        return Qtrue;
@@ -366,9 +358,9 @@ ruby_xml_parser_context_options_set(VALUE self, VALUE options) {
 
 VALUE
 ruby_xml_parser_context_options_get(VALUE self) {
-  ruby_xml_parser_context *rxpc;
-  Data_Get_Struct(self, ruby_xml_parser_context, rxpc);
-  return INT2NUM(rxpc->ctxt->options);
+  xmlParserCtxtPtr ctxt;
+  Data_Get_Struct(self, xmlParserCtxt, ctxt);
+  return INT2NUM(ctxt->options);
 }
 
 /*
@@ -380,10 +372,10 @@ ruby_xml_parser_context_options_get(VALUE self) {
  */
 VALUE
 ruby_xml_parser_context_replace_entities_q(VALUE self) {
-  ruby_xml_parser_context *rxpc;
-  Data_Get_Struct(self, ruby_xml_parser_context, rxpc);
+  xmlParserCtxtPtr ctxt;
+  Data_Get_Struct(self, xmlParserCtxt, ctxt);
 
-  if (rxpc->ctxt->replaceEntities)
+  if (ctxt->replaceEntities)
     return(Qtrue);
   else
     return(Qfalse);
@@ -399,14 +391,14 @@ ruby_xml_parser_context_replace_entities_q(VALUE self) {
  */
 VALUE
 ruby_xml_parser_context_replace_entities_set(VALUE self, VALUE bool) {
-  ruby_xml_parser_context *rxpc;
-  Data_Get_Struct(self, ruby_xml_parser_context, rxpc);
+  xmlParserCtxtPtr ctxt;
+  Data_Get_Struct(self, xmlParserCtxt, ctxt);
 
   if (TYPE(bool) == T_FALSE) {
-    rxpc->ctxt->replaceEntities = 0;
+    ctxt->replaceEntities = 0;
     return(Qfalse);
   } else {
-    rxpc->ctxt->replaceEntities = 1;
+    ctxt->replaceEntities = 1;
     return(Qfalse);
   }
 }
@@ -419,10 +411,10 @@ ruby_xml_parser_context_replace_entities_set(VALUE self, VALUE bool) {
  */
 VALUE
 ruby_xml_parser_context_space_depth_get(VALUE self) {
-  ruby_xml_parser_context *rxpc;
-  Data_Get_Struct(self, ruby_xml_parser_context, rxpc);
+  xmlParserCtxtPtr ctxt;
+  Data_Get_Struct(self, xmlParserCtxt, ctxt);
 
-  return(INT2NUM(rxpc->ctxt->spaceNr));
+  return(INT2NUM(ctxt->spaceNr));
 }
 
 
@@ -434,10 +426,10 @@ ruby_xml_parser_context_space_depth_get(VALUE self) {
  */
 VALUE
 ruby_xml_parser_context_space_depth_max_get(VALUE self) {
-  ruby_xml_parser_context *rxpc;
-  Data_Get_Struct(self, ruby_xml_parser_context, rxpc);
+  xmlParserCtxtPtr ctxt;
+  Data_Get_Struct(self, xmlParserCtxt, ctxt);
 
-  return(INT2NUM(rxpc->ctxt->spaceMax));
+  return(INT2NUM(ctxt->spaceMax));
 }
 
 
@@ -450,10 +442,10 @@ ruby_xml_parser_context_space_depth_max_get(VALUE self) {
  */
 VALUE
 ruby_xml_parser_context_subset_external_q(VALUE self) {
-  ruby_xml_parser_context *rxpc;
-  Data_Get_Struct(self, ruby_xml_parser_context, rxpc);
+  xmlParserCtxtPtr ctxt;
+  Data_Get_Struct(self, xmlParserCtxt, ctxt);
 
-  if (rxpc->ctxt->inSubset == 2)
+  if (ctxt->inSubset == 2)
     return(Qtrue);
   else
     return(Qfalse);
@@ -469,10 +461,10 @@ ruby_xml_parser_context_subset_external_q(VALUE self) {
  */
 VALUE
 ruby_xml_parser_context_subset_internal_q(VALUE self) {
-  ruby_xml_parser_context *rxpc;
-  Data_Get_Struct(self, ruby_xml_parser_context, rxpc);
+  xmlParserCtxtPtr ctxt;
+  Data_Get_Struct(self, xmlParserCtxt, ctxt);
 
-  if (rxpc->ctxt->inSubset == 1)
+  if (ctxt->inSubset == 1)
     return(Qtrue);
   else
     return(Qfalse);
@@ -489,13 +481,13 @@ ruby_xml_parser_context_subset_internal_q(VALUE self) {
  */
 VALUE
 ruby_xml_parser_context_subset_name_get(VALUE self) {
-  ruby_xml_parser_context *rxpc;
-  Data_Get_Struct(self, ruby_xml_parser_context, rxpc);
+  xmlParserCtxtPtr ctxt;
+  Data_Get_Struct(self, xmlParserCtxt, ctxt);
 
-  if (rxpc->ctxt->intSubName == NULL)
+  if (ctxt->intSubName == NULL)
     return(Qnil);
   else
-    return(rb_str_new2((const char*)rxpc->ctxt->intSubName));
+    return(rb_str_new2((const char*)ctxt->intSubName));
 }
 
 
@@ -509,13 +501,13 @@ ruby_xml_parser_context_subset_name_get(VALUE self) {
  */
 VALUE
 ruby_xml_parser_context_subset_external_uri_get(VALUE self) {
-  ruby_xml_parser_context *rxpc;
-  Data_Get_Struct(self, ruby_xml_parser_context, rxpc);
+  xmlParserCtxtPtr ctxt;
+  Data_Get_Struct(self, xmlParserCtxt, ctxt);
 
-  if (rxpc->ctxt->extSubURI == NULL)
+  if (ctxt->extSubURI == NULL)
     return(Qnil);
   else
-    return(rb_str_new2((const char*)rxpc->ctxt->extSubURI));
+    return(rb_str_new2((const char*)ctxt->extSubURI));
 }
 
 
@@ -529,13 +521,13 @@ ruby_xml_parser_context_subset_external_uri_get(VALUE self) {
  */
 VALUE
 ruby_xml_parser_context_subset_external_system_id_get(VALUE self) {
-  ruby_xml_parser_context *rxpc;
-  Data_Get_Struct(self, ruby_xml_parser_context, rxpc);
+  xmlParserCtxtPtr ctxt;
+  Data_Get_Struct(self, xmlParserCtxt, ctxt);
 
-  if (rxpc->ctxt->extSubSystem == NULL)
+  if (ctxt->extSubSystem == NULL)
     return(Qnil);
   else
-    return(rb_str_new2((const char*)rxpc->ctxt->extSubSystem));
+    return(rb_str_new2((const char*)ctxt->extSubSystem));
 }
 
 
@@ -547,10 +539,10 @@ ruby_xml_parser_context_subset_external_system_id_get(VALUE self) {
  */
 VALUE
 ruby_xml_parser_context_standalone_q(VALUE self) {
-  ruby_xml_parser_context *rxpc;
-  Data_Get_Struct(self, ruby_xml_parser_context, rxpc);
+  xmlParserCtxtPtr ctxt;
+  Data_Get_Struct(self, xmlParserCtxt, ctxt);
 
-  if (rxpc->ctxt->standalone)
+  if (ctxt->standalone)
     return(Qtrue);
   else
     return(Qfalse);
@@ -565,10 +557,10 @@ ruby_xml_parser_context_standalone_q(VALUE self) {
  */
 VALUE
 ruby_xml_parser_context_stats_q(VALUE self) {
-  ruby_xml_parser_context *rxpc;
-  Data_Get_Struct(self, ruby_xml_parser_context, rxpc);
+  xmlParserCtxtPtr ctxt;
+  Data_Get_Struct(self, xmlParserCtxt, ctxt);
 
-  if (rxpc->ctxt->record_info)
+  if (ctxt->record_info)
     return(Qtrue);
   else
     return(Qfalse);
@@ -583,10 +575,10 @@ ruby_xml_parser_context_stats_q(VALUE self) {
  */
 VALUE
 ruby_xml_parser_context_valid_q(VALUE self) {
-  ruby_xml_parser_context *rxpc;
-  Data_Get_Struct(self, ruby_xml_parser_context, rxpc);
+  xmlParserCtxtPtr ctxt;
+  Data_Get_Struct(self, xmlParserCtxt, ctxt);
 
-  if (rxpc->ctxt->valid)
+  if (ctxt->valid)
     return(Qtrue);
   else
     return(Qfalse);
@@ -601,10 +593,10 @@ ruby_xml_parser_context_valid_q(VALUE self) {
  */
 VALUE
 ruby_xml_parser_context_validate_q(VALUE self) {
-  ruby_xml_parser_context *rxpc;
-  Data_Get_Struct(self, ruby_xml_parser_context, rxpc);
+  xmlParserCtxtPtr ctxt;
+  Data_Get_Struct(self, xmlParserCtxt, ctxt);
 
-  if (rxpc->ctxt->validate)
+  if (ctxt->validate)
     return(Qtrue);
   else
     return(Qfalse);
@@ -619,13 +611,13 @@ ruby_xml_parser_context_validate_q(VALUE self) {
  */
 VALUE
 ruby_xml_parser_context_version_get(VALUE self) {
-  ruby_xml_parser_context *rxpc;
-  Data_Get_Struct(self, ruby_xml_parser_context, rxpc);
+  xmlParserCtxtPtr ctxt;
+  Data_Get_Struct(self, xmlParserCtxt, ctxt);
 
-  if (rxpc->ctxt->version == NULL)
+  if (ctxt->version == NULL)
     return(Qnil);
   else
-    return(rb_str_new2((const char*)rxpc->ctxt->version));
+    return(rb_str_new2((const char*)ctxt->version));
 }
 
 
@@ -637,10 +629,10 @@ ruby_xml_parser_context_version_get(VALUE self) {
  */
 VALUE
 ruby_xml_parser_context_well_formed_q(VALUE self) {
-  ruby_xml_parser_context *rxpc;
-  Data_Get_Struct(self, ruby_xml_parser_context, rxpc);
+  xmlParserCtxtPtr ctxt;
+  Data_Get_Struct(self, xmlParserCtxt, ctxt);
 
-  if (rxpc->ctxt->wellFormed)
+  if (ctxt->wellFormed)
     return(Qtrue);
   else
     return(Qfalse);
@@ -657,6 +649,7 @@ ruby_xml_parser_context_well_formed_q(VALUE self) {
 void
 ruby_init_xml_parser_context(void) {
   cXMLParserContext = rb_define_class_under(cXMLParser, "Context", rb_cObject);
+  rb_undef_alloc_func(cXMLParserContext);
 
   rb_define_method(cXMLParserContext, "data_directory", ruby_xml_parser_context_data_directory_get, 0);
   rb_define_method(cXMLParserContext, "depth", ruby_xml_parser_context_depth_get, 0);

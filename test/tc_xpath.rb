@@ -1,6 +1,6 @@
 require 'xml'
-require "tempfile"
-require "test/unit"
+require 'tempfile'
+require 'test/unit'
 
 class TestXPath < Test::Unit::TestCase
   def setup

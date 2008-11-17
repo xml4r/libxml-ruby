@@ -37,11 +37,12 @@ VALUE cXMLDocument;
 VALUE
 ruby_xml_document_compression_get(VALUE self) {
 #ifdef HAVE_ZLIB_H
-  ruby_xml_document_t *rxd;
-  int compmode;
-  Data_Get_Struct(self, ruby_xml_document_t, rxd);
+  xmlDocPtr xdoc;
 
-  compmode = xmlGetDocCompressMode(rxd->doc);
+  int compmode;
+  Data_Get_Struct(self, xmlDoc, xdoc);
+
+  compmode = xmlGetDocCompressMode(xdoc);
   if (compmode == -1)
     return(Qnil);
   else
@@ -62,17 +63,18 @@ ruby_xml_document_compression_get(VALUE self) {
 VALUE
 ruby_xml_document_compression_set(VALUE self, VALUE num) {
 #ifdef HAVE_ZLIB_H
-  ruby_xml_document_t *rxd;
+  xmlDocPtr xdoc;
+
   int compmode;
   Check_Type(num, T_FIXNUM);
-  Data_Get_Struct(self, ruby_xml_document_t, rxd);
+  Data_Get_Struct(self, xmlDoc, xdoc);
 
-  if (rxd->doc == NULL) {
+  if (xdoc == NULL) {
     return(Qnil);
   } else {
-    xmlSetDocCompressMode(rxd->doc, NUM2INT(num));
+    xmlSetDocCompressMode(xdoc, NUM2INT(num));
 
-    compmode = xmlGetDocCompressMode(rxd->doc);
+    compmode = xmlGetDocCompressMode(xdoc);
     if (compmode == -1)
       return(Qnil);
     else
@@ -94,10 +96,11 @@ ruby_xml_document_compression_set(VALUE self, VALUE num) {
 VALUE
 ruby_xml_document_compression_q(VALUE self) {
 #ifdef HAVE_ZLIB_H
-  ruby_xml_document_t *rxd;
-  Data_Get_Struct(self, ruby_xml_document_t, rxd);
+  xmlDocPtr xdoc;
 
-  if (rxd->doc->compression != -1)
+  Data_Get_Struct(self, xmlDoc, xdoc);
+
+  if (xdoc->compression != -1)
     return(Qtrue);
   else
     return(Qfalse);
@@ -116,14 +119,13 @@ ruby_xml_document_compression_q(VALUE self) {
  */
 VALUE
 ruby_xml_document_child_get(VALUE self) {
-  ruby_xml_document_t *rxd;
+  xmlDocPtr xdoc;
+  Data_Get_Struct(self, xmlDoc, xdoc);
 
-  Data_Get_Struct(self, ruby_xml_document_t, rxd);
-
-  if (rxd->doc->children == NULL)
+  if (xdoc->children == NULL)
     return(Qnil);
 
-  return ruby_xml_node2_wrap(cXMLNode, rxd->doc->children);
+  return ruby_xml_node2_wrap(cXMLNode, xdoc->children);
 }
 
 
@@ -135,10 +137,10 @@ ruby_xml_document_child_get(VALUE self) {
  */
 VALUE
 ruby_xml_document_child_q(VALUE self) {
-  ruby_xml_document_t *rxd;
-  Data_Get_Struct(self, ruby_xml_document_t, rxd);
+  xmlDocPtr xdoc;
+  Data_Get_Struct(self, xmlDoc, xdoc);
 
-  if (rxd->doc->children == NULL)
+  if (xdoc->children == NULL)
     return(Qfalse);
   else
     return(Qtrue);
@@ -157,10 +159,10 @@ ruby_xml_document_dump(int argc, VALUE *argv, VALUE self) {
   OpenFile *fptr;
   VALUE io;
   FILE *out;
-  ruby_xml_document_t *rxd;
+  xmlDocPtr xdoc;
 
-  Data_Get_Struct(self, ruby_xml_document_t, rxd);
-  if (rxd->doc == NULL)
+  Data_Get_Struct(self, xmlDoc, xdoc);
+  if (xdoc == NULL)
     return(Qnil);
 
   switch (argc) {
@@ -179,7 +181,7 @@ ruby_xml_document_dump(int argc, VALUE *argv, VALUE self) {
   GetOpenFile(io, fptr);
   rb_io_check_writable(fptr);
   out = GetWriteFile(fptr);
-  xmlDocDump(out, rxd->doc);
+  xmlDocDump(out, xdoc);
   return(Qtrue);
 }
 
@@ -196,10 +198,10 @@ ruby_xml_document_debug_dump(int argc, VALUE *argv, VALUE self) {
   OpenFile *fptr;
   VALUE io;
   FILE *out;
-  ruby_xml_document_t *rxd;
+  xmlDocPtr xdoc;
 
-  Data_Get_Struct(self, ruby_xml_document_t, rxd);
-  if (rxd->doc == NULL)
+  Data_Get_Struct(self, xmlDoc, xdoc);
+  if (xdoc == NULL)
     return(Qnil);
 
   switch (argc) {
@@ -218,7 +220,7 @@ ruby_xml_document_debug_dump(int argc, VALUE *argv, VALUE self) {
   GetOpenFile(io, fptr);
   rb_io_check_writable(fptr);
   out = GetWriteFile(fptr);
-  xmlDebugDumpDocument(out, rxd->doc);
+  xmlDebugDumpDocument(out, xdoc);
   return(Qtrue);
 #else
   rb_warn("libxml was compiled without debugging support.  Please recompile libxml and ruby-libxml");
@@ -240,10 +242,11 @@ ruby_xml_document_debug_dump_head(int argc, VALUE *argv, VALUE self) {
   OpenFile *fptr;
   VALUE io;
   FILE *out;
-  ruby_xml_document_t *rxd;
+  xmlDocPtr xdoc;
 
-  Data_Get_Struct(self, ruby_xml_document_t, rxd);
-  if (rxd->doc == NULL)
+
+  Data_Get_Struct(self, xmlDoc, xdoc);
+  if (xdoc == NULL)
     return(Qnil);
 
   switch (argc) {
@@ -262,7 +265,7 @@ ruby_xml_document_debug_dump_head(int argc, VALUE *argv, VALUE self) {
   GetOpenFile(io, fptr);
   rb_io_check_writable(fptr);
   out = GetWriteFile(fptr);
-  xmlDebugDumpDocumentHead(out, rxd->doc);
+  xmlDebugDumpDocumentHead(out, xdoc);
   return(Qtrue);
 #else
   rb_warn("libxml was compiled without debugging support.  Please recompile libxml and ruby-libxml");
@@ -285,11 +288,12 @@ ruby_xml_document_format_dump(int argc, VALUE *argv, VALUE self) {
   OpenFile *fptr;
   VALUE bool, io;
   FILE *out;
-  ruby_xml_document_t *rxd;
+  xmlDocPtr xdoc;
+
   int size, spacing;
 
-  Data_Get_Struct(self, ruby_xml_document_t, rxd);
-  if (rxd->doc == NULL)
+  Data_Get_Struct(self, xmlDoc, xdoc);
+  if (xdoc == NULL)
     return(Qnil);
 
   switch (argc) {
@@ -323,7 +327,7 @@ ruby_xml_document_format_dump(int argc, VALUE *argv, VALUE self) {
   GetOpenFile(io, fptr);
   rb_io_check_writable(fptr);
   out = GetWriteFile(fptr);
-  size = xmlDocFormatDump(out, rxd->doc, spacing);
+  size = xmlDocFormatDump(out, xdoc, spacing);
   return(INT2NUM(size));
 }
 
@@ -349,12 +353,13 @@ ruby_xml_document_debug_format_dump(int argc, VALUE *argv, VALUE self) {
  */
 VALUE
 ruby_xml_document_encoding_get(VALUE self) {
-  ruby_xml_document_t *rxd;
-  Data_Get_Struct(self, ruby_xml_document_t, rxd);
-  if (rxd->doc->encoding == NULL)
+  xmlDocPtr xdoc;
+
+  Data_Get_Struct(self, xmlDoc, xdoc);
+  if (xdoc->encoding == NULL)
     return(Qnil);
   else
-    return(rb_str_new2((const char*)rxd->doc->encoding));
+    return(rb_str_new2((const char*)xdoc->encoding));
 }
 
 
@@ -366,94 +371,42 @@ ruby_xml_document_encoding_get(VALUE self) {
  */
 VALUE
 ruby_xml_document_encoding_set(VALUE self, VALUE encoding) {
-  ruby_xml_document_t *rxd;
+  xmlDocPtr xdoc;
+
 
   Check_Type(encoding, T_STRING);
-  Data_Get_Struct(self, ruby_xml_document_t, rxd);
-  rxd->doc->encoding = xmlStrdup(StringValuePtr(encoding));
+  Data_Get_Struct(self, xmlDoc, xdoc);
+  xdoc->encoding = xmlStrdup(StringValuePtr(encoding));
   return(ruby_xml_document_encoding_get(self));
 }
 
-
-/*
- * call-seq:
- *    document.filename -> "filename"
- * 
- * Obtain the filename this document was read from.
- */
-VALUE
-ruby_xml_document_filename_get(VALUE self) {
-  ruby_xml_document_t *rxd;
-  rx_file_data *data;
-
-  Data_Get_Struct(self, ruby_xml_document_t, rxd);
-  if (rxd->data == NULL)
-    return(Qnil);
-
-  switch (rxd->data_type) {
-  case RUBY_LIBXML_SRC_TYPE_NULL:
-    return(Qnil);
-  case RUBY_LIBXML_SRC_TYPE_FILE:
-    data = (rx_file_data *)rxd->data;
-    return(data->filename);
-  default:
-    rb_fatal("Unknown document type in libxml");
-  }
-
-  return(Qnil);
-}
-
-
 void
-ruby_xml_document_free(ruby_xml_document_t *rxd) {
+ruby_xml_document_free(xmlDocPtr xdoc) {
   void *data;
 
-  if (rxd->doc == NULL) return;
-  rxd->doc->_private=NULL;
+  if (xdoc == NULL) return;
+  xdoc->_private=NULL;
 #ifdef NODE_DEBUG
-  fprintf(stderr,"ruby_xml_document_free 0x%x/0x%x\n",rxd,rxd->doc);
+  fprintf(stderr,"ruby_xml_document_free 0x%x/0x%x\n",rxd,xdoc);
 #endif
-  xmlFreeDoc(rxd->doc);
-  rxd->doc = NULL;
-
-  switch(rxd->data_type) {
-  case RUBY_LIBXML_SRC_TYPE_NULL:
-    break;
-  case RUBY_LIBXML_SRC_TYPE_FILE:
-    data = (void*)(rx_file_data *)rxd->data;
-    ruby_xfree((rx_file_data *)data);
-    break;
-  case RUBY_LIBXML_SRC_TYPE_STRING:
-    data = (void*)(rx_string_data *)rxd->data;
-    ruby_xfree((rx_string_data *)data);
-    break;
-  case RUBY_LIBXML_SRC_TYPE_IO:
-    data = (void*)(rx_io_data *)rxd->data;
-    ruby_xfree((rx_io_data *)data);
-    break;
-  default:
-    rb_fatal("Unknown data type, %d", rxd->data_type);
-  }
-
-  ruby_xfree(rxd);
+  xmlFreeDoc(xdoc);
 }
 
 void
-ruby_xml_document_mark(ruby_xml_document_t *rxd) {
-  // will mark parsers and source types
-  // I do not thing doc->parent has anything useful in it.
+ruby_xml_document_mark(xmlDocPtr xdoc) {
   rb_gc_mark(LIBXML_STATE);
 }
 
 /*
  * call-seq:
- *    XML::Document.new(xml_version = 1.0) -> document
+ *    XML::Document.initialize(xml_version = 1.0) -> document
  * 
- * Create a new XML::Document, optionally specifying the
+ * Initializes a new XML::Document, optionally specifying the
  * XML version.
  */
 VALUE
 ruby_xml_document_new(int argc, VALUE *argv, VALUE class) {
+  xmlDocPtr xdoc;
   VALUE docobj, xmlver;
 
   switch (argc) {
@@ -467,10 +420,13 @@ ruby_xml_document_new(int argc, VALUE *argv, VALUE class) {
     rb_raise(rb_eArgError, "wrong number of arguments (need 0 or 1)");
   }
 
-  docobj = ruby_xml_document_new_native(cXMLDocument, xmlver);
-  return(docobj);
-}
+  Check_Type(xmlver, T_STRING);
 
+  xdoc = xmlNewDoc((xmlChar*)StringValuePtr(xmlver));
+  xdoc->_private=NULL;
+
+  return ruby_xml_document_wrap(xdoc);
+}
 
 /*
  * call-seq:
@@ -480,14 +436,15 @@ ruby_xml_document_new(int argc, VALUE *argv, VALUE class) {
  */
 VALUE
 ruby_xml_document_last_get(VALUE self) {
-  ruby_xml_document_t *rxd;
+  xmlDocPtr xdoc;
 
-  Data_Get_Struct(self, ruby_xml_document_t, rxd);
 
-  if (rxd->doc->last == NULL)
+  Data_Get_Struct(self, xmlDoc, xdoc);
+
+  if (xdoc->last == NULL)
     return(Qnil);
 
-  return ruby_xml_node2_wrap(cXMLNode, rxd->doc->last);
+  return ruby_xml_node2_wrap(cXMLNode, xdoc->last);
 }
 
 
@@ -499,10 +456,11 @@ ruby_xml_document_last_get(VALUE self) {
  */
 VALUE
 ruby_xml_document_last_q(VALUE self) {
-  ruby_xml_document_t *rxd;
-  Data_Get_Struct(self, ruby_xml_document_t, rxd);
+  xmlDocPtr xdoc;
 
-  if (rxd->doc->last == NULL)
+  Data_Get_Struct(self, xmlDoc, xdoc);
+
+  if (xdoc->last == NULL)
     return(Qfalse);
   else
     return(Qtrue);
@@ -511,52 +469,19 @@ ruby_xml_document_last_q(VALUE self) {
 VALUE
 ruby_xml_document_wrap(xmlDocPtr xdoc) {
   VALUE obj;
-  ruby_xml_document_t *rx;
 
   // This node is already wrapped
   if (xdoc->_private != NULL)
     return (VALUE)xdoc->_private;
     
-  obj=Data_Make_Struct(cXMLDocument, ruby_xml_document_t,
-     	               ruby_xml_document_mark, ruby_xml_document_free,rx);
+  obj = Data_Wrap_Struct(cXMLDocument, ruby_xml_document_mark, ruby_xml_document_free, xdoc);
   
-  rx->doc=xdoc;
-  xdoc->_private=(void*)obj;
-  rx->data = NULL;
-  rx->data_type = RUBY_LIBXML_SRC_TYPE_NULL;
-
+  xdoc->_private = (void*)obj;
+  
 #ifdef NODE_DEBUG
   fprintf(stderr,"wrap rxn=0x%x xn=0x%x o=0x%x\n",(long)rxn,(long)xnode,(long)obj);
 #endif
   return obj;
-}
-
-
-VALUE
-ruby_xml_document_new_native(VALUE class, VALUE xmlver) {
-  xmlDocPtr rx;
-
-  Check_Type(xmlver, T_STRING);
-  rx=xmlNewDoc((xmlChar*)StringValuePtr(xmlver));
-  rx->_private=NULL;
-  return ruby_xml_document_wrap(rx);
-}
-
-
-/*
- * call-seq:
- *    XML::Document.file(filename) -> document
- * 
- * Create a new XML::Document by parsing the specified
- * file.
- */
-VALUE
-ruby_xml_document_new_file(VALUE class, VALUE filename) {
-  VALUE parser;
-
-  parser = ruby_xml_parser_new(cXMLParser);
-  ruby_xml_parser_filename_set(parser, filename);
-  return(ruby_xml_parser_parse(parser));
 }
 
 
@@ -568,14 +493,15 @@ ruby_xml_document_new_file(VALUE class, VALUE filename) {
  */
 VALUE
 ruby_xml_document_next_get(VALUE self) {
-  ruby_xml_document_t *rxd;
+  xmlDocPtr xdoc;
 
-  Data_Get_Struct(self, ruby_xml_document_t, rxd);
 
-  if (rxd->doc->next == NULL)
+  Data_Get_Struct(self, xmlDoc, xdoc);
+
+  if (xdoc->next == NULL)
     return(Qnil);
 
-  return ruby_xml_node2_wrap(cXMLNode, rxd->doc->next);
+  return ruby_xml_node2_wrap(cXMLNode, xdoc->next);
 }
 
 
@@ -587,10 +513,11 @@ ruby_xml_document_next_get(VALUE self) {
  */
 VALUE
 ruby_xml_document_next_q(VALUE self) {
-  ruby_xml_document_t *rxd;
-  Data_Get_Struct(self, ruby_xml_document_t, rxd);
+  xmlDocPtr xdoc;
 
-  if (rxd->doc->next == NULL)
+  Data_Get_Struct(self, xmlDoc, xdoc);
+
+  if (xdoc->next == NULL)
     return(Qfalse);
   else
     return(Qtrue);
@@ -605,14 +532,15 @@ ruby_xml_document_next_q(VALUE self) {
  */
 VALUE
 ruby_xml_document_parent_get(VALUE self) {
-  ruby_xml_document_t *rxd;
+  xmlDocPtr xdoc;
 
-  Data_Get_Struct(self, ruby_xml_document_t, rxd);
 
-  if (rxd->doc->parent == NULL)
+  Data_Get_Struct(self, xmlDoc, xdoc);
+
+  if (xdoc->parent == NULL)
     return(Qnil);
 
-  return ruby_xml_node2_wrap(cXMLNode, rxd->doc->parent);
+  return ruby_xml_node2_wrap(cXMLNode, xdoc->parent);
 }
 
 
@@ -624,10 +552,11 @@ ruby_xml_document_parent_get(VALUE self) {
  */
 VALUE
 ruby_xml_document_parent_q(VALUE self) {
-  ruby_xml_document_t *rxd;
-  Data_Get_Struct(self, ruby_xml_document_t, rxd);
+  xmlDocPtr xdoc;
 
-  if (rxd->doc->parent == NULL)
+  Data_Get_Struct(self, xmlDoc, xdoc);
+
+  if (xdoc->parent == NULL)
     return(Qfalse);
   else
     return(Qtrue);
@@ -642,14 +571,15 @@ ruby_xml_document_parent_q(VALUE self) {
  */
 VALUE
 ruby_xml_document_prev_get(VALUE self) {
-  ruby_xml_document_t *rxd;
+  xmlDocPtr xdoc;
 
-  Data_Get_Struct(self, ruby_xml_document_t, rxd);
 
-  if (rxd->doc->prev == NULL)
+  Data_Get_Struct(self, xmlDoc, xdoc);
+
+  if (xdoc->prev == NULL)
     return(Qnil);
 
-  return ruby_xml_node2_wrap(cXMLNode, rxd->doc->prev);
+  return ruby_xml_node2_wrap(cXMLNode, xdoc->prev);
 }
 
 
@@ -661,10 +591,11 @@ ruby_xml_document_prev_get(VALUE self) {
  */
 VALUE
 ruby_xml_document_prev_q(VALUE self) {
-  ruby_xml_document_t *rxd;
-  Data_Get_Struct(self, ruby_xml_document_t, rxd);
+  xmlDocPtr xdoc;
 
-  if (rxd->doc->prev == NULL)
+  Data_Get_Struct(self, xmlDoc, xdoc);
+
+  if (xdoc->prev == NULL)
     return(Qfalse);
   else
     return(Qtrue);
@@ -679,11 +610,12 @@ ruby_xml_document_prev_q(VALUE self) {
  */
 VALUE
 ruby_xml_document_root_get(VALUE self) {
-  ruby_xml_document_t *rxd;
+  xmlDocPtr xdoc;
+
   xmlNodePtr root;
 
-  Data_Get_Struct(self, ruby_xml_document_t, rxd);
-  root = xmlDocGetRootElement(rxd->doc);
+  Data_Get_Struct(self, xmlDoc, xdoc);
+  root = xmlDocGetRootElement(xdoc);
 
   if (root == NULL)
     return(Qnil);
@@ -700,15 +632,15 @@ ruby_xml_document_root_get(VALUE self) {
  */
 VALUE
 ruby_xml_document_root_set(VALUE self, VALUE node) {
-  ruby_xml_document_t *rxd;
+  xmlDocPtr xdoc;
   xmlNodePtr xroot, xnode;
 
   if (rb_obj_is_kind_of(node, cXMLNode) == Qfalse)
     rb_raise(rb_eTypeError, "must pass an XML::Node type object");
 
-  Data_Get_Struct(self, ruby_xml_document_t, rxd);
+  Data_Get_Struct(self, xmlDoc, xdoc);
   Data_Get_Struct(node, xmlNode, xnode);
-  xroot = xmlDocSetRootElement(rxd->doc, xnode);
+  xroot = xmlDocSetRootElement(xdoc, xnode);
   if (xroot == NULL)
     return(Qnil);
 
@@ -730,7 +662,8 @@ ruby_xml_document_root_set(VALUE self, VALUE node) {
  */
 VALUE
 ruby_xml_document_save(int argc, VALUE *argv, VALUE self) {
-  ruby_xml_document_t *rxd;
+  xmlDocPtr xdoc;
+
   const char *filename;
   int format = 0;
   int len;
@@ -755,8 +688,8 @@ ruby_xml_document_save(int argc, VALUE *argv, VALUE self) {
     }
   }
 
-  Data_Get_Struct(self, ruby_xml_document_t, rxd);
-  len = xmlSaveFormatFileEnc(filename, rxd->doc, (const char*)rxd->doc->encoding, format);
+  Data_Get_Struct(self, xmlDoc, xdoc);
+  len = xmlSaveFormatFileEnc(filename, xdoc, (const char*)xdoc->encoding, format);
   
   if (len == -1)
     rb_raise(rb_eIOError, "Could not write document");
@@ -773,9 +706,10 @@ ruby_xml_document_save(int argc, VALUE *argv, VALUE self) {
  */
 VALUE
 ruby_xml_document_standalone_q(VALUE self) {
-  ruby_xml_document_t *rxd;
-  Data_Get_Struct(self, ruby_xml_document_t, rxd);
-  if (rxd->doc->standalone)
+  xmlDocPtr xdoc;
+
+  Data_Get_Struct(self, xmlDoc, xdoc);
+  if (xdoc->standalone)
     return(Qtrue);
   else
     return(Qfalse);
@@ -796,7 +730,8 @@ ruby_xml_document_standalone_q(VALUE self) {
  */
 VALUE
 ruby_xml_document_to_s(int argc, VALUE *argv, VALUE self) {
-  ruby_xml_document_t *rxd;
+  xmlDocPtr xdoc;
+
   xmlChar *result, *encoding=NULL;
   int format, len;
   VALUE rresult;
@@ -820,22 +755,22 @@ ruby_xml_document_to_s(int argc, VALUE *argv, VALUE self) {
     rb_raise(rb_eArgError, "wrong number of arguments (0 or 1)");
   }
 
-  Data_Get_Struct(self, ruby_xml_document_t, rxd);
-  if (rxd->doc == NULL) {
+  Data_Get_Struct(self, xmlDoc, xdoc);
+  if (xdoc == NULL) {
     return(Qnil);
   } else if (encoding != NULL) {
     if (format) {
-      xmlDocDumpFormatMemoryEnc(rxd->doc, &result, &len,
+      xmlDocDumpFormatMemoryEnc(xdoc, &result, &len,
 				(const char*)encoding, format);
     } else {
-      xmlDocDumpMemoryEnc(rxd->doc, &result, &len,
+      xmlDocDumpMemoryEnc(xdoc, &result, &len,
 			  (const char *)encoding);
     }
   } else {
     if (format)
-      xmlDocDumpFormatMemory(rxd->doc, &result, &len, format);
+      xmlDocDumpFormatMemory(xdoc, &result, &len, format);
     else
-      xmlDocDumpMemory(rxd->doc, &result, &len);
+      xmlDocDumpMemory(xdoc, &result, &len);
   }
   rresult=rb_str_new((const char*)result,len);
   xmlFree(result);
@@ -851,12 +786,13 @@ ruby_xml_document_to_s(int argc, VALUE *argv, VALUE self) {
  */
 VALUE
 ruby_xml_document_url_get(VALUE self) {
-  ruby_xml_document_t *rxd;
-  Data_Get_Struct(self, ruby_xml_document_t, rxd);
-  if (rxd->doc->URL == NULL)
+  xmlDocPtr xdoc;
+
+  Data_Get_Struct(self, xmlDoc, xdoc);
+  if (xdoc->URL == NULL)
     return(Qnil);
   else
-    return(rb_str_new2((const char*)rxd->doc->URL));
+    return(rb_str_new2((const char*)xdoc->URL));
 }
 
 
@@ -868,12 +804,13 @@ ruby_xml_document_url_get(VALUE self) {
  */
 VALUE
 ruby_xml_document_version_get(VALUE self) {
-  ruby_xml_document_t *rxd;
-  Data_Get_Struct(self, ruby_xml_document_t, rxd);
-  if (rxd->doc->version == NULL)
+  xmlDocPtr xdoc;
+
+  Data_Get_Struct(self, xmlDoc, xdoc);
+  if (xdoc->version == NULL)
     return(Qnil);
   else
-    return(rb_str_new2((const char*)rxd->doc->version));
+    return(rb_str_new2((const char*)xdoc->version));
 }
 
 
@@ -886,11 +823,12 @@ ruby_xml_document_version_get(VALUE self) {
 VALUE
 ruby_xml_document_xinclude(VALUE self) {
 #ifdef LIBXML_XINCLUDE_ENABLED
-  ruby_xml_document_t *rxd;
+  xmlDocPtr xdoc;
+
   int ret;
 
-  Data_Get_Struct(self, ruby_xml_document_t, rxd);
-  ret = xmlXIncludeProcess(rxd->doc);
+  Data_Get_Struct(self, xmlDoc, xdoc);
+  ret = xmlXIncludeProcess(xdoc);
   if (ret >= 0)
     return(INT2NUM(ret));
   else
@@ -940,19 +878,19 @@ LibXML_validity_warning(void * ctxt, const char * msg, va_list ap)
 VALUE
 ruby_xml_document_validate_schema(VALUE self, VALUE schema) {
   xmlSchemaValidCtxtPtr vptr;
-  ruby_xml_document_t     *c_doc;
-  ruby_xml_schema       *c_schema;
+  xmlDocPtr xdoc;
+  ruby_xml_schema *c_schema;
   int is_invalid;
 
-  Data_Get_Struct(self,   ruby_xml_document_t, c_doc);
-  Data_Get_Struct(schema, ruby_xml_schema,   c_schema);
+  Data_Get_Struct(self, xmlDoc, xdoc);
+  Data_Get_Struct(schema, ruby_xml_schema, c_schema);
 
   vptr = xmlSchemaNewValidCtxt(c_schema->schema);
 
   xmlSchemaSetValidErrors(vptr, (xmlSchemaValidityErrorFunc)LibXML_validity_error,
                                 (xmlSchemaValidityWarningFunc)LibXML_validity_warning, NULL);
   
-  is_invalid = xmlSchemaValidateDoc(vptr, c_doc->doc);
+  is_invalid = xmlSchemaValidateDoc(vptr, xdoc);
   xmlSchemaFreeValidCtxt(vptr);
   if (is_invalid) {
     ruby_xml_raise(&xmlLastError);
@@ -974,19 +912,19 @@ ruby_xml_document_validate_schema(VALUE self, VALUE schema) {
 VALUE
 ruby_xml_document_validate_relaxng(VALUE self, VALUE relaxng) {
   xmlRelaxNGValidCtxtPtr vptr;
-  ruby_xml_document_t     *c_doc;
-  ruby_xml_relaxng       *c_relaxng;
+  xmlDocPtr xdoc;
+  ruby_xml_relaxng *c_relaxng;
   int is_invalid;
 
-  Data_Get_Struct(self,   ruby_xml_document_t, c_doc);
-  Data_Get_Struct(relaxng, ruby_xml_relaxng,   c_relaxng);
+  Data_Get_Struct(self, xmlDoc, xdoc);
+  Data_Get_Struct(relaxng, ruby_xml_relaxng, c_relaxng);
 
   vptr = xmlRelaxNGNewValidCtxt(c_relaxng->relaxng);
 
   xmlRelaxNGSetValidErrors(vptr, (xmlRelaxNGValidityErrorFunc)LibXML_validity_error,
                                 (xmlRelaxNGValidityWarningFunc)LibXML_validity_warning, NULL);
   
-  is_invalid = xmlRelaxNGValidateDoc(vptr, c_doc->doc);
+  is_invalid = xmlRelaxNGValidateDoc(vptr, xdoc);
   xmlRelaxNGFreeValidCtxt(vptr);
   if (is_invalid) {
     ruby_xml_raise(&xmlLastError);
@@ -1006,11 +944,11 @@ VALUE
 ruby_xml_document_validate_dtd(VALUE self, VALUE dtd) {
   VALUE error = Qnil;
   xmlValidCtxt ctxt;
-  ruby_xml_document_t *c_doc;
+  xmlDocPtr xdoc;
   ruby_xml_dtd *c_dtd;
 
-  Data_Get_Struct(self, ruby_xml_document_t, c_doc);
-  Data_Get_Struct(dtd,  ruby_xml_dtd,      c_dtd);
+  Data_Get_Struct(self, xmlDoc, xdoc);
+  Data_Get_Struct(dtd, ruby_xml_dtd, c_dtd);
 
   ctxt.userData = &error;
   ctxt.error = (xmlValidityErrorFunc)LibXML_validity_error;
@@ -1021,7 +959,7 @@ ruby_xml_document_validate_dtd(VALUE self, VALUE dtd) {
   ctxt.vstateNr = 0;
   ctxt.vstateTab = NULL;
 
-  if (xmlValidateDtd(&ctxt, c_doc->doc, c_dtd->dtd))
+  if (xmlValidateDtd(&ctxt, xdoc, c_dtd->dtd))
     return(Qtrue);
   else
     ruby_xml_raise(&xmlLastError);
@@ -1050,12 +988,12 @@ ruby_xml_document_reader(VALUE self)
 void
 ruby_init_xml_document(void) {
   cXMLDocument = rb_define_class_under(mXML, "Document", rb_cObject);
-  rb_define_singleton_method(cXMLDocument, "file", ruby_xml_document_new_file, 1);
   rb_define_singleton_method(cXMLDocument, "new", ruby_xml_document_new, -1);
 
   //rb_raise(eXMLNodeFailedModify, "unable to add a child to the document");
   //eDTDValidityWarning = rb_define_class_under(cXMLNode, "ValidityWarning", eXMLError);
   //eDTDValidityError   = rb_define_class_under(cXMLNode, "ValidityWarning", eXMLError);
+
   rb_define_method(cXMLDocument, "child", ruby_xml_document_child_get, 0);
   rb_define_method(cXMLDocument, "child?", ruby_xml_document_child_q, 0);
   rb_define_method(cXMLDocument, "compression", ruby_xml_document_compression_get, 0);
@@ -1067,7 +1005,6 @@ ruby_init_xml_document(void) {
   rb_define_method(cXMLDocument, "debug_format_dump", ruby_xml_document_debug_format_dump, -1);
   rb_define_method(cXMLDocument, "encoding", ruby_xml_document_encoding_get, 0);
   rb_define_method(cXMLDocument, "encoding=", ruby_xml_document_encoding_set, 1);
-  rb_define_method(cXMLDocument, "filename", ruby_xml_document_filename_get, 0);
   rb_define_method(cXMLDocument, "format_dump", ruby_xml_document_format_dump, -1);
   rb_define_method(cXMLDocument, "last", ruby_xml_document_last_get, 0);
   rb_define_method(cXMLDocument, "last?", ruby_xml_document_last_q, 0);
