@@ -1,8 +1,7 @@
 # This is for backwards compatibility and is DEPRECATED
 module LibXML
   module XML
-    class Tree 
-      # :enddoc: 
+    class Tree # :nodoc:
       ELEMENT_NODE = Node::ELEMENT_NODE
       ATTRIBUTE_NODE = Node::ATTRIBUTE_NODE
       TEXT_NODE = Node::TEXT_NODE
