@@ -1,5 +1,21 @@
 (See log/ChangeLog for more detailed changes derived directly from source control.)
 
+== 0.8.4 / 2008-11-17 Charlie Savage
+
+* Expose LibXML's encoding support via a new Encoding object.
+
+* Revamp error handling to be much easier to use.  Errors are now
+  wrapped by the new XML::Error class and are thrown as exceptions
+  when it is appropriate.
+
+* Fixed segementation fault caused by documents being freed
+  before xpath results that referenced the document.
+
+* Add Node#register_default_namespace to simplify default namespace handling.
+
+* A number of bug fixes and patches.
+
+
 == 0.8.3 / 2008-07-21 Charlie Savage
 
 * Missed several files in last release
