@@ -114,7 +114,7 @@ class TestXPath < Test::Unit::TestCase
   #def test_nodes_debug
    # nodes = @doc.find('//ns1:IdAndName', 'ns1:http://domain.somewhere.com')
     #nodes.debug
-  #end
+  # end
 
   def test_memory
     # This sometimes causes a segmentation fault because

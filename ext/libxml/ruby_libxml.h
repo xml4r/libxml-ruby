@@ -49,7 +49,6 @@
 #include "ruby_xml_attr.h"
 #include "ruby_xml_document.h"
 #include "ruby_xml_node.h"
-#include "ruby_xml_node_set.h"
 #include "ruby_xml_ns.h"
 #include "ruby_xml_parser.h"
 #include "ruby_xml_parser_context.h"

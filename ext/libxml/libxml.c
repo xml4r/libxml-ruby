@@ -40,7 +40,6 @@ Init_libxml_ruby(void) {
   ruby_init_xml_attributes();
   ruby_init_xml_attr();
   ruby_init_xml_document();
-  ruby_init_xml_node_set();
   ruby_init_xml_ns();
   ruby_init_xml_sax_parser();
   ruby_init_xml_xinclude();

@@ -161,29 +161,6 @@ ruby_xml_xpath_object_to_a(VALUE self)
 
 /*
  * call-seq:
- *    xpath_object.set -> Node::Set
- * 
- * Obtain the previous type object which is really
- * just a proxy back to this object. Unless the
- * type is not a NODESET, in which case it is nil.
- */
-VALUE
-ruby_xml_xpath_object_set(VALUE self)
-{
-  xmlXPathObjectPtr xpop;
-  VALUE r;
-
-  Data_Get_Struct(self,xmlXPathObject,xpop);
-  r=Qnil;
-
-  if (xpop->type == XPATH_NODESET)
-    r=ruby_xml_node_set_new2(self);
-
-  return r;
-}
-
-/*
- * call-seq:
  *    xpath_object.empty? -> (true|false)
  *
  * Determine whether this nodeset is empty (contains no nodes).
@@ -362,7 +339,4 @@ ruby_init_xml_xpath_object(void) {
   rb_define_method(cXMLXPathObject, "[]", ruby_xml_xpath_object_aref, 1);
   rb_define_method(cXMLXPathObject, "string", ruby_xml_xpath_object_string, 0);
   rb_define_method(cXMLXPathObject, "debug", ruby_xml_xpath_object_debug, 0);
-  
-  /* Give the NodeSet type, but it is pointless */
-  rb_define_method(cXMLXPathObject, "set", ruby_xml_xpath_object_set, 0);
 }
