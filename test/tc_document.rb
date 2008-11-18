@@ -25,7 +25,7 @@ class TC_XML_Document < Test::Unit::TestCase
   end
 
   def test_ruby_xml_document_compression
-    if XML::Parser::enabled_zlib?
+    if XML.enabled_zlib?
       0.upto(9) do |i|
         assert_equal(i, @doc.compression = i)
         assert_equal(i, @doc.compression)

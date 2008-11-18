@@ -1,3 +1,4 @@
+require 'tc_xml'
 require 'tc_attributes'
 require 'tc_document'
 require 'tc_document_write'

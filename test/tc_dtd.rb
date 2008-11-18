@@ -72,11 +72,11 @@ class TestDtd < Test::Unit::TestCase
       errors << error
     end
 
-    XML::Parser.default_load_external_dtd = false
+    XML.default_load_external_dtd = false
     doc = XML::Parser.string(xml).parse
     assert_equal(Array.new, errors)
 
-    XML::Parser.default_load_external_dtd = true
+    XML.default_load_external_dtd = true
     doc = XML::Parser.string(xml).parse
     assert_equal("Warning: failed to load external entity \"test.dtd\" at :1.",
                   errors.map do |error|
