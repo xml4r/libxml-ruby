@@ -25,7 +25,6 @@ extension can be compiled when it is installed.  If you are running
 Windows, then install the Windows specific RubyGem which
 includes an already built extension.
 
-
 == INSTALLATION
 The easiest way to install libxml-ruby is via Ruby Gems.  To install:
 
@@ -42,26 +41,23 @@ libxml2 and iconv.  The gem also includes a Microsoft VC++ 2008
 solution.  If you wish to run a debug version of libxml-ruby on
 Windows, then it is highly recommended you use VC++.
 
-
 == Functionality
 LibXML is a highly conformant XML parser, passing all 1800+ tests 
-from the OASIS XML Tests Suite.  In addition, it includes rich
-functionality such as: 
+from the OASIS XML Tests Suite.  It includes rich functionality such as:
 
-* SAX
-* DOM
-* HTML Parsing
-* XMLReader
-* XPath
-* XPointer
-* DTDs 
-* RelaxNG Schemas
-* XML Schema
-* XSLT (split into the libxslt-ruby bindings) 
+* DOM (LibXML::XML::Parser)
+* SAX (LibXML::XML::SaxParser)
+* HTML Parsing (LibXML::XML::HTMLParser)
+* Reader (LibXML::XML::Reader)
+* XPath (LibXML::XML::XPath)
+* XPointer (LibXML::XML::XPointer)
+* DTDs (LibXML::XML::Dtd)
+* RelaxNG Schemas (LibXML::XML::RelaxNG)
+* XML Schema (LibXML::XML::Schema)
+* XSLT (http://rubyforge.org/projects/libxsl/)
 
 libxml-ruby provides impressive coverage of libxml's functionality 
 through an easy-to-use C api.  
-
 
 == Performance
 In addition to being feature rich and conformation, the main reason
@@ -83,7 +79,6 @@ From https://svn.concord.org/svn/projects/trunk/common/ruby/xml_benchmarks/
  libxml    0.641000   0.031000   0.672000 (  0.672000)
  hpricot   5.359000   0.062000   5.421000 (  5.516000)
  rexml    22.859000   0.047000  22.906000 ( 23.203000) 
-
 
 == USAGE
 For in-depth information about using libxml-ruby please refer
@@ -138,7 +133,7 @@ There are several ways to read xml documents.
     puts "Node path: #{node.path} \t Contents: #{node.content}"
   end
 
-And your terminal should look like:
+And your terminal should look like this:
 
   Root element name: root_node
   Elem3: baz
@@ -208,19 +203,15 @@ The file output.xml contains:
     </foo>
   </root_node>
 
-
 == DOCUMENTATION
 RDoc comments are included - run 'rake doc' to generate documentation.
 You can find the latest documentation at:
 
 * http://libxml.rubyforge.org/rdoc/
 
-
 == License
 See LICENSE for license information.
-
 
 == MORE INFORMATION
 For more information please refer to the documentation.  If you have any
 questions, please send email to libxml-devel@rubyforge.org.
-
