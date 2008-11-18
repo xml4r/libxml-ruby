@@ -281,10 +281,6 @@
 				RelativePath="..\libxml\ruby_xml_xpointer.c"
 				>
 			</File>
-			<File
-				RelativePath="..\libxml\ruby_xml_xpointer_context.c"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -385,10 +381,6 @@
 			</File>
 			<File
 				RelativePath="..\libxml\ruby_xml_xpointer.h"
-				>
-			</File>
-			<File
-				RelativePath="..\libxml\ruby_xml_xpointer_context.h"
 				>
 			</File>
 			<File
