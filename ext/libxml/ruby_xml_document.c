@@ -932,7 +932,7 @@ ruby_xml_document_xinclude(VALUE self) {
   if (ret >= 0)
     return(INT2NUM(ret));
   else
-    rb_raise(eXMLXIncludeError, "error processing xinclude directives in document");
+    ruby_xml_raise(&xmlLastError);
 #else
   rb_warn("libxml was compiled without XInclude support.  Please recompile libxml and ruby-libxml");
   return(Qfalse);
