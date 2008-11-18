@@ -11,7 +11,7 @@ require 'date'
 
 # ------- Default Package ----------
 FILES = FileList[
-  'RAKEFILE',
+  'Rakefile',
   'README',
   'LICENSE',
   'CHANGES',

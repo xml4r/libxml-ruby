@@ -17,7 +17,7 @@ static ID ERROR_HANDLER_ID;
 *
 * By default, warnings, errors and fatal errors that
 * libxml generates are printed to STDERR via the
-* XML::Error::VERBOSE_HANDLER proc.  
+* XML::Error::VERBOSE_HANDLER proc.
 *
 * To disable this output you can install the quiet handler:
 *
@@ -52,11 +52,11 @@ ruby_xml_error_set_handler(VALUE self)
     rb_raise(rb_eRuntimeError, "No block given");
 
   block = rb_block_proc();
- 
+
   /* Embed the block within the Error class to avoid it to be collected.
      Previous handler will be overwritten if it exists. */
-  rb_cvar_set(self, ERROR_HANDLER_ID, block, 0); 
-  
+  rb_cvar_set(self, ERROR_HANDLER_ID, block, 0);
+
   return self;
 }
 
@@ -68,7 +68,7 @@ ruby_xml_error_set_handler(VALUE self)
 static VALUE
 ruby_xml_error_reset_handler(VALUE self)
 {
-  rb_cvar_set(self, ERROR_HANDLER_ID, Qnil, 0); 
+  rb_cvar_set(self, ERROR_HANDLER_ID, Qnil, 0);
   return self;
 }
 
@@ -84,22 +84,22 @@ ruby_xml_error_wrap(xmlErrorPtr xerror) {
   rb_iv_set(result, "@domain", INT2NUM(xerror->domain));
   rb_iv_set(result, "@code", INT2NUM(xerror->code));
   rb_iv_set(result, "@level", INT2NUM(xerror->level));
-  
+
   if (xerror->file)
     rb_iv_set(result, "@file", rb_str_new2(xerror->file));
-  
+
   if (xerror->line)
     rb_iv_set(result, "@line", INT2NUM(xerror->line));
-  
+
   if (xerror->str1)
     rb_iv_set(result, "@str1", rb_str_new2(xerror->str1));
-  
+
   if (xerror->str2)
     rb_iv_set(result, "@str2", rb_str_new2(xerror->str2));
-  
+
   if (xerror->str3)
     rb_iv_set(result, "@str3", rb_str_new2(xerror->str3));
-  
+
   rb_iv_set(result, "@int1", INT2NUM(xerror->int1));
   rb_iv_set(result, "@int2", INT2NUM(xerror->int2));
 
@@ -125,7 +125,7 @@ structuredErrorFunc(void *userData, xmlErrorPtr xerror)
   }
 }
 
-// Rdoc needs to know 
+// Rdoc needs to know
 #ifdef RDOC_NEVER_DEFINED
   mLibXML = rb_define_module("LibXML");
   mXML = rb_define_module_under(mLibXML, "XML");
@@ -152,7 +152,7 @@ ruby_init_xml_error() {
 
 
   /* Ruby callback to receive errors - set it to nil by default. */
-  ERROR_HANDLER_ID = rb_intern("@@__error_handler_callback__"); 
+  ERROR_HANDLER_ID = rb_intern("@@__error_handler_callback__");
   rb_cvar_set(eXMLError, ERROR_HANDLER_ID, Qnil, 0);
 
   /* Error attributes */
@@ -204,7 +204,9 @@ ruby_init_xml_error() {
   rb_define_const(eXMLError, "WRITER", INT2NUM(XML_FROM_WRITER));
   rb_define_const(eXMLError, "MODULE", INT2NUM(XML_FROM_MODULE));
   rb_define_const(eXMLError, "I18N", INT2NUM(XML_FROM_I18N));
+#if LIBXML_VERSION >= 20702
   rb_define_const(eXMLError, "SCHEMATRONV", INT2NUM(XML_FROM_SCHEMATRONV));
+#endif
 
   /* errors */
   rb_define_const(eXMLError, "OK", INT2NUM(XML_ERR_OK));
@@ -511,7 +513,9 @@ ruby_init_xml_error() {
   rb_define_const(eXMLError, "TREE_INVALID_HEX", INT2NUM(XML_TREE_INVALID_HEX));
   rb_define_const(eXMLError, "TREE_INVALID_DEC", INT2NUM(XML_TREE_INVALID_DEC));
   rb_define_const(eXMLError, "TREE_UNTERMINATED_ENTITY", INT2NUM(XML_TREE_UNTERMINATED_ENTITY));
+#if LIBXML_VERSION >= 20702
   rb_define_const(eXMLError, "TREE_NOT_UTF8", INT2NUM(XML_TREE_NOT_UTF8));
+#endif
   rb_define_const(eXMLError, "SAVE_NOT_UTF8", INT2NUM(XML_SAVE_NOT_UTF8));
   rb_define_const(eXMLError, "SAVE_CHAR_INVALID", INT2NUM(XML_SAVE_CHAR_INVALID));
   rb_define_const(eXMLError, "SAVE_NO_DOCTYPE", INT2NUM(XML_SAVE_NO_DOCTYPE));
@@ -887,8 +891,10 @@ ruby_init_xml_error() {
   rb_define_const(eXMLError, "SCHEMAP_AU_PROPS_CORRECT", INT2NUM(XML_SCHEMAP_AU_PROPS_CORRECT));
   rb_define_const(eXMLError, "SCHEMAP_A_PROPS_CORRECT_3", INT2NUM(XML_SCHEMAP_A_PROPS_CORRECT_3));
   rb_define_const(eXMLError, "SCHEMAP_COS_ALL_LIMITED", INT2NUM(XML_SCHEMAP_COS_ALL_LIMITED));
+#if LIBXML_VERSION >= 20702
   rb_define_const(eXMLError, "SCHEMATRONV_ASSERT", INT2NUM(XML_SCHEMATRONV_ASSERT));
   rb_define_const(eXMLError, "SCHEMATRONV_REPORT", INT2NUM(XML_SCHEMATRONV_REPORT));
+#endif
   rb_define_const(eXMLError, "MODULE_OPEN", INT2NUM(XML_MODULE_OPEN));
   rb_define_const(eXMLError, "MODULE_CLOSE", INT2NUM(XML_MODULE_CLOSE));
   rb_define_const(eXMLError, "CHECK_FOUND_ELEMENT", INT2NUM(XML_CHECK_FOUND_ELEMENT));

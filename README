@@ -18,7 +18,7 @@ the following libraries to function properly:
 * libm      (math routines: very standard)
 * libz      (zlib)
 * libiconv
-* libxml2
+* libxml2   (version 2.6.31 and higher have been tested)
 
 If you are running Linux or Unix you'll need a C compiler so the
 extension can be compiled when it is installed.  If you are running
@@ -32,7 +32,7 @@ The easiest way to install libxml-ruby is via Ruby Gems.  To install:
 
 If you are running Windows, make sure to install the Win32 RubyGem
 which includes an already built binary file.  The binary is built
-against libxml2 version 2.6.32 and iconv version 1.11.  Both of these
+against libxml2 version 2.7.2 and iconv version 1.11.  Both of these
 are also included as pre-built binaries, and should be put either in
 the libxml/lib directory or on the Windows path.
 

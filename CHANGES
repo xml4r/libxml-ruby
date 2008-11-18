@@ -1,6 +1,6 @@
 (See log/ChangeLog for more detailed changes derived directly from source control.)
 
-== 0.9.0 / 2008-11-18 Charlie Savage
+== 0.9.1 / 2008-11-18 Charlie Savage
 
 * Expose LibXML's encoding support via a new Encoding object.
 
@@ -16,6 +16,10 @@
 * Significantly improve documentation
 
 * A number of bug fixes and patches.
+
+== 0.9.0 / 2008-11-18 Charlie Savage
+
+* Version 0.9.0 was removed due to packaging errors.
 
 
 == 0.8.3 / 2008-07-21 Charlie Savage
