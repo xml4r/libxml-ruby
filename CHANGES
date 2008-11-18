@@ -13,6 +13,8 @@
 
 * Add Node#register_default_namespace to simplify default namespace handling.
 
+* Significantly improve documentation
+
 * A number of bug fixes and patches.
 
 
