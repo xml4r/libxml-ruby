@@ -107,8 +107,6 @@ Rake::RDocTask.new("rdoc") do |rdoc|
                           'VERSION')
 end
 
-task :default => :package
-
 Rake::TestTask.new do |t|
   t.libs << "test"
   t.libs << "lib"
@@ -119,6 +117,7 @@ if not RUBY_PLATFORM.match(/mswin32/i)
   Rake::Task[:test].prerequisites << :extensions
 end
 
+task :default => :package
 task :build => :extensions
 task :extension => :build
 
