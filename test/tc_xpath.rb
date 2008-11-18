@@ -111,9 +111,9 @@ class TestXPath < Test::Unit::TestCase
   end
 
   # This causes a segmentation fault on Windows for some reason
-  # def test_nodes_debug
-  #  nodes = @doc.find('//ns1:IdAndName', 'ns1:http://domain.somewhere.com')
-  #  nodes.debug
+  #def test_nodes_debug
+   # nodes = @doc.find('//ns1:IdAndName', 'ns1:http://domain.somewhere.com')
+    #nodes.debug
   #end
 
   def test_memory
@@ -123,7 +123,7 @@ class TestXPath < Test::Unit::TestCase
     # is free, it iterates over its results which are pointers
     # to the document's nodes. A segmentation fault then happens.
 
-    100.times do
+    1000.times do
       doc = XML::Document.new('1.0')
       doc.root = XML::Node.new("header")
 
@@ -132,8 +132,6 @@ class TestXPath < Test::Unit::TestCase
       end
 
       nodes = doc.find('/header/footer')
-      nodes.length
-      nodes = nil
     end
   end
 
