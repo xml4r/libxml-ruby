@@ -8,6 +8,9 @@ require 'rbconfig'
 
 EXTENSION_NAME = "libxml_ruby.#{Config::CONFIG["DLEXT"]}"
 
+# MingW insists the import library is .dll.a
+EXTENSION_LIB_NAME = "libxml_ruby.dll.a"
+
 # This is called when the Windows GEM is installed!
 task :install do
   # Gems will pass these two environment variables:
@@ -19,6 +22,9 @@ task :install do
   # Copy the extension
   cp(EXTENSION_NAME, dest_path)
   
+  # Copy the import library (used by libxslt)
+  cp(EXTENSION_LIB_NAME, dest_path)
+
   # Copy dllss
   Dir.glob('*.dll').each do |dll|
     cp(dll, dest_path)
