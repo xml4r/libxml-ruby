@@ -12,36 +12,41 @@
 VALUE cXMLXPathObject;
 
 
-static VALUE
-ruby_xml_xpath_object_tabref(xmlXPathObjectPtr xpop, int apos) {
+xmlDocPtr
+ruby_xml_xpath_object_doc(xmlXPathObjectPtr xpop)
+{
+  xmlDocPtr result = NULL;
+  xmlNodePtr *nodes = NULL;
 
-  if (apos < 0 )
-    apos=xpop->nodesetval->nodeNr+apos;
+  if (xpop->type != XPATH_NODESET)
+    return result;
 
-  if (apos < 0 || apos+1 > xpop->nodesetval->nodeNr )
-    return Qnil;
+  if (!xpop->nodesetval || !xpop->nodesetval->nodeTab)
+    return result;
 
-  switch(xpop->nodesetval->nodeTab[apos]->type) {
-  case XML_ATTRIBUTE_NODE:
-    return ruby_xml_attr_wrap((xmlAttrPtr)xpop->nodesetval->nodeTab[apos]);
-    break;
-  default:
-    return ruby_xml_node2_wrap(cXMLNode,
-			       xpop->nodesetval->nodeTab[apos]);
-  }
+  nodes = xpop->nodesetval->nodeTab;
+
+  if (!(*nodes))
+    return result;
+
+  return (*nodes)->doc;
 }
 
 void
 ruby_xml_xpath_object_mark(xmlXPathObjectPtr xpop)
 {
-  void * xnp;
   int i;
 
-  if ( xpop->type == XPATH_NODESET && xpop->nodesetval != NULL ) {
-    for (i=0; i<xpop->nodesetval->nodeNr; i++) {
-      xnp=xpop->nodesetval->nodeTab[i]->_private;
-      if (xnp != NULL)
-	rb_gc_mark((VALUE)xnp);
+  if ( xpop->type == XPATH_NODESET && xpop->nodesetval != NULL ) 
+  {
+    xmlDocPtr xdoc = ruby_xml_xpath_object_doc(xpop);
+    if (xdoc && xdoc->_private)
+      rb_gc_mark(xdoc->_private);
+
+    for (i=0; i<xpop->nodesetval->nodeNr; i++) 
+    {
+      if (xpop->nodesetval->nodeTab[i]->_private)
+        rb_gc_mark(xpop->nodesetval->nodeTab[i]->_private);
     }
   }
 }
@@ -49,21 +54,24 @@ ruby_xml_xpath_object_mark(xmlXPathObjectPtr xpop)
 void
 ruby_xml_xpath_object_free(xmlXPathObjectPtr xpop)
 {
-  if (xpop->type == XPATH_NODESET)
-  {
-    if (xpop->nodesetval && xpop->nodesetval->nodeTab)
-    {
-      xmlNodePtr *node = xpop->nodesetval->nodeTab;
-      if (*node)
-        ruby_xml_document_decr((*node)->doc);
-    }
-  }
+  /* Before freeing this xpath object, get the 
+     document it is dependent on if its a nodeset. */
+  xmlDocPtr xdoc = ruby_xml_xpath_object_doc(xpop);
+
+  /* Now free the xpath result */
   xmlXPathFreeObject(xpop);
+
+  /* Now decrement the document object if this was a 
+     XPATH_NODESET.  Note this could free the document,
+     which is why we do it after freeing xpop.*/
+  if (xdoc)
+    ruby_xml_document_decr(xdoc);
 }
 
 VALUE
 ruby_xml_xpath_object_wrap(xmlXPathObjectPtr xpop)
 {
+  xmlDocPtr xdoc;
   VALUE rval;
 
   if ( xpop==NULL )
@@ -71,13 +79,10 @@ ruby_xml_xpath_object_wrap(xmlXPathObjectPtr xpop)
 
   switch(xpop->type) {
   case XPATH_NODESET:
-    if (xpop->nodesetval && xpop->nodesetval->nodeTab)
-    {
-      xmlNodePtr *node = xpop->nodesetval->nodeTab;
-      if (*node)
-        ruby_xml_document_incr((*node)->doc);
-    }
-
+    xdoc = ruby_xml_xpath_object_doc(xpop);
+    if (xdoc)
+      ruby_xml_document_incr(xdoc);
+    
     rval = Data_Wrap_Struct(cXMLXPathObject,
                             ruby_xml_xpath_object_mark,
                             ruby_xml_xpath_object_free,
@@ -109,6 +114,24 @@ ruby_xml_xpath_object_wrap(xmlXPathObjectPtr xpop)
   return rval;
 }
 
+static VALUE
+ruby_xml_xpath_object_tabref(xmlXPathObjectPtr xpop, int apos) {
+
+  if (apos < 0 )
+    apos=xpop->nodesetval->nodeNr+apos;
+
+  if (apos < 0 || apos+1 > xpop->nodesetval->nodeNr )
+    return Qnil;
+
+  switch(xpop->nodesetval->nodeTab[apos]->type) {
+  case XML_ATTRIBUTE_NODE:
+    return ruby_xml_attr_wrap((xmlAttrPtr)xpop->nodesetval->nodeTab[apos]);
+    break;
+  default:
+    return ruby_xml_node2_wrap(cXMLNode,
+			       xpop->nodesetval->nodeTab[apos]);
+  }
+}
 
 /*
  * call-seq:
