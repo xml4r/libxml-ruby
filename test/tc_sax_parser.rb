@@ -78,7 +78,7 @@ class TestSaxParser < Test::Unit::TestCase
   end
 
   def test_file_without_callbacks
-    @xp.filename = File.join(File.dirname(__FILE__), 'model/saxtest.xml')
+    @xp.file = File.join(File.dirname(__FILE__), 'model/saxtest.xml')
     assert_equal true, @xp.parse
   end
 
@@ -91,7 +91,7 @@ class TestSaxParser < Test::Unit::TestCase
 
   def test_file_with_callbacks
     @xp.callbacks = TestCaseCallbacks.new
-    @xp.filename = File.join(File.dirname(__FILE__), 'model/saxtest.xml')
+    @xp.file = File.join(File.dirname(__FILE__), 'model/saxtest.xml')
     @xp.parse
     verify
   end
@@ -124,9 +124,9 @@ EOS
     assert_not_nil(error)
     assert_kind_of(XML::Error, error)
     assert_equal("Fatal error: Premature end of data in tag Results line 1 at :4.", error.message)
-    assert_equal(XML::Error::XML_FROM_PARSER, error.domain)
-    assert_equal(XML::Error::XML_ERR_TAG_NOT_FINISHED, error.code)
-    assert_equal(XML::Error::XML_ERR_FATAL, error.level)
+    assert_equal(XML::Error::PARSER, error.domain)
+    assert_equal(XML::Error::TAG_NOT_FINISHED, error.code)
+    assert_equal(XML::Error::FATAL, error.level)
     assert_nil(error.file)
     assert_equal(4, error.line)
     assert_equal('Results', error.str1)

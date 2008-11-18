@@ -107,7 +107,6 @@ class TestParserContext < Test::Unit::TestCase
     assert_equal(0, context.name_depth)
     assert_equal(10, context.name_depth_max)
     assert_equal(17, context.num_chars)
-    assert_equal(0, context.options)
     assert_equal(true, context.replace_entities?)
     assert_equal(1, context.space_depth)
     assert_equal(10, context.space_depth_max)
