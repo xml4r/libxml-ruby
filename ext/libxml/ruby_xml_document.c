@@ -5,7 +5,7 @@
 /*
 * Document-class: LibXML::XML::Document
 *
-* Reads or writes an XML document:
+* Reads or writes an document:
 *
 * Reading:
 *  require 'xml'

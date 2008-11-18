@@ -12,9 +12,8 @@ VALUE mXMLEncoding;
 *
 * LibXML converts all data sources to UTF8 internally before 
 * processing them.  By default, LibXML will determine a data
-* source's encoding using the algorthim described here:
-*
-* http://xmlsoft.org/encoding.html
+* source's encoding using the algorithm described on its
+* website[* http://xmlsoft.org/encoding.html].
 *
 * However, its some cases it is possible to tell LibXML
 * the data source's encoding via the constants defined in

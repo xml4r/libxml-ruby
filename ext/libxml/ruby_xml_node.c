@@ -7,16 +7,15 @@
 
 VALUE cXMLNode;
 
-/*
-* Document-class: LibXML::XML::Node
-*
-* Nodes are the primary objects that make up an XML document. 
-* The node class represents most node types that are found in
-* an XML document (but not Attributes, see LibXML::XML::Attribute).
-* It exposes libxml's full API for creating, querying
-* moving and deleting node objects.  Many of these methods are
-* documented in the DOM Level 3 specification found at:
-* http://www.w3.org/TR/DOM-Level-3-Core/. */
+/* Document-class: LibXML::XML::Node
+ *
+ * Nodes are the primary objects that make up an XML document. 
+ * The node class represents most node types that are found in
+ * an XML document (but not Attributes, see LibXML::XML::Attribute).
+ * It exposes libxml's full API for creating, querying
+ * moving and deleting node objects.  Many of these methods are
+ * documented in the DOM Level 3 specification found at:
+ * http://www.w3.org/TR/DOM-Level-3-Core/. */
 
 
 VALUE
@@ -1562,13 +1561,6 @@ ruby_init_xml_node(void) {
   rb_define_method(cXMLNode, "xlink?", ruby_xml_node_xlink_q, 0);
   rb_define_method(cXMLNode, "xlink_type", ruby_xml_node_xlink_type, 0);
   rb_define_method(cXMLNode, "xlink_type_name", ruby_xml_node_xlink_type_name, 0);
-  
+
   rb_define_alias(cXMLNode, "==", "eql?");
-  
-  /* :nodoc: */
-  {
-    VALUE singleton;
-    singleton = rb_singleton_class(cXMLNode);
-    rb_define_alias(singleton, "new_element", "new");
-  }
 }

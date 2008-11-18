@@ -5,7 +5,7 @@
 /*
 * Document-class: LibXML::XML::Attributes
 *
-* Provides access to an elements attributes (XML::Attr).
+* Provides access to an element's attributes (XML::Attr).
 *
 * Basic Usage:
 *  require 'xml'
