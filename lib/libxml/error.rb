@@ -1,7 +1,6 @@
 module LibXML
   module XML
     class Error
-
       # Verbose error handler
       VERBOSE_HANDLER = lambda do |error|
         STDERR << error.to_s << "\n"
@@ -34,13 +33,13 @@ module LibXML
 
       def level_to_s
         case self.level
-          when XML_ERR_NONE:
+          when NONE:
             ''
-          when XML_ERR_WARNING:
+          when WARNING:
             'Warning:'
-          when XML_ERR_ERROR:
+          when ERROR:
             'Error:'
-          when XML_ERR_FATAL:
+          when FATAL:
             'Fatal error:'
         end
       end
