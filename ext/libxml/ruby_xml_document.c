@@ -1,24 +1,29 @@
 /* $Id$ */
 
-/* Please see the LICENSE file for copyright and distribution information */
-
 /*
 * Document-class: LibXML::XML::Document
 *
-* Reads or writes an document:
+* The XML::Document class provides a tree based API for working
+* with xml documents.  You may directly create a document and
+* manipulate it, or create a document from a data source by
+* using an XML::Parser object.
 *
-* Reading:
-*  require 'xml'
+* To create a document from scratch:
 *
 *  doc = XML::Document.new()
 *  doc.root = XML::Node.new('root_node')
 *  doc.root << XML::Node.new('elem1')
 *  doc.save('output.xml', format)
 * 
-* Writing:
-*  require 'libxml'
-*  doc = XML::Document.file('output.xml')
-*  root = doc.root
+* To read a document
+* 
+*   doc = XML::Document.file('my_file')
+*
+* To use a parser to read a document:
+*
+*   parser = XML::Parser.new
+*   parser.file = 'my_file'
+*   doc = parser.parse
 */
 
 #include <stdarg.h>

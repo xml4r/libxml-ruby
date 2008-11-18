@@ -58,7 +58,6 @@
 #include "ruby_xml_xpath_context.h"
 #include "ruby_xml_xpath_object.h"
 #include "ruby_xml_xpointer.h"
-#include "ruby_xml_xpointer_context.h"
 #include "ruby_xml_input_cbg.h"
 #include "ruby_xml_dtd.h"
 #include "ruby_xml_schema.h"

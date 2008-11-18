@@ -12,34 +12,22 @@
  *
  * Once a schema is prepared, an XML document can be validated by the
  * XML::Document#validate_relaxng method providing the XML::RelaxNG object
- * as parameter. The method return true if the document validates, false 
- * otherwise.
+ * as parameter. The method will raise an exception if the document is
+ * not valid.
  *
- * If a block is provided to the XML::Document#validate_relaxng method,
- * it functions as an error handler that is called with two parameters for
- * all errors and warnings. The first parameter is the error or warning message 
- * the second indicates if the message is an error (true) or a warning (false).
- * If no error handler is provided errors are written to stderr.
+ * Basic Usage:
  *
- * E.g.
  *  # parse schema as xml document
  *  relaxng_document = XML::Document.file('schema.rng')
+ *  
  *  # prepare schema for validation
  *  relaxng_schema = XML::RelaxNG.document(relaxng_document)
  *
  *  # parse xml document to be validated
  *  instance = XML::Document.file('instance.xml')
  *
- *  # validate without error handler
- *  validates = instance.validate_relaxng(relaxng_schema)
- *  puts validates ? 'valid' : 'invalid'
- *
- *  # validate with error handler
- *  messages = { :errors => [], :warnings => [] }
- *  validates = instance.validate_relaxng(relaxng_schema) { | msg, error | messages[ error ? :errors : :warnings ] << msg }
- *  puts validates ? 'valid' : 'invalid'
- *  puts "warnings: #{messages[:warnings].join("\n")}"
- *  puts "errors  : #{messages[:errors].join("\n")}"
+ *  # validate
+ *  instance.validate_relaxng(relaxng_schema)
  */
 
 VALUE cXMLRelaxNG;

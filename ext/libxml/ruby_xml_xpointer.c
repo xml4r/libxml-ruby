@@ -6,7 +6,15 @@
 #include "ruby_xml_xpointer.h"
 
 VALUE cXMLXPointer;
-VALUE eXMLXPointerInvalidExpression;
+
+/*
+* Document-class: LibXML::XML::XPointer
+*
+* The XML::Pointer class provides a standards based API for searching an xml document.
+* XPointer is based on the XML Path Language (XML::XPath) and is documented
+* at http://www.w3.org/TR/WD-xptr.
+*/
+
 
 VALUE
 ruby_xml_xpointer_point(VALUE class, VALUE rnode, VALUE xptr_str) {
@@ -31,7 +39,7 @@ ruby_xml_xpointer_point(VALUE class, VALUE rnode, VALUE xptr_str) {
 
   xpop = xmlXPtrEval((xmlChar*)StringValuePtr(xptr_str), xctxt);
   if (!xpop)
-    rb_raise(eXMLXPointerInvalidExpression, "Invalid xpointer expression");
+    ruby_xml_raise(&xmlLastError);
 
   result = ruby_xml_xpath_object_wrap(xpop);
   rb_iv_set(result, "@context", context);
@@ -98,7 +106,5 @@ ruby_xml_xpointer_range(VALUE class, VALUE rstart, VALUE rend) {
 void
 ruby_init_xml_xpointer(void) {
   cXMLXPointer = rb_define_class_under(mXML, "XPointer", rb_cObject);
-  eXMLXPointerInvalidExpression = rb_define_class_under(cXMLXPointer, "InvalidExpression", eXMLError);
-
   rb_define_singleton_method(cXMLXPointer, "range", ruby_xml_xpointer_range, 2);
 }

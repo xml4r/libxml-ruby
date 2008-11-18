@@ -1,12 +1,17 @@
 /* $Id$ */
 
-/* Please see the LICENSE file for copyright and distribution information */
-
 #include "ruby_libxml.h"
 #include "ruby_xml_xinclude.h"
 
 VALUE cXMLXInclude;
-VALUE eXMLXIncludeError;
+
+/*
+* Document-class: LibXML::XML::XInclude
+*
+* The ruby bindings do not currently expose libxml's 
+* XInclude fuctionality.
+*/
+
 
 // Rdoc needs to know 
 #ifdef RDOC_NEVER_DEFINED
@@ -17,5 +22,4 @@ VALUE eXMLXIncludeError;
 void
 ruby_init_xml_xinclude(void) {
   cXMLXInclude = rb_define_class_under(mXML, "XInclude", rb_cObject);
-  eXMLXIncludeError = rb_define_class_under(cXMLXInclude, "Error", rb_eRuntimeError);
 }

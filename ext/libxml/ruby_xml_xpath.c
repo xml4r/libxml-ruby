@@ -79,7 +79,6 @@
  *  # xpath expression.
  *  doc.find('/soap:Envelope/soap:Body/ns0:getManufacturerNamesResponse/ns0:IDAndNameList/ns1:IdAndName', 
              ['ns0:http://services.somewhere.com', 'ns1:http://domain.somewhere.com'])
- *
  */
 
 VALUE mXPath;

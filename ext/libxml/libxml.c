@@ -46,7 +46,6 @@ Init_libxml_ruby(void) {
   ruby_init_xml_xpath();
   ruby_init_xml_xpath_context();
   ruby_init_xml_xpointer();
-  ruby_init_xml_xpointer_context();
   ruby_init_html_parser();
   ruby_init_input_callbacks(); 
   ruby_init_xml_dtd();         
