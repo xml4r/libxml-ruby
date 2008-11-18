@@ -19,8 +19,10 @@ task :install do
   # Copy the extension
   cp(EXTENSION_NAME, dest_path)
   
-  # Copy libxml binary
-  cp('libxml2-2.dll', dest_path)
+  # Copy dllss
+  Dir.glob('*.dll').each do |dll|
+    cp(dll, dest_path)
+  end
 end
 
 task :default => :install
