@@ -18,19 +18,15 @@ class TC_XML_XPointer < Test::Unit::TestCase
     @xptr = nil
   end
 
-  def test_libxml_xpointer_id()
-    @xptr = @root.pointer('xpointer(id("two"))')
-    assert_instance_of(XML::XPath::Object, @xptr)
-    set = @xptr.set
-    assert_instance_of(XML::Node::Set, set)
-    for n in set
+  def test_libxml_xpointer_id
+    xptr = @root.pointer('xpointer(id("two"))')
+    assert_instance_of(XML::XPath::Object, xptr)
+    xptr.each do |node|
       # It seems from the spec that the pointer should
       # be the whole node, rather than just the ID attr.
-
-      # assert_equal('two', n.to_s)
-
-      assert_instance_of(XML::Node, n)
-      assert_equal('two', n['id'])
+      assert_equal('two', node.content)
+      assert_instance_of(XML::Node, node)
+      assert_equal('two', node['id'])
     end
 
     # FIXME: Not sure at all about this kind of range

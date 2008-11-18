@@ -16,7 +16,6 @@ class TestXPath < Test::Unit::TestCase
     assert_instance_of(XML::XPath::Object, nodes)
     assert_equal(1, nodes.length)
     assert_equal(nodes.xpath_type, XML::XPath::NODESET)
-    assert_instance_of(XML::Node::Set, nodes.set)
     assert_instance_of(XML::XPath::Context, nodes.context)
   end
 

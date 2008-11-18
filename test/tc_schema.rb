@@ -34,12 +34,11 @@ class TestSchema < Test::Unit::TestCase
 
     assert_not_nil(error)
     assert_kind_of(XML::Error, error)
-    assert_equal("Error: Element 'invalid': This element is not expected. Expected is ( item ). at C:/Development/src/libxml-ruby/test/model/shiporder.xml:0.",
-                 error.message)
-    assert_equal(XML::Error::XML_FROM_SCHEMASV, error.domain)
-    assert_equal(XML::Error::XML_SCHEMAV_ELEMENT_CONTENT, error.code)
-    assert_equal(XML::Error::XML_ERR_ERROR, error.level)
-    assert_equal("C:/Development/src/libxml-ruby/test/model/shiporder.xml", error.file)
+    assert(error.message.match(/Error: Element 'invalid': This element is not expected. Expected is \( item \)\. at/))
+    assert_equal(XML::Error::SCHEMASV, error.domain)
+    assert_equal(XML::Error::SCHEMAV_ELEMENT_CONTENT, error.code)
+    assert_equal(XML::Error::ERROR, error.level)
+    assert(error.file.match(/shiporder.xml/))
     assert_nil(error.line)
     assert_nil(error.str1)
     assert_nil(error.str2)

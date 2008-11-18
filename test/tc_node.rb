@@ -54,9 +54,8 @@ class TestNode < Test::Unit::TestCase
   end
 
   def test_node_find
-    set = @doc.root.find('./fixnum').set
-    assert_instance_of(XML::Node::Set, set)
-    for node in set
+    nodes = @doc.root.find('./fixnum')
+    for node in nodes
       assert_instance_of(XML::Node, node)
     end
   end

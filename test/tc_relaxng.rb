@@ -34,12 +34,11 @@ class TestRelaxNG < Test::Unit::TestCase
 
     assert_not_nil(error)
     assert_kind_of(XML::Error, error)
-    assert_equal("Error: Did not expect element invalid there at C:/Development/src/libxml-ruby/test/model/shiporder.xml:0.",
-                 error.message)
-    assert_equal(XML::Error::XML_FROM_RELAXNGV, error.domain)
-    assert_equal(XML::Error::XML_ERR_LT_IN_ATTRIBUTE, error.code)
-    assert_equal(XML::Error::XML_ERR_ERROR, error.level)
-    assert_equal("C:/Development/src/libxml-ruby/test/model/shiporder.xml", error.file)
+    assert(error.message.match(/Error: Did not expect element invalid there at/))
+    assert_equal(XML::Error::RELAXNGV, error.domain)
+    assert_equal(XML::Error::LT_IN_ATTRIBUTE, error.code)
+    assert_equal(XML::Error::ERROR, error.level)
+    assert(error.file.match(/shiporder\.xml/))
     assert_nil(error.line)
     assert_equal('invalid', error.str1)
     assert_nil(error.str2)
