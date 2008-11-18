@@ -51,7 +51,7 @@ static st_table *ref_count_table = 0;
 
 void
 ruby_xml_document_internal_free(xmlDocPtr xdoc) {
-  st_delete(ref_count_table, &xdoc, 0);
+  st_delete(ref_count_table, (st_data_t*)&xdoc, 0);
   xdoc->_private = NULL;
   xmlFreeDoc(xdoc);
 }
@@ -60,15 +60,15 @@ int
 ruby_xml_document_incr(xmlDocPtr xdoc) {
   int ref_count;
 
-  if (st_lookup(ref_count_table, xdoc, &ref_count))
+  if (st_lookup(ref_count_table, (st_data_t)xdoc, (st_data_t*)&ref_count))
   {
     ref_count++;
-    st_insert(ref_count_table, xdoc, ref_count);
+    st_insert(ref_count_table, (st_data_t)xdoc, (st_data_t)ref_count);
   }
   else
   {
     ref_count = 1;
-    st_add_direct(ref_count_table, xdoc, ref_count);
+    st_add_direct(ref_count_table, (st_data_t)xdoc, (st_data_t)ref_count);
   }
   
   return ref_count;
@@ -78,7 +78,7 @@ int
 ruby_xml_document_decr(xmlDocPtr xdoc) {
   int ref_count = 0;
 
-  if (!st_lookup(ref_count_table, xdoc, &ref_count)) 
+  if (!st_lookup(ref_count_table, (st_data_t)xdoc, (st_data_t*)&ref_count)) 
     rb_raise(rb_eRuntimeError, "Document does not have a reference count.");
 
   if (ref_count == 0)
@@ -99,7 +99,7 @@ ruby_xml_document_decr(xmlDocPtr xdoc) {
     }
   }
 
-  st_insert(ref_count_table, xdoc, ref_count);
+  st_insert(ref_count_table, (st_data_t)xdoc, ref_count);
   return ref_count;
 }
 
@@ -107,7 +107,7 @@ void
 ruby_xml_document_free(xmlDocPtr xdoc) {
   int ref_count;
 
-  if (!st_lookup(ref_count_table, xdoc, &ref_count))
+  if (!st_lookup(ref_count_table, (st_data_t)xdoc, (st_data_t*)&ref_count))
   {
     ruby_xml_document_internal_free(xdoc);
   }
@@ -118,7 +118,7 @@ ruby_xml_document_free(xmlDocPtr xdoc) {
   else if (ref_count > 0)
   {
     ref_count *= -1;
-    st_insert(ref_count_table, xdoc, ref_count);
+    st_insert(ref_count_table, (st_data_t)xdoc, ref_count);
   }
   else 
   {
@@ -172,7 +172,7 @@ ruby_xml_document_alloc(VALUE klass) {
 VALUE
 ruby_xml_document_initialize(int argc, VALUE *argv, VALUE self) {
   xmlDocPtr xdoc;
-  VALUE docobj, xmlver;
+  VALUE xmlver;
 
   switch (argc) {
     case 0:
@@ -930,9 +930,14 @@ ruby_xml_document_xinclude(VALUE self) {
   Data_Get_Struct(self, xmlDoc, xdoc);
   ret = xmlXIncludeProcess(xdoc);
   if (ret >= 0)
+  {
     return(INT2NUM(ret));
+  }
   else
+  {
     ruby_xml_raise(&xmlLastError);
+    return Qnil;
+  }
 #else
   rb_warn("libxml was compiled without XInclude support.  Please recompile libxml and ruby-libxml");
   return(Qfalse);
