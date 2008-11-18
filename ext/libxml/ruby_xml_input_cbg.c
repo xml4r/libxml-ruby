@@ -1,9 +1,11 @@
-
-/* ruby support for custom scheme handlers      */
 /* Author: Martin Povolny (xpovolny@fi.muni.cz) */
 
 #include "ruby_libxml.h"
 #include "ruby_xml_input_cbg.h"
+
+/* Document-class: LibXML::XML::InputCallbacks
+ * 
+ * Support for adding custom scheme handlers. */
 
 static ic_scheme *first_scheme = 0;
 
@@ -82,6 +84,13 @@ VALUE input_callbacks_register_input_callbacks() {
     return(Qtrue);
 }
 
+
+/*
+ * call-seq:
+ *    add_scheme
+ * 
+ * No documentation available.
+ */
 VALUE
 input_callbacks_add_scheme (VALUE self, VALUE scheme_name, VALUE class) {
   ic_scheme *scheme;
@@ -109,6 +118,12 @@ input_callbacks_add_scheme (VALUE self, VALUE scheme_name, VALUE class) {
   return(Qtrue);
 }
 
+/*
+ * call-seq:
+ *    remove_scheme
+ * 
+ * No documentation available.
+ */
 VALUE
 input_callbacks_remove_scheme (VALUE self, VALUE scheme_name) {
     char *name;
@@ -120,7 +135,6 @@ input_callbacks_remove_scheme (VALUE self, VALUE scheme_name) {
     if (0 == first_scheme)
         return Qfalse;
     
-    /* check the first one */
     if (!strncmp(name, first_scheme->scheme_name, first_scheme->name_len)) {
         save_scheme = first_scheme->next_scheme;
 

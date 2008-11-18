@@ -6,9 +6,6 @@
 #define __RUBY_XML_NODE__
 
 extern VALUE cXMLNode;
-extern VALUE eXMLNodeSetNamespace;
-extern VALUE eXMLNodeFailedModify;
-extern VALUE eXMLNodeUnknownType;
 
 void ruby_init_xml_node(void);
 void ruby_xml_node_mark_common(xmlNodePtr xnode);

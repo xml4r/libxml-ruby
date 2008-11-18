@@ -7,6 +7,40 @@
 
 VALUE mXMLEncoding;
 
+/*
+* Document-module: LibXML::XML::Encoding
+*
+* LibXML converts all data sources to UTF8 internally before 
+* processing them.  By default, LibXML will determine a data
+* source's encoding using the algorthim described here:
+*
+* http://xmlsoft.org/encoding.html
+*
+* However, its some cases it is possible to tell LibXML
+* the data source's encoding via the constants defined in
+* the Encoding module.
+*
+* Example 1:
+* 
+*   parser = XML::Parser.new
+*   parser.input.encoding = XML::Encoding::ISO_8859_1
+*   parser.io = File.open('some_file', 'rb')
+*   doc = parser.parse
+*
+* Example 2:
+* 
+*   parser = XML::HTMLParser.new
+*   parser.encoding = XML::Encoding::ISO_8859_1
+*   parser.file = "some_file"
+*   doc = parser.parse
+*
+* Example 3:
+* 
+*   document = XML::Document.new
+*   encoding_string =  XML::Encoding.encoding_to_s(XML::Encoding::ISO_8859_1)
+*   document.encoding = document
+*   doc << XML::Node.new */
+
 VALUE
 ruby_xml_encoding_to_s(VALUE self, VALUE encoding)
 {
@@ -90,6 +124,12 @@ ruby_xml_encoding_to_s(VALUE self, VALUE encoding)
 
   return rb_str_new2(encodingStr);
 }
+
+// Rdoc needs to know 
+#ifdef RDOC_NEVER_DEFINED
+  mLibXML = rb_define_module("LibXML");
+  mXML = rb_define_module_under(mLibXML, "XML");
+#endif
 
 void
 ruby_init_xml_encoding(void) {

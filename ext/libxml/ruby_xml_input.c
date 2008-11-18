@@ -7,6 +7,21 @@
 
 VALUE cXMLInput;
 
+/*
+* Document-class: LibXML::XML::Input
+*
+* Input is a helper class that defines a libxml data source.
+* Libxml can parse files, strings, io streams and documents
+* accessible via networking protocols such as http.
+* Be default, the ruby-libxml bindings expose parsing
+* files, io streams and strings.
+*
+* Generally you will not directly work with the input object,
+* but instead will use the various Document and Parser apis.
+* For example:
+*
+*   document = Document.file('my_file') */
+
 ID ENCODING_ATTR;
 ID FILE_ATTR;
 ID STRING_ATTR;

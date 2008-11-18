@@ -5,10 +5,10 @@
 /*
 * Document-class: LibXML::XML::Attr
 *
-* Provides access to an single element attribute.  Accessed by
-* calling XML::Node#attributes method.
+* Provides access to an single element attribute.
 *
 * Basic Usage:
+*
 *  require 'xml'
 *
 *  doc = XML::Document.new(<some_file>)
@@ -153,7 +153,7 @@ ruby_xml_attr_child_get(VALUE self) {
  * call-seq:
  *    attr.child? -> (true|false)
  * 
- * Determine whether this attribute has child attributes.
+ * Returns whether this attribute has child attributes.
  */
 VALUE
 ruby_xml_attr_child_q(VALUE self) {

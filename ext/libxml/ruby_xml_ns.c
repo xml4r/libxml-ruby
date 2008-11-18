@@ -8,6 +8,14 @@
 VALUE cXMLNS;
 
 
+/* Document-class: LibXML::XML::NS
+ * 
+ * The NS class is used to query information about
+ * xml namespaces associated with particular nodes.
+ * It can also be used to associate new namespaces
+ * with an node. */
+
+
 VALUE
 ruby_xml_ns_alloc(VALUE klass) {
   return Data_Wrap_Struct(cXMLNS, NULL, NULL, NULL);

@@ -344,25 +344,6 @@ ruby_xml_parser_context_num_chars_get(VALUE self) {
   return(LONG2NUM(ctxt->nbChars));
 }
 
-
-VALUE
-ruby_xml_parser_context_options_set(VALUE self, VALUE options) {
-  xmlParserCtxtPtr ctxt;
-  Data_Get_Struct(self, xmlParserCtxt, ctxt);
-
-  if (xmlCtxtUseOptions(ctxt, NUM2INT(options)))
-       return Qfalse;
-  else
-       return Qtrue;
-}
-
-VALUE
-ruby_xml_parser_context_options_get(VALUE self) {
-  xmlParserCtxtPtr ctxt;
-  Data_Get_Struct(self, xmlParserCtxt, ctxt);
-  return INT2NUM(ctxt->options);
-}
-
 /*
  * call-seq:
  *    context.replace_entities? -> (true|false)
@@ -669,8 +650,6 @@ ruby_init_xml_parser_context(void) {
   rb_define_method(cXMLParserContext, "node_depth", ruby_xml_parser_context_node_depth_get, 0);
   rb_define_method(cXMLParserContext, "node_depth_max", ruby_xml_parser_context_node_depth_max_get, 0);
   rb_define_method(cXMLParserContext, "num_chars", ruby_xml_parser_context_num_chars_get, 0);
-  rb_define_method(cXMLParserContext, "options", ruby_xml_parser_context_options_get, 0);
-  rb_define_method(cXMLParserContext, "options=", ruby_xml_parser_context_options_set, 1);
   rb_define_method(cXMLParserContext, "replace_entities?", ruby_xml_parser_context_replace_entities_q, 0);
   rb_define_method(cXMLParserContext, "replace_entities=", ruby_xml_parser_context_replace_entities_set, 1);
   rb_define_method(cXMLParserContext, "space_depth", ruby_xml_parser_context_space_depth_get, 0);
