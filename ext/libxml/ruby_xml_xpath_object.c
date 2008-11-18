@@ -41,12 +41,12 @@ ruby_xml_xpath_object_mark(xmlXPathObjectPtr xpop)
   {
     xmlDocPtr xdoc = ruby_xml_xpath_object_doc(xpop);
     if (xdoc && xdoc->_private)
-      rb_gc_mark(xdoc->_private);
+      rb_gc_mark((VALUE)xdoc->_private);
 
     for (i=0; i<xpop->nodesetval->nodeNr; i++) 
     {
       if (xpop->nodesetval->nodeTab[i]->_private)
-        rb_gc_mark(xpop->nodesetval->nodeTab[i]->_private);
+        rb_gc_mark((VALUE)xpop->nodesetval->nodeTab[i]->_private);
     }
   }
 }

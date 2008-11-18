@@ -105,6 +105,7 @@ VALUE
 ruby_xml_sax_parser_initialize(VALUE self) {
   VALUE input = rb_class_new_instance(0, NULL, cXMLInput);
   rb_iv_set(self, "@input", input);
+  return self;
 }
 
 /*
@@ -172,9 +173,14 @@ ruby_xml_sax_parser_parse(VALUE self) {
   }
   
   if (status)
+  {
     ruby_xml_raise(&xmlLastError);
+    return Qfalse;
+  }
   else
+  {
     return(Qtrue);
+  }
 }
 
 // Rdoc needs to know 
