@@ -9,6 +9,29 @@ VALUE cXMLParser;
 ID INPUT_ATTR;
 ID CONTEXT_ATTR;
 
+/*
+ * Document-class: LibXML::XML::Parser
+ *
+ * The XML::Parser provides a tree based API for processing
+ * xml documents, in contract to XML::Reader's stream
+ * based api and XML::SaxParser callback based API.
+ *
+ * As a result, parsing a document creates an in-memory document object
+ * that consist of any number of XML::Node instances.  This is simple
+ * and powerful model, but has the major limitation that the size of 
+ * the document that can be processed is limited by the amount of
+ * memory available.  In such cases, it is better to use the XML::Reader.
+ *
+ * Using the parser is simple:
+ *
+ *   parser = XML::Parser.new
+ *   parser.file = 'my_file'
+ *   doc = parser.parse
+ * 
+ * You can also parse strings (see XML::Parser.string) and io objects (see 
+ * XML::Parser.io).
+ */
+
 static int
 ctxtRead(FILE *f, char * buf, size_t len) {
     return(rb_io_fread(buf, len, f));
@@ -912,9 +935,6 @@ ruby_xml_parser_parse(VALUE self) {
 
 void
 ruby_init_parser(void) {	
-  INPUT_ATTR = rb_intern("@input");
-  CONTEXT_ATTR = rb_intern("@context");
-
   cXMLParser = rb_define_class_under(mXML, "Parser", rb_cObject);
                  
   /* Constants */
@@ -1018,6 +1038,8 @@ ruby_init_parser(void) {
   rb_define_singleton_method(cXMLParser, "memory_used", ruby_xml_parser_memory_used, 0);
 
   /* Atributes */
+  INPUT_ATTR = rb_intern("@input");
+  CONTEXT_ATTR = rb_intern("@context");
   rb_define_attr(cXMLParser, "input", 1, 0);
   rb_define_attr(cXMLParser, "context", 1, 0);
 

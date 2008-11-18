@@ -5,16 +5,15 @@
 #include "ruby_libxml.h"
 #include "ruby_xml_parser_context.h"
 
-/* TODO:
- *
- * *) xmlParserInput class/structure
- * *) errNo and mappings
- * *) validity context
- * *) record_info or stats class/structure
- * *) xmlParserNodeInfoSeq
- * *) xmlParserInputState
- */
 VALUE cXMLParserContext;
+
+/*
+ * Document-class: LibXML::XML::Parser::Context
+ *
+ * The XML::Parser::Context class provides in-depth control over how
+ * a document is parsed.
+ */
+
 
 void
 ruby_xml_parser_context_free(xmlParserCtxtPtr ctxt) {

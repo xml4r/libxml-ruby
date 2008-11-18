@@ -4,6 +4,42 @@
 #include "ruby_libxml.h"
 #include "ruby_xml_reader.h"
 
+VALUE cXMLReader;
+
+/*
+ * Document-class: LibXML::XML::Reader
+ *
+ * The XML::Reader class provides a simpler, alternative way of parsing an XML
+ * document in contrast to XML::Parser or XML::SaxParser.  A XML::Reader instance
+ * acts like a cursor going forward in a document stream, stopping at each node 
+ * it encounters.  To advance to the next node, simply cadd XML::Reader#read.
+ * 
+ * The XML::Reader API closely matches the DOM Core specification and supports
+ * namespaces, xml:base, entity handling and DTDs.  
+ *
+ * To summarize, XML::Reader provides a far simpler API to use versus XML::SaxParser
+ * and is more memory efficient than using XML::Parser to create a DOM tree.
+ *
+ * Example:
+ *
+ *  parser = XML::Reader.new("<foo><bar>1</bar><bar>2</bar><bar>3</bar></foo>")
+ *  parser.read
+ *  assert_equal('foo', parser.name)
+ *  assert_equal(nil, parser.value)
+ *  
+ *  3.times do |i|
+ *    parser.read
+ *    assert_equal(XML::Reader::TYPE_ELEMENT, parser.node_type)
+ *    assert_equal('bar', parser.name)
+ *    parser.read
+ *    assert_equal(XML::Reader::TYPE_TEXT, parser.node_type)
+ *    assert_equal((i + 1).to_s, parser.value)
+ *    parser.read
+ *    assert_equal(XML::Reader::TYPE_END_ELEMENT, parser.node_type)
+ *  end
+ *
+ * For a more in depth tutorial, albeit in C, see http://xmlsoft.org/xmlreader.html.*/
+
 #define CSTR2RVAL(x)  (x == NULL ? Qnil : rb_str_new2((const char *)x))
 #define RVAL2CSTR(x)  (StringValueCStr(x))
 
@@ -19,8 +55,6 @@ __rb_str_new_and_free(xmlChar *x)
 }
 
 #define CSTR2RVAL2(x) (__rb_str_new_and_free(x))
-
-VALUE cXMLReader;
 
 static int
 ctxtRead(FILE *f, char * buf, size_t len) {

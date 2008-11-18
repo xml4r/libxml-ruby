@@ -5,6 +5,36 @@
 #include "ruby_libxml.h"
 #include "ruby_xml_sax_parser.h"
 
+/*
+ * Document-class: LibXML::XML::SaxParser
+ *
+ * XML::SaxParser provides a callback based API for parsing documents,
+ * in contrast to XML::Parser's tree based API and XML::Reader's stream
+ * based API.  
+ *
+ * Note that the XML::SaxParser API is fairly complex, not well standardized, 
+ * and does not directly support validation making entity, namespace and
+ * base processing relatively hard.
+ *
+ * To use the XML::SaxParser, register a callback class via the
+ * XML::SaxParser#callbacks=.  It is easiest to include the 
+ * XML::SaxParser::Callbacks module in your class and override 
+ * the methods as needed.
+ *
+ * Basic example:
+ *
+ *   class MyCallbacks
+ *     include XML::SaxParser::Callbacks
+ *     def on_start_element(element, attributes)
+ *       puts #Element started: #{element}"
+ *     end
+ *   end
+ *
+ *   parser = XML::SaxParser.new
+ *   parser.callbacks = MyCallbacks.new
+ *   parser.parse
+ */
+
 VALUE cXMLSaxParser;
 VALUE mXMLSaxParserCallbacks;
 
