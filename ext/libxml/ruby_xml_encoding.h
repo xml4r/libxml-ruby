@@ -8,4 +8,6 @@
 extern VALUE mXMLEncoding;
 
 void ruby_init_xml_encoding(void);
+VALUE ruby_xml_encoding_to_s(VALUE self, VALUE encoding);
+
 #endif
