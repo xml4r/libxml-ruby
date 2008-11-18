@@ -176,7 +176,7 @@ ruby_init_xml_error() {
   rb_define_const(eXMLError, "FATAL",   INT2NUM(XML_ERR_FATAL));
 
   /* xml error domains */
-  rb_define_const(eXMLError, "NONE", INT2NUM(XML_FROM_NONE));
+  rb_define_const(eXMLError, "NO_ERROR", INT2NUM(XML_FROM_NONE));
   rb_define_const(eXMLError, "PARSER", INT2NUM(XML_FROM_PARSER));
   rb_define_const(eXMLError, "TREE", INT2NUM(XML_FROM_TREE));
   rb_define_const(eXMLError, "NAMESPACE", INT2NUM(XML_FROM_NAMESPACE));
