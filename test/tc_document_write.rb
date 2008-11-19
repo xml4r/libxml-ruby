@@ -143,4 +143,18 @@ class TestDocumentWrite < Test::Unit::TestCase
     assert_instance_of(XML::Node, @doc.root)
     assert_equal("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n<rubynet/>\n", @doc.to_s)
   end
+
+  def test_encoding_to_s
+    doc = XML::Document.new
+    doc.encoding = 'UTF-8'
+    doc.root = XML::Node.new 'node'
+    doc.root.content = '&#1;'
+
+    xml = doc.to_s(true, 'UTF-8')
+    puts xml
+
+    parser = XML::Parser.string(xml)
+    doc = parser.parse
+    p doc.root.content
+  end
 end
