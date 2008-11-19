@@ -202,7 +202,9 @@ ruby_init_xml_error() {
   rb_define_const(eXMLError, "VALID", INT2NUM(XML_FROM_VALID));
   rb_define_const(eXMLError, "CHECK", INT2NUM(XML_FROM_CHECK));
   rb_define_const(eXMLError, "WRITER", INT2NUM(XML_FROM_WRITER));
+#if LIBXML_VERSION >= 20621
   rb_define_const(eXMLError, "MODULE", INT2NUM(XML_FROM_MODULE));
+#endif
 #if LIBXML_VERSION >= 20632
   rb_define_const(eXMLError, "I18N", INT2NUM(XML_FROM_I18N));
   rb_define_const(eXMLError, "SCHEMATRONV", INT2NUM(XML_FROM_SCHEMATRONV));
@@ -323,7 +325,12 @@ ruby_init_xml_error() {
   rb_define_const(eXMLError, "NS_ERR_UNDEFINED_NAMESPACE", INT2NUM(XML_NS_ERR_UNDEFINED_NAMESPACE));
   rb_define_const(eXMLError, "NS_ERR_QNAME", INT2NUM(XML_NS_ERR_QNAME));
   rb_define_const(eXMLError, "NS_ERR_ATTRIBUTE_REDEFINED", INT2NUM(XML_NS_ERR_ATTRIBUTE_REDEFINED));
+#if LIBXML_VERSION >= 20620
   rb_define_const(eXMLError, "NS_ERR_EMPTY", INT2NUM(XML_NS_ERR_EMPTY));
+#endif
+#if LIBXML_VERSION >= 20700
+  rb_define_const(eXMLError, "NS_ERR_COLON", INT2NUM(XML_NS_ERR_COLON));
+#endif
   rb_define_const(eXMLError, "DTD_ATTRIBUTE_DEFAULT", INT2NUM(XML_DTD_ATTRIBUTE_DEFAULT));
   rb_define_const(eXMLError, "DTD_ATTRIBUTE_REDEFINED", INT2NUM(XML_DTD_ATTRIBUTE_REDEFINED));
   rb_define_const(eXMLError, "DTD_ATTRIBUTE_VALUE", INT2NUM(XML_DTD_ATTRIBUTE_VALUE));
@@ -781,8 +788,10 @@ ruby_init_xml_error() {
   rb_define_const(eXMLError, "SCHEMAV_CVC_AU", INT2NUM(XML_SCHEMAV_CVC_AU));
   rb_define_const(eXMLError, "SCHEMAV_CVC_TYPE_1", INT2NUM(XML_SCHEMAV_CVC_TYPE_1));
   rb_define_const(eXMLError, "SCHEMAV_CVC_TYPE_2", INT2NUM(XML_SCHEMAV_CVC_TYPE_2));
+#if LIBXML_VERSION >= 20618
   rb_define_const(eXMLError, "SCHEMAV_CVC_IDC", INT2NUM(XML_SCHEMAV_CVC_IDC));
   rb_define_const(eXMLError, "SCHEMAV_CVC_WILDCARD", INT2NUM(XML_SCHEMAV_CVC_WILDCARD));
+#endif
 #if LIBXML_VERSION >= 20631
   rb_define_const(eXMLError, "SCHEMAV_MISC", INT2NUM(XML_SCHEMAV_MISC));
 #endif
@@ -909,8 +918,10 @@ ruby_init_xml_error() {
   rb_define_const(eXMLError, "SCHEMATRONV_ASSERT", INT2NUM(XML_SCHEMATRONV_ASSERT));
   rb_define_const(eXMLError, "SCHEMATRONV_REPORT", INT2NUM(XML_SCHEMATRONV_REPORT));
 #endif
+#if LIBXML_VERSION >= 20618
   rb_define_const(eXMLError, "MODULE_OPEN", INT2NUM(XML_MODULE_OPEN));
   rb_define_const(eXMLError, "MODULE_CLOSE", INT2NUM(XML_MODULE_CLOSE));
+#endif
   rb_define_const(eXMLError, "CHECK_FOUND_ELEMENT", INT2NUM(XML_CHECK_FOUND_ELEMENT));
   rb_define_const(eXMLError, "CHECK_FOUND_ATTRIBUTE", INT2NUM(XML_CHECK_FOUND_ATTRIBUTE));
   rb_define_const(eXMLError, "CHECK_FOUND_TEXT", INT2NUM(XML_CHECK_FOUND_TEXT));
