@@ -38,7 +38,7 @@
 VALUE cXMLSaxParser;
 VALUE mXMLSaxParserCallbacks;
 
-ID INPUT_ATTR;
+static ID INPUT_ATTR;
 
 VALUE cbidOnInternalSubset;
 VALUE cbidOnIsStandalone;

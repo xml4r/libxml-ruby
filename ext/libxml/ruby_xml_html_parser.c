@@ -5,8 +5,8 @@
 #include "ruby_libxml.h"
 
 VALUE cXMLHTMLParser;
-ID INPUT_ATTR;
-ID CONTEXT_ATTR;
+static ID INPUT_ATTR;
+static ID CONTEXT_ATTR;
 
 
 /*
