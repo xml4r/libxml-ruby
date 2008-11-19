@@ -18,7 +18,7 @@ the following libraries to function properly:
 * libm      (math routines: very standard)
 * libz      (zlib)
 * libiconv
-* libxml2   (version 2.6.31 and higher have been tested)
+* libxml2
 
 If you are running Linux or Unix you'll need a C compiler so the
 extension can be compiled when it is installed.  If you are running
