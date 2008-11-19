@@ -9,7 +9,9 @@
 /*
  * Document-class: LibXML::XML::XPath::Expression
  * 
- * The XML::XPath::Expression class is used to compile XPath for multiple use once.
+ * The XML::XPath::Expression class is used to compile  
+ * XPath expressions so they can be parsed only once
+ * but reused multiple times.
  *
  *  doc = XML::Document.string(IO.read('some xml file'))
  *  expr = XPath::Expression.new('//first')
