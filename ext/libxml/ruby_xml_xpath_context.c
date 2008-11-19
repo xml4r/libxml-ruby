@@ -4,6 +4,7 @@
 
 #include "ruby_libxml.h"
 #include "ruby_xml_xpath_context.h"
+#include "ruby_xml_xpath_expression.h"
 #include <st.h>
 
 
@@ -247,14 +248,26 @@ VALUE
 ruby_xml_xpath_context_find(VALUE self, VALUE xpath_expr) {
   xmlXPathContextPtr xctxt;
   xmlXPathObjectPtr xobject;
+  xmlXPathCompExprPtr xcompexpr;
   VALUE result;
 
   Data_Get_Struct(self, xmlXPathContext, xctxt);
-  xobject = xmlXPathEval((xmlChar*)StringValuePtr(xpath_expr), xctxt);
+
+  if (TYPE(xpath_expr) == T_STRING) {
+    VALUE expression = rb_check_string_type(xpath_expr);
+	  xobject = xmlXPathEval((xmlChar*)StringValueCStr(expression), xctxt);  
+  }
+  else if (rb_obj_is_kind_of(xpath_expr, cXMLXPathExpression)) {
+	  Data_Get_Struct(xpath_expr, xmlXPathCompExpr, xcompexpr);
+	  xobject = xmlXPathCompiledEval(xcompexpr, xctxt);	
+  }
+  else {
+	  rb_raise(rb_eTypeError, "Argument should be an intance of a String or XPath::Expression");
+  }  
   
   if (xobject == NULL)
   {
-    /* xmlLastError is differnet than xctxt->lastError.  Use 
+    /* xmlLastError is different than xctxt->lastError.  Use 
        xmlLastError since it has the message set while xctxt->lastError
        does not. */
     xmlErrorPtr xerror = xmlGetLastError();

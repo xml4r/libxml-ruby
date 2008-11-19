@@ -24,6 +24,7 @@ require 'tc_traversal'
 require 'tc_well_formed'
 require 'tc_xinclude'
 require 'tc_xpath'
+require 'tc_xpath_expression'
 require 'tc_xpointer'
 
 # Compatibility

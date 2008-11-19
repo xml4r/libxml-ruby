@@ -55,6 +55,7 @@
 #include "ruby_xml_sax_parser.h"
 #include "ruby_xml_xinclude.h"
 #include "ruby_xml_xpath.h"
+#include "ruby_xml_xpath_expression.h"
 #include "ruby_xml_xpath_context.h"
 #include "ruby_xml_xpath_object.h"
 #include "ruby_xml_xpointer.h"
