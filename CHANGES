@@ -4,6 +4,8 @@
 
 * Add support for compiled XPath expressions (donated by Pavel Valodzka)
 
+* Fixes for compiling on OS X 10.5.4 and 10.5.5
+
 == 0.9.1 / 2008-11-18 Charlie Savage
 
 * Expose LibXML's encoding support via a new Encoding object.
