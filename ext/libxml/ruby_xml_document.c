@@ -34,96 +34,10 @@
 
 VALUE cXMLDocument;
 
-
-/* We have to make sure that documents are freed after
-   XPathObjects.  The Ruby gc does not guarantee this
-   at shutdown or in normal operation when a document,
-   xpath context and xpath object form a cycle.  So
-   we implement this simple reference counting scheme.
-   It works as you'd expect, except with a simple twist.
-   If a document is freed, but still has outstanding
-   references, its reference count is made negative.  Thus
-   if it has ref_count of 1, then its becomes -1.  At that
-   point, decrement will increase the account to 0, and 
-   once it reaches 0, the document is freed. */
-
-static st_table *ref_count_table = 0;
-
-void
-ruby_xml_document_internal_free(xmlDocPtr xdoc) {
-  st_delete(ref_count_table, (st_data_t*)&xdoc, 0);
-  xdoc->_private = NULL;
-  xmlFreeDoc(xdoc);
-}
-
-int
-ruby_xml_document_incr(xmlDocPtr xdoc) {
-  int ref_count;
-
-  if (st_lookup(ref_count_table, (st_data_t)xdoc, (st_data_t*)&ref_count))
-  {
-    ref_count++;
-    st_insert(ref_count_table, (st_data_t)xdoc, (st_data_t)ref_count);
-  }
-  else
-  {
-    ref_count = 1;
-    st_add_direct(ref_count_table, (st_data_t)xdoc, (st_data_t)ref_count);
-  }
-  
-  return ref_count;
-}
-
-int
-ruby_xml_document_decr(xmlDocPtr xdoc) {
-  int ref_count = 0;
-
-  if (!st_lookup(ref_count_table, (st_data_t)xdoc, (st_data_t*)&ref_count)) 
-    rb_raise(rb_eRuntimeError, "Document does not have a reference count.");
-
-  if (ref_count == 0)
-  {
-    rb_raise(rb_eRuntimeError, "Document already has no references.");
-  }
-  else if (ref_count > 0)
-  {
-    ref_count--;
-  }
-  else
-  {
-    ref_count++;
-    if (ref_count == 0)
-    {
-      ruby_xml_document_internal_free(xdoc);
-      return ref_count;
-    }
-  }
-
-  st_insert(ref_count_table, (st_data_t)xdoc, ref_count);
-  return ref_count;
-}
-
 void
 ruby_xml_document_free(xmlDocPtr xdoc) {
-  int ref_count;
-
-  if (!st_lookup(ref_count_table, (st_data_t)xdoc, (st_data_t*)&ref_count))
-  {
-    ruby_xml_document_internal_free(xdoc);
-  }
-  else if (ref_count == 0)
-  {
-    ruby_xml_document_internal_free(xdoc);
-  }
-  else if (ref_count > 0)
-  {
-    ref_count *= -1;
-    st_insert(ref_count_table, (st_data_t)xdoc, ref_count);
-  }
-  else 
-  {
-    rb_raise(rb_eRuntimeError, "Ruby is attempting to free document twice.");
-  }
+  xdoc->_private = NULL;
+  xmlFreeDoc(xdoc);
 }   
  
 void
@@ -1103,8 +1017,6 @@ ruby_xml_document_reader(VALUE self)
 
 void
 ruby_init_xml_document(void) {
-  ref_count_table = st_init_numtable();
-
   cXMLDocument = rb_define_class_under(mXML, "Document", rb_cObject);
   rb_define_alloc_func(cXMLDocument, ruby_xml_document_alloc);
 

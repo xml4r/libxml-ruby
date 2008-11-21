@@ -54,18 +54,9 @@ ruby_xml_xpath_object_mark(xmlXPathObjectPtr xpop)
 void
 ruby_xml_xpath_object_free(xmlXPathObjectPtr xpop)
 {
-  /* Before freeing this xpath object, get the 
-     document it is dependent on if its a nodeset. */
-  xmlDocPtr xdoc = ruby_xml_xpath_object_doc(xpop);
-
-  /* Now free the xpath result */
-  xmlXPathFreeObject(xpop);
-
-  /* Now decrement the document object if this was a 
-     XPATH_NODESET.  Note this could free the document,
-     which is why we do it after freeing xpop.*/
-  if (xdoc)
-    ruby_xml_document_decr(xdoc);
+  /* Now free the xpath result but not underlying nodes
+     since those belong to the document. */
+  xmlXPathFreeNodeSetList(xpop);
 }
 
 VALUE
@@ -79,10 +70,6 @@ ruby_xml_xpath_object_wrap(xmlXPathObjectPtr xpop)
 
   switch(xpop->type) {
   case XPATH_NODESET:
-    xdoc = ruby_xml_xpath_object_doc(xpop);
-    if (xdoc)
-      ruby_xml_document_incr(xdoc);
-    
     rval = Data_Wrap_Struct(cXMLXPathObject,
                             ruby_xml_xpath_object_mark,
                             ruby_xml_xpath_object_free,
