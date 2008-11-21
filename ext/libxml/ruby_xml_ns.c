@@ -16,7 +16,7 @@ VALUE cXMLNS;
  * with an node. */
 
 
-VALUE
+static VALUE
 ruby_xml_ns_alloc(VALUE klass) {
   return Data_Wrap_Struct(cXMLNS, NULL, NULL, NULL);
 }
@@ -30,7 +30,7 @@ ruby_xml_ns_alloc(VALUE klass) {
  *
  *  XML::NS.new(node, "xlink", "http://www.w3.org/1999/xlink")
  */
-VALUE
+static VALUE
 ruby_xml_ns_initialize(VALUE self, VALUE node, VALUE href, VALUE prefix) {
   xmlNodePtr xnode;
   xmlChar *xmlPrefix;
@@ -57,7 +57,7 @@ ruby_xml_ns_wrap(xmlNsPtr xns) {
  * 
  * Obtain the namespace's href.
  */
-VALUE
+static VALUE
 ruby_xml_ns_href_get(VALUE self) {
   xmlNsPtr xns;
   Data_Get_Struct(self, xmlNs, xns);
@@ -74,7 +74,7 @@ ruby_xml_ns_href_get(VALUE self) {
  * 
  * Determine whether this namespace has an href.
  */
-VALUE
+static VALUE
 ruby_xml_ns_href_q(VALUE self) {
   xmlNsPtr xns;
   Data_Get_Struct(self, xmlNs, xns);
@@ -91,7 +91,7 @@ ruby_xml_ns_href_q(VALUE self) {
  * 
  * Obtain the next namespace.
  */
-VALUE
+static VALUE
 ruby_xml_ns_next(VALUE self) {
   xmlNsPtr xns;
   Data_Get_Struct(self, xmlNs, xns);
@@ -109,7 +109,7 @@ ruby_xml_ns_next(VALUE self) {
  * 
  * Obtain the namespace's prefix.
  */
-VALUE
+static VALUE
 ruby_xml_ns_prefix_get(VALUE self) {
   xmlNsPtr xns;
   Data_Get_Struct(self, xmlNs, xns);
@@ -126,7 +126,7 @@ ruby_xml_ns_prefix_get(VALUE self) {
  * 
  * Determine whether this namespace has a prefix.
  */
-VALUE
+static VALUE
 ruby_xml_ns_prefix_q(VALUE self) {
   xmlNsPtr xns;
   Data_Get_Struct(self, xmlNs, xns);

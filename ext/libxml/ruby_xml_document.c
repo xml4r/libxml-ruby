@@ -71,7 +71,7 @@ ruby_xml_document_wrap(xmlDocPtr xdoc) {
  * Alocates a new XML::Document, optionally specifying the
  * XML version.
  */
-VALUE
+static VALUE
 ruby_xml_document_alloc(VALUE klass) {
   return Data_Wrap_Struct(klass, ruby_xml_document_mark, ruby_xml_document_free, NULL);
 }
@@ -83,7 +83,7 @@ ruby_xml_document_alloc(VALUE klass) {
  * Initializes a new XML::Document, optionally specifying the
  * XML version.
  */
-VALUE
+static VALUE
 ruby_xml_document_initialize(int argc, VALUE *argv, VALUE self) {
   xmlDocPtr xdoc;
   VALUE xmlver;
@@ -114,7 +114,7 @@ ruby_xml_document_initialize(int argc, VALUE *argv, VALUE self) {
  * 
  * Obtain this document's compression mode identifier.
  */
-VALUE
+static VALUE
 ruby_xml_document_compression_get(VALUE self) {
 #ifdef HAVE_ZLIB_H
   xmlDocPtr xdoc;
@@ -140,7 +140,7 @@ ruby_xml_document_compression_get(VALUE self) {
  * 
  * Set this document's compression mode.
  */
-VALUE
+static VALUE
 ruby_xml_document_compression_set(VALUE self, VALUE num) {
 #ifdef HAVE_ZLIB_H
   xmlDocPtr xdoc;
@@ -173,7 +173,7 @@ ruby_xml_document_compression_set(VALUE self, VALUE num) {
  * 
  * Determine whether this document is compressed.
  */
-VALUE
+static VALUE
 ruby_xml_document_compression_q(VALUE self) {
 #ifdef HAVE_ZLIB_H
   xmlDocPtr xdoc;
@@ -197,7 +197,7 @@ ruby_xml_document_compression_q(VALUE self) {
  * 
  * Get this document's child node.
  */
-VALUE
+static VALUE
 ruby_xml_document_child_get(VALUE self) {
   xmlDocPtr xdoc;
   Data_Get_Struct(self, xmlDoc, xdoc);
@@ -215,7 +215,7 @@ ruby_xml_document_child_get(VALUE self) {
  * 
  * Determine whether this document has a child node.
  */
-VALUE
+static VALUE
 ruby_xml_document_child_q(VALUE self) {
   xmlDocPtr xdoc;
   Data_Get_Struct(self, xmlDoc, xdoc);
@@ -234,7 +234,7 @@ ruby_xml_document_child_q(VALUE self) {
  * Dump this document's XML to the specified IO stream.
  * If no stream is specified, stdout is used.
  */
-VALUE
+static VALUE
 ruby_xml_document_dump(int argc, VALUE *argv, VALUE self) {
   OpenFile *fptr;
   VALUE io;
@@ -272,7 +272,7 @@ ruby_xml_document_dump(int argc, VALUE *argv, VALUE self) {
  * 
  * Debug version of dump.
  */
-VALUE
+static VALUE
 ruby_xml_document_debug_dump(int argc, VALUE *argv, VALUE self) {
 #ifdef LIBXML_DEBUG_ENABLED
   OpenFile *fptr;
@@ -316,7 +316,7 @@ ruby_xml_document_debug_dump(int argc, VALUE *argv, VALUE self) {
  * Debug-dump this document's header to the specified IO stream.
  * If no stream is specified, stdout is used.
  */
-VALUE
+static VALUE
 ruby_xml_document_debug_dump_head(int argc, VALUE *argv, VALUE self) {
 #ifdef LIBXML_DEBUG_ENABLED
   OpenFile *fptr;
@@ -363,7 +363,7 @@ ruby_xml_document_debug_dump_head(int argc, VALUE *argv, VALUE self) {
  * specified, it must be a boolean that determines whether 
  * spacing is used.
  */
-VALUE
+static VALUE
 ruby_xml_document_format_dump(int argc, VALUE *argv, VALUE self) {
   OpenFile *fptr;
   VALUE bool, io;
@@ -418,7 +418,7 @@ ruby_xml_document_format_dump(int argc, VALUE *argv, VALUE self) {
  * 
  * *Deprecated* in favour of format_dump.
  */
-VALUE
+static VALUE
 ruby_xml_document_debug_format_dump(int argc, VALUE *argv, VALUE self) {
   rb_warn("debug_format_dump has been deprecaited, use format_dump instead");
   return(ruby_xml_document_format_dump(argc, argv, self));
@@ -431,7 +431,7 @@ ruby_xml_document_debug_format_dump(int argc, VALUE *argv, VALUE self) {
  * 
  * Obtain the encoding specified by this document.
  */
-VALUE
+static VALUE
 ruby_xml_document_encoding_get(VALUE self) {
   xmlDocPtr xdoc;
 
@@ -449,7 +449,7 @@ ruby_xml_document_encoding_get(VALUE self) {
  * 
  * Set the encoding for this document.
  */
-VALUE
+static VALUE
 ruby_xml_document_encoding_set(VALUE self, VALUE encoding) {
   xmlDocPtr xdoc;
 
@@ -466,7 +466,7 @@ ruby_xml_document_encoding_set(VALUE self, VALUE encoding) {
  * 
  * Obtain the last node.
  */
-VALUE
+static VALUE
 ruby_xml_document_last_get(VALUE self) {
   xmlDocPtr xdoc;
 
@@ -486,7 +486,7 @@ ruby_xml_document_last_get(VALUE self) {
  * 
  * Determine whether there is a last node.
  */
-VALUE
+static VALUE
 ruby_xml_document_last_q(VALUE self) {
   xmlDocPtr xdoc;
 
@@ -505,7 +505,7 @@ ruby_xml_document_last_q(VALUE self) {
  * 
  * Obtain the next node.
  */
-VALUE
+static VALUE
 ruby_xml_document_next_get(VALUE self) {
   xmlDocPtr xdoc;
 
@@ -525,7 +525,7 @@ ruby_xml_document_next_get(VALUE self) {
  * 
  * Determine whether there is a next node.
  */
-VALUE
+static VALUE
 ruby_xml_document_next_q(VALUE self) {
   xmlDocPtr xdoc;
 
@@ -544,7 +544,7 @@ ruby_xml_document_next_q(VALUE self) {
  * 
  * Obtain the parent node.
  */
-VALUE
+static VALUE
 ruby_xml_document_parent_get(VALUE self) {
   xmlDocPtr xdoc;
 
@@ -564,7 +564,7 @@ ruby_xml_document_parent_get(VALUE self) {
  * 
  * Determine whether there is a parent node.
  */
-VALUE
+static VALUE
 ruby_xml_document_parent_q(VALUE self) {
   xmlDocPtr xdoc;
 
@@ -583,7 +583,7 @@ ruby_xml_document_parent_q(VALUE self) {
  * 
  * Obtain the previous node.
  */
-VALUE
+static VALUE
 ruby_xml_document_prev_get(VALUE self) {
   xmlDocPtr xdoc;
 
@@ -603,7 +603,7 @@ ruby_xml_document_prev_get(VALUE self) {
  * 
  * Determine whether there is a previous node.
  */
-VALUE
+static VALUE
 ruby_xml_document_prev_q(VALUE self) {
   xmlDocPtr xdoc;
 
@@ -622,7 +622,7 @@ ruby_xml_document_prev_q(VALUE self) {
  * 
  * Obtain the root node.
  */
-VALUE
+static VALUE
 ruby_xml_document_root_get(VALUE self) {
   xmlDocPtr xdoc;
 
@@ -644,7 +644,7 @@ ruby_xml_document_root_get(VALUE self) {
  * 
  * Set the root node.
  */
-VALUE
+static VALUE
 ruby_xml_document_root_set(VALUE self, VALUE node) {
   xmlDocPtr xdoc;
   xmlNodePtr xroot, xnode;
@@ -674,7 +674,7 @@ ruby_xml_document_root_set(VALUE self, VALUE node) {
  *  format: Specifies whether formatting spaces should be added.
  *  returns: The number of bytes written or -1 in case of error. 
  */
-VALUE
+static VALUE
 ruby_xml_document_save(int argc, VALUE *argv, VALUE self) {
   xmlDocPtr xdoc;
 
@@ -718,7 +718,7 @@ ruby_xml_document_save(int argc, VALUE *argv, VALUE self) {
  * 
  * Determine whether this is a standalone document.
  */
-VALUE
+static VALUE
 ruby_xml_document_standalone_q(VALUE self) {
   xmlDocPtr xdoc;
 
@@ -742,7 +742,7 @@ ruby_xml_document_standalone_q(VALUE self) {
  * The encoding is not applied to the document, but is
  * encoding target of the resulting string.
  */
-VALUE
+static VALUE
 ruby_xml_document_to_s(int argc, VALUE *argv, VALUE self) {
   xmlDocPtr xdoc;
 
@@ -798,7 +798,7 @@ ruby_xml_document_to_s(int argc, VALUE *argv, VALUE self) {
  * 
  * Obtain this document's source URL, if any.
  */
-VALUE
+static VALUE
 ruby_xml_document_url_get(VALUE self) {
   xmlDocPtr xdoc;
 
@@ -816,7 +816,7 @@ ruby_xml_document_url_get(VALUE self) {
  * 
  * Obtain the XML version specified by this document.
  */
-VALUE
+static VALUE
 ruby_xml_document_version_get(VALUE self) {
   xmlDocPtr xdoc;
 
@@ -834,7 +834,7 @@ ruby_xml_document_version_get(VALUE self) {
  * 
  * Process xinclude directives in this document. 
  */
-VALUE
+static VALUE
 ruby_xml_document_xinclude(VALUE self) {
 #ifdef LIBXML_XINCLUDE_ENABLED
   xmlDocPtr xdoc;
@@ -894,7 +894,7 @@ LibXML_validity_warning(void * ctxt, const char * msg, va_list ap)
  * The block is called with two argument, the message and a flag indication
  * if the message is an error (true) or a warning (false).
  */
-VALUE
+static VALUE
 ruby_xml_document_validate_schema(VALUE self, VALUE schema) {
   xmlSchemaValidCtxtPtr vptr;
   xmlDocPtr xdoc;
@@ -931,7 +931,7 @@ ruby_xml_document_validate_schema(VALUE self, VALUE schema) {
  * The block is called with two argument, the message and a flag indication
  * if the message is an error (true) or a warning (false).
  */
-VALUE
+static VALUE
 ruby_xml_document_validate_relaxng(VALUE self, VALUE relaxng) {
   xmlRelaxNGValidCtxtPtr vptr;
   xmlDocPtr xdoc;
@@ -965,7 +965,7 @@ ruby_xml_document_validate_relaxng(VALUE self, VALUE relaxng) {
  * 
  * Validate this document against the specified XML::DTD.
  */
-VALUE
+static VALUE
 ruby_xml_document_validate_dtd(VALUE self, VALUE dtd) {
   VALUE error = Qnil;
   xmlValidCtxt ctxt;

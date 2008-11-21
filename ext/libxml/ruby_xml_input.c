@@ -34,7 +34,7 @@ ID IO_ATTR;
  * 
  * Initialize a new intput object.
  */
-VALUE
+static VALUE
 ruby_xml_input_initialize(VALUE self) {
   rb_ivar_set(self, ENCODING_ATTR, INT2NUM(XML_CHAR_ENCODING_UTF8));
   return self;
@@ -47,7 +47,7 @@ ruby_xml_input_initialize(VALUE self) {
  * 
  * Obtain the FILE this parser will read from.
  */
-VALUE
+static VALUE
 ruby_xml_input_file_get(VALUE self) {
   return rb_ivar_get(self, FILE_ATTR);
 }
@@ -58,7 +58,7 @@ ruby_xml_input_file_get(VALUE self) {
  * 
  * Set the FILE this parser will read from.
  */
-VALUE
+static VALUE
 ruby_xml_input_file_set(VALUE self, VALUE FILE) {
   Check_Type(FILE, T_STRING);
   rb_ivar_set(self, FILE_ATTR, FILE);
@@ -75,7 +75,7 @@ ruby_xml_input_file_set(VALUE self, VALUE FILE) {
  * 
  * Obtain the string this parser will read from.
  */
-VALUE
+static VALUE
 ruby_xml_input_string_get(VALUE self) {
   return rb_ivar_get(self, STRING_ATTR);
 }
@@ -87,7 +87,7 @@ ruby_xml_input_string_get(VALUE self) {
  * 
  * Set the string this parser will read from.
  */
-VALUE
+static VALUE
 ruby_xml_input_string_set(VALUE self, VALUE string) {
   Check_Type(string, T_STRING);
   rb_ivar_set(self, FILE_ATTR, Qnil);
@@ -103,7 +103,7 @@ ruby_xml_input_string_set(VALUE self, VALUE string) {
  * 
  * Obtain the document this parser will read from.
  */
-VALUE
+static VALUE
 ruby_xml_input_document_get(VALUE self) {
   return rb_ivar_get(self, DOCUMENT_ATTR);
 }
@@ -114,7 +114,7 @@ ruby_xml_input_document_get(VALUE self) {
  * 
  * Set the document this parser will read from.
  */
-VALUE
+static VALUE
 ruby_xml_input_document_set(VALUE self, VALUE document) {
   rb_ivar_set(self, FILE_ATTR, Qnil);
   rb_ivar_set(self, STRING_ATTR, Qnil);
@@ -129,7 +129,7 @@ ruby_xml_input_document_set(VALUE self, VALUE document) {
  * 
  * Obtain the IO instance this parser works with.
  */
-VALUE
+static VALUE
 ruby_xml_input_io_get(VALUE self) {
   return rb_ivar_get(self, IO_ATTR);
 }
@@ -140,7 +140,7 @@ ruby_xml_input_io_get(VALUE self) {
  * 
  * Set the IO instance this parser works with.
  */
-VALUE
+static VALUE
 ruby_xml_input_io_set(VALUE self, VALUE io) {
   if (!rb_obj_is_kind_of(io, rb_cIO))
     rb_raise(rb_eTypeError, "Invalid argument, must be an IO object");

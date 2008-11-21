@@ -55,7 +55,7 @@ ruby_xml_dtd_mark(ruby_xml_dtd *rxdtd) {
  * Create a new Dtd from the specified public and system
  * identifiers.
  */
-VALUE
+static VALUE
 ruby_xml_dtd_initialize(int argc, VALUE *argv, VALUE class) {
   ruby_xml_dtd *rxdtd;
   VALUE external, system, dtd_string;

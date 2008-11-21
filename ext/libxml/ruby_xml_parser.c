@@ -44,7 +44,7 @@ ctxtRead(FILE *f, char * buf, size_t len) {
  * 
  * Initiliazes instance of parser.
  */
-VALUE
+static VALUE
 ruby_xml_parser_initialize(VALUE self) {
   VALUE input = rb_class_new_instance(0, NULL, cXMLInput);
   rb_iv_set(self, "@input", input);
@@ -52,8 +52,7 @@ ruby_xml_parser_initialize(VALUE self) {
   return self;
 }
 
-
-xmlParserCtxtPtr
+static xmlParserCtxtPtr
 ruby_xml_parser_filename_ctxt(VALUE input) {
   xmlParserCtxtPtr ctxt;
   int retry_count = 0;
@@ -74,13 +73,13 @@ ruby_xml_parser_filename_ctxt(VALUE input) {
   return ctxt;
 }
 
-xmlParserCtxtPtr
+static xmlParserCtxtPtr
 ruby_xml_parser_str_ctxt(VALUE input) {
   VALUE str = rb_ivar_get(input, STRING_ATTR);
   return xmlCreateMemoryParserCtxt(StringValuePtr(str), RSTRING_LEN(str));
 }
 
-xmlParserCtxtPtr
+static xmlParserCtxtPtr
 ruby_xml_parser_io_ctxt(VALUE input) {
   VALUE io = rb_ivar_get(input, IO_ATTR);
   VALUE encoding = rb_ivar_get(input, ENCODING_ATTR);
@@ -106,7 +105,7 @@ ruby_xml_parser_io_ctxt(VALUE input) {
  * it's content. If an error occurs, XML::Parser::ParseError
  * is thrown.
  */
-VALUE
+static VALUE
 ruby_xml_parser_parse(VALUE self) {
   xmlParserCtxtPtr ctxt;
   VALUE context;

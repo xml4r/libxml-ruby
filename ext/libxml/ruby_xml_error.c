@@ -73,7 +73,7 @@ ruby_xml_error_reset_handler(VALUE self)
 }
 
 
-VALUE
+static VALUE
 ruby_xml_error_wrap(xmlErrorPtr xerror) {
   VALUE result = Qnil;
   if (xerror->message)

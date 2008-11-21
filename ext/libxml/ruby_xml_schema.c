@@ -43,7 +43,7 @@ ruby_xml_schema_mark(ruby_xml_schema *rxschema) {
   return;
 }
 
-void
+static void
 ruby_xml_schema_free(ruby_xml_schema *rxschema) {
   if (rxschema->schema != NULL) {
     xmlSchemaFree(rxschema->schema);
@@ -59,7 +59,7 @@ ruby_xml_schema_free(ruby_xml_schema *rxschema) {
  * 
  * Create a new schema from the specified URI.
  */
-VALUE
+static VALUE
 ruby_xml_schema_init_from_uri(VALUE class, VALUE uri) {
   xmlSchemaParserCtxtPtr parser;
   ruby_xml_schema *schema;
@@ -80,7 +80,7 @@ ruby_xml_schema_init_from_uri(VALUE class, VALUE uri) {
  * 
  * Create a new schema from the specified document.
  */
-VALUE
+static VALUE
 ruby_xml_schema_init_from_document(VALUE class, VALUE document) {
   xmlDocPtr xdoc;
   ruby_xml_schema *schema;
@@ -102,7 +102,7 @@ ruby_xml_schema_init_from_document(VALUE class, VALUE document) {
  * 
  * Create a new schema using the specified string.
  */
-VALUE
+static VALUE
 ruby_xml_schema_init_from_string(VALUE self, VALUE schema_str) {
   xmlSchemaParserCtxtPtr  parser;
   ruby_xml_schema *rxschema;

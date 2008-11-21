@@ -60,12 +60,12 @@ VALUE cbidOnExternalSubset;
 
 #include "sax_parser_callbacks.inc"
 
-void
+static void
 ruby_xml_sax_parser_free(ruby_xml_sax_parser *rxsp) {
   xfree(rxsp);
 }
 
-void
+static void
 ruby_xml_sax_parser_mark(ruby_xml_sax_parser *rxsp) {
   if (rxsp->callbackHandler != Qnil) {
     rb_gc_mark(rxsp->callbackHandler);
@@ -80,7 +80,7 @@ ruby_xml_sax_parser_mark(ruby_xml_sax_parser *rxsp) {
   }
 }
 
-VALUE
+static VALUE
 ruby_xml_sax_parser_alloc(VALUE klass) {
   ruby_xml_sax_parser *rxsp = ALLOC(ruby_xml_sax_parser);
   rxsp->xsh = &rubySAXHandlerStruct;
@@ -101,7 +101,7 @@ ruby_xml_sax_parser_alloc(VALUE klass) {
  * 
  * Initiliazes instance of parser.
  */
-VALUE
+static VALUE
 ruby_xml_sax_parser_initialize(VALUE self) {
   VALUE input = rb_class_new_instance(0, NULL, cXMLInput);
   rb_iv_set(self, "@input", input);
@@ -114,7 +114,7 @@ ruby_xml_sax_parser_initialize(VALUE self) {
  * 
  * Obtain the callbacks used by this parser.
  */
-VALUE
+static VALUE
 ruby_xml_sax_parser_callbacks_get(VALUE self) {
   ruby_xml_sax_parser *rxsp;
   Data_Get_Struct(self, ruby_xml_sax_parser, rxsp);
@@ -131,7 +131,7 @@ ruby_xml_sax_parser_callbacks_get(VALUE self) {
  * XML::SaxParser::Callbacks module, overriding the callbacks it
  * wishes to process.
  */
-VALUE
+static VALUE
 ruby_xml_sax_parser_callbacks_set(VALUE self, VALUE callbacks) {
   ruby_xml_sax_parser *rxsp;
   Data_Get_Struct(self, ruby_xml_sax_parser, rxsp);
@@ -146,7 +146,7 @@ ruby_xml_sax_parser_callbacks_set(VALUE self, VALUE callbacks) {
  * Parse the input XML, generating callbacks to the object
  * registered via the +callbacks+ attributesibute.
  */
-VALUE
+static VALUE
 ruby_xml_sax_parser_parse(VALUE self) {
   char *str;
   int status = 1;

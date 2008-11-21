@@ -24,13 +24,13 @@
 
 VALUE cXMLXPathContext;
 
-void
+static void
 ruby_xml_xpath_context_free(xmlXPathContextPtr ctxt) {
   xmlXPathFreeContext(ctxt);
 }
 
 
-VALUE
+static VALUE
 ruby_xml_xpath_context_alloc(VALUE klass) {
   return Data_Wrap_Struct(cXMLXPathContext,
 			  NULL,
@@ -49,7 +49,7 @@ ruby_xml_xpath_context_alloc(VALUE klass) {
  *  nodes = XPath::Object.new('//first', context)
  *  nodes.length == 1
  */
-VALUE
+static VALUE
 ruby_xml_xpath_context_initialize(VALUE self, VALUE node) {
   xmlDocPtr xdoc;
   VALUE document;
@@ -91,7 +91,7 @@ ruby_xml_xpath_context_initialize(VALUE self, VALUE node) {
  
  *   context.register_namespace('xi', 'http://www.w3.org/2001/XInclude')
  */
-VALUE
+static VALUE
 ruby_xml_xpath_context_register_namespace(VALUE self, VALUE prefix, VALUE uri) {
   xmlXPathContextPtr ctxt;
 
@@ -117,7 +117,7 @@ ruby_xml_xpath_context_register_namespace(VALUE self, VALUE prefix, VALUE uri) {
  *  context = XPath::Context.new(doc)
  *  context.register_namespaces_from_node(doc.root)
  */
-VALUE
+static VALUE
 ruby_xml_xpath_context_register_namespaces_from_node(VALUE self, VALUE node) {
   xmlXPathContextPtr xctxt;
   xmlNodePtr xnode;
@@ -183,7 +183,7 @@ iterate_ns_hash(st_data_t prefix, st_data_t uri, st_data_t self)
  *   context.register_namespaces('xlink' => 'http://www.w3.org/1999/xlink',
  *                                  'xi' => 'http://www.w3.org/2001/XInclude')
  */
-VALUE
+static VALUE
 ruby_xml_xpath_context_register_namespaces(VALUE self, VALUE nslist) {
   char *cp;
   long i;
@@ -227,7 +227,7 @@ ruby_xml_xpath_context_register_namespaces(VALUE self, VALUE nslist) {
  *  doc = XML::Document.string('<header><first>hi</first></header>')
  *  context.node = doc.root.first
  */
-VALUE
+static VALUE
 ruby_xml_xpath_context_node_set(VALUE self, VALUE node) {
   xmlXPathContextPtr xctxt;
   xmlNodePtr xnode;
@@ -244,7 +244,7 @@ ruby_xml_xpath_context_node_set(VALUE self, VALUE node) {
  * 
  * Find nodes matching the specified XPath expression
  */
-VALUE
+static VALUE
 ruby_xml_xpath_context_find(VALUE self, VALUE xpath_expr) {
   xmlXPathContextPtr xctxt;
   xmlXPathObjectPtr xobject;
@@ -278,7 +278,6 @@ ruby_xml_xpath_context_find(VALUE self, VALUE xpath_expr) {
   rb_iv_set(result, "@context", self);
   return result;  
 }
-
 
 void
 ruby_init_xml_xpath_context(void) {

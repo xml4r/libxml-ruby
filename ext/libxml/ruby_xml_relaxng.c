@@ -43,7 +43,7 @@ ruby_xml_relaxng_mark(ruby_xml_relaxng *rxrelaxng) {
   return;
 }
 
-void
+static void
 ruby_xml_relaxng_free(ruby_xml_relaxng *rxrelaxng) {
   if (rxrelaxng->relaxng != NULL) {
     xmlRelaxNGFree(rxrelaxng->relaxng);
@@ -59,7 +59,7 @@ ruby_xml_relaxng_free(ruby_xml_relaxng *rxrelaxng) {
  * 
  * Create a new relaxng from the specified URI.
  */
-VALUE
+static VALUE
 ruby_xml_relaxng_init_from_uri(VALUE class, VALUE uri) {
   xmlRelaxNGParserCtxtPtr parser;
   ruby_xml_relaxng *relaxng;
@@ -80,7 +80,7 @@ ruby_xml_relaxng_init_from_uri(VALUE class, VALUE uri) {
  * 
  * Create a new relaxng from the specified document.
  */
-VALUE
+static VALUE
 ruby_xml_relaxng_init_from_document(VALUE class, VALUE document) {
   xmlDocPtr xdoc;
   ruby_xml_relaxng *relaxng;
@@ -102,7 +102,7 @@ ruby_xml_relaxng_init_from_document(VALUE class, VALUE document) {
  * 
  * Create a new relaxng using the specified string.
  */
-VALUE
+static VALUE
 ruby_xml_relaxng_init_from_string(VALUE self, VALUE relaxng_str) {
   xmlRelaxNGParserCtxtPtr  parser;
   ruby_xml_relaxng *rxrelaxng;

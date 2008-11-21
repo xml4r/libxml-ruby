@@ -14,7 +14,7 @@ VALUE mXML;
  * 
  * Dump all the global catalog content stdout.
  */
-VALUE
+static VALUE
 ruby_xml_catalog_dump(VALUE self) {
   xmlCatalogDump(stdout);
   return(Qtrue);
@@ -27,7 +27,7 @@ ruby_xml_catalog_dump(VALUE self) {
  * 
  * Remove the specified resource catalog.
  */
-VALUE
+static VALUE
 ruby_xml_catalog_remove(VALUE self, VALUE cat) {
   Check_Type(cat, T_STRING);
   xmlCatalogRemove((xmlChar *)StringValuePtr(cat));
@@ -42,7 +42,7 @@ ruby_xml_catalog_remove(VALUE self, VALUE cat) {
  * Check LIBXML version matches version the bindings
  * were compiled to. Throws an exception if not.
  */
-VALUE
+static VALUE
 ruby_xml_check_lib_versions(VALUE class) {
   xmlCheckVersion(LIBXML_VERSION);
   return(Qtrue);
@@ -55,7 +55,7 @@ ruby_xml_check_lib_versions(VALUE class) {
  * 
  * Determine whether libxml regexp automata support is enabled.
  */
-VALUE
+static VALUE
 ruby_xml_enabled_automata_q(VALUE class) {
 #ifdef LIBXML_AUTOMATA_ENABLED
   return(Qtrue);
@@ -72,7 +72,7 @@ ruby_xml_enabled_automata_q(VALUE class) {
  * Determine whether libxml 'canonical XML' support is enabled.
  * See "Canonical XML" (http://www.w3.org/TR/xml-c14n)
  */
-VALUE
+static VALUE
 ruby_xml_enabled_c14n_q(VALUE class) {
 #ifdef LIBXML_C14N_ENABLED
   return(Qtrue);
@@ -88,7 +88,7 @@ ruby_xml_enabled_c14n_q(VALUE class) {
  * 
  * Determine whether libxml resource catalog support is enabled.
  */
-VALUE
+static VALUE
 ruby_xml_enabled_catalog_q(VALUE class) {
 #ifdef LIBXML_CATALOG_ENABLED
   return(Qtrue);
@@ -104,7 +104,7 @@ ruby_xml_enabled_catalog_q(VALUE class) {
  * 
  * Determine whether libxml debugging support is enabled.
  */
-VALUE
+static VALUE
 ruby_xml_enabled_debug_q(VALUE class) {
 #ifdef LIBXML_DEBUG_ENABLED
   return(Qtrue);
@@ -120,7 +120,7 @@ ruby_xml_enabled_debug_q(VALUE class) {
  * 
  * Determine whether libxml docbook support is enabled.
  */
-VALUE
+static VALUE
 ruby_xml_enabled_docbook_q(VALUE class) {
 #ifdef LIBXML_DOCB_ENABLED
   return(Qtrue);
@@ -136,7 +136,7 @@ ruby_xml_enabled_docbook_q(VALUE class) {
  * 
  * Determine whether libxml ftp client support is enabled.
  */
-VALUE
+static VALUE
 ruby_xml_enabled_ftp_q(VALUE class) {
 #ifdef LIBXML_FTP_ENABLED
   return(Qtrue);
@@ -152,7 +152,7 @@ ruby_xml_enabled_ftp_q(VALUE class) {
  * 
  * Determine whether libxml http client support is enabled.
  */
-VALUE
+static VALUE
 ruby_xml_enabled_http_q(VALUE class) {
 #ifdef LIBXML_HTTP_ENABLED
   return(Qtrue);
@@ -168,7 +168,7 @@ ruby_xml_enabled_http_q(VALUE class) {
  * 
  * Determine whether libxml html support is enabled.
  */
-VALUE
+static VALUE
 ruby_xml_enabled_html_q(VALUE class) {
 #ifdef LIBXML_HTML_ENABLED
   return(Qtrue);
@@ -184,7 +184,7 @@ ruby_xml_enabled_html_q(VALUE class) {
  * 
  * Determine whether libxml iconv support is enabled.
  */
-VALUE
+static VALUE
 ruby_xml_enabled_iconv_q(VALUE class) {
 #ifdef LIBXML_ICONV_ENABLED
   return(Qtrue);
@@ -201,7 +201,7 @@ ruby_xml_enabled_iconv_q(VALUE class) {
  * Determine whether libxml memory location debugging support
  * is enabled.
  */
-VALUE
+static VALUE
 ruby_xml_enabled_memory_debug_location_q(VALUE class) {
 #ifdef DEBUG_MEMORY_LOCATION
   return(Qtrue);
@@ -217,7 +217,7 @@ ruby_xml_enabled_memory_debug_location_q(VALUE class) {
  * 
  * Determine whether libxml regular expression support is enabled.
  */
-VALUE
+static VALUE
 ruby_xml_enabled_regexp_q(VALUE class) {
 #ifdef LIBXML_REGEXP_ENABLED
   return(Qtrue);
@@ -233,7 +233,7 @@ ruby_xml_enabled_regexp_q(VALUE class) {
  * 
  * Determine whether libxml schema support is enabled.
  */
-VALUE
+static VALUE
 ruby_xml_enabled_schemas_q(VALUE class) {
 #ifdef LIBXML_SCHEMAS_ENABLED
   return(Qtrue);
@@ -250,7 +250,7 @@ ruby_xml_enabled_schemas_q(VALUE class) {
  * Determine whether libxml thread-safe semantics support 
  * is enabled (I think?).
  */
-VALUE
+static VALUE
 ruby_xml_enabled_thread_q(VALUE class) {
 #ifdef LIBXML_THREAD_ENABLED
   return(Qtrue);
@@ -266,7 +266,7 @@ ruby_xml_enabled_thread_q(VALUE class) {
  * 
  * Determine whether libxml unicode support is enabled.
  */
-VALUE
+static VALUE
 ruby_xml_enabled_unicode_q(VALUE class) {
 #ifdef LIBXML_UNICODE_ENABLED
   return(Qtrue);
@@ -282,7 +282,7 @@ ruby_xml_enabled_unicode_q(VALUE class) {
  * 
  * Determine whether libxml xinclude support is enabled.
  */
-VALUE
+static VALUE
 ruby_xml_enabled_xinclude_q(VALUE class) {
 #ifdef LIBXML_XINCLUDE_ENABLED
   return(Qtrue);
@@ -298,7 +298,7 @@ ruby_xml_enabled_xinclude_q(VALUE class) {
  * 
  * Determine whether libxml xpath support is enabled.
  */
-VALUE
+static VALUE
 ruby_xml_enabled_xpath_q(VALUE class) {
 #ifdef LIBXML_XPATH_ENABLED
   return(Qtrue);
@@ -314,7 +314,7 @@ ruby_xml_enabled_xpath_q(VALUE class) {
  * 
  * Determine whether libxml xpointer support is enabled.
  */
-VALUE
+static VALUE
 ruby_xml_enabled_xpointer_q(VALUE class) {
 #ifdef LIBXML_XPTR_ENABLED
   return(Qtrue);
@@ -330,7 +330,7 @@ ruby_xml_enabled_xpointer_q(VALUE class) {
  * 
  * Determine whether libxml zlib support is enabled.
  */
-VALUE
+static VALUE
 ruby_xml_enabled_zlib_q(VALUE class) {
 #ifdef HAVE_ZLIB_H
   return(Qtrue);
@@ -347,7 +347,7 @@ ruby_xml_enabled_zlib_q(VALUE class) {
  * Determine whether included-entity debugging is enabled.
  * (Requires Libxml to be compiled with debugging support)
  */
-VALUE
+static VALUE
 ruby_xml_debug_entities_get(VALUE class) {
 #ifdef LIBXML_DEBUG_ENABLED
   if (xmlParserDebugEntities)
@@ -368,7 +368,7 @@ ruby_xml_debug_entities_get(VALUE class) {
  * Enable or disable included-entity debugging.
  * (Requires Libxml to be compiled with debugging support)
  */
-VALUE
+static VALUE
 ruby_xml_debug_entities_set(VALUE class, VALUE bool) {
 #ifdef LIBXML_DEBUG_ENABLED
   if (TYPE(bool) == T_FALSE) {
@@ -390,7 +390,7 @@ ruby_xml_debug_entities_set(VALUE class, VALUE bool) {
  * 
  * Determine whether parsers retain whitespace by default.
  */
-VALUE
+static VALUE
 ruby_xml_default_keep_blanks_get(VALUE class) {
   if (xmlKeepBlanksDefaultValue)
     return(Qtrue);
@@ -405,7 +405,7 @@ ruby_xml_default_keep_blanks_get(VALUE class) {
  * 
  * Controls whether parsers retain whitespace by default.
  */
-VALUE
+static VALUE
 ruby_xml_default_keep_blanks_set(VALUE class, VALUE bool) {
   if (TYPE(bool) == T_FALSE) {
     xmlKeepBlanksDefaultValue = 0;
@@ -425,7 +425,7 @@ ruby_xml_default_keep_blanks_set(VALUE class, VALUE bool) {
  * 
  * Determine whether parsers load external DTDs by default.
  */
-VALUE
+static VALUE
 ruby_xml_default_load_external_dtd_get(VALUE class) {
   if (xmlLoadExtDtdDefaultValue)
     return(Qtrue);
@@ -440,7 +440,7 @@ ruby_xml_default_load_external_dtd_get(VALUE class) {
  * 
  * Controls whether parsers load external DTDs by default.
  */
-VALUE
+static VALUE
 ruby_xml_default_load_external_dtd_set(VALUE class, VALUE bool) {
   if (TYPE(bool) == T_FALSE) {
     xmlLoadExtDtdDefaultValue = 0;
@@ -458,7 +458,7 @@ ruby_xml_default_load_external_dtd_set(VALUE class, VALUE bool) {
  * 
  * Determine whether parsers retain line-numbers by default.
  */
-VALUE
+static VALUE
 ruby_xml_default_line_numbers_get(VALUE class) {
   if (xmlLineNumbersDefaultValue)
     return(Qtrue);
@@ -473,7 +473,7 @@ ruby_xml_default_line_numbers_get(VALUE class) {
  * 
  * Controls whether parsers retain line-numbers by default.
  */
-VALUE
+static VALUE
 ruby_xml_default_line_numbers_set(VALUE class, VALUE bool) {
   if (TYPE(bool) == T_FALSE) {
     xmlLineNumbersDefault(0);
@@ -491,7 +491,7 @@ ruby_xml_default_line_numbers_set(VALUE class, VALUE bool) {
  * 
  * Determine whether parsers are pedantic by default.
  */
-VALUE
+static VALUE
 ruby_xml_default_pedantic_parser_get(VALUE class) {
   if (xmlPedanticParserDefaultValue)
     return(Qtrue);
@@ -506,7 +506,7 @@ ruby_xml_default_pedantic_parser_get(VALUE class) {
  * 
  * Controls whether parsers are pedantic by default.
  */
-VALUE
+static VALUE
 ruby_xml_default_pedantic_parser_set(VALUE class, VALUE bool) {
   if (TYPE(bool) == T_FALSE) {
     xmlPedanticParserDefault(0);
@@ -525,7 +525,7 @@ ruby_xml_default_pedantic_parser_set(VALUE class, VALUE bool) {
  * Determine whether parsers perform inline entity substitution
  * (for external entities) by default.
  */
-VALUE
+static VALUE
 ruby_xml_default_substitute_entities_get(VALUE class) {
   if (xmlSubstituteEntitiesDefaultValue)
     return(Qtrue);
@@ -541,7 +541,7 @@ ruby_xml_default_substitute_entities_get(VALUE class) {
  * Controls whether parsers perform inline entity substitution
  * (for external entities) by default.
  */
-VALUE
+static VALUE
 ruby_xml_default_substitute_entities_set(VALUE class, VALUE bool) {
   if (TYPE(bool) == T_FALSE) {
     xmlSubstituteEntitiesDefault(0);
@@ -560,7 +560,7 @@ ruby_xml_default_substitute_entities_set(VALUE class, VALUE bool) {
  * Obtain the default string used by parsers to indent the XML tree
  * for output.
  */
-VALUE
+static VALUE
 ruby_xml_default_tree_indent_string_get(VALUE class) {
   if (xmlTreeIndentString == NULL)
     return(Qnil);
@@ -576,7 +576,7 @@ ruby_xml_default_tree_indent_string_get(VALUE class) {
  * Set the default string used by parsers to indent the XML tree
  * for output.
  */
-VALUE
+static VALUE
 ruby_xml_default_tree_indent_string_set(VALUE class, VALUE string) {
   Check_Type(string, T_STRING);
   xmlTreeIndentString = xmlStrdup(StringValuePtr(string));
@@ -590,7 +590,7 @@ ruby_xml_default_tree_indent_string_set(VALUE class, VALUE string) {
  * 
  * Determine whether parsers perform XML validation by default.
  */
-VALUE
+static VALUE
 ruby_xml_default_validity_checking_get(VALUE class) {
   if (xmlDoValidityCheckingDefaultValue)
     return(Qtrue);
@@ -605,7 +605,7 @@ ruby_xml_default_validity_checking_get(VALUE class) {
  * 
  * Controls whether parsers perform XML validation by default.
  */
-VALUE
+static VALUE
 ruby_xml_default_validity_checking_set(VALUE class, VALUE bool) {
   if (TYPE(bool) == T_FALSE) {
     xmlDoValidityCheckingDefaultValue = 0;
@@ -623,7 +623,7 @@ ruby_xml_default_validity_checking_set(VALUE class, VALUE bool) {
  * 
  * Determine whether parsers output warnings by default.
  */
-VALUE
+static VALUE
 ruby_xml_default_warnings_get(VALUE class) {
   if (xmlGetWarningsDefaultValue)
     return(Qtrue);
@@ -638,7 +638,7 @@ ruby_xml_default_warnings_get(VALUE class) {
  * 
  * Controls whether parsers output warnings by default.
  */
-VALUE
+static VALUE
 ruby_xml_default_warnings_set(VALUE class, VALUE bool) {
   if (TYPE(bool) == T_FALSE) {
     xmlGetWarningsDefaultValue = 0;
@@ -657,7 +657,7 @@ ruby_xml_default_warnings_set(VALUE class, VALUE bool) {
  * Determine whether parsers use Zlib compression by default
  * (requires libxml to be compiled with Zlib support).
  */
-VALUE
+static VALUE
 ruby_xml_default_compression_get(VALUE class) {
 #ifdef HAVE_ZLIB_H
   return(INT2FIX(xmlGetCompressMode()));
@@ -675,7 +675,7 @@ ruby_xml_default_compression_get(VALUE class) {
  * Controls whether parsers use Zlib compression by default
  * (requires libxml to be compiled with Zlib support).
  */
-VALUE
+static VALUE
 ruby_xml_default_compression_set(VALUE class, VALUE num) {
 #ifdef HAVE_ZLIB_H
   Check_Type(num, T_FIXNUM);
@@ -695,7 +695,7 @@ ruby_xml_default_compression_set(VALUE class, VALUE num) {
  * Obtains an array of strings representing features supported 
  * (and enabled) by the installed libxml.
  */
-VALUE
+static VALUE
 ruby_xml_features(VALUE class) {
   VALUE arr, str;
   int i, len = MAX_LIBXML_FEATURES_LEN;
@@ -729,7 +729,7 @@ ruby_xml_features(VALUE class) {
  * Determines whether XML output will be indented 
  * (using the string supplied to +default_indent_tree_string+)
  */
-VALUE
+static VALUE
 ruby_xml_indent_tree_output_get(VALUE class) {
   if (xmlIndentTreeOutput)
     return(Qtrue);
@@ -745,7 +745,7 @@ ruby_xml_indent_tree_output_get(VALUE class) {
  * Controls whether XML output will be indented 
  * (using the string supplied to +default_indent_tree_string+)
  */
-VALUE
+static VALUE
 ruby_xml_indent_tree_output_set(VALUE class, VALUE bool) {
   if (TYPE(bool) == T_TRUE) {
     xmlIndentTreeOutput = 1;
@@ -765,7 +765,7 @@ ruby_xml_indent_tree_output_set(VALUE class, VALUE bool) {
  * Perform a parser memory dump (requires memory debugging 
  * support in libxml).
  */
-VALUE
+static VALUE
 ruby_xml_memory_dump(VALUE self) {
 #ifdef DEBUG_MEMORY_LOCATION
   xmlMemoryDump();
@@ -784,7 +784,7 @@ ruby_xml_memory_dump(VALUE self) {
  * Perform a parser memory dump (requires memory debugging 
  * support in libxml).
  */
-VALUE
+static VALUE
 ruby_xml_memory_used(VALUE self) {
 #ifdef DEBUG_MEMORY_LOCATION
   return(INT2NUM(xmlMemUsed()));

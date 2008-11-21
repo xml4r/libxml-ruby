@@ -24,7 +24,7 @@ static ID CONTEXT_ATTR;
  * 
  * Initializes a new parser instance with no pre-determined source.
  */
-VALUE
+static VALUE
 ruby_xml_html_parser_initialize(VALUE self) {
   VALUE input = rb_class_new_instance(0, NULL, cXMLInput);
   rb_iv_set(self, "@input", input);
@@ -75,7 +75,7 @@ ruby_xml_html_parser_io_ctxt(VALUE input) {
  * it's content. If an error occurs, XML::Parser::ParseError
  * is thrown.
  */
-VALUE
+static VALUE
 ruby_xml_html_parser_parse(VALUE self) {
   xmlParserCtxtPtr ctxt;
   VALUE context;

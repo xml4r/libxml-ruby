@@ -16,7 +16,7 @@ VALUE cXMLXPointer;
 */
 
 
-VALUE
+static VALUE
 ruby_xml_xpointer_point(VALUE class, VALUE rnode, VALUE xptr_str) {
 #ifdef LIBXML_XPTR_ENABLED
   xmlNodePtr xnode;
@@ -51,7 +51,6 @@ ruby_xml_xpointer_point(VALUE class, VALUE rnode, VALUE xptr_str) {
 #endif
 }
 
-
 VALUE
 ruby_xml_xpointer_point2(VALUE node, VALUE xptr_str) {
   return(ruby_xml_xpointer_point(cXMLXPointer, node, xptr_str));
@@ -65,7 +64,7 @@ ruby_xml_xpointer_point2(VALUE node, VALUE xptr_str) {
  * Create an xpath representing the range between the supplied
  * start and end node.
  */
-VALUE
+static VALUE
 ruby_xml_xpointer_range(VALUE class, VALUE rstart, VALUE rend) {
 #ifdef LIBXML_XPTR_ENABLED
   xmlNodePtr start, end;

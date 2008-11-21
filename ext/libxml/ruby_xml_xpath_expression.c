@@ -23,12 +23,12 @@
 
 VALUE cXMLXPathExpression;
 
-void
+static void
 ruby_xml_xpath_expression_free(xmlXPathCompExprPtr expr) {
   xmlXPathFreeCompExpr(expr);
 }
 
-VALUE
+static VALUE
 ruby_xml_xpath_expression_alloc(VALUE klass) {
   return Data_Wrap_Struct(cXMLXPathExpression,
 						  NULL,
@@ -46,7 +46,7 @@ ruby_xml_xpath_expression_alloc(VALUE klass) {
  *  expr = XPath::Expression.new('//first')
  *  nodes = doc.find(expr)
  */
-VALUE
+static VALUE
 ruby_xml_xpath_expression_initialize(VALUE self, VALUE expression) {
   xmlXPathCompExprPtr compexpr = xmlXPathCompile(StringValueCStr(expression));  
 

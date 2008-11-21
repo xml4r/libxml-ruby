@@ -12,7 +12,7 @@
 VALUE cXMLXPathObject;
 
 
-xmlDocPtr
+static xmlDocPtr
 ruby_xml_xpath_object_doc(xmlXPathObjectPtr xpop)
 {
   xmlDocPtr result = NULL;
@@ -32,7 +32,7 @@ ruby_xml_xpath_object_doc(xmlXPathObjectPtr xpop)
   return (*nodes)->doc;
 }
 
-void
+static void
 ruby_xml_xpath_object_mark(xmlXPathObjectPtr xpop)
 {
   int i;
@@ -51,7 +51,7 @@ ruby_xml_xpath_object_mark(xmlXPathObjectPtr xpop)
   }
 }
 
-void
+static void
 ruby_xml_xpath_object_free(xmlXPathObjectPtr xpop)
 {
   /* Now free the xpath result but not underlying nodes
@@ -126,7 +126,7 @@ ruby_xml_xpath_object_tabref(xmlXPathObjectPtr xpop, int apos) {
  * 
  * Obtain an array of the nodes in this set.
  */
-VALUE
+static VALUE
 ruby_xml_xpath_object_to_a(VALUE self)
 {
   VALUE set_ary, nodeobj;
@@ -152,7 +152,7 @@ ruby_xml_xpath_object_to_a(VALUE self)
  *
  * Determine whether this nodeset is empty (contains no nodes).
  */
-VALUE
+static VALUE
 ruby_xml_xpath_object_empty_q(VALUE self) {
   xmlXPathObjectPtr xpop;
 
@@ -170,7 +170,7 @@ ruby_xml_xpath_object_empty_q(VALUE self) {
  * 
  * Call the supplied block for each node in this set.
  */
-VALUE
+static VALUE
 ruby_xml_xpath_object_each(VALUE self)
 {
   xmlXPathObjectPtr xpop;
@@ -193,7 +193,7 @@ ruby_xml_xpath_object_each(VALUE self)
  *
  * Returns the first node in this node set, or nil if none exist.
  */
-VALUE
+static VALUE
 ruby_xml_xpath_object_first(VALUE self) {
   if ( ruby_xml_xpath_object_empty_q(self) == Qtrue )
     return Qnil;
@@ -207,7 +207,7 @@ ruby_xml_xpath_object_first(VALUE self) {
  *
  * array index into set of nodes
  */
-VALUE
+static VALUE
 ruby_xml_xpath_object_aref(VALUE self, VALUE aref) {
   if ( ruby_xml_xpath_object_empty_q(self) == Qtrue )
     return Qnil;
@@ -222,7 +222,7 @@ ruby_xml_xpath_object_aref(VALUE self, VALUE aref) {
  * 
  * Obtain the length of the nodesetval node list.
  */
-VALUE
+static VALUE
 ruby_xml_xpath_object_length(VALUE self) {
   xmlXPathObjectPtr xpop;
 
@@ -253,7 +253,7 @@ ruby_xml_xpath_object_length(VALUE self) {
  * * XML::XPath::USERS
  * * XML::XPath::XSLT_TREE 
  */
-VALUE
+static VALUE
 ruby_xml_xpath_object_get_type(VALUE self)
 {
   xmlXPathObjectPtr xpop;
@@ -270,7 +270,7 @@ ruby_xml_xpath_object_get_type(VALUE self)
  * 
  * Returns the original XPath expression as a string.
  */
-VALUE
+static VALUE
 ruby_xml_xpath_object_string(VALUE self)
 {
   xmlXPathObjectPtr xpop;
@@ -290,7 +290,7 @@ ruby_xml_xpath_object_string(VALUE self)
  * Dump libxml debugging information to stdout.
  * Requires Libxml be compiled with debugging enabled.
  */
-VALUE
+static VALUE
 ruby_xml_xpath_object_debug(VALUE self) {
   xmlXPathObjectPtr xpop;
   

@@ -7,13 +7,13 @@ VALUE LIBXML_STATE = Qnil;
 
 static int dummy = 0;
 
-void
+static void
 ruby_xml_state_free(int dummy) {
   xmlCleanupParser();
   LIBXML_STATE = Qnil;
 }
 
-VALUE
+static VALUE
 ruby_xml_state_alloc(VALUE klass) {
   #ifdef DEBUG
   fprintf(stderr, "Allocating state");

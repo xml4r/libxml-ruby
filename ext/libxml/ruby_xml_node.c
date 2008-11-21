@@ -34,7 +34,7 @@ check_string_or_symbol( VALUE val ) {
  * 
  * Obtain this node's base URI.
  */
-VALUE
+static VALUE
 ruby_xml_node_base_get(VALUE self) {
   xmlNodePtr xnode;
   xmlChar* base_uri;            
@@ -63,7 +63,7 @@ ruby_xml_node_base_get(VALUE self) {
  * 
  * Set this node's base URI.
  */
-VALUE
+static VALUE
 ruby_xml_node_base_set(VALUE self, VALUE uri) {
   xmlNodePtr xnode;
 
@@ -83,7 +83,7 @@ ruby_xml_node_base_set(VALUE self, VALUE uri) {
  * 
  * Obtain this node's content as a string.
  */
-VALUE
+static VALUE
 ruby_xml_node_content_get(VALUE self) {
   xmlNodePtr xnode;
   xmlChar *content;
@@ -105,7 +105,7 @@ ruby_xml_node_content_get(VALUE self) {
  * 
  * Set this node's content to the specified string.
  */ 
-VALUE
+static VALUE
 ruby_xml_node_content_set(VALUE self, VALUE content) {
   xmlNodePtr xnode;
 
@@ -126,7 +126,7 @@ ruby_xml_node_content_set(VALUE self, VALUE content) {
  * *Deprecated*: Stripped content can be obtained via the
  * +content+ method.
  */
-VALUE
+static VALUE
 ruby_xml_node_content_stripped_get(VALUE self) {
   xmlNodePtr xnode;
   xmlChar* content;
@@ -151,7 +151,7 @@ ruby_xml_node_content_stripped_get(VALUE self) {
  * 
  * Returns this node's first child node if any.
  */
-VALUE
+static VALUE
 ruby_xml_node_first_get(VALUE self) {
   xmlNodePtr xnode;
 
@@ -168,7 +168,7 @@ ruby_xml_node_first_get(VALUE self) {
  * underlying for child_set and child_add, difference being
  * former raises on implicit copy, latter does not.
  */
-VALUE
+static VALUE
 ruby_xml_node_child_set_aux(VALUE self, VALUE rnode) {
   xmlNodePtr pnode, chld, ret;
 
@@ -199,7 +199,7 @@ ruby_xml_node_child_set_aux(VALUE self, VALUE rnode) {
  * 
  * Set a child node for this node. Also called for <<
  */
-VALUE
+static VALUE
 ruby_xml_node_child_set(VALUE self, VALUE rnode) {
   return ruby_xml_node_child_set_aux(self, rnode);
 }
@@ -214,7 +214,7 @@ ruby_xml_node_child_set(VALUE self, VALUE rnode) {
  * added and not self, thereby allowing << calls to
  * be chained.
  */
-VALUE
+static VALUE
 ruby_xml_node_content_add(VALUE self, VALUE obj) {
   xmlNodePtr xnode;
   VALUE str;
@@ -242,7 +242,7 @@ ruby_xml_node_content_add(VALUE self, VALUE obj) {
  * 
  * Set a child node for this node.
  */
-VALUE
+static VALUE
 ruby_xml_node_child_add(VALUE self, VALUE rnode) {
   return ruby_xml_node_child_set_aux(self, rnode);
 }
@@ -253,7 +253,7 @@ ruby_xml_node_child_add(VALUE self, VALUE rnode) {
  * 
  * Obtain the XML::Document this node belongs to.
  */
-VALUE
+static VALUE
 ruby_xml_node_doc(VALUE self) {
   xmlNodePtr xnode;
   xmlDocPtr doc=NULL;
@@ -298,7 +298,7 @@ ruby_xml_node_doc(VALUE self) {
  * 
  * Dump this node to stdout.
  */
-VALUE
+static VALUE
 ruby_xml_node_dump(VALUE self) {
   xmlNodePtr xnode;
   xmlBufferPtr buf;
@@ -323,7 +323,7 @@ ruby_xml_node_dump(VALUE self) {
  * Dump this node to stdout, including any debugging
  * information.
  */
-VALUE
+static VALUE
 ruby_xml_node_debug_dump(VALUE self) {
   xmlNodePtr xnode;
   Data_Get_Struct(self, xmlNode, xnode);
@@ -346,7 +346,7 @@ ruby_xml_node_debug_dump(VALUE self) {
  *  doc = XML::Document.new('model/books.xml')
  *  doc.root.each {|node| puts node}
  */
-VALUE
+static VALUE
 ruby_xml_node_each(VALUE self) {
   xmlNodePtr xnode;
   xmlNodePtr xchild;
@@ -368,7 +368,7 @@ ruby_xml_node_each(VALUE self) {
  * 
  * Determine whether this node is empty.
  */
-VALUE
+static VALUE
 ruby_xml_node_empty_q(VALUE self) {
   xmlNodePtr xnode;
   Data_Get_Struct(self, xmlNode, xnode);
@@ -379,7 +379,7 @@ ruby_xml_node_empty_q(VALUE self) {
 }
 
 
-VALUE ruby_xml_node_to_s(VALUE self);
+static VALUE ruby_xml_node_to_s(VALUE self);
 
 /*
  * call-seq:
@@ -387,7 +387,7 @@ VALUE ruby_xml_node_to_s(VALUE self);
  * 
  * Test equality between the two nodes. Two nodes are equal
  * if they are the same node or have the same XML representation.*/
-VALUE
+static VALUE
 ruby_xml_node_eql_q(VALUE self, VALUE other) {
   if (self == other)
   {
@@ -418,7 +418,7 @@ ruby_xml_node_eql_q(VALUE self, VALUE other) {
  * Create a new #CDATA node, optionally setting
  * the node's content.
  */
-VALUE
+static VALUE
 ruby_xml_node_new_cdata(int argc, VALUE *argv, VALUE class) {
   xmlNodePtr xnode;
   VALUE str=Qnil;
@@ -455,7 +455,7 @@ ruby_xml_node_new_cdata(int argc, VALUE *argv, VALUE class) {
  * the node's content.
  * 
  */
-VALUE
+static VALUE
 ruby_xml_node_new_comment(int argc, VALUE *argv, VALUE class) {
   xmlNodePtr xnode;
   VALUE str=Qnil;
@@ -492,7 +492,7 @@ ruby_xml_node_new_comment(int argc, VALUE *argv, VALUE class) {
  * Obtain the language set for this node, if any.
  * This is set in XML via the xml:lang attribute.
  */
-VALUE
+static VALUE
 ruby_xml_node_lang_get(VALUE self) {
   xmlNodePtr xnode;
   xmlChar *lang;
@@ -519,7 +519,7 @@ ruby_xml_node_lang_get(VALUE self) {
  * Set the language for this node. This affects the value
  * of the xml:lang attribute.
  */
-VALUE
+static VALUE
 ruby_xml_node_lang_set(VALUE self, VALUE lang) {
   xmlNodePtr xnode;
 
@@ -537,7 +537,7 @@ ruby_xml_node_lang_set(VALUE self, VALUE lang) {
  * 
  * Obtain the last child node of this node, if any.
  */
-VALUE
+static VALUE
 ruby_xml_node_last_get(VALUE self) {
   xmlNodePtr xnode;
 
@@ -557,7 +557,7 @@ ruby_xml_node_last_get(VALUE self) {
  * node was read from. If +default_line_numbers+ is set
  * false (the default), this method returns zero.
  */
-VALUE
+static VALUE
 ruby_xml_node_line_num(VALUE self) {
   xmlNodePtr xnode;
   long line_num;
@@ -580,7 +580,7 @@ ruby_xml_node_line_num(VALUE self) {
  * 
  * Determine whether this node is an xlink node.
  */
-VALUE
+static VALUE
 ruby_xml_node_xlink_q(VALUE self) {
   xmlNodePtr xnode;
   xlinkType xlt;
@@ -603,7 +603,7 @@ ruby_xml_node_xlink_q(VALUE self) {
  * If this is not an xlink node (see +xlink?+), will return
  * nil.
  */
-VALUE
+static VALUE
 ruby_xml_node_xlink_type(VALUE self) {
   xmlNodePtr xnode;
   xlinkType xlt;
@@ -626,7 +626,7 @@ ruby_xml_node_xlink_type(VALUE self) {
  * If this is not an xlink node (see +xlink?+), will return
  * nil.
  */
-VALUE
+static VALUE
 ruby_xml_node_xlink_type_name(VALUE self) {
   xmlNodePtr xnode;
   xlinkType xlt;
@@ -654,7 +654,7 @@ ruby_xml_node_xlink_type_name(VALUE self) {
  * 
  * Obtain this node's name.
  */
-VALUE
+static VALUE
 ruby_xml_node_name_get(VALUE self) {
   xmlNodePtr xnode;
   const xmlChar *name;
@@ -702,7 +702,7 @@ ruby_xml_node_name_get(VALUE self) {
  * 
  * Set this node's name.
  */
-VALUE
+static VALUE
 ruby_xml_node_name_set(VALUE self, VALUE name) {
   xmlNodePtr xnode;
 
@@ -720,7 +720,7 @@ ruby_xml_node_name_set(VALUE self, VALUE name) {
  * Obtain an array of +XML::NS+ objects representing
  * this node's xmlns attributes
  */
-VALUE
+static VALUE
 ruby_xml_node_namespace_get(VALUE self) {
   xmlNodePtr xnode;
   xmlNsPtr *nsList, *cur;
@@ -755,7 +755,7 @@ ruby_xml_node_namespace_get(VALUE self) {
  * 
  * Obtain this node's namespace node.
  */
-VALUE
+static VALUE
 ruby_xml_node_namespace_get_node(VALUE self) {
   xmlNodePtr xnode;
 
@@ -779,7 +779,7 @@ ruby_xml_node_namespace_get_node(VALUE self) {
  * 
  * Add the specified XML::NS object to this node's xmlns attributes.
  */
-VALUE
+static VALUE
 ruby_xml_node_namespace_set(int argc, VALUE *argv, VALUE self) {
   VALUE rns, rprefix;
   xmlNodePtr xnode;
@@ -917,7 +917,7 @@ ruby_xml_node2_wrap(VALUE class, xmlNodePtr xnode)
  * Create a new element node in the specified namespace with the 
  * supplied name and content.
  */
-VALUE
+static VALUE
 ruby_xml_node_new_string(VALUE klass, VALUE ns, VALUE name, VALUE val)
 {
   xmlNodePtr xnode;
@@ -953,7 +953,7 @@ ruby_xml_node_new_string(VALUE klass, VALUE ns, VALUE name, VALUE val)
  * the node's content.
  * backward compatibility for <.5 new
  */
-VALUE
+static VALUE
 ruby_xml_node_new_string_bc(int argc, VALUE *argv, VALUE class)
 {
   VALUE content=Qnil;
@@ -979,7 +979,7 @@ ruby_xml_node_new_string_bc(int argc, VALUE *argv, VALUE class)
  * 
  * Obtain the next sibling node, if any.
  */
-VALUE
+static VALUE
 ruby_xml_node_next_get(VALUE self) {
   xmlNodePtr xnode;
 
@@ -998,7 +998,7 @@ ruby_xml_node_next_get(VALUE self) {
  * 
  * Insert the specified node as this node's next sibling.
  */
-VALUE
+static VALUE
 ruby_xml_node_next_set(VALUE self, VALUE rnode) {
   xmlNodePtr cnode, pnode, ret;
 
@@ -1022,7 +1022,7 @@ ruby_xml_node_next_set(VALUE self, VALUE rnode) {
  * 
  * Determine whether this node has a namespace.
  */
-VALUE
+static VALUE
 ruby_xml_node_ns_q(VALUE self) {
   xmlNodePtr xnode;
   Data_Get_Struct(self, xmlNode, xnode);
@@ -1039,7 +1039,7 @@ ruby_xml_node_ns_q(VALUE self) {
  * Obtain an array of +XML::NS+ objects representing
  * this node's xmlns attributes
  */
-VALUE
+static VALUE
 ruby_xml_node_ns_def_q(VALUE self) {
   xmlNodePtr xnode;
   Data_Get_Struct(self, xmlNode, xnode);
@@ -1056,7 +1056,7 @@ ruby_xml_node_ns_def_q(VALUE self) {
  * 
  * Obtain this node's default namespace.
  */
-VALUE
+static VALUE
 ruby_xml_node_ns_def_get(VALUE self) {
   xmlNodePtr xnode;
   Data_Get_Struct(self, xmlNode, xnode);
@@ -1073,7 +1073,7 @@ ruby_xml_node_ns_def_get(VALUE self) {
  * 
  * Obtain this node's parent node, if any.
  */
-VALUE
+static VALUE
 ruby_xml_node_parent_get(VALUE self) {
   xmlNodePtr xnode;
 
@@ -1092,7 +1092,7 @@ ruby_xml_node_parent_get(VALUE self) {
  * 
  * Obtain this node's path.
  */
-VALUE
+static VALUE
 ruby_xml_node_path(VALUE self) {
   xmlNodePtr xnode;
   xmlChar *path;
@@ -1113,7 +1113,7 @@ ruby_xml_node_path(VALUE self) {
  * 
  * Evaluates an XPointer expression relative to this node.
  */
-VALUE
+static VALUE
 ruby_xml_node_pointer(VALUE self, VALUE xptr_str) {
   return(ruby_xml_xpointer_point2(self, xptr_str));
 }
@@ -1125,7 +1125,7 @@ ruby_xml_node_pointer(VALUE self, VALUE xptr_str) {
  * 
  * Obtain the previous sibling, if any.
  */
-VALUE
+static VALUE
 ruby_xml_node_prev_get(VALUE self) {
   xmlNodePtr xnode;
   xmlNodePtr node;
@@ -1164,7 +1164,7 @@ ruby_xml_node_prev_get(VALUE self) {
  * 
  * Insert the specified node as this node's previous sibling.
  */
-VALUE
+static VALUE
 ruby_xml_node_prev_set(VALUE self, VALUE rnode) {
   xmlNodePtr cnode, pnode, ret;
 
@@ -1187,7 +1187,7 @@ ruby_xml_node_prev_set(VALUE self, VALUE rnode) {
  * 
  * Returns the XML::Attributes for this node. 
  */
-VALUE
+static VALUE
 ruby_xml_node_attributes_get(VALUE self) {
   xmlNodePtr xnode;
 
@@ -1202,7 +1202,7 @@ ruby_xml_node_attributes_get(VALUE self) {
  * 
  * Obtain the named pyroperty.
  */
-VALUE
+static VALUE
 ruby_xml_node_attribute_get(VALUE self, VALUE name) {
   VALUE attributes = ruby_xml_node_attributes_get(self);
   return ruby_xml_attributes_attribute_get(attributes, name);
@@ -1214,7 +1214,7 @@ ruby_xml_node_attribute_get(VALUE self, VALUE name) {
  * 
  * Set the named property.
  */
-VALUE
+static VALUE
 ruby_xml_node_property_set(VALUE self, VALUE name, VALUE value) {
   VALUE attributes = ruby_xml_node_attributes_get(self);
   return ruby_xml_attributes_attribute_set(attributes, name, value);
@@ -1227,7 +1227,7 @@ ruby_xml_node_property_set(VALUE self, VALUE name, VALUE value) {
 *
 * Removes this node from it's parent.
 */
-VALUE
+static VALUE
 ruby_xml_node_remove_ex(VALUE self) {
   xmlNodePtr xnode;
   Data_Get_Struct(self, xmlNode, xnode);
@@ -1242,7 +1242,7 @@ ruby_xml_node_remove_ex(VALUE self) {
  * 
  * Search for a namespace by href.
  */
-VALUE
+static VALUE
 ruby_xml_node_search_href(VALUE self, VALUE href) {
   xmlNodePtr xnode;
 
@@ -1259,7 +1259,7 @@ ruby_xml_node_search_href(VALUE self, VALUE href) {
  * 
  * Search for a namespace by namespace.
  */
-VALUE
+static VALUE
 ruby_xml_node_search_ns(VALUE self, VALUE ns) {
   xmlNodePtr xnode;
 
@@ -1276,7 +1276,7 @@ ruby_xml_node_search_ns(VALUE self, VALUE ns) {
  * 
  * Add the specified node as a sibling of this node.
  */
-VALUE
+static VALUE
 ruby_xml_node_sibling_set(VALUE self, VALUE rnode) {
   xmlNodePtr cnode, pnode, ret;
   VALUE obj;
@@ -1306,7 +1306,7 @@ ruby_xml_node_sibling_set(VALUE self, VALUE rnode) {
  * 
  * Determine whether this node preserves whitespace.
  */
-VALUE
+static VALUE
 ruby_xml_node_space_preserve_get(VALUE self) {
   xmlNodePtr xnode;
 
@@ -1321,7 +1321,7 @@ ruby_xml_node_space_preserve_get(VALUE self) {
  * 
  * Control whether this node preserves whitespace.
  */
-VALUE
+static VALUE
 ruby_xml_node_space_preserve_set(VALUE self, VALUE bool) {
   xmlNodePtr xnode;
   Data_Get_Struct(self, xmlNode, xnode);
@@ -1341,7 +1341,7 @@ ruby_xml_node_space_preserve_set(VALUE self, VALUE bool) {
  * Coerce this node to a string representation of
  * it's XML.
  */
-VALUE
+static VALUE
 ruby_xml_node_to_s(VALUE self) {
   xmlNodePtr xnode;
   xmlBufferPtr buf;
@@ -1363,7 +1363,7 @@ ruby_xml_node_to_s(VALUE self) {
  * 
  * Obtain this node's type identifier.
  */
-VALUE
+static VALUE
 ruby_xml_node_type(VALUE self) {
   xmlNodePtr xnode;
   Data_Get_Struct(self, xmlNode, xnode);
@@ -1383,7 +1383,7 @@ ruby_xml_node_type(VALUE self) {
  * to true. 
  *
  */
-VALUE
+static VALUE
 ruby_xml_node_copy(VALUE self, VALUE deep) {
   xmlNodePtr xnode;
   xmlNodePtr xcopy;
@@ -1406,7 +1406,7 @@ ruby_xml_node_copy(VALUE self, VALUE deep) {
  * the node's content.
  * 
  */
-VALUE
+static VALUE
 ruby_xml_node_new_text(VALUE class, VALUE text)
 {
   VALUE obj;

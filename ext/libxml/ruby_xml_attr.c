@@ -72,7 +72,7 @@ ruby_xml_attr_wrap(xmlAttrPtr xattr)
 }
 
 
-VALUE
+static VALUE
 ruby_xml_attr_alloc(VALUE klass)
 {
   return Data_Wrap_Struct(cXMLAttr,
@@ -92,7 +92,7 @@ ruby_xml_attr_alloc(VALUE klass)
  *
  *  attr = XML::Attr.new(doc.root, 'name', 'libxml')
  */
-VALUE
+static VALUE
 ruby_xml_attr_initialize(int argc, VALUE *argv, VALUE self) {
   VALUE node = argv[0];
   VALUE name = argv[1];
@@ -138,7 +138,7 @@ ruby_xml_attr_initialize(int argc, VALUE *argv, VALUE self) {
  * 
  * Obtain this attribute's child attribute(s).
  */
-VALUE
+static VALUE
 ruby_xml_attr_child_get(VALUE self) {
   xmlAttrPtr xattr;
   Data_Get_Struct(self, xmlAttr, xattr);
@@ -155,7 +155,7 @@ ruby_xml_attr_child_get(VALUE self) {
  * 
  * Returns whether this attribute has child attributes.
  */
-VALUE
+static VALUE
 ruby_xml_attr_child_q(VALUE self) {
   xmlAttrPtr xattr;
   Data_Get_Struct(self, xmlAttr, xattr);
@@ -174,7 +174,7 @@ ruby_xml_attr_child_q(VALUE self) {
  *
  *  doc.root.attributes.get_attribute('name').doc == doc
  */
-VALUE
+static VALUE
 ruby_xml_attr_doc_get(VALUE self) {
   xmlAttrPtr xattr;
   Data_Get_Struct(self, xmlAttr, xattr);
@@ -191,7 +191,7 @@ ruby_xml_attr_doc_get(VALUE self) {
  * Determine whether this attribute is associated with an
  * XML::Document.
  */
-VALUE
+static VALUE
 ruby_xml_attr_doc_q(VALUE self) {
   xmlAttrPtr xattr;
   Data_Get_Struct(self, xmlAttr, xattr);
@@ -208,7 +208,7 @@ ruby_xml_attr_doc_q(VALUE self) {
  * 
  * Obtain the last attribute.
  */
-VALUE
+static VALUE
 ruby_xml_attr_last_get(VALUE self) {
   xmlAttrPtr xattr;
   Data_Get_Struct(self, xmlAttr, xattr);
@@ -225,7 +225,7 @@ ruby_xml_attr_last_get(VALUE self) {
  * 
  * Determine whether this is the last attribute.
  */
-VALUE
+static VALUE
 ruby_xml_attr_last_q(VALUE self) {
   xmlAttrPtr xattr;
   Data_Get_Struct(self, xmlAttr, xattr);
@@ -241,7 +241,7 @@ ruby_xml_attr_last_q(VALUE self) {
  * 
  * Obtain this attribute's name.
  */
-VALUE
+static VALUE
 ruby_xml_attr_name_get(VALUE self) {
   xmlAttrPtr xattr;
   Data_Get_Struct(self, xmlAttr, xattr);
@@ -258,7 +258,7 @@ ruby_xml_attr_name_get(VALUE self) {
  * 
  * Obtain the next attribute.
  */
-VALUE
+static VALUE
 ruby_xml_attr_next_get(VALUE self) {
   xmlAttrPtr xattr;
   Data_Get_Struct(self, xmlAttr, xattr);
@@ -275,7 +275,7 @@ ruby_xml_attr_next_get(VALUE self) {
  * 
  * Determine whether there is a next attribute.
  */
-VALUE
+static VALUE
 ruby_xml_attr_next_q(VALUE self) {
   xmlAttrPtr xattr;
   Data_Get_Struct(self, xmlAttr, xattr);
@@ -292,7 +292,7 @@ ruby_xml_attr_next_q(VALUE self) {
  * 
  * Obtain this attribute node's type name.
  */
-VALUE
+static VALUE
 ruby_xml_attr_node_type_name(VALUE self) {
   return(rb_str_new2("attribute"));
 }
@@ -304,7 +304,7 @@ ruby_xml_attr_node_type_name(VALUE self) {
  * 
  * Obtain this attribute's associated XML::NS, if any.
  */
-VALUE
+static VALUE
 ruby_xml_attr_ns_get(VALUE self) {
   xmlAttrPtr xattr;
   Data_Get_Struct(self, xmlAttr, xattr);
@@ -322,7 +322,7 @@ ruby_xml_attr_ns_get(VALUE self) {
  * Determine whether this attribute has an associated 
  * namespace.
  */
-VALUE
+static VALUE
 ruby_xml_attr_ns_q(VALUE self) {
   xmlAttrPtr xattr;
   Data_Get_Struct(self, xmlAttr, xattr);
@@ -339,7 +339,7 @@ ruby_xml_attr_ns_q(VALUE self) {
  * 
  * Obtain this attribute node's parent.
  */
-VALUE
+static VALUE
 ruby_xml_attr_parent_get(VALUE self) {
   xmlAttrPtr xattr;
   Data_Get_Struct(self, xmlAttr, xattr);
@@ -356,7 +356,7 @@ ruby_xml_attr_parent_get(VALUE self) {
  * 
  * Determine whether this attribute has a parent.
  */
-VALUE
+static VALUE
 ruby_xml_attr_parent_q(VALUE self) {
   xmlAttrPtr xattr;
   Data_Get_Struct(self, xmlAttr, xattr);
@@ -373,7 +373,7 @@ ruby_xml_attr_parent_q(VALUE self) {
  * 
  * Obtain the previous attribute.
  */
-VALUE
+static VALUE
 ruby_xml_attr_prev_get(VALUE self) {
   xmlAttrPtr xattr;
   Data_Get_Struct(self, xmlAttr, xattr);
@@ -390,7 +390,7 @@ ruby_xml_attr_prev_get(VALUE self) {
  * 
  * Determine whether there is a previous attribute.
  */
-VALUE
+static VALUE
 ruby_xml_attr_prev_q(VALUE self) {
   xmlAttrPtr xattr;
   Data_Get_Struct(self, xmlAttr, xattr);
@@ -407,7 +407,7 @@ ruby_xml_attr_prev_q(VALUE self) {
  * 
  * Removes this attribute from it's parent.
  */
-VALUE
+static VALUE
 ruby_xml_attr_remove_ex(VALUE self) {
   xmlAttrPtr xattr;
   Data_Get_Struct(self, xmlAttr, xattr);

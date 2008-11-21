@@ -76,7 +76,7 @@ ruby_xml_attributes_node_get(VALUE self) {
  *
  *  doc.root.attributes.get_attribute("foo")
  */
-VALUE
+static VALUE
 ruby_xml_attributes_get_attribute(VALUE self, VALUE name) {
   xmlNodePtr xnode;
   xmlAttrPtr xattr;
@@ -104,7 +104,7 @@ ruby_xml_attributes_get_attribute(VALUE self, VALUE name) {
  *
  *  doc.root.attributes.get_attribute_ns('http://www.w3.org/1999/xlink', 'href')
  */
-VALUE
+static VALUE
 ruby_xml_attributes_get_attribute_ns(VALUE self, VALUE namespace, VALUE name) {
   xmlNodePtr xnode;
   xmlAttrPtr xattr;
@@ -181,7 +181,7 @@ ruby_xml_attributes_attribute_set(VALUE self, VALUE name, VALUE value) {
  *  
  *  doc.root.attributes.each {|attribute| puts attribute.name}
  */
-VALUE
+static VALUE
 ruby_xml_attributes_each(VALUE self) {
   xmlNodePtr xnode;
   xmlAttrPtr xattr;
@@ -207,7 +207,7 @@ ruby_xml_attributes_each(VALUE self) {
  *
  *  doc.root.attributes.length
  */
-VALUE
+static VALUE
 ruby_xml_attributes_length(VALUE self) {
   int length = 0;
   xmlNodePtr xnode;
@@ -233,7 +233,7 @@ ruby_xml_attributes_length(VALUE self) {
  *
  *  doc.root.attributes.first
  */
-VALUE
+static VALUE
 ruby_xml_attributes_first(VALUE self) {
   xmlNodePtr xnode;
   Data_Get_Struct(self, xmlNode, xnode);

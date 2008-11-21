@@ -79,7 +79,7 @@ int ic_close (void *context) {
  * 
  * Register a new set of I/O callback for handling parser input.
  */
-VALUE input_callbacks_register_input_callbacks() {
+static VALUE input_callbacks_register_input_callbacks() {
     xmlRegisterInputCallbacks( ic_match, ic_open, ic_read, ic_close );
     return(Qtrue);
 }
@@ -91,7 +91,7 @@ VALUE input_callbacks_register_input_callbacks() {
  * 
  * No documentation available.
  */
-VALUE
+static VALUE
 input_callbacks_add_scheme (VALUE self, VALUE scheme_name, VALUE class) {
   ic_scheme *scheme;
 
@@ -124,7 +124,7 @@ input_callbacks_add_scheme (VALUE self, VALUE scheme_name, VALUE class) {
  * 
  * No documentation available.
  */
-VALUE
+static VALUE
 input_callbacks_remove_scheme (VALUE self, VALUE scheme_name) {
     char *name;
     ic_scheme *save_scheme, *scheme;
