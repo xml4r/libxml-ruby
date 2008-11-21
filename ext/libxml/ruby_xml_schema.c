@@ -39,12 +39,12 @@ VALUE cXMLSchema;
 #endif
 
 static void
-ruby_xml_schema_mark(ruby_xml_schema *rxschema) {
+rxml_schema_mark(rxml_schema *rxschema) {
   return;
 }
 
 static void
-ruby_xml_schema_free(ruby_xml_schema *rxschema) {
+rxml_schema_free(rxml_schema *rxschema) {
   if (rxschema->schema != NULL) {
     xmlSchemaFree(rxschema->schema);
     rxschema->schema = NULL;
@@ -60,18 +60,18 @@ ruby_xml_schema_free(ruby_xml_schema *rxschema) {
  * Create a new schema from the specified URI.
  */
 static VALUE
-ruby_xml_schema_init_from_uri(VALUE class, VALUE uri) {
+rxml_schema_init_from_uri(VALUE class, VALUE uri) {
   xmlSchemaParserCtxtPtr parser;
-  ruby_xml_schema *schema;
+  rxml_schema *schema;
 
   Check_Type(uri, T_STRING);
 
   parser = xmlSchemaNewParserCtxt(StringValuePtr(uri));
-  schema = ALLOC(ruby_xml_schema);
+  schema = ALLOC(rxml_schema);
   schema->schema = xmlSchemaParse(parser);
   xmlSchemaFreeParserCtxt(parser);
 
-  return Data_Wrap_Struct(cXMLSchema, ruby_xml_schema_mark, ruby_xml_schema_free, schema);
+  return Data_Wrap_Struct(cXMLSchema, rxml_schema_mark, rxml_schema_free, schema);
 }
 
 /*
@@ -81,19 +81,19 @@ ruby_xml_schema_init_from_uri(VALUE class, VALUE uri) {
  * Create a new schema from the specified document.
  */
 static VALUE
-ruby_xml_schema_init_from_document(VALUE class, VALUE document) {
+rxml_schema_init_from_document(VALUE class, VALUE document) {
   xmlDocPtr xdoc;
-  ruby_xml_schema *schema;
+  rxml_schema *schema;
   xmlSchemaParserCtxtPtr parser;
 
   Data_Get_Struct(document, xmlDoc, xdoc);
 
   parser = xmlSchemaNewDocParserCtxt(xdoc);
-  schema = ALLOC(ruby_xml_schema);
+  schema = ALLOC(rxml_schema);
   schema->schema = xmlSchemaParse(parser);
   xmlSchemaFreeParserCtxt(parser);
 
-  return Data_Wrap_Struct(cXMLSchema, ruby_xml_schema_mark, ruby_xml_schema_free, schema);
+  return Data_Wrap_Struct(cXMLSchema, rxml_schema_mark, rxml_schema_free, schema);
 }
 
 /*
@@ -103,18 +103,18 @@ ruby_xml_schema_init_from_document(VALUE class, VALUE document) {
  * Create a new schema using the specified string.
  */
 static VALUE
-ruby_xml_schema_init_from_string(VALUE self, VALUE schema_str) {
+rxml_schema_init_from_string(VALUE self, VALUE schema_str) {
   xmlSchemaParserCtxtPtr  parser;
-  ruby_xml_schema *rxschema;
+  rxml_schema *rxschema;
 
   Check_Type(schema_str, T_STRING);
 
   parser = xmlSchemaNewMemParserCtxt(StringValuePtr(schema_str), strlen(StringValuePtr(schema_str)));
-  rxschema = ALLOC(ruby_xml_schema);
+  rxschema = ALLOC(rxml_schema);
   rxschema->schema = xmlSchemaParse(parser);
   xmlSchemaFreeParserCtxt(parser);
 
-  return Data_Wrap_Struct(cXMLSchema, ruby_xml_schema_mark, ruby_xml_schema_free, rxschema);
+  return Data_Wrap_Struct(cXMLSchema, rxml_schema_mark, rxml_schema_free, rxschema);
 }
   
 /* TODO what is this patch doing here?
@@ -167,8 +167,8 @@ ruby_xml_schema_init_from_string(VALUE self, VALUE schema_str) {
 
 void  ruby_init_xml_schema(void) {
   cXMLSchema = rb_define_class_under(mXML, "Schema", rb_cObject);
-  rb_define_singleton_method(cXMLSchema, "new",         ruby_xml_schema_init_from_uri, 1);
-  rb_define_singleton_method(cXMLSchema, "from_string", ruby_xml_schema_init_from_string, 1);
-  rb_define_singleton_method(cXMLSchema, "document",    ruby_xml_schema_init_from_document, 1);
+  rb_define_singleton_method(cXMLSchema, "new",         rxml_schema_init_from_uri, 1);
+  rb_define_singleton_method(cXMLSchema, "from_string", rxml_schema_init_from_string, 1);
+  rb_define_singleton_method(cXMLSchema, "document",    rxml_schema_init_from_document, 1);
 }
 

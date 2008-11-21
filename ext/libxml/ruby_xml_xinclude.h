@@ -2,8 +2,8 @@
 
 /* Please see the LICENSE file for copyright and distribution information */
 
-#ifndef __RUBY_XML_XINCLUDE__
-#define __RUBY_XML_XINCLUDE__
+#ifndef __rxml_XINCLUDE__
+#define __rxml_XINCLUDE__
 
 extern VALUE cXMLXInclude;
 extern VALUE eXMLXIncludeError;

@@ -44,7 +44,7 @@ static ID ERROR_HANDLER_ID;
  * error messages.
  */
 static VALUE
-ruby_xml_error_set_handler(VALUE self)
+rxml_error_set_handler(VALUE self)
 {
   VALUE block;
 
@@ -66,7 +66,7 @@ ruby_xml_error_set_handler(VALUE self)
  *
  * Removes the current error handler. */
 static VALUE
-ruby_xml_error_reset_handler(VALUE self)
+rxml_error_reset_handler(VALUE self)
 {
   rb_cvar_set(self, ERROR_HANDLER_ID, Qnil, 0);
   return self;
@@ -74,7 +74,7 @@ ruby_xml_error_reset_handler(VALUE self)
 
 
 static VALUE
-ruby_xml_error_wrap(xmlErrorPtr xerror) {
+rxml_error_wrap(xmlErrorPtr xerror) {
   VALUE result = Qnil;
   if (xerror->message)
     result = rb_exc_new2(eXMLError, xerror->message);
@@ -105,7 +105,7 @@ ruby_xml_error_wrap(xmlErrorPtr xerror) {
 
   //rb_define_attr(eXMLError, "ctxt", 1, 0);
   if (xerror->node) {
-    VALUE node = ruby_xml_node2_wrap(cXMLNode, xerror->node);
+    VALUE node = rxml_node2_wrap(cXMLNode, xerror->node);
     rb_iv_set(result, "@node", node);
   }
   return result;
@@ -120,7 +120,7 @@ structuredErrorFunc(void *userData, xmlErrorPtr xerror)
 
   if (block != Qnil)
   {
-    VALUE error = ruby_xml_error_wrap(xerror);
+    VALUE error = rxml_error_wrap(xerror);
     rb_funcall(block, rb_intern("call"), 1, error);
   }
 }
@@ -132,10 +132,10 @@ structuredErrorFunc(void *userData, xmlErrorPtr xerror)
 #endif
 
 void
-ruby_xml_raise(xmlErrorPtr xerror)
+rxml_raise(xmlErrorPtr xerror)
 {
   /* Wrap error up as Ruby object and send it off to ruby */
-  VALUE error = ruby_xml_error_wrap(xerror);
+  VALUE error = rxml_error_wrap(xerror);
   rb_exc_raise(error);
 }
 
@@ -147,8 +147,8 @@ ruby_init_xml_error() {
 
   /* Error class */
   eXMLError = rb_define_class_under(mXML, "Error", rb_eStandardError);
-  rb_define_singleton_method(eXMLError, "set_handler", ruby_xml_error_set_handler, 0);
-  rb_define_singleton_method(eXMLError, "reset_handler", ruby_xml_error_reset_handler, 0);
+  rb_define_singleton_method(eXMLError, "set_handler", rxml_error_set_handler, 0);
+  rb_define_singleton_method(eXMLError, "reset_handler", rxml_error_reset_handler, 0);
 
 
   /* Ruby callback to receive errors - set it to nil by default. */

@@ -15,7 +15,7 @@ VALUE mXML;
  * Dump all the global catalog content stdout.
  */
 static VALUE
-ruby_xml_catalog_dump(VALUE self) {
+rxml_catalog_dump(VALUE self) {
   xmlCatalogDump(stdout);
   return(Qtrue);
 }
@@ -28,7 +28,7 @@ ruby_xml_catalog_dump(VALUE self) {
  * Remove the specified resource catalog.
  */
 static VALUE
-ruby_xml_catalog_remove(VALUE self, VALUE cat) {
+rxml_catalog_remove(VALUE self, VALUE cat) {
   Check_Type(cat, T_STRING);
   xmlCatalogRemove((xmlChar *)StringValuePtr(cat));
   return(Qtrue);
@@ -43,7 +43,7 @@ ruby_xml_catalog_remove(VALUE self, VALUE cat) {
  * were compiled to. Throws an exception if not.
  */
 static VALUE
-ruby_xml_check_lib_versions(VALUE class) {
+rxml_check_lib_versions(VALUE class) {
   xmlCheckVersion(LIBXML_VERSION);
   return(Qtrue);
 }
@@ -56,7 +56,7 @@ ruby_xml_check_lib_versions(VALUE class) {
  * Determine whether libxml regexp automata support is enabled.
  */
 static VALUE
-ruby_xml_enabled_automata_q(VALUE class) {
+rxml_enabled_automata_q(VALUE class) {
 #ifdef LIBXML_AUTOMATA_ENABLED
   return(Qtrue);
 #else
@@ -73,7 +73,7 @@ ruby_xml_enabled_automata_q(VALUE class) {
  * See "Canonical XML" (http://www.w3.org/TR/xml-c14n)
  */
 static VALUE
-ruby_xml_enabled_c14n_q(VALUE class) {
+rxml_enabled_c14n_q(VALUE class) {
 #ifdef LIBXML_C14N_ENABLED
   return(Qtrue);
 #else
@@ -89,7 +89,7 @@ ruby_xml_enabled_c14n_q(VALUE class) {
  * Determine whether libxml resource catalog support is enabled.
  */
 static VALUE
-ruby_xml_enabled_catalog_q(VALUE class) {
+rxml_enabled_catalog_q(VALUE class) {
 #ifdef LIBXML_CATALOG_ENABLED
   return(Qtrue);
 #else
@@ -105,7 +105,7 @@ ruby_xml_enabled_catalog_q(VALUE class) {
  * Determine whether libxml debugging support is enabled.
  */
 static VALUE
-ruby_xml_enabled_debug_q(VALUE class) {
+rxml_enabled_debug_q(VALUE class) {
 #ifdef LIBXML_DEBUG_ENABLED
   return(Qtrue);
 #else
@@ -121,7 +121,7 @@ ruby_xml_enabled_debug_q(VALUE class) {
  * Determine whether libxml docbook support is enabled.
  */
 static VALUE
-ruby_xml_enabled_docbook_q(VALUE class) {
+rxml_enabled_docbook_q(VALUE class) {
 #ifdef LIBXML_DOCB_ENABLED
   return(Qtrue);
 #else
@@ -137,7 +137,7 @@ ruby_xml_enabled_docbook_q(VALUE class) {
  * Determine whether libxml ftp client support is enabled.
  */
 static VALUE
-ruby_xml_enabled_ftp_q(VALUE class) {
+rxml_enabled_ftp_q(VALUE class) {
 #ifdef LIBXML_FTP_ENABLED
   return(Qtrue);
 #else
@@ -153,7 +153,7 @@ ruby_xml_enabled_ftp_q(VALUE class) {
  * Determine whether libxml http client support is enabled.
  */
 static VALUE
-ruby_xml_enabled_http_q(VALUE class) {
+rxml_enabled_http_q(VALUE class) {
 #ifdef LIBXML_HTTP_ENABLED
   return(Qtrue);
 #else
@@ -169,7 +169,7 @@ ruby_xml_enabled_http_q(VALUE class) {
  * Determine whether libxml html support is enabled.
  */
 static VALUE
-ruby_xml_enabled_html_q(VALUE class) {
+rxml_enabled_html_q(VALUE class) {
 #ifdef LIBXML_HTML_ENABLED
   return(Qtrue);
 #else
@@ -185,7 +185,7 @@ ruby_xml_enabled_html_q(VALUE class) {
  * Determine whether libxml iconv support is enabled.
  */
 static VALUE
-ruby_xml_enabled_iconv_q(VALUE class) {
+rxml_enabled_iconv_q(VALUE class) {
 #ifdef LIBXML_ICONV_ENABLED
   return(Qtrue);
 #else
@@ -202,7 +202,7 @@ ruby_xml_enabled_iconv_q(VALUE class) {
  * is enabled.
  */
 static VALUE
-ruby_xml_enabled_memory_debug_location_q(VALUE class) {
+rxml_enabled_memory_debug_location_q(VALUE class) {
 #ifdef DEBUG_MEMORY_LOCATION
   return(Qtrue);
 #else
@@ -218,7 +218,7 @@ ruby_xml_enabled_memory_debug_location_q(VALUE class) {
  * Determine whether libxml regular expression support is enabled.
  */
 static VALUE
-ruby_xml_enabled_regexp_q(VALUE class) {
+rxml_enabled_regexp_q(VALUE class) {
 #ifdef LIBXML_REGEXP_ENABLED
   return(Qtrue);
 #else
@@ -234,7 +234,7 @@ ruby_xml_enabled_regexp_q(VALUE class) {
  * Determine whether libxml schema support is enabled.
  */
 static VALUE
-ruby_xml_enabled_schemas_q(VALUE class) {
+rxml_enabled_schemas_q(VALUE class) {
 #ifdef LIBXML_SCHEMAS_ENABLED
   return(Qtrue);
 #else
@@ -251,7 +251,7 @@ ruby_xml_enabled_schemas_q(VALUE class) {
  * is enabled (I think?).
  */
 static VALUE
-ruby_xml_enabled_thread_q(VALUE class) {
+rxml_enabled_thread_q(VALUE class) {
 #ifdef LIBXML_THREAD_ENABLED
   return(Qtrue);
 #else
@@ -267,7 +267,7 @@ ruby_xml_enabled_thread_q(VALUE class) {
  * Determine whether libxml unicode support is enabled.
  */
 static VALUE
-ruby_xml_enabled_unicode_q(VALUE class) {
+rxml_enabled_unicode_q(VALUE class) {
 #ifdef LIBXML_UNICODE_ENABLED
   return(Qtrue);
 #else
@@ -283,7 +283,7 @@ ruby_xml_enabled_unicode_q(VALUE class) {
  * Determine whether libxml xinclude support is enabled.
  */
 static VALUE
-ruby_xml_enabled_xinclude_q(VALUE class) {
+rxml_enabled_xinclude_q(VALUE class) {
 #ifdef LIBXML_XINCLUDE_ENABLED
   return(Qtrue);
 #else
@@ -299,7 +299,7 @@ ruby_xml_enabled_xinclude_q(VALUE class) {
  * Determine whether libxml xpath support is enabled.
  */
 static VALUE
-ruby_xml_enabled_xpath_q(VALUE class) {
+rxml_enabled_xpath_q(VALUE class) {
 #ifdef LIBXML_XPATH_ENABLED
   return(Qtrue);
 #else
@@ -315,7 +315,7 @@ ruby_xml_enabled_xpath_q(VALUE class) {
  * Determine whether libxml xpointer support is enabled.
  */
 static VALUE
-ruby_xml_enabled_xpointer_q(VALUE class) {
+rxml_enabled_xpointer_q(VALUE class) {
 #ifdef LIBXML_XPTR_ENABLED
   return(Qtrue);
 #else
@@ -331,7 +331,7 @@ ruby_xml_enabled_xpointer_q(VALUE class) {
  * Determine whether libxml zlib support is enabled.
  */
 static VALUE
-ruby_xml_enabled_zlib_q(VALUE class) {
+rxml_enabled_zlib_q(VALUE class) {
 #ifdef HAVE_ZLIB_H
   return(Qtrue);
 #else
@@ -348,7 +348,7 @@ ruby_xml_enabled_zlib_q(VALUE class) {
  * (Requires Libxml to be compiled with debugging support)
  */
 static VALUE
-ruby_xml_debug_entities_get(VALUE class) {
+rxml_debug_entities_get(VALUE class) {
 #ifdef LIBXML_DEBUG_ENABLED
   if (xmlParserDebugEntities)
     return(Qtrue);
@@ -369,7 +369,7 @@ ruby_xml_debug_entities_get(VALUE class) {
  * (Requires Libxml to be compiled with debugging support)
  */
 static VALUE
-ruby_xml_debug_entities_set(VALUE class, VALUE bool) {
+rxml_debug_entities_set(VALUE class, VALUE bool) {
 #ifdef LIBXML_DEBUG_ENABLED
   if (TYPE(bool) == T_FALSE) {
     xmlParserDebugEntities = 0;
@@ -391,7 +391,7 @@ ruby_xml_debug_entities_set(VALUE class, VALUE bool) {
  * Determine whether parsers retain whitespace by default.
  */
 static VALUE
-ruby_xml_default_keep_blanks_get(VALUE class) {
+rxml_default_keep_blanks_get(VALUE class) {
   if (xmlKeepBlanksDefaultValue)
     return(Qtrue);
   else
@@ -406,7 +406,7 @@ ruby_xml_default_keep_blanks_get(VALUE class) {
  * Controls whether parsers retain whitespace by default.
  */
 static VALUE
-ruby_xml_default_keep_blanks_set(VALUE class, VALUE bool) {
+rxml_default_keep_blanks_set(VALUE class, VALUE bool) {
   if (TYPE(bool) == T_FALSE) {
     xmlKeepBlanksDefaultValue = 0;
     return(Qfalse);
@@ -426,7 +426,7 @@ ruby_xml_default_keep_blanks_set(VALUE class, VALUE bool) {
  * Determine whether parsers load external DTDs by default.
  */
 static VALUE
-ruby_xml_default_load_external_dtd_get(VALUE class) {
+rxml_default_load_external_dtd_get(VALUE class) {
   if (xmlLoadExtDtdDefaultValue)
     return(Qtrue);
   else
@@ -441,7 +441,7 @@ ruby_xml_default_load_external_dtd_get(VALUE class) {
  * Controls whether parsers load external DTDs by default.
  */
 static VALUE
-ruby_xml_default_load_external_dtd_set(VALUE class, VALUE bool) {
+rxml_default_load_external_dtd_set(VALUE class, VALUE bool) {
   if (TYPE(bool) == T_FALSE) {
     xmlLoadExtDtdDefaultValue = 0;
     return(Qfalse);
@@ -459,7 +459,7 @@ ruby_xml_default_load_external_dtd_set(VALUE class, VALUE bool) {
  * Determine whether parsers retain line-numbers by default.
  */
 static VALUE
-ruby_xml_default_line_numbers_get(VALUE class) {
+rxml_default_line_numbers_get(VALUE class) {
   if (xmlLineNumbersDefaultValue)
     return(Qtrue);
   else
@@ -474,7 +474,7 @@ ruby_xml_default_line_numbers_get(VALUE class) {
  * Controls whether parsers retain line-numbers by default.
  */
 static VALUE
-ruby_xml_default_line_numbers_set(VALUE class, VALUE bool) {
+rxml_default_line_numbers_set(VALUE class, VALUE bool) {
   if (TYPE(bool) == T_FALSE) {
     xmlLineNumbersDefault(0);
     return(Qfalse);
@@ -492,7 +492,7 @@ ruby_xml_default_line_numbers_set(VALUE class, VALUE bool) {
  * Determine whether parsers are pedantic by default.
  */
 static VALUE
-ruby_xml_default_pedantic_parser_get(VALUE class) {
+rxml_default_pedantic_parser_get(VALUE class) {
   if (xmlPedanticParserDefaultValue)
     return(Qtrue);
   else
@@ -507,7 +507,7 @@ ruby_xml_default_pedantic_parser_get(VALUE class) {
  * Controls whether parsers are pedantic by default.
  */
 static VALUE
-ruby_xml_default_pedantic_parser_set(VALUE class, VALUE bool) {
+rxml_default_pedantic_parser_set(VALUE class, VALUE bool) {
   if (TYPE(bool) == T_FALSE) {
     xmlPedanticParserDefault(0);
     return(Qfalse);
@@ -526,7 +526,7 @@ ruby_xml_default_pedantic_parser_set(VALUE class, VALUE bool) {
  * (for external entities) by default.
  */
 static VALUE
-ruby_xml_default_substitute_entities_get(VALUE class) {
+rxml_default_substitute_entities_get(VALUE class) {
   if (xmlSubstituteEntitiesDefaultValue)
     return(Qtrue);
   else
@@ -542,7 +542,7 @@ ruby_xml_default_substitute_entities_get(VALUE class) {
  * (for external entities) by default.
  */
 static VALUE
-ruby_xml_default_substitute_entities_set(VALUE class, VALUE bool) {
+rxml_default_substitute_entities_set(VALUE class, VALUE bool) {
   if (TYPE(bool) == T_FALSE) {
     xmlSubstituteEntitiesDefault(0);
     return(Qfalse);
@@ -561,7 +561,7 @@ ruby_xml_default_substitute_entities_set(VALUE class, VALUE bool) {
  * for output.
  */
 static VALUE
-ruby_xml_default_tree_indent_string_get(VALUE class) {
+rxml_default_tree_indent_string_get(VALUE class) {
   if (xmlTreeIndentString == NULL)
     return(Qnil);
   else
@@ -577,7 +577,7 @@ ruby_xml_default_tree_indent_string_get(VALUE class) {
  * for output.
  */
 static VALUE
-ruby_xml_default_tree_indent_string_set(VALUE class, VALUE string) {
+rxml_default_tree_indent_string_set(VALUE class, VALUE string) {
   Check_Type(string, T_STRING);
   xmlTreeIndentString = xmlStrdup(StringValuePtr(string));
   return(string);
@@ -591,7 +591,7 @@ ruby_xml_default_tree_indent_string_set(VALUE class, VALUE string) {
  * Determine whether parsers perform XML validation by default.
  */
 static VALUE
-ruby_xml_default_validity_checking_get(VALUE class) {
+rxml_default_validity_checking_get(VALUE class) {
   if (xmlDoValidityCheckingDefaultValue)
     return(Qtrue);
   else
@@ -606,7 +606,7 @@ ruby_xml_default_validity_checking_get(VALUE class) {
  * Controls whether parsers perform XML validation by default.
  */
 static VALUE
-ruby_xml_default_validity_checking_set(VALUE class, VALUE bool) {
+rxml_default_validity_checking_set(VALUE class, VALUE bool) {
   if (TYPE(bool) == T_FALSE) {
     xmlDoValidityCheckingDefaultValue = 0;
     return(Qfalse);
@@ -624,7 +624,7 @@ ruby_xml_default_validity_checking_set(VALUE class, VALUE bool) {
  * Determine whether parsers output warnings by default.
  */
 static VALUE
-ruby_xml_default_warnings_get(VALUE class) {
+rxml_default_warnings_get(VALUE class) {
   if (xmlGetWarningsDefaultValue)
     return(Qtrue);
   else
@@ -639,7 +639,7 @@ ruby_xml_default_warnings_get(VALUE class) {
  * Controls whether parsers output warnings by default.
  */
 static VALUE
-ruby_xml_default_warnings_set(VALUE class, VALUE bool) {
+rxml_default_warnings_set(VALUE class, VALUE bool) {
   if (TYPE(bool) == T_FALSE) {
     xmlGetWarningsDefaultValue = 0;
     return(Qfalse);
@@ -658,7 +658,7 @@ ruby_xml_default_warnings_set(VALUE class, VALUE bool) {
  * (requires libxml to be compiled with Zlib support).
  */
 static VALUE
-ruby_xml_default_compression_get(VALUE class) {
+rxml_default_compression_get(VALUE class) {
 #ifdef HAVE_ZLIB_H
   return(INT2FIX(xmlGetCompressMode()));
 #else
@@ -676,7 +676,7 @@ ruby_xml_default_compression_get(VALUE class) {
  * (requires libxml to be compiled with Zlib support).
  */
 static VALUE
-ruby_xml_default_compression_set(VALUE class, VALUE num) {
+rxml_default_compression_set(VALUE class, VALUE num) {
 #ifdef HAVE_ZLIB_H
   Check_Type(num, T_FIXNUM);
   xmlSetCompressMode(FIX2INT(num));
@@ -696,7 +696,7 @@ ruby_xml_default_compression_set(VALUE class, VALUE num) {
  * (and enabled) by the installed libxml.
  */
 static VALUE
-ruby_xml_features(VALUE class) {
+rxml_features(VALUE class) {
   VALUE arr, str;
   int i, len = MAX_LIBXML_FEATURES_LEN;
   char **list = NULL;
@@ -730,7 +730,7 @@ ruby_xml_features(VALUE class) {
  * (using the string supplied to +default_indent_tree_string+)
  */
 static VALUE
-ruby_xml_indent_tree_output_get(VALUE class) {
+rxml_indent_tree_output_get(VALUE class) {
   if (xmlIndentTreeOutput)
     return(Qtrue);
   else
@@ -746,7 +746,7 @@ ruby_xml_indent_tree_output_get(VALUE class) {
  * (using the string supplied to +default_indent_tree_string+)
  */
 static VALUE
-ruby_xml_indent_tree_output_set(VALUE class, VALUE bool) {
+rxml_indent_tree_output_set(VALUE class, VALUE bool) {
   if (TYPE(bool) == T_TRUE) {
     xmlIndentTreeOutput = 1;
     return(Qtrue);
@@ -766,7 +766,7 @@ ruby_xml_indent_tree_output_set(VALUE class, VALUE bool) {
  * support in libxml).
  */
 static VALUE
-ruby_xml_memory_dump(VALUE self) {
+rxml_memory_dump(VALUE self) {
 #ifdef DEBUG_MEMORY_LOCATION
   xmlMemoryDump();
   return(Qtrue);
@@ -785,7 +785,7 @@ ruby_xml_memory_dump(VALUE self) {
  * support in libxml).
  */
 static VALUE
-ruby_xml_memory_used(VALUE self) {
+rxml_memory_used(VALUE self) {
 #ifdef DEBUG_MEMORY_LOCATION
   return(INT2NUM(xmlMemUsed()));
 #else
@@ -808,53 +808,53 @@ Init_libxml_ruby(void) {
   rb_define_const(mXML, "VERNUM", INT2NUM(RUBY_LIBXML_VERNUM));
   rb_define_const(mXML, "XML_NAMESPACE", rb_str_new2((const char*)XML_XML_NAMESPACE));
 
-  rb_define_module_function(mXML, "enabled_automata?", ruby_xml_enabled_automata_q, 0);
-  rb_define_module_function(mXML, "enabled_c14n?", ruby_xml_enabled_c14n_q, 0);
-  rb_define_module_function(mXML, "enabled_catalog?", ruby_xml_enabled_catalog_q, 0);
-  rb_define_module_function(mXML, "enabled_debug?", ruby_xml_enabled_debug_q, 0);
-  rb_define_module_function(mXML, "enabled_docbook?", ruby_xml_enabled_docbook_q, 0);
-  rb_define_module_function(mXML, "enabled_ftp?", ruby_xml_enabled_ftp_q, 0);
-  rb_define_module_function(mXML, "enabled_http?", ruby_xml_enabled_http_q, 0);
-  rb_define_module_function(mXML, "enabled_html?", ruby_xml_enabled_html_q, 0);
-  rb_define_module_function(mXML, "enabled_iconv?", ruby_xml_enabled_iconv_q, 0);
-  rb_define_module_function(mXML, "enabled_memory_debug?", ruby_xml_enabled_memory_debug_location_q, 0);
-  rb_define_module_function(mXML, "enabled_regexp?", ruby_xml_enabled_regexp_q, 0);
-  rb_define_module_function(mXML, "enabled_schemas?", ruby_xml_enabled_schemas_q, 0);
-  rb_define_module_function(mXML, "enabled_thread?", ruby_xml_enabled_thread_q, 0);
-  rb_define_module_function(mXML, "enabled_unicode?", ruby_xml_enabled_unicode_q, 0);
-  rb_define_module_function(mXML, "enabled_xinclude?", ruby_xml_enabled_xinclude_q, 0);
-  rb_define_module_function(mXML, "enabled_xpath?", ruby_xml_enabled_xpath_q, 0);
-  rb_define_module_function(mXML, "enabled_xpointer?", ruby_xml_enabled_xpointer_q, 0);
-  rb_define_module_function(mXML, "enabled_zlib?", ruby_xml_enabled_zlib_q, 0);
+  rb_define_module_function(mXML, "enabled_automata?", rxml_enabled_automata_q, 0);
+  rb_define_module_function(mXML, "enabled_c14n?", rxml_enabled_c14n_q, 0);
+  rb_define_module_function(mXML, "enabled_catalog?", rxml_enabled_catalog_q, 0);
+  rb_define_module_function(mXML, "enabled_debug?", rxml_enabled_debug_q, 0);
+  rb_define_module_function(mXML, "enabled_docbook?", rxml_enabled_docbook_q, 0);
+  rb_define_module_function(mXML, "enabled_ftp?", rxml_enabled_ftp_q, 0);
+  rb_define_module_function(mXML, "enabled_http?", rxml_enabled_http_q, 0);
+  rb_define_module_function(mXML, "enabled_html?", rxml_enabled_html_q, 0);
+  rb_define_module_function(mXML, "enabled_iconv?", rxml_enabled_iconv_q, 0);
+  rb_define_module_function(mXML, "enabled_memory_debug?", rxml_enabled_memory_debug_location_q, 0);
+  rb_define_module_function(mXML, "enabled_regexp?", rxml_enabled_regexp_q, 0);
+  rb_define_module_function(mXML, "enabled_schemas?", rxml_enabled_schemas_q, 0);
+  rb_define_module_function(mXML, "enabled_thread?", rxml_enabled_thread_q, 0);
+  rb_define_module_function(mXML, "enabled_unicode?", rxml_enabled_unicode_q, 0);
+  rb_define_module_function(mXML, "enabled_xinclude?", rxml_enabled_xinclude_q, 0);
+  rb_define_module_function(mXML, "enabled_xpath?", rxml_enabled_xpath_q, 0);
+  rb_define_module_function(mXML, "enabled_xpointer?", rxml_enabled_xpointer_q, 0);
+  rb_define_module_function(mXML, "enabled_zlib?", rxml_enabled_zlib_q, 0);
   
-  rb_define_module_function(mXML, "catalog_dump", ruby_xml_catalog_dump, 0);
-  rb_define_module_function(mXML, "catalog_remove", ruby_xml_catalog_remove, 1);
-  rb_define_module_function(mXML, "check_lib_versions", ruby_xml_check_lib_versions, 0);
-  rb_define_module_function(mXML, "debug_entities", ruby_xml_debug_entities_get, 0);
-  rb_define_module_function(mXML, "debug_entities=", ruby_xml_debug_entities_set, 1);
-  rb_define_module_function(mXML, "default_compression", ruby_xml_default_compression_get, 0);
-  rb_define_module_function(mXML, "default_compression=", ruby_xml_default_compression_set, 1);
-  rb_define_module_function(mXML, "default_keep_blanks", ruby_xml_default_keep_blanks_get, 0);
-  rb_define_module_function(mXML, "default_keep_blanks=", ruby_xml_default_keep_blanks_set, 1);
-  rb_define_module_function(mXML, "default_load_external_dtd", ruby_xml_default_load_external_dtd_get, 0);
-  rb_define_module_function(mXML, "default_load_external_dtd=", ruby_xml_default_load_external_dtd_set, 1);
-  rb_define_module_function(mXML, "default_line_numbers", ruby_xml_default_line_numbers_get, 0);
-  rb_define_module_function(mXML, "default_line_numbers=", ruby_xml_default_line_numbers_set, 1);
-  rb_define_module_function(mXML, "default_pedantic_parser", ruby_xml_default_pedantic_parser_get, 0);
-  rb_define_module_function(mXML, "default_pedantic_parser=", ruby_xml_default_pedantic_parser_set, 1);
-  rb_define_module_function(mXML, "default_substitute_entities", ruby_xml_default_substitute_entities_get, 0);
-  rb_define_module_function(mXML, "default_substitute_entities=", ruby_xml_default_substitute_entities_set, 1);
-  rb_define_module_function(mXML, "default_tree_indent_string", ruby_xml_default_tree_indent_string_get, 0);
-  rb_define_module_function(mXML, "default_tree_indent_string=", ruby_xml_default_tree_indent_string_set, 1);
-  rb_define_module_function(mXML, "default_validity_checking", ruby_xml_default_validity_checking_get, 0);
-  rb_define_module_function(mXML, "default_validity_checking=", ruby_xml_default_validity_checking_set, 1);
-  rb_define_module_function(mXML, "default_warnings", ruby_xml_default_warnings_get, 0);
-  rb_define_module_function(mXML, "default_warnings=", ruby_xml_default_warnings_set, 1);
-	rb_define_module_function(mXML, "features", ruby_xml_features, 0);
-  rb_define_module_function(mXML, "indent_tree_output", ruby_xml_indent_tree_output_get, 0);
-  rb_define_module_function(mXML, "indent_tree_output=", ruby_xml_indent_tree_output_set, 1);
-  rb_define_module_function(mXML, "memory_dump", ruby_xml_memory_dump, 0);
-  rb_define_module_function(mXML, "memory_used", ruby_xml_memory_used, 0);
+  rb_define_module_function(mXML, "catalog_dump", rxml_catalog_dump, 0);
+  rb_define_module_function(mXML, "catalog_remove", rxml_catalog_remove, 1);
+  rb_define_module_function(mXML, "check_lib_versions", rxml_check_lib_versions, 0);
+  rb_define_module_function(mXML, "debug_entities", rxml_debug_entities_get, 0);
+  rb_define_module_function(mXML, "debug_entities=", rxml_debug_entities_set, 1);
+  rb_define_module_function(mXML, "default_compression", rxml_default_compression_get, 0);
+  rb_define_module_function(mXML, "default_compression=", rxml_default_compression_set, 1);
+  rb_define_module_function(mXML, "default_keep_blanks", rxml_default_keep_blanks_get, 0);
+  rb_define_module_function(mXML, "default_keep_blanks=", rxml_default_keep_blanks_set, 1);
+  rb_define_module_function(mXML, "default_load_external_dtd", rxml_default_load_external_dtd_get, 0);
+  rb_define_module_function(mXML, "default_load_external_dtd=", rxml_default_load_external_dtd_set, 1);
+  rb_define_module_function(mXML, "default_line_numbers", rxml_default_line_numbers_get, 0);
+  rb_define_module_function(mXML, "default_line_numbers=", rxml_default_line_numbers_set, 1);
+  rb_define_module_function(mXML, "default_pedantic_parser", rxml_default_pedantic_parser_get, 0);
+  rb_define_module_function(mXML, "default_pedantic_parser=", rxml_default_pedantic_parser_set, 1);
+  rb_define_module_function(mXML, "default_substitute_entities", rxml_default_substitute_entities_get, 0);
+  rb_define_module_function(mXML, "default_substitute_entities=", rxml_default_substitute_entities_set, 1);
+  rb_define_module_function(mXML, "default_tree_indent_string", rxml_default_tree_indent_string_get, 0);
+  rb_define_module_function(mXML, "default_tree_indent_string=", rxml_default_tree_indent_string_set, 1);
+  rb_define_module_function(mXML, "default_validity_checking", rxml_default_validity_checking_get, 0);
+  rb_define_module_function(mXML, "default_validity_checking=", rxml_default_validity_checking_set, 1);
+  rb_define_module_function(mXML, "default_warnings", rxml_default_warnings_get, 0);
+  rb_define_module_function(mXML, "default_warnings=", rxml_default_warnings_set, 1);
+	rb_define_module_function(mXML, "features", rxml_features, 0);
+  rb_define_module_function(mXML, "indent_tree_output", rxml_indent_tree_output_get, 0);
+  rb_define_module_function(mXML, "indent_tree_output=", rxml_indent_tree_output_set, 1);
+  rb_define_module_function(mXML, "memory_dump", rxml_memory_dump, 0);
+  rb_define_module_function(mXML, "memory_used", rxml_memory_used, 0);
 
   /* Now initialize all the other modules */
   ruby_init_xml_encoding();      
@@ -881,6 +881,6 @@ Init_libxml_ruby(void) {
   ruby_init_xml_relaxng();      
   ruby_init_xml_reader();
 
-  ruby_xml_default_substitute_entities_set(mXML, Qtrue);
-  ruby_xml_default_load_external_dtd_set(mXML, Qtrue);
+  rxml_default_substitute_entities_set(mXML, Qtrue);
+  rxml_default_load_external_dtd_set(mXML, Qtrue);
 }

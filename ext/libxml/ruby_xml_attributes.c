@@ -1,4 +1,4 @@
-/* $Id: ruby_xml_attributes.c 300 2008-07-01 19:14:15Z cfis $ */
+/* $Id: rxml_attributes.c 300 2008-07-01 19:14:15Z cfis $ */
 
 /* Please see the LICENSE file for copyright and distribution information */
 
@@ -35,18 +35,18 @@
 VALUE cXMLAttributes;
 
 void
-ruby_xml_attributes_mark(xmlNodePtr xnode) {
-  ruby_xml_node_mark_common(xnode);
+rxml_attributes_mark(xmlNodePtr xnode) {
+  rxml_node_mark_common(xnode);
 }
 
 /*
  * Creates a  new attributes instance.  Not exposed to ruby.
  */
 VALUE
-ruby_xml_attributes_new(xmlNodePtr xnode)
+rxml_attributes_new(xmlNodePtr xnode)
 {
   return Data_Wrap_Struct(cXMLAttributes,
-                          ruby_xml_attributes_mark, NULL,
+                          rxml_attributes_mark, NULL,
                           xnode);
 }
 
@@ -59,10 +59,10 @@ ruby_xml_attributes_new(xmlNodePtr xnode)
  *  doc.root.attributes.node == doc.root
  */
 VALUE
-ruby_xml_attributes_node_get(VALUE self) {
+rxml_attributes_node_get(VALUE self) {
   xmlNodePtr xnode;
   Data_Get_Struct(self, xmlNode, xnode);
-  return(ruby_xml_node2_wrap(cXMLNode, xnode));
+  return(rxml_node2_wrap(cXMLNode, xnode));
 }
 
 
@@ -77,7 +77,7 @@ ruby_xml_attributes_node_get(VALUE self) {
  *  doc.root.attributes.get_attribute("foo")
  */
 static VALUE
-ruby_xml_attributes_get_attribute(VALUE self, VALUE name) {
+rxml_attributes_get_attribute(VALUE self, VALUE name) {
   xmlNodePtr xnode;
   xmlAttrPtr xattr;
 
@@ -88,7 +88,7 @@ ruby_xml_attributes_get_attribute(VALUE self, VALUE name) {
   xattr = xmlHasProp(xnode, (xmlChar*)StringValuePtr(name));
   
   if (xattr)
-    return(ruby_xml_attr_wrap(xattr));
+    return(rxml_attr_wrap(xattr));
   else
     return(Qnil);
 }
@@ -105,7 +105,7 @@ ruby_xml_attributes_get_attribute(VALUE self, VALUE name) {
  *  doc.root.attributes.get_attribute_ns('http://www.w3.org/1999/xlink', 'href')
  */
 static VALUE
-ruby_xml_attributes_get_attribute_ns(VALUE self, VALUE namespace, VALUE name) {
+rxml_attributes_get_attribute_ns(VALUE self, VALUE namespace, VALUE name) {
   xmlNodePtr xnode;
   xmlAttrPtr xattr;
 
@@ -116,7 +116,7 @@ ruby_xml_attributes_get_attribute_ns(VALUE self, VALUE namespace, VALUE name) {
   xattr = xmlHasNsProp(xnode, (xmlChar*)StringValuePtr(name), (xmlChar*)StringValuePtr(namespace));
   
   if (xattr)
-    return(ruby_xml_attr_wrap(xattr));
+    return(rxml_attr_wrap(xattr));
   else
     return(Qnil);
 }
@@ -133,12 +133,12 @@ ruby_xml_attributes_get_attribute_ns(VALUE self, VALUE namespace, VALUE name) {
  *  doc.root.attributes['att'] -> 'some value'
  */
 VALUE
-ruby_xml_attributes_attribute_get(VALUE self, VALUE name) {
-  VALUE xattr = ruby_xml_attributes_get_attribute(self, name);
+rxml_attributes_attribute_get(VALUE self, VALUE name) {
+  VALUE xattr = rxml_attributes_get_attribute(self, name);
   if NIL_P(xattr)
     return(Qnil);
   else
-    return ruby_xml_attr_value_get(xattr);
+    return rxml_attr_value_get(xattr);
 }  
 
 /*
@@ -154,13 +154,13 @@ ruby_xml_attributes_attribute_get(VALUE self, VALUE name) {
  *  doc.root.attributes['att'] = 'some value'
  */
 VALUE
-ruby_xml_attributes_attribute_set(VALUE self, VALUE name, VALUE value) {
-  VALUE xattr = ruby_xml_attributes_get_attribute(self, name);
+rxml_attributes_attribute_set(VALUE self, VALUE name, VALUE value) {
+  VALUE xattr = rxml_attributes_get_attribute(self, name);
   if NIL_P(xattr)
   {
     VALUE args[3];
 
-    args[0] = ruby_xml_attributes_node_get(self);
+    args[0] = rxml_attributes_node_get(self);
     args[1] = name;
     args[2] = value;
 
@@ -168,7 +168,7 @@ ruby_xml_attributes_attribute_set(VALUE self, VALUE name, VALUE value) {
   }
   else
   {
-    return ruby_xml_attr_value_set(xattr, value);
+    return rxml_attr_value_set(xattr, value);
   }
 }  
 
@@ -182,7 +182,7 @@ ruby_xml_attributes_attribute_set(VALUE self, VALUE name, VALUE value) {
  *  doc.root.attributes.each {|attribute| puts attribute.name}
  */
 static VALUE
-ruby_xml_attributes_each(VALUE self) {
+rxml_attributes_each(VALUE self) {
   xmlNodePtr xnode;
   xmlAttrPtr xattr;
   Data_Get_Struct(self, xmlNode, xnode);
@@ -191,7 +191,7 @@ ruby_xml_attributes_each(VALUE self) {
 
   while (xattr)
   {
-     VALUE attr = ruby_xml_attr_wrap(xattr);
+     VALUE attr = rxml_attr_wrap(xattr);
      rb_yield(attr);
      xattr = xattr->next;
   }
@@ -208,7 +208,7 @@ ruby_xml_attributes_each(VALUE self) {
  *  doc.root.attributes.length
  */
 static VALUE
-ruby_xml_attributes_length(VALUE self) {
+rxml_attributes_length(VALUE self) {
   int length = 0;
   xmlNodePtr xnode;
   xmlAttrPtr xattr;
@@ -234,7 +234,7 @@ ruby_xml_attributes_length(VALUE self) {
  *  doc.root.attributes.first
  */
 static VALUE
-ruby_xml_attributes_first(VALUE self) {
+rxml_attributes_first(VALUE self) {
   xmlNodePtr xnode;
   Data_Get_Struct(self, xmlNode, xnode);
 
@@ -242,7 +242,7 @@ ruby_xml_attributes_first(VALUE self) {
     xmlAttrPtr xattr = xnode->properties;
     
     if (xattr) {
-      return(ruby_xml_attr_wrap(xattr));
+      return(rxml_attr_wrap(xattr));
     }
   } 
   return(Qnil);
@@ -258,12 +258,12 @@ void
 ruby_init_xml_attributes(void) {
   cXMLAttributes = rb_define_class_under(mXML, "Attributes", rb_cObject);
   rb_include_module(cXMLAttributes, rb_mEnumerable);
-  rb_define_method(cXMLAttributes, "node", ruby_xml_attributes_node_get, 0);
-  rb_define_method(cXMLAttributes, "get_attribute", ruby_xml_attributes_get_attribute, 1);
-  rb_define_method(cXMLAttributes, "get_attribute_ns", ruby_xml_attributes_get_attribute_ns, 2);
-  rb_define_method(cXMLAttributes, "[]", ruby_xml_attributes_attribute_get, 1);
-  rb_define_method(cXMLAttributes, "[]=", ruby_xml_attributes_attribute_set, 2);
-  rb_define_method(cXMLAttributes, "each", ruby_xml_attributes_each, 0);
-  rb_define_method(cXMLAttributes, "length", ruby_xml_attributes_length, 0);
-  rb_define_method(cXMLAttributes, "first", ruby_xml_attributes_first, 0);
+  rb_define_method(cXMLAttributes, "node", rxml_attributes_node_get, 0);
+  rb_define_method(cXMLAttributes, "get_attribute", rxml_attributes_get_attribute, 1);
+  rb_define_method(cXMLAttributes, "get_attribute_ns", rxml_attributes_get_attribute_ns, 2);
+  rb_define_method(cXMLAttributes, "[]", rxml_attributes_attribute_get, 1);
+  rb_define_method(cXMLAttributes, "[]=", rxml_attributes_attribute_set, 2);
+  rb_define_method(cXMLAttributes, "each", rxml_attributes_each, 0);
+  rb_define_method(cXMLAttributes, "length", rxml_attributes_length, 0);
+  rb_define_method(cXMLAttributes, "first", rxml_attributes_first, 0);
 }

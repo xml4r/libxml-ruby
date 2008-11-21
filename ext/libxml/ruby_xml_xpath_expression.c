@@ -1,4 +1,4 @@
-/* $Id: ruby_xml_xpath.c 461 2008-07-15 21:35:56Z cfis $ */
+/* $Id: rxml_xpath.c 461 2008-07-15 21:35:56Z cfis $ */
 
 /* Please see the LICENSE file for copyright and distribution information */
 
@@ -24,15 +24,15 @@
 VALUE cXMLXPathExpression;
 
 static void
-ruby_xml_xpath_expression_free(xmlXPathCompExprPtr expr) {
+rxml_xpath_expression_free(xmlXPathCompExprPtr expr) {
   xmlXPathFreeCompExpr(expr);
 }
 
 static VALUE
-ruby_xml_xpath_expression_alloc(VALUE klass) {
+rxml_xpath_expression_alloc(VALUE klass) {
   return Data_Wrap_Struct(cXMLXPathExpression,
 						  NULL,
-						  ruby_xml_xpath_expression_free,
+						  rxml_xpath_expression_free,
 						  NULL);
 }
 
@@ -47,12 +47,12 @@ ruby_xml_xpath_expression_alloc(VALUE klass) {
  *  nodes = doc.find(expr)
  */
 static VALUE
-ruby_xml_xpath_expression_initialize(VALUE self, VALUE expression) {
+rxml_xpath_expression_initialize(VALUE self, VALUE expression) {
   xmlXPathCompExprPtr compexpr = xmlXPathCompile(StringValueCStr(expression));  
 
   if (compexpr == NULL) {
 	  xmlErrorPtr xerror = xmlGetLastError();
-	  ruby_xml_raise(xerror);
+	  rxml_raise(xerror);
   }
 
   DATA_PTR(self) = compexpr;
@@ -62,8 +62,8 @@ ruby_xml_xpath_expression_initialize(VALUE self, VALUE expression) {
 void
 ruby_init_xml_xpath_expression(void) {
   cXMLXPathExpression = rb_define_class_under(mXPath, "Expression", rb_cObject);
-  rb_define_alloc_func(cXMLXPathExpression, ruby_xml_xpath_expression_alloc);
+  rb_define_alloc_func(cXMLXPathExpression, rxml_xpath_expression_alloc);
   rb_define_singleton_method(rb_cRegexp, "compile", rb_class_new_instance, 1);
 
-  rb_define_method(cXMLXPathExpression, "initialize", ruby_xml_xpath_expression_initialize, 1);
+  rb_define_method(cXMLXPathExpression, "initialize", rxml_xpath_expression_initialize, 1);
 }

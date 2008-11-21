@@ -2,13 +2,13 @@
 
 /* Please see the LICENSE file for copyright and distribution information */
 
-#ifndef __RUBY_XML_XPOINTER__
-#define __RUBY_XML_XPOINTER__
+#ifndef __rxml_XPOINTER__
+#define __rxml_XPOINTER__
 
 extern VALUE cXMLXPointer;
 extern VALUE eXMLXPointerInvalidExpression;
 
-typedef struct ruby_xml_xpointer {
+typedef struct rxml_xpointer {
   VALUE xd;
   VALUE ctxt;
   /*
@@ -18,10 +18,10 @@ typedef struct ruby_xml_xpointer {
    *
    * I also need an xpointer data struct type.
   */
-} ruby_xml_xpointer;
+} rxml_xpointer;
 
-VALUE ruby_xml_xpointer_point(VALUE class, VALUE node, VALUE xptr_string);
-VALUE ruby_xml_xpointer_point2(VALUE node, VALUE xptr_string);
+VALUE rxml_xpointer_point(VALUE class, VALUE node, VALUE xptr_string);
+VALUE rxml_xpointer_point2(VALUE node, VALUE xptr_string);
 void ruby_init_xml_xpointer(void);
 
 #endif

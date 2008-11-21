@@ -45,7 +45,7 @@ ctxtRead(FILE *f, char * buf, size_t len) {
  * Initiliazes instance of parser.
  */
 static VALUE
-ruby_xml_parser_initialize(VALUE self) {
+rxml_parser_initialize(VALUE self) {
   VALUE input = rb_class_new_instance(0, NULL, cXMLInput);
   rb_iv_set(self, "@input", input);
   rb_iv_set(self, "@context", Qnil);
@@ -53,7 +53,7 @@ ruby_xml_parser_initialize(VALUE self) {
 }
 
 static xmlParserCtxtPtr
-ruby_xml_parser_filename_ctxt(VALUE input) {
+rxml_parser_filename_ctxt(VALUE input) {
   xmlParserCtxtPtr ctxt;
   int retry_count = 0;
   VALUE filename = rb_ivar_get(input, FILE_ATTR);
@@ -74,13 +74,13 @@ ruby_xml_parser_filename_ctxt(VALUE input) {
 }
 
 static xmlParserCtxtPtr
-ruby_xml_parser_str_ctxt(VALUE input) {
+rxml_parser_str_ctxt(VALUE input) {
   VALUE str = rb_ivar_get(input, STRING_ATTR);
   return xmlCreateMemoryParserCtxt(StringValuePtr(str), RSTRING_LEN(str));
 }
 
 static xmlParserCtxtPtr
-ruby_xml_parser_io_ctxt(VALUE input) {
+rxml_parser_io_ctxt(VALUE input) {
   VALUE io = rb_ivar_get(input, IO_ATTR);
   VALUE encoding = rb_ivar_get(input, ENCODING_ATTR);
   xmlCharEncoding xmlEncoding = NUM2INT(encoding);
@@ -106,7 +106,7 @@ ruby_xml_parser_io_ctxt(VALUE input) {
  * is thrown.
  */
 static VALUE
-ruby_xml_parser_parse(VALUE self) {
+rxml_parser_parse(VALUE self) {
   xmlParserCtxtPtr ctxt;
   VALUE context;
   VALUE input = rb_ivar_get(self, INPUT_ATTR);
@@ -116,28 +116,28 @@ ruby_xml_parser_parse(VALUE self) {
     rb_raise(rb_eRuntimeError, "You cannot parse a data source twice");
 
   if (rb_ivar_get(input, FILE_ATTR) != Qnil)
-    ctxt = ruby_xml_parser_filename_ctxt(input);
+    ctxt = rxml_parser_filename_ctxt(input);
   else if (rb_ivar_get(input, STRING_ATTR) != Qnil)
-    ctxt = ruby_xml_parser_str_ctxt(input);
+    ctxt = rxml_parser_str_ctxt(input);
   /*else if (rb_ivar_get(input, DOCUMENT_ATTR) != Qnil)
-    ctxt = ruby_xml_parser_parse_document(input);*/
+    ctxt = rxml_parser_parse_document(input);*/
   else if (rb_ivar_get(input, IO_ATTR) != Qnil)
-    ctxt = ruby_xml_parser_io_ctxt(input);
+    ctxt = rxml_parser_io_ctxt(input);
   else
     rb_raise(rb_eArgError, "You must specify a parser data source");
   
   if (!ctxt)
-    ruby_xml_raise(&xmlLastError);
+    rxml_raise(&xmlLastError);
 
-  context = ruby_xml_parser_context_wrap(ctxt);
+  context = rxml_parser_context_wrap(ctxt);
   rb_ivar_set(self, CONTEXT_ATTR, context);
  
   if (xmlParseDocument(ctxt) == -1 || !ctxt->wellFormed) {
     xmlFreeDoc(ctxt->myDoc);
-    ruby_xml_raise(&ctxt->lastError);
+    rxml_raise(&ctxt->lastError);
   }
 
-  return ruby_xml_document_wrap(ctxt->myDoc);
+  return rxml_document_wrap(ctxt->myDoc);
 }
 
 
@@ -158,6 +158,6 @@ ruby_init_parser(void) {
   rb_define_attr(cXMLParser, "context", 1, 0);
 
   /* Instance Methods */
-  rb_define_method(cXMLParser, "initialize", ruby_xml_parser_initialize, 0);
-  rb_define_method(cXMLParser, "parse", ruby_xml_parser_parse, 0);
+  rb_define_method(cXMLParser, "initialize", rxml_parser_initialize, 0);
+  rb_define_method(cXMLParser, "parse", rxml_parser_parse, 0);
 }

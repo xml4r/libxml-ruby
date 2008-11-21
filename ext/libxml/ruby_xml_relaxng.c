@@ -39,12 +39,12 @@ VALUE cXMLRelaxNG;
 #endif
 
 static void
-ruby_xml_relaxng_mark(ruby_xml_relaxng *rxrelaxng) {
+rxml_relaxng_mark(rxml_relaxng *rxrelaxng) {
   return;
 }
 
 static void
-ruby_xml_relaxng_free(ruby_xml_relaxng *rxrelaxng) {
+rxml_relaxng_free(rxml_relaxng *rxrelaxng) {
   if (rxrelaxng->relaxng != NULL) {
     xmlRelaxNGFree(rxrelaxng->relaxng);
     rxrelaxng->relaxng = NULL;
@@ -60,18 +60,18 @@ ruby_xml_relaxng_free(ruby_xml_relaxng *rxrelaxng) {
  * Create a new relaxng from the specified URI.
  */
 static VALUE
-ruby_xml_relaxng_init_from_uri(VALUE class, VALUE uri) {
+rxml_relaxng_init_from_uri(VALUE class, VALUE uri) {
   xmlRelaxNGParserCtxtPtr parser;
-  ruby_xml_relaxng *relaxng;
+  rxml_relaxng *relaxng;
 
   Check_Type(uri, T_STRING);
 
   parser = xmlRelaxNGNewParserCtxt(StringValuePtr(uri));
-  relaxng = ALLOC(ruby_xml_relaxng);
+  relaxng = ALLOC(rxml_relaxng);
   relaxng->relaxng = xmlRelaxNGParse(parser);
   xmlRelaxNGFreeParserCtxt(parser);
 
-  return Data_Wrap_Struct(cXMLRelaxNG, ruby_xml_relaxng_mark, ruby_xml_relaxng_free, relaxng);
+  return Data_Wrap_Struct(cXMLRelaxNG, rxml_relaxng_mark, rxml_relaxng_free, relaxng);
 }
 
 /*
@@ -81,19 +81,19 @@ ruby_xml_relaxng_init_from_uri(VALUE class, VALUE uri) {
  * Create a new relaxng from the specified document.
  */
 static VALUE
-ruby_xml_relaxng_init_from_document(VALUE class, VALUE document) {
+rxml_relaxng_init_from_document(VALUE class, VALUE document) {
   xmlDocPtr xdoc;
-  ruby_xml_relaxng *relaxng;
+  rxml_relaxng *relaxng;
   xmlRelaxNGParserCtxtPtr parser;
 
   Data_Get_Struct(document, xmlDoc, xdoc);
 
   parser = xmlRelaxNGNewDocParserCtxt(xdoc);
-  relaxng = ALLOC(ruby_xml_relaxng);
+  relaxng = ALLOC(rxml_relaxng);
   relaxng->relaxng = xmlRelaxNGParse(parser);
   xmlRelaxNGFreeParserCtxt(parser);
 
-  return Data_Wrap_Struct(cXMLRelaxNG, ruby_xml_relaxng_mark, ruby_xml_relaxng_free, relaxng);
+  return Data_Wrap_Struct(cXMLRelaxNG, rxml_relaxng_mark, rxml_relaxng_free, relaxng);
 }
 
 /*
@@ -103,24 +103,24 @@ ruby_xml_relaxng_init_from_document(VALUE class, VALUE document) {
  * Create a new relaxng using the specified string.
  */
 static VALUE
-ruby_xml_relaxng_init_from_string(VALUE self, VALUE relaxng_str) {
+rxml_relaxng_init_from_string(VALUE self, VALUE relaxng_str) {
   xmlRelaxNGParserCtxtPtr  parser;
-  ruby_xml_relaxng *rxrelaxng;
+  rxml_relaxng *rxrelaxng;
 
   Check_Type(relaxng_str, T_STRING);
 
   parser = xmlRelaxNGNewMemParserCtxt(StringValuePtr(relaxng_str), strlen(StringValuePtr(relaxng_str)));
-  rxrelaxng = ALLOC(ruby_xml_relaxng);
+  rxrelaxng = ALLOC(rxml_relaxng);
   rxrelaxng->relaxng = xmlRelaxNGParse(parser);
   xmlRelaxNGFreeParserCtxt(parser);
 
-  return Data_Wrap_Struct(cXMLRelaxNG, ruby_xml_relaxng_mark, ruby_xml_relaxng_free, rxrelaxng);
+  return Data_Wrap_Struct(cXMLRelaxNG, rxml_relaxng_mark, rxml_relaxng_free, rxrelaxng);
 }
   
 void  ruby_init_xml_relaxng(void) {
   cXMLRelaxNG = rb_define_class_under(mXML, "RelaxNG", rb_cObject);
-  rb_define_singleton_method(cXMLRelaxNG, "new",         ruby_xml_relaxng_init_from_uri, 1);
-  rb_define_singleton_method(cXMLRelaxNG, "from_string", ruby_xml_relaxng_init_from_string, 1);
-  rb_define_singleton_method(cXMLRelaxNG, "document",    ruby_xml_relaxng_init_from_document, 1);
+  rb_define_singleton_method(cXMLRelaxNG, "new",         rxml_relaxng_init_from_uri, 1);
+  rb_define_singleton_method(cXMLRelaxNG, "from_string", rxml_relaxng_init_from_string, 1);
+  rb_define_singleton_method(cXMLRelaxNG, "document",    rxml_relaxng_init_from_document, 1);
 }
 

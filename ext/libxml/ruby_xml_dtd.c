@@ -31,7 +31,7 @@
 VALUE cXMLDtd;
 
 void
-ruby_xml_dtd_free(ruby_xml_dtd *rxdtd) {
+rxml_dtd_free(rxml_dtd *rxdtd) {
   if (rxdtd->dtd != NULL) {
     xmlFreeDtd(rxdtd->dtd);
     rxdtd->dtd = NULL;
@@ -41,7 +41,7 @@ ruby_xml_dtd_free(ruby_xml_dtd *rxdtd) {
 }
 
 static void
-ruby_xml_dtd_mark(ruby_xml_dtd *rxdtd) {
+rxml_dtd_mark(rxml_dtd *rxdtd) {
   return;
   //if (rxdtd == NULL) return;
   //if (!NIL_P(rxd->xmlver)) rb_gc_mark(rxd->xmlver);
@@ -56,8 +56,8 @@ ruby_xml_dtd_mark(ruby_xml_dtd *rxdtd) {
  * identifiers.
  */
 static VALUE
-ruby_xml_dtd_initialize(int argc, VALUE *argv, VALUE class) {
-  ruby_xml_dtd *rxdtd;
+rxml_dtd_initialize(int argc, VALUE *argv, VALUE class) {
+  rxml_dtd *rxdtd;
   VALUE external, system, dtd_string;
   xmlParserInputBufferPtr buffer;
   xmlCharEncoding enc = XML_CHAR_ENCODING_NONE;
@@ -71,7 +71,7 @@ ruby_xml_dtd_initialize(int argc, VALUE *argv, VALUE class) {
 
     Check_Type(external, T_STRING);
     Check_Type(system,   T_STRING);
-    rxdtd = ALLOC(ruby_xml_dtd);
+    rxdtd = ALLOC(rxml_dtd);
     rxdtd->dtd = xmlParseDTD( (xmlChar*)StringValuePtr(external),
                               (xmlChar*)StringValuePtr(system) );
     if (rxdtd->dtd == NULL) {
@@ -80,7 +80,7 @@ ruby_xml_dtd_initialize(int argc, VALUE *argv, VALUE class) {
     }
 
     xmlSetTreeDoc( (xmlNodePtr)rxdtd->dtd, NULL );
-    return( Data_Wrap_Struct(cXMLDtd, ruby_xml_dtd_mark, ruby_xml_dtd_free, rxdtd) );
+    return( Data_Wrap_Struct(cXMLDtd, rxml_dtd_mark, rxml_dtd_free, rxdtd) );
     break;
 
 /*
@@ -113,14 +113,14 @@ new(CLASS, external, system)
     new_string = xmlStrdup((xmlChar*)StringValuePtr(dtd_string));
     xmlParserInputBufferPush(buffer, xmlStrlen(new_string), (const char*)new_string);
 
-    rxdtd = ALLOC(ruby_xml_dtd);
+    rxdtd = ALLOC(rxml_dtd);
     rxdtd->dtd = xmlIOParseDTD(NULL, buffer, enc);
 
     // NOTE: For some reason freeing this InputBuffer causes a segfault! 
     // xmlFreeParserInputBuffer(buffer); 
     xmlFree(new_string);
 
-    return( Data_Wrap_Struct(cXMLDtd, ruby_xml_dtd_mark, ruby_xml_dtd_free, rxdtd) );
+    return( Data_Wrap_Struct(cXMLDtd, rxml_dtd_mark, rxml_dtd_free, rxdtd) );
 
     break;
 /*
@@ -177,7 +177,7 @@ SV * parse_string(CLASS, str, ...)
     rb_raise(rb_eArgError, "wrong number of arguments (need 1 or 2)");
   }
 
-  //docobj = ruby_xml_document_new2(cXMLDocument, xmlver);
+  //docobj = rxml_document_new2(cXMLDocument, xmlver);
   return Qnil;
 }
 
@@ -190,7 +190,7 @@ SV * parse_string(CLASS, str, ...)
 void
 ruby_init_xml_dtd(void) {
   cXMLDtd = rb_define_class_under(mXML, "Dtd", rb_cObject);
-  rb_define_singleton_method(cXMLDtd, "new", ruby_xml_dtd_initialize, -1);
-  //rb_define_method(cXMLDocument, "xinclude", ruby_xml_document_xinclude, 0);
+  rb_define_singleton_method(cXMLDtd, "new", rxml_dtd_initialize, -1);
+  //rb_define_method(cXMLDocument, "xinclude", rxml_document_xinclude, 0);
 }
 

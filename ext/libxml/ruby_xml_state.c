@@ -8,13 +8,13 @@ VALUE LIBXML_STATE = Qnil;
 static int dummy = 0;
 
 static void
-ruby_xml_state_free(int dummy) {
+rxml_state_free(int dummy) {
   xmlCleanupParser();
   LIBXML_STATE = Qnil;
 }
 
 static VALUE
-ruby_xml_state_alloc(VALUE klass) {
+rxml_state_alloc(VALUE klass) {
   #ifdef DEBUG
   fprintf(stderr, "Allocating state");
   #endif
@@ -22,7 +22,7 @@ ruby_xml_state_alloc(VALUE klass) {
   xmlInitParser();
   
   return Data_Wrap_Struct(cXMLState,
-			  NULL, ruby_xml_state_free,
+			  NULL, rxml_state_free,
 			  &dummy);
 }
 
@@ -42,7 +42,7 @@ ruby_init_state(void) {
   rb_mSingleton = rb_const_get(rb_cObject, rb_intern("Singleton"));
   rb_include_module(cXMLState, rb_mSingleton);
 
-  rb_define_alloc_func(cXMLState, ruby_xml_state_alloc);
+  rb_define_alloc_func(cXMLState, rxml_state_alloc);
 
   /* Create one instance of the state object that is used
      to initalize and cleanup libxml. Then register it with

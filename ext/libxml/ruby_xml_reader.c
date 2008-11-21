@@ -62,13 +62,13 @@ ctxtRead(FILE *f, char * buf, size_t len) {
 }
 
 static VALUE
-ruby_xml_reader_new(VALUE class, xmlTextReaderPtr reader)
+rxml_reader_new(VALUE class, xmlTextReaderPtr reader)
 {
   return Data_Wrap_Struct(class, NULL, xmlFreeTextReader, reader);
 }
 
 static xmlTextReaderPtr
-ruby_xml_text_reader_get(VALUE obj)
+rxml_text_reader_get(VALUE obj)
 {
   xmlTextReaderPtr ptr;
   Data_Get_Struct(obj, xmlTextReader, ptr);
@@ -83,7 +83,7 @@ ruby_xml_text_reader_get(VALUE obj)
  * options are a combination of xmlParserOption. 
  */
 static VALUE
-ruby_xml_reader_new_file(int argc, VALUE *argv, VALUE self)
+rxml_reader_new_file(int argc, VALUE *argv, VALUE self)
 {
   xmlTextReaderPtr reader;
   VALUE path, encoding, options;
@@ -98,7 +98,7 @@ ruby_xml_reader_new_file(int argc, VALUE *argv, VALUE self)
              "cannot create text reader for given XML file at path '%s'", 
              RVAL2CSTR(path));
 
-  return ruby_xml_reader_new(self, reader); 
+  return rxml_reader_new(self, reader); 
 }
 
 /*
@@ -109,7 +109,7 @@ ruby_xml_reader_new_file(int argc, VALUE *argv, VALUE self)
  * a combination of xmlParserOption. 
  */
 static VALUE
-ruby_xml_reader_new_io(int argc, VALUE *argv, VALUE self)
+rxml_reader_new_io(int argc, VALUE *argv, VALUE self)
 {
   xmlTextReaderPtr reader;
   VALUE io, url, encoding, options;
@@ -136,7 +136,7 @@ ruby_xml_reader_new_io(int argc, VALUE *argv, VALUE self)
   if (reader == NULL)
     rb_raise(rb_eRuntimeError, "cannot create text reader for given stream");
 
-  return ruby_xml_reader_new(self, reader); 
+  return rxml_reader_new(self, reader); 
 }
 
 /*
@@ -147,7 +147,7 @@ ruby_xml_reader_new_io(int argc, VALUE *argv, VALUE self)
  * Create an XML text reader for a preparsed document.
  */
 VALUE
-ruby_xml_reader_new_walker(VALUE self, VALUE doc)
+rxml_reader_new_walker(VALUE self, VALUE doc)
 {
   xmlDocPtr xdoc;
   xmlTextReaderPtr reader;
@@ -158,7 +158,7 @@ ruby_xml_reader_new_walker(VALUE self, VALUE doc)
   if (reader == NULL)
     rb_raise(rb_eRuntimeError, "cannot create text reader for given document");
 
-  return ruby_xml_reader_new(self, reader); 
+  return rxml_reader_new(self, reader); 
 }
 
 /*
@@ -170,7 +170,7 @@ ruby_xml_reader_new_walker(VALUE self, VALUE doc)
  * options are a combination of xmlParserOption.
  */
 static VALUE
-ruby_xml_reader_new_data(int argc, VALUE *argv, VALUE self)
+rxml_reader_new_data(int argc, VALUE *argv, VALUE self)
 {
   xmlTextReaderPtr reader;
   VALUE data, url, encoding, options;
@@ -187,7 +187,7 @@ ruby_xml_reader_new_data(int argc, VALUE *argv, VALUE self)
   if (reader == NULL)
     rb_raise(rb_eRuntimeError, "cannot create text reader for given data");
 
-  return ruby_xml_reader_new(self, reader); 
+  return rxml_reader_new(self, reader); 
 }
 
 /*
@@ -198,9 +198,9 @@ ruby_xml_reader_new_data(int argc, VALUE *argv, VALUE self)
  * changes the state to Closed and close any underlying input.
  */
 static VALUE
-ruby_xml_reader_close(VALUE self)
+rxml_reader_close(VALUE self)
 {
-  return INT2FIX(xmlTextReaderClose(ruby_xml_text_reader_get(self)));
+  return INT2FIX(xmlTextReaderClose(rxml_text_reader_get(self)));
 }
 
 /*
@@ -212,12 +212,12 @@ ruby_xml_reader_close(VALUE self)
  * relative to the containing element.
  */
 static VALUE
-ruby_xml_reader_move_to_attr(VALUE self, VALUE val)
+rxml_reader_move_to_attr(VALUE self, VALUE val)
 {
   xmlTextReaderPtr reader;
   int ret;
 
-  reader = ruby_xml_text_reader_get(self);
+  reader = rxml_text_reader_get(self);
 
   if (TYPE(val) == T_FIXNUM) {
     ret = xmlTextReaderMoveToAttributeNo(reader, FIX2INT(val));
@@ -237,9 +237,9 @@ ruby_xml_reader_move_to_attr(VALUE self, VALUE val)
  * with the current node.
  */
 static VALUE
-ruby_xml_reader_move_to_first_attr(VALUE self)
+rxml_reader_move_to_first_attr(VALUE self)
 {
-  return INT2FIX(xmlTextReaderMoveToFirstAttribute(ruby_xml_text_reader_get(self)));
+  return INT2FIX(xmlTextReaderMoveToFirstAttribute(rxml_text_reader_get(self)));
 }
 
 /*
@@ -250,9 +250,9 @@ ruby_xml_reader_move_to_first_attr(VALUE self)
  * with the current node.
  */
 static VALUE
-ruby_xml_reader_move_to_next_attr(VALUE self)
+rxml_reader_move_to_next_attr(VALUE self)
 {
-  return INT2FIX(xmlTextReaderMoveToNextAttribute(ruby_xml_text_reader_get(self)));
+  return INT2FIX(xmlTextReaderMoveToNextAttribute(rxml_text_reader_get(self)));
 }
 
 /*
@@ -263,9 +263,9 @@ ruby_xml_reader_move_to_next_attr(VALUE self)
  * current attribute node.
  */
 static VALUE
-ruby_xml_reader_move_to_element(VALUE self)
+rxml_reader_move_to_element(VALUE self)
 {
-  return INT2FIX(xmlTextReaderMoveToElement(ruby_xml_text_reader_get(self)));
+  return INT2FIX(xmlTextReaderMoveToElement(rxml_text_reader_get(self)));
 }
 
 /*
@@ -276,9 +276,9 @@ ruby_xml_reader_move_to_element(VALUE self)
  * the subtree if any.
  */
 static VALUE
-ruby_xml_reader_next(VALUE self)
+rxml_reader_next(VALUE self)
 {
-  return INT2FIX(xmlTextReaderNext(ruby_xml_text_reader_get(self)));
+  return INT2FIX(xmlTextReaderNext(rxml_text_reader_get(self)));
 }
 
 /*
@@ -290,9 +290,9 @@ ruby_xml_reader_next(VALUE self)
  * document.
  */
 static VALUE
-ruby_xml_reader_next_sibling(VALUE self)
+rxml_reader_next_sibling(VALUE self)
 {
-  return INT2FIX(xmlTextReaderNextSibling(ruby_xml_text_reader_get(self)));
+  return INT2FIX(xmlTextReaderNextSibling(rxml_text_reader_get(self)));
 }
 
 /*
@@ -303,9 +303,9 @@ ruby_xml_reader_next_sibling(VALUE self)
  * http://dotgnu.org/pnetlib-doc/System/Xml/XmlNodeType.html
  */
 static VALUE
-ruby_xml_reader_node_type(VALUE self)
+rxml_reader_node_type(VALUE self)
 {
-  return INT2FIX(xmlTextReaderNodeType(ruby_xml_text_reader_get(self)));
+  return INT2FIX(xmlTextReaderNodeType(rxml_text_reader_get(self)));
 }
 
 /*
@@ -321,9 +321,9 @@ ruby_xml_reader_node_type(VALUE self)
  * Return 1 or -1 in case of error.
  */
 static VALUE
-ruby_xml_reader_normalization(VALUE self)
+rxml_reader_normalization(VALUE self)
 {
-  return INT2FIX(xmlTextReaderNormalization(ruby_xml_text_reader_get(self)));
+  return INT2FIX(xmlTextReaderNormalization(rxml_text_reader_get(self)));
 }
 
 /*
@@ -337,9 +337,9 @@ ruby_xml_reader_normalization(VALUE self)
  * read, or -1 in case of error.
  */
 static VALUE
-ruby_xml_reader_read(VALUE self)
+rxml_reader_read(VALUE self)
 {
-  return INT2FIX(xmlTextReaderRead(ruby_xml_text_reader_get(self)));
+  return INT2FIX(xmlTextReaderRead(rxml_text_reader_get(self)));
 }
 
 /*
@@ -353,9 +353,9 @@ ruby_xml_reader_read(VALUE self)
  * error.
  */
 static VALUE
-ruby_xml_reader_read_attr_value(VALUE self)
+rxml_reader_read_attr_value(VALUE self)
 {
-  return INT2FIX(xmlTextReaderReadAttributeValue(ruby_xml_text_reader_get(self)));
+  return INT2FIX(xmlTextReaderReadAttributeValue(rxml_text_reader_get(self)));
 }
 
 /*
@@ -368,9 +368,9 @@ ruby_xml_reader_read_attr_value(VALUE self)
  * neither an element nor attribute, or has no child nodes. 
  */
 static VALUE
-ruby_xml_reader_read_inner_xml(VALUE self)
+rxml_reader_read_inner_xml(VALUE self)
 {
-  return CSTR2RVAL2(xmlTextReaderReadInnerXml(ruby_xml_text_reader_get(self)));
+  return CSTR2RVAL2(xmlTextReaderReadInnerXml(rxml_text_reader_get(self)));
 }
 
 /*
@@ -383,9 +383,9 @@ ruby_xml_reader_read_inner_xml(VALUE self)
  * neither an element nor attribute, or has no child nodes. 
  */
 static VALUE
-ruby_xml_reader_read_outer_xml(VALUE self)
+rxml_reader_read_outer_xml(VALUE self)
 {
-  return CSTR2RVAL2(xmlTextReaderReadOuterXml(ruby_xml_text_reader_get(self)));
+  return CSTR2RVAL2(xmlTextReaderReadOuterXml(rxml_text_reader_get(self)));
 }
 
 /*
@@ -395,9 +395,9 @@ ruby_xml_reader_read_outer_xml(VALUE self)
  * Get the read state of the reader.
  */
 static VALUE
-ruby_xml_reader_read_state(VALUE self)
+rxml_reader_read_state(VALUE self)
 {
-  return INT2FIX(xmlTextReaderReadState(ruby_xml_text_reader_get(self)));
+  return INT2FIX(xmlTextReaderReadState(rxml_text_reader_get(self)));
 }
 
 /*
@@ -410,9 +410,9 @@ ruby_xml_reader_read_state(VALUE self)
  * if the reader is positioned on any other type of node.
  */
 static VALUE
-ruby_xml_reader_read_string(VALUE self)
+rxml_reader_read_string(VALUE self)
 {
-  return CSTR2RVAL2(xmlTextReaderReadString(ruby_xml_text_reader_get(self)));
+  return CSTR2RVAL2(xmlTextReaderReadString(rxml_text_reader_get(self)));
 }
 
 /*
@@ -427,9 +427,9 @@ ruby_xml_reader_read_string(VALUE self)
  * case of error.
  */ 
 static VALUE
-ruby_xml_reader_relax_ng_validate(VALUE self, VALUE rng)
+rxml_reader_relax_ng_validate(VALUE self, VALUE rng)
 {
-  return INT2FIX(xmlTextReaderRelaxNGValidate(ruby_xml_text_reader_get(self), NIL_P(rng) ? NULL : RVAL2CSTR(rng)));
+  return INT2FIX(xmlTextReaderRelaxNGValidate(rxml_text_reader_get(self), NIL_P(rng) ? NULL : RVAL2CSTR(rng)));
 }
 
 #if LIBXML_VERSION >= 20620
@@ -445,9 +445,9 @@ ruby_xml_reader_relax_ng_validate(VALUE self, VALUE rng)
  * case of error.
  */
 static VALUE
-ruby_xml_reader_schema_validate(VALUE self, VALUE xsd)
+rxml_reader_schema_validate(VALUE self, VALUE xsd)
 {
-  return INT2FIX(xmlTextReaderSchemaValidate(ruby_xml_text_reader_get(self), NIL_P(xsd) ? NULL : RVAL2CSTR(xsd)));
+  return INT2FIX(xmlTextReaderSchemaValidate(rxml_text_reader_get(self), NIL_P(xsd) ? NULL : RVAL2CSTR(xsd)));
 }
 #endif
 
@@ -458,9 +458,9 @@ ruby_xml_reader_schema_validate(VALUE self, VALUE xsd)
  * Return the qualified name of the node.
  */
 static VALUE
-ruby_xml_reader_name(VALUE self)
+rxml_reader_name(VALUE self)
 {
-  return CSTR2RVAL(xmlTextReaderConstName(ruby_xml_text_reader_get(self)));
+  return CSTR2RVAL(xmlTextReaderConstName(rxml_text_reader_get(self)));
 }
 
 /* 
@@ -470,9 +470,9 @@ ruby_xml_reader_name(VALUE self)
  * Return the local name of the node.
  */
 static VALUE
-ruby_xml_reader_local_name(VALUE self)
+rxml_reader_local_name(VALUE self)
 {
-  return CSTR2RVAL(xmlTextReaderConstLocalName(ruby_xml_text_reader_get(self)));
+  return CSTR2RVAL(xmlTextReaderConstLocalName(rxml_text_reader_get(self)));
 }
 
 /*
@@ -482,9 +482,9 @@ ruby_xml_reader_local_name(VALUE self)
  * Provide the number of attributes of the current node.
  */
 static VALUE
-ruby_xml_reader_attr_count(VALUE self)
+rxml_reader_attr_count(VALUE self)
 {
-  return INT2FIX(xmlTextReaderAttributeCount(ruby_xml_text_reader_get(self)));
+  return INT2FIX(xmlTextReaderAttributeCount(rxml_text_reader_get(self)));
 }
 
 /*
@@ -494,9 +494,9 @@ ruby_xml_reader_attr_count(VALUE self)
  * Determine the encoding of the document being read.
  */
 static VALUE
-ruby_xml_reader_encoding(VALUE self)
+rxml_reader_encoding(VALUE self)
 {
-  return CSTR2RVAL(xmlTextReaderConstEncoding(ruby_xml_text_reader_get(self)));
+  return CSTR2RVAL(xmlTextReaderConstEncoding(rxml_text_reader_get(self)));
 }
 
 /*
@@ -506,9 +506,9 @@ ruby_xml_reader_encoding(VALUE self)
  * Determine the base URI of the node.
  */
 static VALUE
-ruby_xml_reader_base_uri(VALUE self)
+rxml_reader_base_uri(VALUE self)
 {
-  return CSTR2RVAL(xmlTextReaderConstBaseUri(ruby_xml_text_reader_get(self)));
+  return CSTR2RVAL(xmlTextReaderConstBaseUri(rxml_text_reader_get(self)));
 }
 
 /*
@@ -518,9 +518,9 @@ ruby_xml_reader_base_uri(VALUE self)
  * Determine the namespace URI of the node.
  */
 static VALUE
-ruby_xml_reader_namespace_uri(VALUE self)
+rxml_reader_namespace_uri(VALUE self)
 {
-  return CSTR2RVAL(xmlTextReaderConstNamespaceUri(ruby_xml_text_reader_get(self)));
+  return CSTR2RVAL(xmlTextReaderConstNamespaceUri(rxml_text_reader_get(self)));
 }
 
 /*
@@ -530,9 +530,9 @@ ruby_xml_reader_namespace_uri(VALUE self)
  * Provide the text value of the node if present.
  */
 static VALUE
-ruby_xml_reader_value(VALUE self)
+rxml_reader_value(VALUE self)
 {
-  return CSTR2RVAL(xmlTextReaderConstValue(ruby_xml_text_reader_get(self)));
+  return CSTR2RVAL(xmlTextReaderConstValue(rxml_text_reader_get(self)));
 }
 
 /* 
@@ -542,9 +542,9 @@ ruby_xml_reader_value(VALUE self)
  * Get a shorthand reference to the namespace associated with the node.
  */
 static VALUE
-ruby_xml_reader_prefix(VALUE self)
+rxml_reader_prefix(VALUE self)
 {
-  return CSTR2RVAL(xmlTextReaderConstPrefix(ruby_xml_text_reader_get(self)));
+  return CSTR2RVAL(xmlTextReaderConstPrefix(rxml_text_reader_get(self)));
 }
 
 /*
@@ -554,9 +554,9 @@ ruby_xml_reader_prefix(VALUE self)
  * Get the depth of the node in the tree.
  */
 static VALUE
-ruby_xml_reader_depth(VALUE self)
+rxml_reader_depth(VALUE self)
 {
-  return INT2FIX(xmlTextReaderDepth(ruby_xml_text_reader_get(self)));
+  return INT2FIX(xmlTextReaderDepth(rxml_text_reader_get(self)));
 }
 
 /*
@@ -567,9 +567,9 @@ ruby_xml_reader_depth(VALUE self)
  * as an integer value (and -1 in case of error).
  */
 static VALUE
-ruby_xml_reader_quote_char(VALUE self)
+rxml_reader_quote_char(VALUE self)
 {
-  return INT2FIX(xmlTextReaderQuoteChar(ruby_xml_text_reader_get(self)));
+  return INT2FIX(xmlTextReaderQuoteChar(rxml_text_reader_get(self)));
 }
 
 /*
@@ -583,9 +583,9 @@ ruby_xml_reader_quote_char(VALUE self)
  * standalone status or in case of error.
  */
 static VALUE
-ruby_xml_reader_standalone(VALUE self)
+rxml_reader_standalone(VALUE self)
 {
-  return INT2FIX(xmlTextReaderStandalone(ruby_xml_text_reader_get(self)));
+  return INT2FIX(xmlTextReaderStandalone(rxml_text_reader_get(self)));
 }
 
 /*
@@ -595,9 +595,9 @@ ruby_xml_reader_standalone(VALUE self)
  * Get the xml:lang scope within which the node resides.
  */
 static VALUE
-ruby_xml_reader_xml_lang(VALUE self)
+rxml_reader_xml_lang(VALUE self)
 {
-  return CSTR2RVAL(xmlTextReaderConstXmlLang(ruby_xml_text_reader_get(self)));
+  return CSTR2RVAL(xmlTextReaderConstXmlLang(rxml_text_reader_get(self)));
 }
 
 /*
@@ -607,9 +607,9 @@ ruby_xml_reader_xml_lang(VALUE self)
  * Determine the XML version of the document being read.
  */
 static VALUE
-ruby_xml_reader_xml_version(VALUE self)
+rxml_reader_xml_version(VALUE self)
 {
-  return CSTR2RVAL(xmlTextReaderConstXmlVersion(ruby_xml_text_reader_get(self)));
+  return CSTR2RVAL(xmlTextReaderConstXmlVersion(rxml_text_reader_get(self)));
 }
 
 /*
@@ -619,9 +619,9 @@ ruby_xml_reader_xml_version(VALUE self)
  * Get whether the node has attributes.
  */
 static VALUE
-ruby_xml_reader_has_attributes(VALUE self)
+rxml_reader_has_attributes(VALUE self)
 {
-  return xmlTextReaderHasAttributes(ruby_xml_text_reader_get(self)) ? Qtrue : Qfalse;
+  return xmlTextReaderHasAttributes(rxml_text_reader_get(self)) ? Qtrue : Qfalse;
 }
 
 /*
@@ -631,9 +631,9 @@ ruby_xml_reader_has_attributes(VALUE self)
  * Get whether the node can have a text value.
  */
 static VALUE
-ruby_xml_reader_has_value(VALUE self)
+rxml_reader_has_value(VALUE self)
 {
-  return xmlTextReaderHasValue(ruby_xml_text_reader_get(self)) ? Qtrue : Qfalse;
+  return xmlTextReaderHasValue(rxml_text_reader_get(self)) ? Qtrue : Qfalse;
 }
 
 /*
@@ -645,12 +645,12 @@ ruby_xml_reader_has_value(VALUE self)
  * containing element, as a string.
  */
 static VALUE
-ruby_xml_reader_attribute(VALUE self, VALUE key)
+rxml_reader_attribute(VALUE self, VALUE key)
 {
   xmlTextReaderPtr reader;
   xmlChar *attr;
 
-  reader = ruby_xml_text_reader_get(self);
+  reader = rxml_text_reader_get(self);
 
   if (TYPE(key) == T_FIXNUM) {
     attr = xmlTextReaderGetAttributeNo(reader, FIX2INT(key));
@@ -669,9 +669,9 @@ ruby_xml_reader_attribute(VALUE self, VALUE key)
  * To return the default namespace, specify nil as +prefix+.
  */
 static VALUE
-ruby_xml_reader_lookup_namespace(VALUE self, VALUE prefix)
+rxml_reader_lookup_namespace(VALUE self, VALUE prefix)
 {
-  return CSTR2RVAL2(xmlTextReaderLookupNamespace(ruby_xml_text_reader_get(self), (const xmlChar *)RVAL2CSTR(prefix)));
+  return CSTR2RVAL2(xmlTextReaderLookupNamespace(rxml_text_reader_get(self), (const xmlChar *)RVAL2CSTR(prefix)));
 }
 
 /*
@@ -684,11 +684,11 @@ ruby_xml_reader_lookup_namespace(VALUE self, VALUE prefix)
  * Return an XML::Node object, or nil in case of error.
  */
 static VALUE
-ruby_xml_reader_expand(VALUE self)
+rxml_reader_expand(VALUE self)
 {
   xmlNodePtr node;
   xmlDocPtr doc;
-  xmlTextReaderPtr reader = ruby_xml_text_reader_get(self);
+  xmlTextReaderPtr reader = rxml_text_reader_get(self);
   node = xmlTextReaderExpand(reader);
   
   if (!node)
@@ -702,9 +702,9 @@ ruby_xml_reader_expand(VALUE self)
 
   xmlTextReaderPreserve(reader);
   doc = xmlTextReaderCurrentDoc(reader);
-  ruby_xml_document_wrap(doc);
+  rxml_document_wrap(doc);
 
-  return ruby_xml_node2_wrap(cXMLNode, node);
+  return rxml_node2_wrap(cXMLNode, node);
 }
 
 #if LIBXML_VERSION >= 20618
@@ -716,9 +716,9 @@ ruby_xml_reader_expand(VALUE self)
  * relative to the start of the current entity. 
  */
 static VALUE
-ruby_xml_reader_byte_consumed(VALUE self)
+rxml_reader_byte_consumed(VALUE self)
 {
-  return INT2NUM(xmlTextReaderByteConsumed(ruby_xml_text_reader_get(self)));
+  return INT2NUM(xmlTextReaderByteConsumed(rxml_text_reader_get(self)));
 }
 #endif
 
@@ -730,9 +730,9 @@ ruby_xml_reader_byte_consumed(VALUE self)
  * Provide the column number of the current parsing point.
  */
 static VALUE
-ruby_xml_reader_column_number(VALUE self)
+rxml_reader_column_number(VALUE self)
 {
-  return INT2NUM(xmlTextReaderGetParserColumnNumber(ruby_xml_text_reader_get(self)));
+  return INT2NUM(xmlTextReaderGetParserColumnNumber(rxml_text_reader_get(self)));
 }
 
 /*
@@ -742,9 +742,9 @@ ruby_xml_reader_column_number(VALUE self)
  * Provide the line number of the current parsing point.
  */
 static VALUE
-ruby_xml_reader_line_number(VALUE self)
+rxml_reader_line_number(VALUE self)
 {
-  return INT2NUM(xmlTextReaderGetParserLineNumber(ruby_xml_text_reader_get(self)));
+  return INT2NUM(xmlTextReaderGetParserLineNumber(rxml_text_reader_get(self)));
 }
 #endif
 
@@ -756,9 +756,9 @@ ruby_xml_reader_line_number(VALUE self)
  * defined in the DTD or schema.
  */
 static VALUE
-ruby_xml_reader_default(VALUE self)
+rxml_reader_default(VALUE self)
 {
-  return xmlTextReaderIsDefault(ruby_xml_text_reader_get(self)) ? Qtrue : Qfalse;
+  return xmlTextReaderIsDefault(rxml_text_reader_get(self)) ? Qtrue : Qfalse;
 }
 
 /*
@@ -769,9 +769,9 @@ ruby_xml_reader_default(VALUE self)
  * regular attribute.
  */
 static VALUE
-ruby_xml_reader_namespace_declaration(VALUE self)
+rxml_reader_namespace_declaration(VALUE self)
 {
-  return xmlTextReaderIsNamespaceDecl(ruby_xml_text_reader_get(self)) ? Qtrue : Qfalse;
+  return xmlTextReaderIsNamespaceDecl(rxml_text_reader_get(self)) ? Qtrue : Qfalse;
 }
 
 /*
@@ -781,9 +781,9 @@ ruby_xml_reader_namespace_declaration(VALUE self)
  * Check if the current node is empty.
  */
 static VALUE
-ruby_xml_reader_empty_element(VALUE self)
+rxml_reader_empty_element(VALUE self)
 {
-  return xmlTextReaderIsEmptyElement(ruby_xml_text_reader_get(self)) ? Qtrue : Qfalse;
+  return xmlTextReaderIsEmptyElement(rxml_text_reader_get(self)) ? Qtrue : Qfalse;
 }
 
 /*
@@ -793,9 +793,9 @@ ruby_xml_reader_empty_element(VALUE self)
  * Retrieve the validity status from the parser context.
  */
 static VALUE
-ruby_xml_reader_valid(VALUE self)
+rxml_reader_valid(VALUE self)
 {
-  return xmlTextReaderIsValid(ruby_xml_text_reader_get(self)) ? Qtrue : Qfalse;
+  return xmlTextReaderIsValid(rxml_text_reader_get(self)) ? Qtrue : Qfalse;
 }
 
 /* Rdoc needs to know. */ 
@@ -809,67 +809,67 @@ ruby_init_xml_reader(void)
 {
   cXMLReader = rb_define_class_under(mXML, "Reader", rb_cObject);
  
-  rb_define_singleton_method(cXMLReader, "file", ruby_xml_reader_new_file, -1);
-  rb_define_singleton_method(cXMLReader, "io", ruby_xml_reader_new_io, -1);
-  rb_define_singleton_method(cXMLReader, "walker", ruby_xml_reader_new_walker, 1);
+  rb_define_singleton_method(cXMLReader, "file", rxml_reader_new_file, -1);
+  rb_define_singleton_method(cXMLReader, "io", rxml_reader_new_io, -1);
+  rb_define_singleton_method(cXMLReader, "walker", rxml_reader_new_walker, 1);
   rb_define_alias(CLASS_OF(cXMLReader), "document", "walker");
-  rb_define_singleton_method(cXMLReader, "new", ruby_xml_reader_new_data, -1);
+  rb_define_singleton_method(cXMLReader, "new", rxml_reader_new_data, -1);
   rb_define_alias(CLASS_OF(cXMLReader), "string", "new");
 
-  rb_define_method(cXMLReader, "close", ruby_xml_reader_close, 0);
+  rb_define_method(cXMLReader, "close", rxml_reader_close, 0);
 
-  rb_define_method(cXMLReader, "move_to_attribute", ruby_xml_reader_move_to_attr, 1);
-  rb_define_method(cXMLReader, "move_to_first_attribute", ruby_xml_reader_move_to_first_attr, 0);
-  rb_define_method(cXMLReader, "move_to_next_attribute", ruby_xml_reader_move_to_next_attr, 0);
-  rb_define_method(cXMLReader, "move_to_element", ruby_xml_reader_move_to_element, 0);
-  rb_define_method(cXMLReader, "next", ruby_xml_reader_next, 0);
-  rb_define_method(cXMLReader, "next_sibling", ruby_xml_reader_next_sibling, 0);
-  rb_define_method(cXMLReader, "read", ruby_xml_reader_read, 0);
-  rb_define_method(cXMLReader, "read_attribute_value", ruby_xml_reader_read_attr_value, 0);
-  rb_define_method(cXMLReader, "read_inner_xml", ruby_xml_reader_read_inner_xml, 0);
-  rb_define_method(cXMLReader, "read_outer_xml", ruby_xml_reader_read_outer_xml, 0);
-  rb_define_method(cXMLReader, "read_state", ruby_xml_reader_read_state, 0);
-  rb_define_method(cXMLReader, "read_string", ruby_xml_reader_read_string, 0);
+  rb_define_method(cXMLReader, "move_to_attribute", rxml_reader_move_to_attr, 1);
+  rb_define_method(cXMLReader, "move_to_first_attribute", rxml_reader_move_to_first_attr, 0);
+  rb_define_method(cXMLReader, "move_to_next_attribute", rxml_reader_move_to_next_attr, 0);
+  rb_define_method(cXMLReader, "move_to_element", rxml_reader_move_to_element, 0);
+  rb_define_method(cXMLReader, "next", rxml_reader_next, 0);
+  rb_define_method(cXMLReader, "next_sibling", rxml_reader_next_sibling, 0);
+  rb_define_method(cXMLReader, "read", rxml_reader_read, 0);
+  rb_define_method(cXMLReader, "read_attribute_value", rxml_reader_read_attr_value, 0);
+  rb_define_method(cXMLReader, "read_inner_xml", rxml_reader_read_inner_xml, 0);
+  rb_define_method(cXMLReader, "read_outer_xml", rxml_reader_read_outer_xml, 0);
+  rb_define_method(cXMLReader, "read_state", rxml_reader_read_state, 0);
+  rb_define_method(cXMLReader, "read_string", rxml_reader_read_string, 0);
 
-  rb_define_method(cXMLReader, "relax_ng_validate", ruby_xml_reader_relax_ng_validate, 1);
+  rb_define_method(cXMLReader, "relax_ng_validate", rxml_reader_relax_ng_validate, 1);
 #if LIBXML_VERSION >= 20620
-  rb_define_method(cXMLReader, "schema_validate", ruby_xml_reader_schema_validate, 1);
+  rb_define_method(cXMLReader, "schema_validate", rxml_reader_schema_validate, 1);
 #endif
   
-  rb_define_method(cXMLReader, "node_type", ruby_xml_reader_node_type, 0);
-  rb_define_method(cXMLReader, "normalization", ruby_xml_reader_normalization, 0);
-  rb_define_method(cXMLReader, "attribute_count", ruby_xml_reader_attr_count, 0);
-  rb_define_method(cXMLReader, "name", ruby_xml_reader_name, 0);
-  rb_define_method(cXMLReader, "local_name", ruby_xml_reader_local_name, 0);
-  rb_define_method(cXMLReader, "encoding", ruby_xml_reader_encoding, 0);
-  rb_define_method(cXMLReader, "base_uri", ruby_xml_reader_base_uri, 0);
-  rb_define_method(cXMLReader, "namespace_uri", ruby_xml_reader_namespace_uri, 0);
-  rb_define_method(cXMLReader, "xml_lang", ruby_xml_reader_xml_lang, 0);
-  rb_define_method(cXMLReader, "xml_version", ruby_xml_reader_xml_version, 0);
-  rb_define_method(cXMLReader, "prefix", ruby_xml_reader_prefix, 0);
-  rb_define_method(cXMLReader, "depth", ruby_xml_reader_depth, 0);
-  rb_define_method(cXMLReader, "quote_char", ruby_xml_reader_quote_char, 0); 
-  rb_define_method(cXMLReader, "standalone", ruby_xml_reader_standalone, 0);
+  rb_define_method(cXMLReader, "node_type", rxml_reader_node_type, 0);
+  rb_define_method(cXMLReader, "normalization", rxml_reader_normalization, 0);
+  rb_define_method(cXMLReader, "attribute_count", rxml_reader_attr_count, 0);
+  rb_define_method(cXMLReader, "name", rxml_reader_name, 0);
+  rb_define_method(cXMLReader, "local_name", rxml_reader_local_name, 0);
+  rb_define_method(cXMLReader, "encoding", rxml_reader_encoding, 0);
+  rb_define_method(cXMLReader, "base_uri", rxml_reader_base_uri, 0);
+  rb_define_method(cXMLReader, "namespace_uri", rxml_reader_namespace_uri, 0);
+  rb_define_method(cXMLReader, "xml_lang", rxml_reader_xml_lang, 0);
+  rb_define_method(cXMLReader, "xml_version", rxml_reader_xml_version, 0);
+  rb_define_method(cXMLReader, "prefix", rxml_reader_prefix, 0);
+  rb_define_method(cXMLReader, "depth", rxml_reader_depth, 0);
+  rb_define_method(cXMLReader, "quote_char", rxml_reader_quote_char, 0); 
+  rb_define_method(cXMLReader, "standalone", rxml_reader_standalone, 0);
   
-  rb_define_method(cXMLReader, "has_attributes?", ruby_xml_reader_has_attributes, 0);
-  rb_define_method(cXMLReader, "[]", ruby_xml_reader_attribute, 1);
-  rb_define_method(cXMLReader, "has_value?", ruby_xml_reader_has_value, 0);
-  rb_define_method(cXMLReader, "value", ruby_xml_reader_value, 0);
+  rb_define_method(cXMLReader, "has_attributes?", rxml_reader_has_attributes, 0);
+  rb_define_method(cXMLReader, "[]", rxml_reader_attribute, 1);
+  rb_define_method(cXMLReader, "has_value?", rxml_reader_has_value, 0);
+  rb_define_method(cXMLReader, "value", rxml_reader_value, 0);
 
-  rb_define_method(cXMLReader, "lookup_namespace", ruby_xml_reader_lookup_namespace, 1);
-  rb_define_method(cXMLReader, "expand", ruby_xml_reader_expand, 0);
+  rb_define_method(cXMLReader, "lookup_namespace", rxml_reader_lookup_namespace, 1);
+  rb_define_method(cXMLReader, "expand", rxml_reader_expand, 0);
 
 #if LIBXML_VERSION >= 20618
-  rb_define_method(cXMLReader, "byte_consumed", ruby_xml_reader_byte_consumed, 0);
+  rb_define_method(cXMLReader, "byte_consumed", rxml_reader_byte_consumed, 0);
 #endif
 #if LIBXML_VERSION >= 20617
-  rb_define_method(cXMLReader, "column_number", ruby_xml_reader_column_number, 0);
-  rb_define_method(cXMLReader, "line_number", ruby_xml_reader_line_number, 0);
+  rb_define_method(cXMLReader, "column_number", rxml_reader_column_number, 0);
+  rb_define_method(cXMLReader, "line_number", rxml_reader_line_number, 0);
 #endif
-  rb_define_method(cXMLReader, "default?", ruby_xml_reader_default, 0);
-  rb_define_method(cXMLReader, "empty_element?", ruby_xml_reader_empty_element, 0);
-  rb_define_method(cXMLReader, "namespace_declaration?", ruby_xml_reader_namespace_declaration, 0);
-  rb_define_method(cXMLReader, "valid?", ruby_xml_reader_valid, 0);
+  rb_define_method(cXMLReader, "default?", rxml_reader_default, 0);
+  rb_define_method(cXMLReader, "empty_element?", rxml_reader_empty_element, 0);
+  rb_define_method(cXMLReader, "namespace_declaration?", rxml_reader_namespace_declaration, 0);
+  rb_define_method(cXMLReader, "valid?", rxml_reader_valid, 0);
 
   rb_define_const(cXMLReader, "LOADDTD", INT2FIX(XML_PARSER_LOADDTD));
   rb_define_const(cXMLReader, "DEFAULTATTRS", INT2FIX(XML_PARSER_DEFAULTATTRS));

@@ -1,9 +1,9 @@
-/* $Id: ruby_xml_parser.h 39 2006-02-21 20:40:16Z roscopeco $ */
+/* $Id: rxml_parser.h 39 2006-02-21 20:40:16Z roscopeco $ */
 
 /* Please see the LICENSE file for copyright and distribution information */
 
-#ifndef __RUBY_XML_INPUT__
-#define __RUBY_XML_INPUT__
+#ifndef __rxml_INPUT__
+#define __rxml_INPUT__
 
 extern VALUE cXMLInput;
 

@@ -13,7 +13,7 @@ VALUE cXMLXPathObject;
 
 
 static xmlDocPtr
-ruby_xml_xpath_object_doc(xmlXPathObjectPtr xpop)
+rxml_xpath_object_doc(xmlXPathObjectPtr xpop)
 {
   xmlDocPtr result = NULL;
   xmlNodePtr *nodes = NULL;
@@ -33,13 +33,13 @@ ruby_xml_xpath_object_doc(xmlXPathObjectPtr xpop)
 }
 
 static void
-ruby_xml_xpath_object_mark(xmlXPathObjectPtr xpop)
+rxml_xpath_object_mark(xmlXPathObjectPtr xpop)
 {
   int i;
 
   if ( xpop->type == XPATH_NODESET && xpop->nodesetval != NULL ) 
   {
-    xmlDocPtr xdoc = ruby_xml_xpath_object_doc(xpop);
+    xmlDocPtr xdoc = rxml_xpath_object_doc(xpop);
     if (xdoc && xdoc->_private)
       rb_gc_mark((VALUE)xdoc->_private);
 
@@ -52,7 +52,7 @@ ruby_xml_xpath_object_mark(xmlXPathObjectPtr xpop)
 }
 
 static void
-ruby_xml_xpath_object_free(xmlXPathObjectPtr xpop)
+rxml_xpath_object_free(xmlXPathObjectPtr xpop)
 {
   /* Now free the xpath result but not underlying nodes
      since those belong to the document. */
@@ -60,7 +60,7 @@ ruby_xml_xpath_object_free(xmlXPathObjectPtr xpop)
 }
 
 VALUE
-ruby_xml_xpath_object_wrap(xmlXPathObjectPtr xpop)
+rxml_xpath_object_wrap(xmlXPathObjectPtr xpop)
 {
   xmlDocPtr xdoc;
   VALUE rval;
@@ -71,8 +71,8 @@ ruby_xml_xpath_object_wrap(xmlXPathObjectPtr xpop)
   switch(xpop->type) {
   case XPATH_NODESET:
     rval = Data_Wrap_Struct(cXMLXPathObject,
-                            ruby_xml_xpath_object_mark,
-                            ruby_xml_xpath_object_free,
+                            rxml_xpath_object_mark,
+                            rxml_xpath_object_free,
                             xpop);
   
     break;
@@ -102,7 +102,7 @@ ruby_xml_xpath_object_wrap(xmlXPathObjectPtr xpop)
 }
 
 static VALUE
-ruby_xml_xpath_object_tabref(xmlXPathObjectPtr xpop, int apos) {
+rxml_xpath_object_tabref(xmlXPathObjectPtr xpop, int apos) {
 
   if (apos < 0 )
     apos=xpop->nodesetval->nodeNr+apos;
@@ -112,10 +112,10 @@ ruby_xml_xpath_object_tabref(xmlXPathObjectPtr xpop, int apos) {
 
   switch(xpop->nodesetval->nodeTab[apos]->type) {
   case XML_ATTRIBUTE_NODE:
-    return ruby_xml_attr_wrap((xmlAttrPtr)xpop->nodesetval->nodeTab[apos]);
+    return rxml_attr_wrap((xmlAttrPtr)xpop->nodesetval->nodeTab[apos]);
     break;
   default:
-    return ruby_xml_node2_wrap(cXMLNode,
+    return rxml_node2_wrap(cXMLNode,
 			       xpop->nodesetval->nodeTab[apos]);
   }
 }
@@ -127,7 +127,7 @@ ruby_xml_xpath_object_tabref(xmlXPathObjectPtr xpop, int apos) {
  * Obtain an array of the nodes in this set.
  */
 static VALUE
-ruby_xml_xpath_object_to_a(VALUE self)
+rxml_xpath_object_to_a(VALUE self)
 {
   VALUE set_ary, nodeobj;
   xmlXPathObjectPtr xpop;
@@ -138,7 +138,7 @@ ruby_xml_xpath_object_to_a(VALUE self)
   set_ary = rb_ary_new();
   if (!((xpop->nodesetval == NULL) || (xpop->nodesetval->nodeNr == 0))) {
     for (i = 0; i < xpop->nodesetval->nodeNr; i++) {
-      nodeobj = ruby_xml_xpath_object_tabref(xpop, i);
+      nodeobj = rxml_xpath_object_tabref(xpop, i);
       rb_ary_push(set_ary, nodeobj);
     }
   }
@@ -153,7 +153,7 @@ ruby_xml_xpath_object_to_a(VALUE self)
  * Determine whether this nodeset is empty (contains no nodes).
  */
 static VALUE
-ruby_xml_xpath_object_empty_q(VALUE self) {
+rxml_xpath_object_empty_q(VALUE self) {
   xmlXPathObjectPtr xpop;
 
   Data_Get_Struct(self,xmlXPathObject,xpop);
@@ -171,18 +171,18 @@ ruby_xml_xpath_object_empty_q(VALUE self) {
  * Call the supplied block for each node in this set.
  */
 static VALUE
-ruby_xml_xpath_object_each(VALUE self)
+rxml_xpath_object_each(VALUE self)
 {
   xmlXPathObjectPtr xpop;
   int i;
 
-  if ( ruby_xml_xpath_object_empty_q(self) == Qtrue )
+  if ( rxml_xpath_object_empty_q(self) == Qtrue )
     return Qnil;
 
   Data_Get_Struct(self,xmlXPathObject,xpop);
 
   for (i = 0; i < xpop->nodesetval->nodeNr; i++) {
-    rb_yield(ruby_xml_xpath_object_tabref(xpop,i));
+    rb_yield(rxml_xpath_object_tabref(xpop,i));
   }
   return(self);
 }
@@ -194,11 +194,11 @@ ruby_xml_xpath_object_each(VALUE self)
  * Returns the first node in this node set, or nil if none exist.
  */
 static VALUE
-ruby_xml_xpath_object_first(VALUE self) {
-  if ( ruby_xml_xpath_object_empty_q(self) == Qtrue )
+rxml_xpath_object_first(VALUE self) {
+  if ( rxml_xpath_object_empty_q(self) == Qtrue )
     return Qnil;
   
-  return ruby_xml_xpath_object_tabref((xmlXPathObjectPtr)DATA_PTR(self),0);
+  return rxml_xpath_object_tabref((xmlXPathObjectPtr)DATA_PTR(self),0);
 }
 
 /*
@@ -208,11 +208,11 @@ ruby_xml_xpath_object_first(VALUE self) {
  * array index into set of nodes
  */
 static VALUE
-ruby_xml_xpath_object_aref(VALUE self, VALUE aref) {
-  if ( ruby_xml_xpath_object_empty_q(self) == Qtrue )
+rxml_xpath_object_aref(VALUE self, VALUE aref) {
+  if ( rxml_xpath_object_empty_q(self) == Qtrue )
     return Qnil;
 
-  return ruby_xml_xpath_object_tabref((xmlXPathObjectPtr)DATA_PTR(self),
+  return rxml_xpath_object_tabref((xmlXPathObjectPtr)DATA_PTR(self),
 				      NUM2INT(aref));
 }
 
@@ -223,10 +223,10 @@ ruby_xml_xpath_object_aref(VALUE self, VALUE aref) {
  * Obtain the length of the nodesetval node list.
  */
 static VALUE
-ruby_xml_xpath_object_length(VALUE self) {
+rxml_xpath_object_length(VALUE self) {
   xmlXPathObjectPtr xpop;
 
-  if (ruby_xml_xpath_object_empty_q(self) == Qtrue)
+  if (rxml_xpath_object_empty_q(self) == Qtrue)
     return INT2FIX(0);
 
   Data_Get_Struct(self,xmlXPathObject,xpop);
@@ -254,7 +254,7 @@ ruby_xml_xpath_object_length(VALUE self) {
  * * XML::XPath::XSLT_TREE 
  */
 static VALUE
-ruby_xml_xpath_object_get_type(VALUE self)
+rxml_xpath_object_get_type(VALUE self)
 {
   xmlXPathObjectPtr xpop;
 
@@ -271,7 +271,7 @@ ruby_xml_xpath_object_get_type(VALUE self)
  * Returns the original XPath expression as a string.
  */
 static VALUE
-ruby_xml_xpath_object_string(VALUE self)
+rxml_xpath_object_string(VALUE self)
 {
   xmlXPathObjectPtr xpop;
 
@@ -291,7 +291,7 @@ ruby_xml_xpath_object_string(VALUE self)
  * Requires Libxml be compiled with debugging enabled.
  */
 static VALUE
-ruby_xml_xpath_object_debug(VALUE self) {
+rxml_xpath_object_debug(VALUE self) {
   xmlXPathObjectPtr xpop;
   
   #ifndef LIBXML_DEBUG_ENABLED
@@ -308,14 +308,14 @@ ruby_init_xml_xpath_object(void) {
   cXMLXPathObject = rb_define_class_under(mXPath, "Object", rb_cObject);
   rb_include_module(cXMLXPathObject, rb_mEnumerable);
   rb_define_attr(cXMLXPathObject, "context", 1, 0);
-  rb_define_method(cXMLXPathObject, "each", ruby_xml_xpath_object_each, 0);
-  rb_define_method(cXMLXPathObject, "xpath_type", ruby_xml_xpath_object_get_type, 0);
-  rb_define_method(cXMLXPathObject, "empty?", ruby_xml_xpath_object_empty_q, 0);
-  rb_define_method(cXMLXPathObject, "first", ruby_xml_xpath_object_first, 0);
-  rb_define_method(cXMLXPathObject, "length", ruby_xml_xpath_object_length, 0);
-  rb_define_method(cXMLXPathObject, "size", ruby_xml_xpath_object_length, 0);
-  rb_define_method(cXMLXPathObject, "to_a", ruby_xml_xpath_object_to_a, 0);
-  rb_define_method(cXMLXPathObject, "[]", ruby_xml_xpath_object_aref, 1);
-  rb_define_method(cXMLXPathObject, "string", ruby_xml_xpath_object_string, 0);
-  rb_define_method(cXMLXPathObject, "debug", ruby_xml_xpath_object_debug, 0);
+  rb_define_method(cXMLXPathObject, "each", rxml_xpath_object_each, 0);
+  rb_define_method(cXMLXPathObject, "xpath_type", rxml_xpath_object_get_type, 0);
+  rb_define_method(cXMLXPathObject, "empty?", rxml_xpath_object_empty_q, 0);
+  rb_define_method(cXMLXPathObject, "first", rxml_xpath_object_first, 0);
+  rb_define_method(cXMLXPathObject, "length", rxml_xpath_object_length, 0);
+  rb_define_method(cXMLXPathObject, "size", rxml_xpath_object_length, 0);
+  rb_define_method(cXMLXPathObject, "to_a", rxml_xpath_object_to_a, 0);
+  rb_define_method(cXMLXPathObject, "[]", rxml_xpath_object_aref, 1);
+  rb_define_method(cXMLXPathObject, "string", rxml_xpath_object_string, 0);
+  rb_define_method(cXMLXPathObject, "debug", rxml_xpath_object_debug, 0);
 }

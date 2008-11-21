@@ -2,19 +2,19 @@
 
 /* Please see the LICENSE file for copyright and distribution information */
 
-#ifndef __RUBY_XML_XPATH__
-#define __RUBY_XML_XPATH__
+#ifndef __rxml_XPATH__
+#define __rxml_XPATH__
 
 extern VALUE mXPath;
 
-typedef struct ruby_xml_xpath {
+typedef struct rxml_xpath {
   VALUE xd;
   VALUE ctxt;
   xmlXPathObjectPtr xpop;
-} ruby_xml_xpath;
+} rxml_xpath;
 
-void ruby_xml_xpath_free(ruby_xml_xpath *rxxp);
-VALUE ruby_xml_xpath_find(VALUE class, VALUE anode, VALUE xpath_expr, VALUE nslist);
+void rxml_xpath_free(rxml_xpath *rxxp);
+VALUE rxml_xpath_find(VALUE class, VALUE anode, VALUE xpath_expr, VALUE nslist);
 
 void ruby_init_xml_xpath(void);
 

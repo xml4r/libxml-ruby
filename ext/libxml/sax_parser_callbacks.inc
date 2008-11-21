@@ -5,7 +5,7 @@
 /*
  * SAX CALLBACK HANDLERS
  */ 
-static void internal_subset_func(ruby_xml_sax_parser *cbp, 
+static void internal_subset_func(rxml_sax_parser *cbp, 
        const char *name,
        const char *extid,
        const char *sysid) {
@@ -19,7 +19,7 @@ static void internal_subset_func(ruby_xml_sax_parser *cbp,
   }    
 }
 
-static void is_standalone_func(ruby_xml_sax_parser *cbp) {
+static void is_standalone_func(rxml_sax_parser *cbp) {
   VALUE handler = cbp->callbackHandler;
   
   if (handler != Qnil) {
@@ -27,7 +27,7 @@ static void is_standalone_func(ruby_xml_sax_parser *cbp) {
   }    
 }
 
-static void has_internal_subset_func(ruby_xml_sax_parser *cbp) {
+static void has_internal_subset_func(rxml_sax_parser *cbp) {
   VALUE handler = cbp->callbackHandler;
   
   if (handler != Qnil) {
@@ -35,7 +35,7 @@ static void has_internal_subset_func(ruby_xml_sax_parser *cbp) {
   }    
 }
 
-static void has_external_subset_func(ruby_xml_sax_parser *cbp) {
+static void has_external_subset_func(rxml_sax_parser *cbp) {
   VALUE handler = cbp->callbackHandler;
   
   if (handler != Qnil) {
@@ -43,7 +43,7 @@ static void has_external_subset_func(ruby_xml_sax_parser *cbp) {
   }    
 }
 
-static void start_document_func(ruby_xml_sax_parser *cbp) {
+static void start_document_func(rxml_sax_parser *cbp) {
   VALUE handler = cbp->callbackHandler;
   
   if (handler != Qnil) {
@@ -51,7 +51,7 @@ static void start_document_func(ruby_xml_sax_parser *cbp) {
   }    
 }
 
-static void end_document_func(ruby_xml_sax_parser *cbp) {
+static void end_document_func(rxml_sax_parser *cbp) {
   VALUE handler = cbp->callbackHandler;
   
   if (handler != Qnil) {
@@ -59,7 +59,7 @@ static void end_document_func(ruby_xml_sax_parser *cbp) {
   }    
 }
 
-static void start_element_func(ruby_xml_sax_parser *cbp, 
+static void start_element_func(rxml_sax_parser *cbp, 
        const char *name, const char **attrs) {  
   VALUE handler = cbp->callbackHandler;
   VALUE ahsh = rb_hash_new();
@@ -77,7 +77,7 @@ static void start_element_func(ruby_xml_sax_parser *cbp,
   }    
 }        
 
-static void end_element_func(ruby_xml_sax_parser *cbp, const char *name) {
+static void end_element_func(rxml_sax_parser *cbp, const char *name) {
   VALUE handler = cbp->callbackHandler;
   
   if (handler != Qnil) {
@@ -85,7 +85,7 @@ static void end_element_func(ruby_xml_sax_parser *cbp, const char *name) {
   }    
 }
 
-static void reference_func(ruby_xml_sax_parser *cbp, 
+static void reference_func(rxml_sax_parser *cbp, 
        const char *name) {
   VALUE handler = cbp->callbackHandler;
   
@@ -94,7 +94,7 @@ static void reference_func(ruby_xml_sax_parser *cbp,
   }    
 }
 
-static void characters_func(ruby_xml_sax_parser *cbp, 
+static void characters_func(rxml_sax_parser *cbp, 
        const char *chars, int len) {
   VALUE handler = cbp->callbackHandler;
   
@@ -104,7 +104,7 @@ static void characters_func(ruby_xml_sax_parser *cbp,
   }    
 }
 
-static void processing_instruction_func(ruby_xml_sax_parser *cbp, 
+static void processing_instruction_func(rxml_sax_parser *cbp, 
        const char *target, const char *data) {
   VALUE handler = cbp->callbackHandler;
   
@@ -115,7 +115,7 @@ static void processing_instruction_func(ruby_xml_sax_parser *cbp,
   }    
 }
 
-static void comment_func(ruby_xml_sax_parser *cbp, 
+static void comment_func(rxml_sax_parser *cbp, 
        const char *msg) {
   VALUE handler = cbp->callbackHandler;
   
@@ -136,7 +136,7 @@ static void comment_func(ruby_xml_sax_parser *cbp,
   while (0)
   
 // TODO these next three should actually be formatting messages.
-static void warning_func(ruby_xml_sax_parser *cbp, 
+static void warning_func(rxml_sax_parser *cbp, 
        const char *msg, ...) {
   VALUE handler = cbp->callbackHandler;
   
@@ -145,7 +145,7 @@ static void warning_func(ruby_xml_sax_parser *cbp,
   }    
 }
 
-static void error_func(ruby_xml_sax_parser *cbp, 
+static void error_func(rxml_sax_parser *cbp, 
        const char *msg, ...) {
   VALUE handler = cbp->callbackHandler;
   
@@ -154,7 +154,7 @@ static void error_func(ruby_xml_sax_parser *cbp,
   }    
 }
 
-static void fatal_error_func(ruby_xml_sax_parser *cbp, 
+static void fatal_error_func(rxml_sax_parser *cbp, 
        const char *msg, ...) {
   VALUE handler = cbp->callbackHandler;
   
@@ -163,7 +163,7 @@ static void fatal_error_func(ruby_xml_sax_parser *cbp,
   }    
 }
 
-static void cdata_block_func(ruby_xml_sax_parser *cbp, 
+static void cdata_block_func(rxml_sax_parser *cbp, 
        const char *value, int len) {
   VALUE handler = cbp->callbackHandler;
   
@@ -172,7 +172,7 @@ static void cdata_block_func(ruby_xml_sax_parser *cbp,
   }    
 }
 
-static void external_subset_func(ruby_xml_sax_parser *cbp, 
+static void external_subset_func(rxml_sax_parser *cbp, 
        const char *name,
        const char *extid,
        const char *sysid) {

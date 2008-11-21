@@ -35,18 +35,18 @@
 VALUE cXMLDocument;
 
 void
-ruby_xml_document_free(xmlDocPtr xdoc) {
+rxml_document_free(xmlDocPtr xdoc) {
   xdoc->_private = NULL;
   xmlFreeDoc(xdoc);
 }   
  
 void
-ruby_xml_document_mark(xmlDocPtr xdoc) {
+rxml_document_mark(xmlDocPtr xdoc) {
   rb_gc_mark(LIBXML_STATE);
 }
 
 VALUE
-ruby_xml_document_wrap(xmlDocPtr xdoc) {
+rxml_document_wrap(xmlDocPtr xdoc) {
   VALUE result;
 
   // This node is already wrapped
@@ -56,7 +56,7 @@ ruby_xml_document_wrap(xmlDocPtr xdoc) {
   }
   else  
   {
-    result = Data_Wrap_Struct(cXMLDocument, ruby_xml_document_mark, ruby_xml_document_free, xdoc);
+    result = Data_Wrap_Struct(cXMLDocument, rxml_document_mark, rxml_document_free, xdoc);
     xdoc->_private = (void*)result;
   }
      
@@ -72,8 +72,8 @@ ruby_xml_document_wrap(xmlDocPtr xdoc) {
  * XML version.
  */
 static VALUE
-ruby_xml_document_alloc(VALUE klass) {
-  return Data_Wrap_Struct(klass, ruby_xml_document_mark, ruby_xml_document_free, NULL);
+rxml_document_alloc(VALUE klass) {
+  return Data_Wrap_Struct(klass, rxml_document_mark, rxml_document_free, NULL);
 }
 
 /*
@@ -84,7 +84,7 @@ ruby_xml_document_alloc(VALUE klass) {
  * XML version.
  */
 static VALUE
-ruby_xml_document_initialize(int argc, VALUE *argv, VALUE self) {
+rxml_document_initialize(int argc, VALUE *argv, VALUE self) {
   xmlDocPtr xdoc;
   VALUE xmlver;
 
@@ -115,7 +115,7 @@ ruby_xml_document_initialize(int argc, VALUE *argv, VALUE self) {
  * Obtain this document's compression mode identifier.
  */
 static VALUE
-ruby_xml_document_compression_get(VALUE self) {
+rxml_document_compression_get(VALUE self) {
 #ifdef HAVE_ZLIB_H
   xmlDocPtr xdoc;
 
@@ -141,7 +141,7 @@ ruby_xml_document_compression_get(VALUE self) {
  * Set this document's compression mode.
  */
 static VALUE
-ruby_xml_document_compression_set(VALUE self, VALUE num) {
+rxml_document_compression_set(VALUE self, VALUE num) {
 #ifdef HAVE_ZLIB_H
   xmlDocPtr xdoc;
 
@@ -174,7 +174,7 @@ ruby_xml_document_compression_set(VALUE self, VALUE num) {
  * Determine whether this document is compressed.
  */
 static VALUE
-ruby_xml_document_compression_q(VALUE self) {
+rxml_document_compression_q(VALUE self) {
 #ifdef HAVE_ZLIB_H
   xmlDocPtr xdoc;
 
@@ -198,14 +198,14 @@ ruby_xml_document_compression_q(VALUE self) {
  * Get this document's child node.
  */
 static VALUE
-ruby_xml_document_child_get(VALUE self) {
+rxml_document_child_get(VALUE self) {
   xmlDocPtr xdoc;
   Data_Get_Struct(self, xmlDoc, xdoc);
 
   if (xdoc->children == NULL)
     return(Qnil);
 
-  return ruby_xml_node2_wrap(cXMLNode, xdoc->children);
+  return rxml_node2_wrap(cXMLNode, xdoc->children);
 }
 
 
@@ -216,7 +216,7 @@ ruby_xml_document_child_get(VALUE self) {
  * Determine whether this document has a child node.
  */
 static VALUE
-ruby_xml_document_child_q(VALUE self) {
+rxml_document_child_q(VALUE self) {
   xmlDocPtr xdoc;
   Data_Get_Struct(self, xmlDoc, xdoc);
 
@@ -235,7 +235,7 @@ ruby_xml_document_child_q(VALUE self) {
  * If no stream is specified, stdout is used.
  */
 static VALUE
-ruby_xml_document_dump(int argc, VALUE *argv, VALUE self) {
+rxml_document_dump(int argc, VALUE *argv, VALUE self) {
   OpenFile *fptr;
   VALUE io;
   FILE *out;
@@ -273,7 +273,7 @@ ruby_xml_document_dump(int argc, VALUE *argv, VALUE self) {
  * Debug version of dump.
  */
 static VALUE
-ruby_xml_document_debug_dump(int argc, VALUE *argv, VALUE self) {
+rxml_document_debug_dump(int argc, VALUE *argv, VALUE self) {
 #ifdef LIBXML_DEBUG_ENABLED
   OpenFile *fptr;
   VALUE io;
@@ -317,7 +317,7 @@ ruby_xml_document_debug_dump(int argc, VALUE *argv, VALUE self) {
  * If no stream is specified, stdout is used.
  */
 static VALUE
-ruby_xml_document_debug_dump_head(int argc, VALUE *argv, VALUE self) {
+rxml_document_debug_dump_head(int argc, VALUE *argv, VALUE self) {
 #ifdef LIBXML_DEBUG_ENABLED
   OpenFile *fptr;
   VALUE io;
@@ -364,7 +364,7 @@ ruby_xml_document_debug_dump_head(int argc, VALUE *argv, VALUE self) {
  * spacing is used.
  */
 static VALUE
-ruby_xml_document_format_dump(int argc, VALUE *argv, VALUE self) {
+rxml_document_format_dump(int argc, VALUE *argv, VALUE self) {
   OpenFile *fptr;
   VALUE bool, io;
   FILE *out;
@@ -419,9 +419,9 @@ ruby_xml_document_format_dump(int argc, VALUE *argv, VALUE self) {
  * *Deprecated* in favour of format_dump.
  */
 static VALUE
-ruby_xml_document_debug_format_dump(int argc, VALUE *argv, VALUE self) {
+rxml_document_debug_format_dump(int argc, VALUE *argv, VALUE self) {
   rb_warn("debug_format_dump has been deprecaited, use format_dump instead");
-  return(ruby_xml_document_format_dump(argc, argv, self));
+  return(rxml_document_format_dump(argc, argv, self));
 }
 
 
@@ -432,7 +432,7 @@ ruby_xml_document_debug_format_dump(int argc, VALUE *argv, VALUE self) {
  * Obtain the encoding specified by this document.
  */
 static VALUE
-ruby_xml_document_encoding_get(VALUE self) {
+rxml_document_encoding_get(VALUE self) {
   xmlDocPtr xdoc;
 
   Data_Get_Struct(self, xmlDoc, xdoc);
@@ -450,14 +450,14 @@ ruby_xml_document_encoding_get(VALUE self) {
  * Set the encoding for this document.
  */
 static VALUE
-ruby_xml_document_encoding_set(VALUE self, VALUE encoding) {
+rxml_document_encoding_set(VALUE self, VALUE encoding) {
   xmlDocPtr xdoc;
 
 
   Check_Type(encoding, T_STRING);
   Data_Get_Struct(self, xmlDoc, xdoc);
   xdoc->encoding = xmlStrdup(StringValuePtr(encoding));
-  return(ruby_xml_document_encoding_get(self));
+  return(rxml_document_encoding_get(self));
 }
 
 /*
@@ -467,7 +467,7 @@ ruby_xml_document_encoding_set(VALUE self, VALUE encoding) {
  * Obtain the last node.
  */
 static VALUE
-ruby_xml_document_last_get(VALUE self) {
+rxml_document_last_get(VALUE self) {
   xmlDocPtr xdoc;
 
 
@@ -476,7 +476,7 @@ ruby_xml_document_last_get(VALUE self) {
   if (xdoc->last == NULL)
     return(Qnil);
 
-  return ruby_xml_node2_wrap(cXMLNode, xdoc->last);
+  return rxml_node2_wrap(cXMLNode, xdoc->last);
 }
 
 
@@ -487,7 +487,7 @@ ruby_xml_document_last_get(VALUE self) {
  * Determine whether there is a last node.
  */
 static VALUE
-ruby_xml_document_last_q(VALUE self) {
+rxml_document_last_q(VALUE self) {
   xmlDocPtr xdoc;
 
   Data_Get_Struct(self, xmlDoc, xdoc);
@@ -506,7 +506,7 @@ ruby_xml_document_last_q(VALUE self) {
  * Obtain the next node.
  */
 static VALUE
-ruby_xml_document_next_get(VALUE self) {
+rxml_document_next_get(VALUE self) {
   xmlDocPtr xdoc;
 
 
@@ -515,7 +515,7 @@ ruby_xml_document_next_get(VALUE self) {
   if (xdoc->next == NULL)
     return(Qnil);
 
-  return ruby_xml_node2_wrap(cXMLNode, xdoc->next);
+  return rxml_node2_wrap(cXMLNode, xdoc->next);
 }
 
 
@@ -526,7 +526,7 @@ ruby_xml_document_next_get(VALUE self) {
  * Determine whether there is a next node.
  */
 static VALUE
-ruby_xml_document_next_q(VALUE self) {
+rxml_document_next_q(VALUE self) {
   xmlDocPtr xdoc;
 
   Data_Get_Struct(self, xmlDoc, xdoc);
@@ -545,7 +545,7 @@ ruby_xml_document_next_q(VALUE self) {
  * Obtain the parent node.
  */
 static VALUE
-ruby_xml_document_parent_get(VALUE self) {
+rxml_document_parent_get(VALUE self) {
   xmlDocPtr xdoc;
 
 
@@ -554,7 +554,7 @@ ruby_xml_document_parent_get(VALUE self) {
   if (xdoc->parent == NULL)
     return(Qnil);
 
-  return ruby_xml_node2_wrap(cXMLNode, xdoc->parent);
+  return rxml_node2_wrap(cXMLNode, xdoc->parent);
 }
 
 
@@ -565,7 +565,7 @@ ruby_xml_document_parent_get(VALUE self) {
  * Determine whether there is a parent node.
  */
 static VALUE
-ruby_xml_document_parent_q(VALUE self) {
+rxml_document_parent_q(VALUE self) {
   xmlDocPtr xdoc;
 
   Data_Get_Struct(self, xmlDoc, xdoc);
@@ -584,7 +584,7 @@ ruby_xml_document_parent_q(VALUE self) {
  * Obtain the previous node.
  */
 static VALUE
-ruby_xml_document_prev_get(VALUE self) {
+rxml_document_prev_get(VALUE self) {
   xmlDocPtr xdoc;
 
 
@@ -593,7 +593,7 @@ ruby_xml_document_prev_get(VALUE self) {
   if (xdoc->prev == NULL)
     return(Qnil);
 
-  return ruby_xml_node2_wrap(cXMLNode, xdoc->prev);
+  return rxml_node2_wrap(cXMLNode, xdoc->prev);
 }
 
 
@@ -604,7 +604,7 @@ ruby_xml_document_prev_get(VALUE self) {
  * Determine whether there is a previous node.
  */
 static VALUE
-ruby_xml_document_prev_q(VALUE self) {
+rxml_document_prev_q(VALUE self) {
   xmlDocPtr xdoc;
 
   Data_Get_Struct(self, xmlDoc, xdoc);
@@ -623,7 +623,7 @@ ruby_xml_document_prev_q(VALUE self) {
  * Obtain the root node.
  */
 static VALUE
-ruby_xml_document_root_get(VALUE self) {
+rxml_document_root_get(VALUE self) {
   xmlDocPtr xdoc;
 
   xmlNodePtr root;
@@ -634,7 +634,7 @@ ruby_xml_document_root_get(VALUE self) {
   if (root == NULL)
     return(Qnil);
 
-  return ruby_xml_node2_wrap(cXMLNode, root);
+  return rxml_node2_wrap(cXMLNode, root);
 }
 
 
@@ -645,7 +645,7 @@ ruby_xml_document_root_get(VALUE self) {
  * Set the root node.
  */
 static VALUE
-ruby_xml_document_root_set(VALUE self, VALUE node) {
+rxml_document_root_set(VALUE self, VALUE node) {
   xmlDocPtr xdoc;
   xmlNodePtr xroot, xnode;
 
@@ -658,7 +658,7 @@ ruby_xml_document_root_set(VALUE self, VALUE node) {
   if (xroot == NULL)
     return(Qnil);
 
-  return ruby_xml_node2_wrap(cXMLNode, xroot);
+  return rxml_node2_wrap(cXMLNode, xroot);
 }
 
 
@@ -675,7 +675,7 @@ ruby_xml_document_root_set(VALUE self, VALUE node) {
  *  returns: The number of bytes written or -1 in case of error. 
  */
 static VALUE
-ruby_xml_document_save(int argc, VALUE *argv, VALUE self) {
+rxml_document_save(int argc, VALUE *argv, VALUE self) {
   xmlDocPtr xdoc;
 
   const char *filename;
@@ -719,7 +719,7 @@ ruby_xml_document_save(int argc, VALUE *argv, VALUE self) {
  * Determine whether this is a standalone document.
  */
 static VALUE
-ruby_xml_document_standalone_q(VALUE self) {
+rxml_document_standalone_q(VALUE self) {
   xmlDocPtr xdoc;
 
   Data_Get_Struct(self, xmlDoc, xdoc);
@@ -743,7 +743,7 @@ ruby_xml_document_standalone_q(VALUE self) {
  * encoding target of the resulting string.
  */
 static VALUE
-ruby_xml_document_to_s(int argc, VALUE *argv, VALUE self) {
+rxml_document_to_s(int argc, VALUE *argv, VALUE self) {
   xmlDocPtr xdoc;
 
   xmlChar *result, *encoding=NULL;
@@ -799,7 +799,7 @@ ruby_xml_document_to_s(int argc, VALUE *argv, VALUE self) {
  * Obtain this document's source URL, if any.
  */
 static VALUE
-ruby_xml_document_url_get(VALUE self) {
+rxml_document_url_get(VALUE self) {
   xmlDocPtr xdoc;
 
   Data_Get_Struct(self, xmlDoc, xdoc);
@@ -817,7 +817,7 @@ ruby_xml_document_url_get(VALUE self) {
  * Obtain the XML version specified by this document.
  */
 static VALUE
-ruby_xml_document_version_get(VALUE self) {
+rxml_document_version_get(VALUE self) {
   xmlDocPtr xdoc;
 
   Data_Get_Struct(self, xmlDoc, xdoc);
@@ -835,7 +835,7 @@ ruby_xml_document_version_get(VALUE self) {
  * Process xinclude directives in this document. 
  */
 static VALUE
-ruby_xml_document_xinclude(VALUE self) {
+rxml_document_xinclude(VALUE self) {
 #ifdef LIBXML_XINCLUDE_ENABLED
   xmlDocPtr xdoc;
 
@@ -849,7 +849,7 @@ ruby_xml_document_xinclude(VALUE self) {
   }
   else
   {
-    ruby_xml_raise(&xmlLastError);
+    rxml_raise(&xmlLastError);
     return Qnil;
   }
 #else
@@ -895,14 +895,14 @@ LibXML_validity_warning(void * ctxt, const char * msg, va_list ap)
  * if the message is an error (true) or a warning (false).
  */
 static VALUE
-ruby_xml_document_validate_schema(VALUE self, VALUE schema) {
+rxml_document_validate_schema(VALUE self, VALUE schema) {
   xmlSchemaValidCtxtPtr vptr;
   xmlDocPtr xdoc;
-  ruby_xml_schema *c_schema;
+  rxml_schema *c_schema;
   int is_invalid;
 
   Data_Get_Struct(self, xmlDoc, xdoc);
-  Data_Get_Struct(schema, ruby_xml_schema, c_schema);
+  Data_Get_Struct(schema, rxml_schema, c_schema);
 
   vptr = xmlSchemaNewValidCtxt(c_schema->schema);
 
@@ -913,7 +913,7 @@ ruby_xml_document_validate_schema(VALUE self, VALUE schema) {
   xmlSchemaFreeValidCtxt(vptr);
   if (is_invalid) 
   {
-    ruby_xml_raise(&xmlLastError);
+    rxml_raise(&xmlLastError);
     return Qfalse;
   } else
   {
@@ -932,14 +932,14 @@ ruby_xml_document_validate_schema(VALUE self, VALUE schema) {
  * if the message is an error (true) or a warning (false).
  */
 static VALUE
-ruby_xml_document_validate_relaxng(VALUE self, VALUE relaxng) {
+rxml_document_validate_relaxng(VALUE self, VALUE relaxng) {
   xmlRelaxNGValidCtxtPtr vptr;
   xmlDocPtr xdoc;
-  ruby_xml_relaxng *c_relaxng;
+  rxml_relaxng *c_relaxng;
   int is_invalid;
 
   Data_Get_Struct(self, xmlDoc, xdoc);
-  Data_Get_Struct(relaxng, ruby_xml_relaxng, c_relaxng);
+  Data_Get_Struct(relaxng, rxml_relaxng, c_relaxng);
 
   vptr = xmlRelaxNGNewValidCtxt(c_relaxng->relaxng);
 
@@ -950,7 +950,7 @@ ruby_xml_document_validate_relaxng(VALUE self, VALUE relaxng) {
   xmlRelaxNGFreeValidCtxt(vptr);
   if (is_invalid) 
   {
-    ruby_xml_raise(&xmlLastError);
+    rxml_raise(&xmlLastError);
     return Qfalse;
   } else 
   {
@@ -966,14 +966,14 @@ ruby_xml_document_validate_relaxng(VALUE self, VALUE relaxng) {
  * Validate this document against the specified XML::DTD.
  */
 static VALUE
-ruby_xml_document_validate_dtd(VALUE self, VALUE dtd) {
+rxml_document_validate_dtd(VALUE self, VALUE dtd) {
   VALUE error = Qnil;
   xmlValidCtxt ctxt;
   xmlDocPtr xdoc;
-  ruby_xml_dtd *c_dtd;
+  rxml_dtd *c_dtd;
 
   Data_Get_Struct(self, xmlDoc, xdoc);
-  Data_Get_Struct(dtd, ruby_xml_dtd, c_dtd);
+  Data_Get_Struct(dtd, rxml_dtd, c_dtd);
 
   ctxt.userData = &error;
   ctxt.error = (xmlValidityErrorFunc)LibXML_validity_error;
@@ -990,7 +990,7 @@ ruby_xml_document_validate_dtd(VALUE self, VALUE dtd) {
   }
   else
   {
-    ruby_xml_raise(&xmlLastError);
+    rxml_raise(&xmlLastError);
     return Qfalse;
   }
 }
@@ -1004,9 +1004,9 @@ ruby_xml_document_validate_dtd(VALUE self, VALUE dtd) {
  * XML::Reader.walker().
  */
 static VALUE
-ruby_xml_document_reader(VALUE self)
+rxml_document_reader(VALUE self)
 {
-  return ruby_xml_reader_new_walker(cXMLReader, self);
+  return rxml_reader_new_walker(cXMLReader, self);
 }
 
 // Rdoc needs to know 
@@ -1018,39 +1018,39 @@ ruby_xml_document_reader(VALUE self)
 void
 ruby_init_xml_document(void) {
   cXMLDocument = rb_define_class_under(mXML, "Document", rb_cObject);
-  rb_define_alloc_func(cXMLDocument, ruby_xml_document_alloc);
+  rb_define_alloc_func(cXMLDocument, rxml_document_alloc);
 
-  rb_define_method(cXMLDocument, "initialize", ruby_xml_document_initialize, -1);
-  rb_define_method(cXMLDocument, "child", ruby_xml_document_child_get, 0);
-  rb_define_method(cXMLDocument, "child?", ruby_xml_document_child_q, 0);
-  rb_define_method(cXMLDocument, "compression", ruby_xml_document_compression_get, 0);
-  rb_define_method(cXMLDocument, "compression=", ruby_xml_document_compression_set, 1);
-  rb_define_method(cXMLDocument, "compression?", ruby_xml_document_compression_q, 0);
-  rb_define_method(cXMLDocument, "dump", ruby_xml_document_dump, -1);
-  rb_define_method(cXMLDocument, "debug_dump", ruby_xml_document_debug_dump, -1);
-  rb_define_method(cXMLDocument, "debug_dump_head", ruby_xml_document_debug_dump_head, -1);
-  rb_define_method(cXMLDocument, "debug_format_dump", ruby_xml_document_debug_format_dump, -1);
-  rb_define_method(cXMLDocument, "encoding", ruby_xml_document_encoding_get, 0);
-  rb_define_method(cXMLDocument, "encoding=", ruby_xml_document_encoding_set, 1);
-  rb_define_method(cXMLDocument, "format_dump", ruby_xml_document_format_dump, -1);
-  rb_define_method(cXMLDocument, "last", ruby_xml_document_last_get, 0);
-  rb_define_method(cXMLDocument, "last?", ruby_xml_document_last_q, 0);
-  rb_define_method(cXMLDocument, "next", ruby_xml_document_next_get, 0);
-  rb_define_method(cXMLDocument, "next?", ruby_xml_document_next_q, 0);
-  rb_define_method(cXMLDocument, "parent", ruby_xml_document_parent_get, 0);
-  rb_define_method(cXMLDocument, "parent?", ruby_xml_document_parent_q, 0);
-  rb_define_method(cXMLDocument, "prev", ruby_xml_document_prev_get, 0);
-  rb_define_method(cXMLDocument, "prev?", ruby_xml_document_prev_q, 0);
-  rb_define_method(cXMLDocument, "root", ruby_xml_document_root_get, 0);
-  rb_define_method(cXMLDocument, "root=", ruby_xml_document_root_set, 1);
-  rb_define_method(cXMLDocument, "save", ruby_xml_document_save, -1);
-  rb_define_method(cXMLDocument, "standalone?", ruby_xml_document_standalone_q, 0);
-  rb_define_method(cXMLDocument, "to_s", ruby_xml_document_to_s, -1);
-  rb_define_method(cXMLDocument, "url", ruby_xml_document_url_get, 0);
-  rb_define_method(cXMLDocument, "version", ruby_xml_document_version_get, 0);
-  rb_define_method(cXMLDocument, "xinclude", ruby_xml_document_xinclude, 0);
-  rb_define_method(cXMLDocument, "validate", ruby_xml_document_validate_dtd, 1);
-  rb_define_method(cXMLDocument, "validate_schema", ruby_xml_document_validate_schema, 1);
-  rb_define_method(cXMLDocument, "validate_relaxng", ruby_xml_document_validate_relaxng, 1);
-  rb_define_method(cXMLDocument, "reader", ruby_xml_document_reader, 0);
+  rb_define_method(cXMLDocument, "initialize", rxml_document_initialize, -1);
+  rb_define_method(cXMLDocument, "child", rxml_document_child_get, 0);
+  rb_define_method(cXMLDocument, "child?", rxml_document_child_q, 0);
+  rb_define_method(cXMLDocument, "compression", rxml_document_compression_get, 0);
+  rb_define_method(cXMLDocument, "compression=", rxml_document_compression_set, 1);
+  rb_define_method(cXMLDocument, "compression?", rxml_document_compression_q, 0);
+  rb_define_method(cXMLDocument, "dump", rxml_document_dump, -1);
+  rb_define_method(cXMLDocument, "debug_dump", rxml_document_debug_dump, -1);
+  rb_define_method(cXMLDocument, "debug_dump_head", rxml_document_debug_dump_head, -1);
+  rb_define_method(cXMLDocument, "debug_format_dump", rxml_document_debug_format_dump, -1);
+  rb_define_method(cXMLDocument, "encoding", rxml_document_encoding_get, 0);
+  rb_define_method(cXMLDocument, "encoding=", rxml_document_encoding_set, 1);
+  rb_define_method(cXMLDocument, "format_dump", rxml_document_format_dump, -1);
+  rb_define_method(cXMLDocument, "last", rxml_document_last_get, 0);
+  rb_define_method(cXMLDocument, "last?", rxml_document_last_q, 0);
+  rb_define_method(cXMLDocument, "next", rxml_document_next_get, 0);
+  rb_define_method(cXMLDocument, "next?", rxml_document_next_q, 0);
+  rb_define_method(cXMLDocument, "parent", rxml_document_parent_get, 0);
+  rb_define_method(cXMLDocument, "parent?", rxml_document_parent_q, 0);
+  rb_define_method(cXMLDocument, "prev", rxml_document_prev_get, 0);
+  rb_define_method(cXMLDocument, "prev?", rxml_document_prev_q, 0);
+  rb_define_method(cXMLDocument, "root", rxml_document_root_get, 0);
+  rb_define_method(cXMLDocument, "root=", rxml_document_root_set, 1);
+  rb_define_method(cXMLDocument, "save", rxml_document_save, -1);
+  rb_define_method(cXMLDocument, "standalone?", rxml_document_standalone_q, 0);
+  rb_define_method(cXMLDocument, "to_s", rxml_document_to_s, -1);
+  rb_define_method(cXMLDocument, "url", rxml_document_url_get, 0);
+  rb_define_method(cXMLDocument, "version", rxml_document_version_get, 0);
+  rb_define_method(cXMLDocument, "xinclude", rxml_document_xinclude, 0);
+  rb_define_method(cXMLDocument, "validate", rxml_document_validate_dtd, 1);
+  rb_define_method(cXMLDocument, "validate_schema", rxml_document_validate_schema, 1);
+  rb_define_method(cXMLDocument, "validate_relaxng", rxml_document_validate_relaxng, 1);
+  rb_define_method(cXMLDocument, "reader", rxml_document_reader, 0);
 }

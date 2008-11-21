@@ -17,7 +17,7 @@ VALUE cXMLNS;
 
 
 static VALUE
-ruby_xml_ns_alloc(VALUE klass) {
+rxml_ns_alloc(VALUE klass) {
   return Data_Wrap_Struct(cXMLNS, NULL, NULL, NULL);
 }
 
@@ -31,7 +31,7 @@ ruby_xml_ns_alloc(VALUE klass) {
  *  XML::NS.new(node, "xlink", "http://www.w3.org/1999/xlink")
  */
 static VALUE
-ruby_xml_ns_initialize(VALUE self, VALUE node, VALUE href, VALUE prefix) {
+rxml_ns_initialize(VALUE self, VALUE node, VALUE href, VALUE prefix) {
   xmlNodePtr xnode;
   xmlChar *xmlPrefix;
 	xmlNsPtr xns;
@@ -46,7 +46,7 @@ ruby_xml_ns_initialize(VALUE self, VALUE node, VALUE href, VALUE prefix) {
 }
 
 VALUE
-ruby_xml_ns_wrap(xmlNsPtr xns) {
+rxml_ns_wrap(xmlNsPtr xns) {
   return(Data_Wrap_Struct(cXMLNS, NULL, NULL, xns));
 }
 
@@ -58,7 +58,7 @@ ruby_xml_ns_wrap(xmlNsPtr xns) {
  * Obtain the namespace's href.
  */
 static VALUE
-ruby_xml_ns_href_get(VALUE self) {
+rxml_ns_href_get(VALUE self) {
   xmlNsPtr xns;
   Data_Get_Struct(self, xmlNs, xns);
   if (xns == NULL || xns->href == NULL)
@@ -75,7 +75,7 @@ ruby_xml_ns_href_get(VALUE self) {
  * Determine whether this namespace has an href.
  */
 static VALUE
-ruby_xml_ns_href_q(VALUE self) {
+rxml_ns_href_q(VALUE self) {
   xmlNsPtr xns;
   Data_Get_Struct(self, xmlNs, xns);
   if (xns == NULL || xns->href == NULL)
@@ -92,13 +92,13 @@ ruby_xml_ns_href_q(VALUE self) {
  * Obtain the next namespace.
  */
 static VALUE
-ruby_xml_ns_next(VALUE self) {
+rxml_ns_next(VALUE self) {
   xmlNsPtr xns;
   Data_Get_Struct(self, xmlNs, xns);
   if (xns == NULL || xns->next == NULL)
     return(Qnil);
   else
-    return(ruby_xml_ns_wrap(xns->next));
+    return(rxml_ns_wrap(xns->next));
 }
 
 
@@ -110,7 +110,7 @@ ruby_xml_ns_next(VALUE self) {
  * Obtain the namespace's prefix.
  */
 static VALUE
-ruby_xml_ns_prefix_get(VALUE self) {
+rxml_ns_prefix_get(VALUE self) {
   xmlNsPtr xns;
   Data_Get_Struct(self, xmlNs, xns);
   if (xns == NULL || xns->prefix == NULL)
@@ -127,7 +127,7 @@ ruby_xml_ns_prefix_get(VALUE self) {
  * Determine whether this namespace has a prefix.
  */
 static VALUE
-ruby_xml_ns_prefix_q(VALUE self) {
+rxml_ns_prefix_q(VALUE self) {
   xmlNsPtr xns;
   Data_Get_Struct(self, xmlNs, xns);
   if (xns == NULL || xns->prefix == NULL)
@@ -145,12 +145,12 @@ ruby_xml_ns_prefix_q(VALUE self) {
 void
 ruby_init_xml_ns(void) {
   cXMLNS = rb_define_class_under(mXML, "NS", rb_cObject);
-  rb_define_alloc_func(cXMLNS, ruby_xml_ns_alloc);
-  rb_define_method(cXMLNS, "initialize", ruby_xml_ns_initialize, 3);
-  rb_define_method(cXMLNS, "href", ruby_xml_ns_href_get, 0);
-  rb_define_method(cXMLNS, "href?", ruby_xml_ns_href_q, 0);
-  rb_define_method(cXMLNS, "next", ruby_xml_ns_next, 0);
-  rb_define_method(cXMLNS, "prefix", ruby_xml_ns_prefix_get, 0);
-  rb_define_method(cXMLNS, "prefix?", ruby_xml_ns_prefix_q, 0);
-  rb_define_method(cXMLNS, "to_s", ruby_xml_ns_prefix_get, 0);
+  rb_define_alloc_func(cXMLNS, rxml_ns_alloc);
+  rb_define_method(cXMLNS, "initialize", rxml_ns_initialize, 3);
+  rb_define_method(cXMLNS, "href", rxml_ns_href_get, 0);
+  rb_define_method(cXMLNS, "href?", rxml_ns_href_q, 0);
+  rb_define_method(cXMLNS, "next", rxml_ns_next, 0);
+  rb_define_method(cXMLNS, "prefix", rxml_ns_prefix_get, 0);
+  rb_define_method(cXMLNS, "prefix?", rxml_ns_prefix_q, 0);
+  rb_define_method(cXMLNS, "to_s", rxml_ns_prefix_get, 0);
 }

@@ -25,16 +25,16 @@
 VALUE cXMLXPathContext;
 
 static void
-ruby_xml_xpath_context_free(xmlXPathContextPtr ctxt) {
+rxml_xpath_context_free(xmlXPathContextPtr ctxt) {
   xmlXPathFreeContext(ctxt);
 }
 
 
 static VALUE
-ruby_xml_xpath_context_alloc(VALUE klass) {
+rxml_xpath_context_alloc(VALUE klass) {
   return Data_Wrap_Struct(cXMLXPathContext,
 			  NULL,
-			  ruby_xml_xpath_context_free,
+			  rxml_xpath_context_free,
 			  NULL);
 }
 
@@ -50,7 +50,7 @@ ruby_xml_xpath_context_alloc(VALUE klass) {
  *  nodes.length == 1
  */
 static VALUE
-ruby_xml_xpath_context_initialize(VALUE self, VALUE node) {
+rxml_xpath_context_initialize(VALUE self, VALUE node) {
   xmlDocPtr xdoc;
   VALUE document;
   #ifndef LIBXML_XPATH_ENABLED
@@ -92,7 +92,7 @@ ruby_xml_xpath_context_initialize(VALUE self, VALUE node) {
  *   context.register_namespace('xi', 'http://www.w3.org/2001/XInclude')
  */
 static VALUE
-ruby_xml_xpath_context_register_namespace(VALUE self, VALUE prefix, VALUE uri) {
+rxml_xpath_context_register_namespace(VALUE self, VALUE prefix, VALUE uri) {
   xmlXPathContextPtr ctxt;
 
   Data_Get_Struct(self, xmlXPathContext, ctxt);
@@ -118,7 +118,7 @@ ruby_xml_xpath_context_register_namespace(VALUE self, VALUE prefix, VALUE uri) {
  *  context.register_namespaces_from_node(doc.root)
  */
 static VALUE
-ruby_xml_xpath_context_register_namespaces_from_node(VALUE self, VALUE node) {
+rxml_xpath_context_register_namespaces_from_node(VALUE self, VALUE node) {
   xmlXPathContextPtr xctxt;
   xmlNodePtr xnode;
   xmlNsPtr *xnsArr;
@@ -153,7 +153,7 @@ ruby_xml_xpath_context_register_namespaces_from_node(VALUE self, VALUE node) {
       {
         VALUE prefix = rb_str_new2(xns->prefix);
         VALUE uri = rb_str_new2(xns->href);
-        ruby_xml_xpath_context_register_namespace(self, prefix, uri);
+        rxml_xpath_context_register_namespace(self, prefix, uri);
       }
       xns = xns->next;
     }
@@ -166,7 +166,7 @@ ruby_xml_xpath_context_register_namespaces_from_node(VALUE self, VALUE node) {
 static int
 iterate_ns_hash(st_data_t prefix, st_data_t uri, st_data_t self)
 {
-  ruby_xml_xpath_context_register_namespace(self, prefix, uri);
+  rxml_xpath_context_register_namespace(self, prefix, uri);
   return ST_CONTINUE;
 }
 
@@ -184,7 +184,7 @@ iterate_ns_hash(st_data_t prefix, st_data_t uri, st_data_t self)
  *                                  'xi' => 'http://www.w3.org/2001/XInclude')
  */
 static VALUE
-ruby_xml_xpath_context_register_namespaces(VALUE self, VALUE nslist) {
+rxml_xpath_context_register_namespaces(VALUE self, VALUE nslist) {
   char *cp;
   long i;
   VALUE rprefix, ruri;
@@ -202,11 +202,11 @@ ruby_xml_xpath_context_register_namespaces(VALUE self, VALUE nslist) {
       ruri = rb_str_new2(&cp[1]);
     }
     /* Should test the results of this */
-    ruby_xml_xpath_context_register_namespace(self, rprefix, ruri);
+    rxml_xpath_context_register_namespace(self, rprefix, ruri);
     break;
   case T_ARRAY:
     for (i = 0; i < RARRAY(nslist)->len; i++) {
-      ruby_xml_xpath_context_register_namespaces(self, RARRAY(nslist)->ptr[i]);
+      rxml_xpath_context_register_namespaces(self, RARRAY(nslist)->ptr[i]);
     }
     break;
   case T_HASH:
@@ -228,7 +228,7 @@ ruby_xml_xpath_context_register_namespaces(VALUE self, VALUE nslist) {
  *  context.node = doc.root.first
  */
 static VALUE
-ruby_xml_xpath_context_node_set(VALUE self, VALUE node) {
+rxml_xpath_context_node_set(VALUE self, VALUE node) {
   xmlXPathContextPtr xctxt;
   xmlNodePtr xnode;
   
@@ -245,7 +245,7 @@ ruby_xml_xpath_context_node_set(VALUE self, VALUE node) {
  * Find nodes matching the specified XPath expression
  */
 static VALUE
-ruby_xml_xpath_context_find(VALUE self, VALUE xpath_expr) {
+rxml_xpath_context_find(VALUE self, VALUE xpath_expr) {
   xmlXPathContextPtr xctxt;
   xmlXPathObjectPtr xobject;
   xmlXPathCompExprPtr xcompexpr;
@@ -271,10 +271,10 @@ ruby_xml_xpath_context_find(VALUE self, VALUE xpath_expr) {
        xmlLastError since it has the message set while xctxt->lastError
        does not. */
     xmlErrorPtr xerror = xmlGetLastError();
-    ruby_xml_raise(xerror);
+    rxml_raise(xerror);
   }
     
-  result = ruby_xml_xpath_object_wrap(xobject);
+  result = rxml_xpath_object_wrap(xobject);
   rb_iv_set(result, "@context", self);
   return result;  
 }
@@ -282,12 +282,12 @@ ruby_xml_xpath_context_find(VALUE self, VALUE xpath_expr) {
 void
 ruby_init_xml_xpath_context(void) {
   cXMLXPathContext = rb_define_class_under(mXPath, "Context", rb_cObject);
-  rb_define_alloc_func(cXMLXPathContext, ruby_xml_xpath_context_alloc);
+  rb_define_alloc_func(cXMLXPathContext, rxml_xpath_context_alloc);
   rb_define_attr(cXMLXPathContext, "doc", 1, 0);
-  rb_define_method(cXMLXPathContext, "initialize", ruby_xml_xpath_context_initialize, 1);
-  rb_define_method(cXMLXPathContext, "register_namespaces", ruby_xml_xpath_context_register_namespaces, 1);
-  rb_define_method(cXMLXPathContext, "register_namespaces_from_node", ruby_xml_xpath_context_register_namespaces_from_node, 1);
-  rb_define_method(cXMLXPathContext, "register_namespace", ruby_xml_xpath_context_register_namespace, 2);
-  rb_define_method(cXMLXPathContext, "node=", ruby_xml_xpath_context_node_set, 1);
-  rb_define_method(cXMLXPathContext, "find", ruby_xml_xpath_context_find, 1);
+  rb_define_method(cXMLXPathContext, "initialize", rxml_xpath_context_initialize, 1);
+  rb_define_method(cXMLXPathContext, "register_namespaces", rxml_xpath_context_register_namespaces, 1);
+  rb_define_method(cXMLXPathContext, "register_namespaces_from_node", rxml_xpath_context_register_namespaces_from_node, 1);
+  rb_define_method(cXMLXPathContext, "register_namespace", rxml_xpath_context_register_namespace, 2);
+  rb_define_method(cXMLXPathContext, "node=", rxml_xpath_context_node_set, 1);
+  rb_define_method(cXMLXPathContext, "find", rxml_xpath_context_find, 1);
 }

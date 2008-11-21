@@ -61,12 +61,12 @@ VALUE cbidOnExternalSubset;
 #include "sax_parser_callbacks.inc"
 
 static void
-ruby_xml_sax_parser_free(ruby_xml_sax_parser *rxsp) {
+rxml_sax_parser_free(rxml_sax_parser *rxsp) {
   xfree(rxsp);
 }
 
 static void
-ruby_xml_sax_parser_mark(ruby_xml_sax_parser *rxsp) {
+rxml_sax_parser_mark(rxml_sax_parser *rxsp) {
   if (rxsp->callbackHandler != Qnil) {
     rb_gc_mark(rxsp->callbackHandler);
   }
@@ -81,8 +81,8 @@ ruby_xml_sax_parser_mark(ruby_xml_sax_parser *rxsp) {
 }
 
 static VALUE
-ruby_xml_sax_parser_alloc(VALUE klass) {
-  ruby_xml_sax_parser *rxsp = ALLOC(ruby_xml_sax_parser);
+rxml_sax_parser_alloc(VALUE klass) {
+  rxml_sax_parser *rxsp = ALLOC(rxml_sax_parser);
   rxsp->xsh = &rubySAXHandlerStruct;
   rxsp->callbackHandler = Qnil;  
   rxsp->xpc = NULL;
@@ -90,7 +90,7 @@ ruby_xml_sax_parser_alloc(VALUE klass) {
   rxsp->str = Qnil;
 
   return Data_Wrap_Struct(cXMLSaxParser, 
-                          ruby_xml_sax_parser_mark, ruby_xml_sax_parser_free,
+                          rxml_sax_parser_mark, rxml_sax_parser_free,
                           rxsp);
 }
 
@@ -102,7 +102,7 @@ ruby_xml_sax_parser_alloc(VALUE klass) {
  * Initiliazes instance of parser.
  */
 static VALUE
-ruby_xml_sax_parser_initialize(VALUE self) {
+rxml_sax_parser_initialize(VALUE self) {
   VALUE input = rb_class_new_instance(0, NULL, cXMLInput);
   rb_iv_set(self, "@input", input);
   return self;
@@ -115,9 +115,9 @@ ruby_xml_sax_parser_initialize(VALUE self) {
  * Obtain the callbacks used by this parser.
  */
 static VALUE
-ruby_xml_sax_parser_callbacks_get(VALUE self) {
-  ruby_xml_sax_parser *rxsp;
-  Data_Get_Struct(self, ruby_xml_sax_parser, rxsp);
+rxml_sax_parser_callbacks_get(VALUE self) {
+  rxml_sax_parser *rxsp;
+  Data_Get_Struct(self, rxml_sax_parser, rxsp);
   return(rxsp->callbackHandler);
 }
 
@@ -132,9 +132,9 @@ ruby_xml_sax_parser_callbacks_get(VALUE self) {
  * wishes to process.
  */
 static VALUE
-ruby_xml_sax_parser_callbacks_set(VALUE self, VALUE callbacks) {
-  ruby_xml_sax_parser *rxsp;
-  Data_Get_Struct(self, ruby_xml_sax_parser, rxsp);
+rxml_sax_parser_callbacks_set(VALUE self, VALUE callbacks) {
+  rxml_sax_parser *rxsp;
+  Data_Get_Struct(self, rxml_sax_parser, rxsp);
   rxsp->callbackHandler = callbacks;
   return(rxsp->callbackHandler);
 }
@@ -147,14 +147,14 @@ ruby_xml_sax_parser_callbacks_set(VALUE self, VALUE callbacks) {
  * registered via the +callbacks+ attributesibute.
  */
 static VALUE
-ruby_xml_sax_parser_parse(VALUE self) {
+rxml_sax_parser_parse(VALUE self) {
   char *str;
   int status = 1;
-  ruby_xml_sax_parser *rxsp;
+  rxml_sax_parser *rxsp;
   VALUE source;
   VALUE input = rb_ivar_get(self, INPUT_ATTR);
 
-  Data_Get_Struct(self, ruby_xml_sax_parser, rxsp);
+  Data_Get_Struct(self, rxml_sax_parser, rxsp);
 
   if (rb_ivar_get(input, FILE_ATTR) != Qnil)
   {
@@ -174,7 +174,7 @@ ruby_xml_sax_parser_parse(VALUE self) {
   
   if (status)
   {
-    ruby_xml_raise(&xmlLastError);
+    rxml_raise(&xmlLastError);
     return Qfalse;
   }
   else
@@ -193,16 +193,16 @@ void
 ruby_init_xml_sax_parser(void) {
   /* SaxParser */
   cXMLSaxParser = rb_define_class_under(mXML, "SaxParser", rb_cObject);
-  rb_define_alloc_func(cXMLSaxParser, ruby_xml_sax_parser_alloc);
-  rb_define_method(cXMLSaxParser, "callbacks", ruby_xml_sax_parser_callbacks_get, 0);
-  rb_define_method(cXMLSaxParser, "callbacks=", ruby_xml_sax_parser_callbacks_set, 1);
-  rb_define_method(cXMLSaxParser, "parse", ruby_xml_sax_parser_parse, 0);
+  rb_define_alloc_func(cXMLSaxParser, rxml_sax_parser_alloc);
+  rb_define_method(cXMLSaxParser, "callbacks", rxml_sax_parser_callbacks_get, 0);
+  rb_define_method(cXMLSaxParser, "callbacks=", rxml_sax_parser_callbacks_set, 1);
+  rb_define_method(cXMLSaxParser, "parse", rxml_sax_parser_parse, 0);
 
   /* Atributes */
   rb_define_attr(cXMLSaxParser, "input", 1, 0);
 
   /* Instance Methods */
-  rb_define_method(cXMLSaxParser, "initialize", ruby_xml_sax_parser_initialize, 0);
+  rb_define_method(cXMLSaxParser, "initialize", rxml_sax_parser_initialize, 0);
 
 
   INPUT_ATTR = rb_intern("@input");

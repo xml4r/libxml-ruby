@@ -16,14 +16,14 @@ VALUE cXMLParserContext;
 
 
 static void
-ruby_xml_parser_context_free(xmlParserCtxtPtr ctxt) {
+rxml_parser_context_free(xmlParserCtxtPtr ctxt) {
   if (ctxt != NULL)
     xmlFreeParserCtxt(ctxt);
 }
 
 VALUE
-ruby_xml_parser_context_wrap(xmlParserCtxtPtr ctxt) {
-  return Data_Wrap_Struct(cXMLParserContext, NULL, ruby_xml_parser_context_free, ctxt);
+rxml_parser_context_wrap(xmlParserCtxtPtr ctxt) {
+  return Data_Wrap_Struct(cXMLParserContext, NULL, rxml_parser_context_free, ctxt);
 }
 
 /*
@@ -33,7 +33,7 @@ ruby_xml_parser_context_wrap(xmlParserCtxtPtr ctxt) {
  * Obtain the data directory associated with this context.
  */
 static VALUE
-ruby_xml_parser_context_data_directory_get(VALUE self) {
+rxml_parser_context_data_directory_get(VALUE self) {
   xmlParserCtxtPtr ctxt;
   Data_Get_Struct(self, xmlParserCtxt, ctxt);
 
@@ -51,7 +51,7 @@ ruby_xml_parser_context_data_directory_get(VALUE self) {
  * Obtain the depth of this context.
  */
 static VALUE
-ruby_xml_parser_context_depth_get(VALUE self) {
+rxml_parser_context_depth_get(VALUE self) {
   xmlParserCtxtPtr ctxt;
   Data_Get_Struct(self, xmlParserCtxt, ctxt);
 
@@ -67,7 +67,7 @@ ruby_xml_parser_context_depth_get(VALUE self) {
  * in this context.
  */
 static VALUE
-ruby_xml_parser_context_disable_sax_q(VALUE self) {
+rxml_parser_context_disable_sax_q(VALUE self) {
   xmlParserCtxtPtr ctxt;
   Data_Get_Struct(self, xmlParserCtxt, ctxt);
 
@@ -86,7 +86,7 @@ ruby_xml_parser_context_disable_sax_q(VALUE self) {
  * Determine whether this is a docbook context.
  */
 static VALUE
-ruby_xml_parser_context_docbook_q(VALUE self) {
+rxml_parser_context_docbook_q(VALUE self) {
   xmlParserCtxtPtr ctxt;
   Data_Get_Struct(self, xmlParserCtxt, ctxt);
 
@@ -105,7 +105,7 @@ ruby_xml_parser_context_docbook_q(VALUE self) {
  * this context.
  */
 static VALUE
-ruby_xml_parser_context_encoding_get(VALUE self) {
+rxml_parser_context_encoding_get(VALUE self) {
   xmlParserCtxtPtr ctxt;
   Data_Get_Struct(self, xmlParserCtxt, ctxt);
 
@@ -123,7 +123,7 @@ ruby_xml_parser_context_encoding_get(VALUE self) {
  * Obtain the last-error number in this context.
  */
 static VALUE
-ruby_xml_parser_context_errno_get(VALUE self) {
+rxml_parser_context_errno_get(VALUE self) {
   xmlParserCtxtPtr ctxt;
   Data_Get_Struct(self, xmlParserCtxt, ctxt);
 
@@ -139,7 +139,7 @@ ruby_xml_parser_context_errno_get(VALUE self) {
  * Determine whether this is an html context.
  */
 static VALUE
-ruby_xml_parser_context_html_q(VALUE self) {
+rxml_parser_context_html_q(VALUE self) {
   xmlParserCtxtPtr ctxt;
   Data_Get_Struct(self, xmlParserCtxt, ctxt);
 
@@ -158,7 +158,7 @@ ruby_xml_parser_context_html_q(VALUE self) {
  * this context.
  */
 static VALUE
-ruby_xml_parser_context_io_max_num_streams_get(VALUE self) {
+rxml_parser_context_io_max_num_streams_get(VALUE self) {
   // TODO alias to max_streams and dep this? 
   xmlParserCtxtPtr ctxt;
   Data_Get_Struct(self, xmlParserCtxt, ctxt);
@@ -175,7 +175,7 @@ ruby_xml_parser_context_io_max_num_streams_get(VALUE self) {
  * context.
  */
 static VALUE
-ruby_xml_parser_context_io_num_streams_get(VALUE self) {
+rxml_parser_context_io_num_streams_get(VALUE self) {
   xmlParserCtxtPtr ctxt;
   Data_Get_Struct(self, xmlParserCtxt, ctxt);
 
@@ -191,7 +191,7 @@ ruby_xml_parser_context_io_num_streams_get(VALUE self) {
  * whitespace.
  */
 static VALUE
-ruby_xml_parser_context_keep_blanks_q(VALUE self) {
+rxml_parser_context_keep_blanks_q(VALUE self) {
   xmlParserCtxtPtr ctxt;
   Data_Get_Struct(self, xmlParserCtxt, ctxt);
 
@@ -209,7 +209,7 @@ ruby_xml_parser_context_keep_blanks_q(VALUE self) {
  * Obtain the name depth for this context.
  */
 static VALUE
-ruby_xml_parser_context_name_depth_get(VALUE self) {
+rxml_parser_context_name_depth_get(VALUE self) {
   xmlParserCtxtPtr ctxt;
   Data_Get_Struct(self, xmlParserCtxt, ctxt);
 
@@ -224,7 +224,7 @@ ruby_xml_parser_context_name_depth_get(VALUE self) {
  * Obtain the maximum name depth for this context.
  */
 static VALUE
-ruby_xml_parser_context_name_depth_max_get(VALUE self) {
+rxml_parser_context_name_depth_max_get(VALUE self) {
   xmlParserCtxtPtr ctxt;
   Data_Get_Struct(self, xmlParserCtxt, ctxt);
 
@@ -239,7 +239,7 @@ ruby_xml_parser_context_name_depth_max_get(VALUE self) {
  * Obtain the name node for this context.
  */
 static VALUE
-ruby_xml_parser_context_name_node_get(VALUE self) {
+rxml_parser_context_name_node_get(VALUE self) {
   xmlParserCtxtPtr ctxt;
   Data_Get_Struct(self, xmlParserCtxt, ctxt);
 
@@ -257,7 +257,7 @@ ruby_xml_parser_context_name_node_get(VALUE self) {
  * Obtain the name table for this context.
  */
 static VALUE
-ruby_xml_parser_context_name_tab_get(VALUE self) {
+rxml_parser_context_name_tab_get(VALUE self) {
   int i;
   xmlParserCtxtPtr ctxt;
   VALUE tab_ary;
@@ -287,7 +287,7 @@ ruby_xml_parser_context_name_tab_get(VALUE self) {
  * Obtain the node depth for this context.
  */
 static VALUE
-ruby_xml_parser_context_node_depth_get(VALUE self) {
+rxml_parser_context_node_depth_get(VALUE self) {
   xmlParserCtxtPtr ctxt;
   Data_Get_Struct(self, xmlParserCtxt, ctxt);
 
@@ -302,14 +302,14 @@ ruby_xml_parser_context_node_depth_get(VALUE self) {
  * Obtain the root node of this context.
  */
 static VALUE
-ruby_xml_parser_context_node_get(VALUE self) {
+rxml_parser_context_node_get(VALUE self) {
   xmlParserCtxtPtr ctxt;
   Data_Get_Struct(self, xmlParserCtxt, ctxt);
 
   if (ctxt->node == NULL)
     return(Qnil);
   else
-    return(ruby_xml_node2_wrap(cXMLNode,
+    return(rxml_node2_wrap(cXMLNode,
 			      ctxt->node));
 }
 
@@ -321,7 +321,7 @@ ruby_xml_parser_context_node_get(VALUE self) {
  * Obtain the maximum node depth for this context.
  */
 static VALUE
-ruby_xml_parser_context_node_depth_max_get(VALUE self) {
+rxml_parser_context_node_depth_max_get(VALUE self) {
   xmlParserCtxtPtr ctxt;
   Data_Get_Struct(self, xmlParserCtxt, ctxt);
 
@@ -336,7 +336,7 @@ ruby_xml_parser_context_node_depth_max_get(VALUE self) {
  * Obtain the number of characters in this context.
  */
 static VALUE
-ruby_xml_parser_context_num_chars_get(VALUE self) {
+rxml_parser_context_num_chars_get(VALUE self) {
   xmlParserCtxtPtr ctxt;
   Data_Get_Struct(self, xmlParserCtxt, ctxt);
 
@@ -351,7 +351,7 @@ ruby_xml_parser_context_num_chars_get(VALUE self) {
  * context.
  */
 static VALUE
-ruby_xml_parser_context_replace_entities_q(VALUE self) {
+rxml_parser_context_replace_entities_q(VALUE self) {
   xmlParserCtxtPtr ctxt;
   Data_Get_Struct(self, xmlParserCtxt, ctxt);
 
@@ -370,7 +370,7 @@ ruby_xml_parser_context_replace_entities_q(VALUE self) {
  * context.
  */
 static VALUE
-ruby_xml_parser_context_replace_entities_set(VALUE self, VALUE bool) {
+rxml_parser_context_replace_entities_set(VALUE self, VALUE bool) {
   xmlParserCtxtPtr ctxt;
   Data_Get_Struct(self, xmlParserCtxt, ctxt);
 
@@ -390,7 +390,7 @@ ruby_xml_parser_context_replace_entities_set(VALUE self, VALUE bool) {
  * Obtain the space depth for this context.
  */
 static VALUE
-ruby_xml_parser_context_space_depth_get(VALUE self) {
+rxml_parser_context_space_depth_get(VALUE self) {
   xmlParserCtxtPtr ctxt;
   Data_Get_Struct(self, xmlParserCtxt, ctxt);
 
@@ -405,7 +405,7 @@ ruby_xml_parser_context_space_depth_get(VALUE self) {
  * Obtain the maximum space depth for this context.
  */
 static VALUE
-ruby_xml_parser_context_space_depth_max_get(VALUE self) {
+rxml_parser_context_space_depth_max_get(VALUE self) {
   xmlParserCtxtPtr ctxt;
   Data_Get_Struct(self, xmlParserCtxt, ctxt);
 
@@ -421,7 +421,7 @@ ruby_xml_parser_context_space_depth_max_get(VALUE self) {
  * external context.
  */
 static VALUE
-ruby_xml_parser_context_subset_external_q(VALUE self) {
+rxml_parser_context_subset_external_q(VALUE self) {
   xmlParserCtxtPtr ctxt;
   Data_Get_Struct(self, xmlParserCtxt, ctxt);
 
@@ -440,7 +440,7 @@ ruby_xml_parser_context_subset_external_q(VALUE self) {
  * internal context.
  */
 static VALUE
-ruby_xml_parser_context_subset_internal_q(VALUE self) {
+rxml_parser_context_subset_internal_q(VALUE self) {
   xmlParserCtxtPtr ctxt;
   Data_Get_Struct(self, xmlParserCtxt, ctxt);
 
@@ -460,7 +460,7 @@ ruby_xml_parser_context_subset_internal_q(VALUE self) {
  * is true).
  */
 static VALUE
-ruby_xml_parser_context_subset_name_get(VALUE self) {
+rxml_parser_context_subset_name_get(VALUE self) {
   xmlParserCtxtPtr ctxt;
   Data_Get_Struct(self, xmlParserCtxt, ctxt);
 
@@ -480,7 +480,7 @@ ruby_xml_parser_context_subset_name_get(VALUE self) {
  * is true).
  */
 static VALUE
-ruby_xml_parser_context_subset_external_uri_get(VALUE self) {
+rxml_parser_context_subset_external_uri_get(VALUE self) {
   xmlParserCtxtPtr ctxt;
   Data_Get_Struct(self, xmlParserCtxt, ctxt);
 
@@ -500,7 +500,7 @@ ruby_xml_parser_context_subset_external_uri_get(VALUE self) {
  * is true).
  */
 static VALUE
-ruby_xml_parser_context_subset_external_system_id_get(VALUE self) {
+rxml_parser_context_subset_external_system_id_get(VALUE self) {
   xmlParserCtxtPtr ctxt;
   Data_Get_Struct(self, xmlParserCtxt, ctxt);
 
@@ -518,7 +518,7 @@ ruby_xml_parser_context_subset_external_system_id_get(VALUE self) {
  * Determine whether this is a standalone context.
  */
 static VALUE
-ruby_xml_parser_context_standalone_q(VALUE self) {
+rxml_parser_context_standalone_q(VALUE self) {
   xmlParserCtxtPtr ctxt;
   Data_Get_Struct(self, xmlParserCtxt, ctxt);
 
@@ -536,7 +536,7 @@ ruby_xml_parser_context_standalone_q(VALUE self) {
  * Determine whether this context maintains statistics.
  */
 static VALUE
-ruby_xml_parser_context_stats_q(VALUE self) {
+rxml_parser_context_stats_q(VALUE self) {
   xmlParserCtxtPtr ctxt;
   Data_Get_Struct(self, xmlParserCtxt, ctxt);
 
@@ -554,7 +554,7 @@ ruby_xml_parser_context_stats_q(VALUE self) {
  * Determine whether this context is valid.
  */
 static VALUE
-ruby_xml_parser_context_valid_q(VALUE self) {
+rxml_parser_context_valid_q(VALUE self) {
   xmlParserCtxtPtr ctxt;
   Data_Get_Struct(self, xmlParserCtxt, ctxt);
 
@@ -572,7 +572,7 @@ ruby_xml_parser_context_valid_q(VALUE self) {
  * Determine whether validation is enabled in this context.
  */
 static VALUE
-ruby_xml_parser_context_validate_q(VALUE self) {
+rxml_parser_context_validate_q(VALUE self) {
   xmlParserCtxtPtr ctxt;
   Data_Get_Struct(self, xmlParserCtxt, ctxt);
 
@@ -590,7 +590,7 @@ ruby_xml_parser_context_validate_q(VALUE self) {
  * Obtain this context's version identifier.
  */
 static VALUE
-ruby_xml_parser_context_version_get(VALUE self) {
+rxml_parser_context_version_get(VALUE self) {
   xmlParserCtxtPtr ctxt;
   Data_Get_Struct(self, xmlParserCtxt, ctxt);
 
@@ -608,7 +608,7 @@ ruby_xml_parser_context_version_get(VALUE self) {
  * Determine whether this context contains well-formed XML.
  */
 static VALUE
-ruby_xml_parser_context_well_formed_q(VALUE self) {
+rxml_parser_context_well_formed_q(VALUE self) {
   xmlParserCtxtPtr ctxt;
   Data_Get_Struct(self, xmlParserCtxt, ctxt);
 
@@ -623,37 +623,37 @@ ruby_init_xml_parser_context(void) {
   cXMLParserContext = rb_define_class_under(cXMLParser, "Context", rb_cObject);
   rb_undef_alloc_func(cXMLParserContext);
 
-  rb_define_method(cXMLParserContext, "data_directory", ruby_xml_parser_context_data_directory_get, 0);
-  rb_define_method(cXMLParserContext, "depth", ruby_xml_parser_context_depth_get, 0);
-  rb_define_method(cXMLParserContext, "disable_sax?", ruby_xml_parser_context_disable_sax_q, 0);
-  rb_define_method(cXMLParserContext, "docbook?", ruby_xml_parser_context_docbook_q, 0);
-  rb_define_method(cXMLParserContext, "encoding", ruby_xml_parser_context_encoding_get, 0);
-  rb_define_method(cXMLParserContext, "errno", ruby_xml_parser_context_errno_get, 0);
-  rb_define_method(cXMLParserContext, "html?", ruby_xml_parser_context_html_q, 0);
-  rb_define_method(cXMLParserContext, "io_max_num_streams", ruby_xml_parser_context_io_max_num_streams_get, 0);
-  rb_define_method(cXMLParserContext, "io_num_streams", ruby_xml_parser_context_io_num_streams_get, 0);
-  rb_define_method(cXMLParserContext, "keep_blanks?", ruby_xml_parser_context_keep_blanks_q, 0);
-  rb_define_method(cXMLParserContext, "name_node", ruby_xml_parser_context_name_node_get, 0);
-  rb_define_method(cXMLParserContext, "name_depth", ruby_xml_parser_context_name_depth_get, 0);
-  rb_define_method(cXMLParserContext, "name_depth_max", ruby_xml_parser_context_name_depth_max_get, 0);
-  rb_define_method(cXMLParserContext, "name_tab", ruby_xml_parser_context_name_tab_get, 0);
-  rb_define_method(cXMLParserContext, "node", ruby_xml_parser_context_node_get, 0);
-  rb_define_method(cXMLParserContext, "node_depth", ruby_xml_parser_context_node_depth_get, 0);
-  rb_define_method(cXMLParserContext, "node_depth_max", ruby_xml_parser_context_node_depth_max_get, 0);
-  rb_define_method(cXMLParserContext, "num_chars", ruby_xml_parser_context_num_chars_get, 0);
-  rb_define_method(cXMLParserContext, "replace_entities?", ruby_xml_parser_context_replace_entities_q, 0);
-  rb_define_method(cXMLParserContext, "replace_entities=", ruby_xml_parser_context_replace_entities_set, 1);
-  rb_define_method(cXMLParserContext, "space_depth", ruby_xml_parser_context_space_depth_get, 0);
-  rb_define_method(cXMLParserContext, "space_depth_max", ruby_xml_parser_context_space_depth_max_get, 0);
-  rb_define_method(cXMLParserContext, "subset_external?", ruby_xml_parser_context_subset_external_q, 0);
-  rb_define_method(cXMLParserContext, "subset_external_system_id", ruby_xml_parser_context_subset_external_system_id_get, 0);
-  rb_define_method(cXMLParserContext, "subset_external_uri", ruby_xml_parser_context_subset_name_get, 0);
-  rb_define_method(cXMLParserContext, "subset_internal?", ruby_xml_parser_context_subset_internal_q, 0);
-  rb_define_method(cXMLParserContext, "subset_internal_name", ruby_xml_parser_context_subset_name_get, 0);
-  rb_define_method(cXMLParserContext, "stats?", ruby_xml_parser_context_stats_q, 0);
-  rb_define_method(cXMLParserContext, "standalone?", ruby_xml_parser_context_standalone_q, 0);
-  rb_define_method(cXMLParserContext, "valid", ruby_xml_parser_context_valid_q, 0);
-  rb_define_method(cXMLParserContext, "validate?", ruby_xml_parser_context_validate_q, 0);
-  rb_define_method(cXMLParserContext, "version", ruby_xml_parser_context_version_get, 0);
-  rb_define_method(cXMLParserContext, "well_formed?", ruby_xml_parser_context_well_formed_q, 0);
+  rb_define_method(cXMLParserContext, "data_directory", rxml_parser_context_data_directory_get, 0);
+  rb_define_method(cXMLParserContext, "depth", rxml_parser_context_depth_get, 0);
+  rb_define_method(cXMLParserContext, "disable_sax?", rxml_parser_context_disable_sax_q, 0);
+  rb_define_method(cXMLParserContext, "docbook?", rxml_parser_context_docbook_q, 0);
+  rb_define_method(cXMLParserContext, "encoding", rxml_parser_context_encoding_get, 0);
+  rb_define_method(cXMLParserContext, "errno", rxml_parser_context_errno_get, 0);
+  rb_define_method(cXMLParserContext, "html?", rxml_parser_context_html_q, 0);
+  rb_define_method(cXMLParserContext, "io_max_num_streams", rxml_parser_context_io_max_num_streams_get, 0);
+  rb_define_method(cXMLParserContext, "io_num_streams", rxml_parser_context_io_num_streams_get, 0);
+  rb_define_method(cXMLParserContext, "keep_blanks?", rxml_parser_context_keep_blanks_q, 0);
+  rb_define_method(cXMLParserContext, "name_node", rxml_parser_context_name_node_get, 0);
+  rb_define_method(cXMLParserContext, "name_depth", rxml_parser_context_name_depth_get, 0);
+  rb_define_method(cXMLParserContext, "name_depth_max", rxml_parser_context_name_depth_max_get, 0);
+  rb_define_method(cXMLParserContext, "name_tab", rxml_parser_context_name_tab_get, 0);
+  rb_define_method(cXMLParserContext, "node", rxml_parser_context_node_get, 0);
+  rb_define_method(cXMLParserContext, "node_depth", rxml_parser_context_node_depth_get, 0);
+  rb_define_method(cXMLParserContext, "node_depth_max", rxml_parser_context_node_depth_max_get, 0);
+  rb_define_method(cXMLParserContext, "num_chars", rxml_parser_context_num_chars_get, 0);
+  rb_define_method(cXMLParserContext, "replace_entities?", rxml_parser_context_replace_entities_q, 0);
+  rb_define_method(cXMLParserContext, "replace_entities=", rxml_parser_context_replace_entities_set, 1);
+  rb_define_method(cXMLParserContext, "space_depth", rxml_parser_context_space_depth_get, 0);
+  rb_define_method(cXMLParserContext, "space_depth_max", rxml_parser_context_space_depth_max_get, 0);
+  rb_define_method(cXMLParserContext, "subset_external?", rxml_parser_context_subset_external_q, 0);
+  rb_define_method(cXMLParserContext, "subset_external_system_id", rxml_parser_context_subset_external_system_id_get, 0);
+  rb_define_method(cXMLParserContext, "subset_external_uri", rxml_parser_context_subset_name_get, 0);
+  rb_define_method(cXMLParserContext, "subset_internal?", rxml_parser_context_subset_internal_q, 0);
+  rb_define_method(cXMLParserContext, "subset_internal_name", rxml_parser_context_subset_name_get, 0);
+  rb_define_method(cXMLParserContext, "stats?", rxml_parser_context_stats_q, 0);
+  rb_define_method(cXMLParserContext, "standalone?", rxml_parser_context_standalone_q, 0);
+  rb_define_method(cXMLParserContext, "valid", rxml_parser_context_valid_q, 0);
+  rb_define_method(cXMLParserContext, "validate?", rxml_parser_context_validate_q, 0);
+  rb_define_method(cXMLParserContext, "version", rxml_parser_context_version_get, 0);
+  rb_define_method(cXMLParserContext, "well_formed?", rxml_parser_context_well_formed_q, 0);
 }

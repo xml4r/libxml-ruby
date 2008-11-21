@@ -1,4 +1,4 @@
-/* $Id: ruby_xml_ns.c 524 2008-08-20 08:59:54Z cfis $ */
+/* $Id: rxml_ns.c 524 2008-08-20 08:59:54Z cfis $ */
 
 /* Please see the LICENSE file for copyright and distribution information */
 
@@ -41,7 +41,7 @@ VALUE mXMLEncoding;
 *   doc << XML::Node.new */
 
 VALUE
-ruby_xml_encoding_to_s(VALUE self, VALUE encoding)
+rxml_encoding_to_s(VALUE self, VALUE encoding)
 {
   char* encodingStr = NULL;
 
@@ -134,7 +134,7 @@ void
 ruby_init_xml_encoding(void) {
   mXMLEncoding = rb_define_module_under(mXML, "Encoding");
 
-  rb_define_module_function(mXMLEncoding, "encoding_to_s", ruby_xml_encoding_to_s, 1);
+  rb_define_module_function(mXMLEncoding, "encoding_to_s", rxml_encoding_to_s, 1);
 
   rb_define_const(mXMLEncoding, "UNDEFINED", INT2NUM(XPATH_UNDEFINED));
   rb_define_const(mXMLEncoding, "ERROR", INT2NUM(XML_CHAR_ENCODING_ERROR));         /* No char encoding detected */

@@ -17,7 +17,7 @@ VALUE cXMLXPointer;
 
 
 static VALUE
-ruby_xml_xpointer_point(VALUE class, VALUE rnode, VALUE xptr_str) {
+rxml_xpointer_point(VALUE class, VALUE rnode, VALUE xptr_str) {
 #ifdef LIBXML_XPTR_ENABLED
   xmlNodePtr xnode;
   xmlXPathContextPtr xctxt;
@@ -39,9 +39,9 @@ ruby_xml_xpointer_point(VALUE class, VALUE rnode, VALUE xptr_str) {
 
   xpop = xmlXPtrEval((xmlChar*)StringValuePtr(xptr_str), xctxt);
   if (!xpop)
-    ruby_xml_raise(&xmlLastError);
+    rxml_raise(&xmlLastError);
 
-  result = ruby_xml_xpath_object_wrap(xpop);
+  result = rxml_xpath_object_wrap(xpop);
   rb_iv_set(result, "@context", context);
   
   return(result);
@@ -52,8 +52,8 @@ ruby_xml_xpointer_point(VALUE class, VALUE rnode, VALUE xptr_str) {
 }
 
 VALUE
-ruby_xml_xpointer_point2(VALUE node, VALUE xptr_str) {
-  return(ruby_xml_xpointer_point(cXMLXPointer, node, xptr_str));
+rxml_xpointer_point2(VALUE node, VALUE xptr_str) {
+  return(rxml_xpointer_point(cXMLXPointer, node, xptr_str));
 }
 
 
@@ -65,7 +65,7 @@ ruby_xml_xpointer_point2(VALUE node, VALUE xptr_str) {
  * start and end node.
  */
 static VALUE
-ruby_xml_xpointer_range(VALUE class, VALUE rstart, VALUE rend) {
+rxml_xpointer_range(VALUE class, VALUE rstart, VALUE rend) {
 #ifdef LIBXML_XPTR_ENABLED
   xmlNodePtr start, end;
   VALUE rxxp;
@@ -88,7 +88,7 @@ ruby_xml_xpointer_range(VALUE class, VALUE rstart, VALUE rend) {
   if (xpath == NULL)
     rb_fatal("You shouldn't be able to have this happen");
 
-  rxxp = ruby_xml_xpath_object_wrap(xpath);
+  rxxp = rxml_xpath_object_wrap(xpath);
   return(rxxp);
 #else
   rb_warn("libxml was compiled without XPointer support");
@@ -105,5 +105,5 @@ ruby_xml_xpointer_range(VALUE class, VALUE rstart, VALUE rend) {
 void
 ruby_init_xml_xpointer(void) {
   cXMLXPointer = rb_define_class_under(mXML, "XPointer", rb_cObject);
-  rb_define_singleton_method(cXMLXPointer, "range", ruby_xml_xpointer_range, 2);
+  rb_define_singleton_method(cXMLXPointer, "range", rxml_xpointer_range, 2);
 }
