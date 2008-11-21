@@ -28,6 +28,26 @@ ID STRING_ATTR;
 ID DOCUMENT_ATTR;
 ID IO_ATTR;
 
+static ID READ_METHOD;
+
+
+/* This method is called by libxml when it wants to read
+   more data from a stream. We go with the duck typing
+   solution to support StringIO objects. */
+int rxml_read_callback(void *context, char *buffer, int len) {
+  VALUE io = (VALUE)context;
+  VALUE string = rb_funcall(io, READ_METHOD, 1, INT2NUM(len));
+  int size;
+ 
+  if(string == Qnil)
+    return 0;
+  
+  size = RSTRING_LEN(string);
+  memcpy(buffer, StringValuePtr(string), size);
+
+  return size;
+}
+
 /*
  * call-seq:
  *    initialize -> LibXML::XML::Input instance
@@ -142,9 +162,6 @@ rxml_input_io_get(VALUE self) {
  */
 static VALUE
 rxml_input_io_set(VALUE self, VALUE io) {
-  if (!rb_obj_is_kind_of(io, rb_cIO))
-    rb_raise(rb_eTypeError, "Invalid argument, must be an IO object");
-
   rb_ivar_set(self, FILE_ATTR, Qnil);
   rb_ivar_set(self, STRING_ATTR, Qnil);
   rb_ivar_set(self, DOCUMENT_ATTR, Qnil);
@@ -164,6 +181,7 @@ ruby_init_xml_input(void) {
   STRING_ATTR = rb_intern("@string");
   DOCUMENT_ATTR = rb_intern("@document");
   IO_ATTR = rb_intern("@io");
+  READ_METHOD = rb_intern("read");
 
   cXMLInput = rb_define_class_under(mXML, "Input", rb_cObject);
   rb_define_attr(cXMLInput, "encoding", 1, 1);

@@ -32,12 +32,6 @@ static ID CONTEXT_ATTR;
  * XML::Parser.io).
  */
 
-static int
-ctxtRead(FILE *f, char * buf, size_t len) {
-    return(rb_io_fread(buf, len, f));
-}
-
-
 /*
  * call-seq:
  *    parser.initialize -> parser
@@ -84,16 +78,10 @@ rxml_parser_io_ctxt(VALUE input) {
   VALUE io = rb_ivar_get(input, IO_ATTR);
   VALUE encoding = rb_ivar_get(input, ENCODING_ATTR);
   xmlCharEncoding xmlEncoding = NUM2INT(encoding);
-  OpenFile *fptr;
-  FILE *f;
-
-  GetOpenFile(io, fptr);
-  rb_io_check_readable(fptr);
-  f = GetReadFile(fptr);
 
   return xmlCreateIOParserCtxt(NULL, NULL,
-	 			                      (xmlInputReadCallback) ctxtRead,
-				                      NULL, f, xmlEncoding);
+	 			                      (xmlInputReadCallback) rxml_read_callback,
+				                      NULL, io, xmlEncoding);
 }
 
 

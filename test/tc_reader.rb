@@ -5,14 +5,62 @@ class TextReader < Test::Unit::TestCase
 
   SIMPLE_XML = File.join(File.dirname(__FILE__), 'model/simple.xml')
 
-  def test_new_file
-    reader = XML::Reader.file(SIMPLE_XML)
-    verify_simple(reader)
-    assert_raises(RuntimeError) { XML::Reader.file('/does/not/exist') }
+  def verify_simple(reader)
+    node_types = []
+    19.times do
+      assert_equal(1, reader.read)
+      node_types << reader.node_type
+    end
+    assert_equal(0, reader.read)
+    assert_equal(node_types,
+      [XML::Reader::TYPE_ELEMENT,
+       XML::Reader::TYPE_SIGNIFICANT_WHITESPACE,
+       XML::Reader::TYPE_ELEMENT,
+       XML::Reader::TYPE_TEXT,
+       XML::Reader::TYPE_END_ELEMENT,
+       XML::Reader::TYPE_SIGNIFICANT_WHITESPACE,
+       XML::Reader::TYPE_ELEMENT,
+       XML::Reader::TYPE_SIGNIFICANT_WHITESPACE,
+       XML::Reader::TYPE_ELEMENT,
+       XML::Reader::TYPE_TEXT,
+       XML::Reader::TYPE_END_ELEMENT,
+       XML::Reader::TYPE_SIGNIFICANT_WHITESPACE,
+       XML::Reader::TYPE_ELEMENT,
+       XML::Reader::TYPE_TEXT,
+       XML::Reader::TYPE_END_ELEMENT,
+       XML::Reader::TYPE_SIGNIFICANT_WHITESPACE,
+       XML::Reader::TYPE_END_ELEMENT,
+       XML::Reader::TYPE_SIGNIFICANT_WHITESPACE,
+       XML::Reader::TYPE_END_ELEMENT])
   end
 
-  def test_new_data
-    reader = XML::Reader.new(File.read(SIMPLE_XML))
+  def test_file
+    reader = XML::Reader.file(SIMPLE_XML)
+    verify_simple(reader)
+  end
+
+  def test_invalid_file
+    assert_raises(RuntimeError) do
+      XML::Reader.file('/does/not/exist')
+    end
+  end
+
+  def test_string
+    reader = XML::Reader.string(File.read(SIMPLE_XML))
+    verify_simple(reader)
+  end
+
+  def test_io
+    File.open(SIMPLE_XML, 'rb') do |io|
+      reader = XML::Reader.io(io)
+      verify_simple(reader)
+    end
+  end
+
+  def test_string_io
+    data = File.read(SIMPLE_XML)
+    string_io = StringIO.new(data)
+    reader = XML::Reader.io(string_io)
     verify_simple(reader)
   end
 
@@ -82,35 +130,6 @@ class TextReader < Test::Unit::TestCase
     GC.start
     
     doc.standalone?
-  end
-
-  def verify_simple(reader)
-    node_types = []
-    19.times do
-      assert_equal(1, reader.read)
-      node_types << reader.node_type
-    end
-    assert_equal(0, reader.read)
-    assert_equal(node_types,
-      [XML::Reader::TYPE_ELEMENT,
-       XML::Reader::TYPE_SIGNIFICANT_WHITESPACE,
-       XML::Reader::TYPE_ELEMENT,
-       XML::Reader::TYPE_TEXT,
-       XML::Reader::TYPE_END_ELEMENT,
-       XML::Reader::TYPE_SIGNIFICANT_WHITESPACE,
-       XML::Reader::TYPE_ELEMENT,
-       XML::Reader::TYPE_SIGNIFICANT_WHITESPACE,
-       XML::Reader::TYPE_ELEMENT,
-       XML::Reader::TYPE_TEXT,
-       XML::Reader::TYPE_END_ELEMENT,
-       XML::Reader::TYPE_SIGNIFICANT_WHITESPACE,
-       XML::Reader::TYPE_ELEMENT,
-       XML::Reader::TYPE_TEXT,
-       XML::Reader::TYPE_END_ELEMENT,
-       XML::Reader::TYPE_SIGNIFICANT_WHITESPACE,
-       XML::Reader::TYPE_END_ELEMENT,
-       XML::Reader::TYPE_SIGNIFICANT_WHITESPACE,
-       XML::Reader::TYPE_END_ELEMENT])
   end
 
   def test_mode

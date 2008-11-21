@@ -56,10 +56,6 @@ __rb_str_new_and_free(xmlChar *x)
 
 #define CSTR2RVAL2(x) (__rb_str_new_and_free(x))
 
-static int
-ctxtRead(FILE *f, char * buf, size_t len) {
-    return(fread(buf, 1, len, f));
-}
 
 static VALUE
 rxml_reader_new(VALUE class, xmlTextReaderPtr reader)
@@ -113,23 +109,10 @@ rxml_reader_new_io(int argc, VALUE *argv, VALUE self)
 {
   xmlTextReaderPtr reader;
   VALUE io, url, encoding, options;
-  OpenFile *fptr;
-  FILE *f;
-
-  #ifdef _WIN32
-    rb_raise(rb_eRuntimeError, "Reading an io stream is not supported on Windows");
-  #endif             
 
   rb_scan_args(argc, argv, "13", &io, &url, &encoding, &options);
 
-  if (!rb_obj_is_kind_of(io, rb_cIO))
-    rb_raise(rb_eTypeError, "need an IO object");
-
-  GetOpenFile(io, fptr);
-  rb_io_check_readable(fptr);
-  f = GetWriteFile(fptr);
-
-  reader = xmlReaderForIO((xmlInputReadCallback) ctxtRead, NULL, f,
+  reader = xmlReaderForIO((xmlInputReadCallback) rxml_read_callback, NULL, io,
                           NIL_P(url) ? NULL : RVAL2CSTR(url),
                           NIL_P(encoding) ? NULL : RVAL2CSTR(encoding), 
                           NIL_P(options) ? 0 : FIX2INT(options));

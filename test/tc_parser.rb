@@ -90,15 +90,23 @@ class TestParser < Test::Unit::TestCase
       assert_instance_of(XML::Parser, xp)
       assert_equal(io, xp.io)
       assert_equal(io, xp.input.io)
+
+      doc = xp.parse
+      assert_instance_of(XML::Document, doc)
+      assert_instance_of(XML::Parser::Context, xp.context)
     end
   end
 
   def test_string_io
     data = File.read(File.join(File.dirname(__FILE__), 'model/rubynet.xml'))
     string_io = StringIO.new(data)
-    assert_raises(TypeError) do
-      @xp.io = string_io
-    end
+    @xp.io = string_io
+    assert_equal(string_io, @xp.io)
+    assert_equal(string_io, @xp.input.io)
+
+    doc = @xp.parse
+    assert_instance_of(XML::Document, doc)
+    assert_instance_of(XML::Parser::Context, @xp.context)
   end
 
   def test_fd_gc
