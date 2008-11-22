@@ -1,5 +1,18 @@
 (See log/ChangeLog for more detailed changes derived directly from source control.)
 
+== 0.9.3 / 2008-11-22 Charlie Savage
+
+* Fixed segementation fault caused by documents being freed
+  before xpath results that referenced the document (take 2).
+
+* Allowed sax parser to use io stream
+
+* Combined encoding and input classes
+
+* Cleaned up C code - removed remaining legacy structures,
+  added static to most methods, changed C namespace from ruby_xml
+  to rxml
+
 == 0.9.2 / 2008-11-19 Charlie Savage
 
 * Add support for compiled XPath expressions (donated by Pavel Valodzka)
