@@ -26,7 +26,7 @@ module LibXML
       end
 
       def file
-        input.filename
+        input.file
       end
 
       def file=(value)

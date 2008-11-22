@@ -32,7 +32,7 @@ rxml_html_parser_initialize(VALUE self) {
   return self;
 }
 
-htmlParserCtxtPtr
+static htmlParserCtxtPtr
 rxml_html_parser_file_ctxt(VALUE input) {
   VALUE file = rb_ivar_get(input, FILE_ATTR);
   VALUE encoding = rb_ivar_get(input, ENCODING_ATTR);
@@ -41,31 +41,21 @@ rxml_html_parser_file_ctxt(VALUE input) {
   return htmlCreateFileParserCtxt(StringValuePtr(file), StringValuePtr(encodingStr));
 }
 
-htmlParserCtxtPtr
+static htmlParserCtxtPtr
 rxml_html_parser_str_ctxt(VALUE input) {
   VALUE data = rb_ivar_get(input, STRING_ATTR);
   return htmlCreateMemoryParserCtxt(StringValuePtr(data), RSTRING_LEN(data));
 }
 
-/*
-htmlParserCtxtPtr
+/*static htmlDocPtr
 rxml_html_parser_io_ctxt(VALUE input) {
   VALUE io = rb_ivar_get(input, IO_ATTR);
   VALUE encoding = rb_ivar_get(input, ENCODING_ATTR);
   xmlCharEncoding xmlEncoding = NUM2INT(encoding);
 
-  OpenFile *fptr;
-  FILE *f;
-
-  GetOpenFile(io, fptr);
-  rb_io_check_readable(fptr);
-  f = GetWriteFile(fptr);
-
-  return htmlCreateIOParserCtxt(NULL, NULL,
-				     (xmlInputReadCallback) ctxtRead,
-				     NULL, f, xmlEncoding);
-}
-*/
+  return htmlReadIO((xmlInputReadCallback) rxml_read_callback, NULL,
+        				     io, NULL, xmlEncoding);
+}*/
 
 /*
  * call-seq:
@@ -89,10 +79,10 @@ rxml_html_parser_parse(VALUE self) {
     ctxt = rxml_html_parser_file_ctxt(input);
   else if (rb_ivar_get(input, STRING_ATTR) != Qnil)
     ctxt = rxml_html_parser_str_ctxt(input);
-  /*else if (rb_ivar_get(input, DOCUMENT_ATTR) != Qnil)
-    ctxt = rxml_html_parser_parse_document(input);
-  else if (rb_ivar_get(input, IO_ATTR) != Qnil)
-    ctxt = rxml_html_parser_io_ctxt(input);*/
+  /*else if (rb_ivar_get(input, IO_ATTR) != Qnil)
+    ctxt = rxml_html_parser_io_ctxt(input);
+  else if (rb_ivar_get(input, DOCUMENT_ATTR) != Qnil)
+    ctxt = rxml_html_parser_parse_document(input);*/
   else
     rb_raise(rb_eArgError, "You must specify a parser data source");
   

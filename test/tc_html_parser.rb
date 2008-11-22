@@ -1,8 +1,8 @@
 require "xml"
 require 'test/unit'
 
-class TC_XML_HTMLParser < Test::Unit::TestCase
-  def setup()
+class HtmlParserTest < Test::Unit::TestCase
+  def setup
     @xp = XML::HTMLParser.new()
     assert_not_nil(@xp)
     str = '<html><head><meta name=keywords content=nasty></head><body>Hello<br>World</html>'
@@ -14,7 +14,59 @@ class TC_XML_HTMLParser < Test::Unit::TestCase
     @xp = nil
   end
 
-  def test_libxml_html_parser_parse()
+  def html_file
+    File.expand_path(File.join(File.dirname(__FILE__), 'model/rubynet.xml'))
+  end
+
+  # -----  Sources  ------
+  def test_file
+    xp = XML::HTMLParser.file(html_file)
+    assert_instance_of(XML::HTMLParser, xp)
+    assert_equal(html_file, xp.file)
+    assert_equal(html_file, xp.input.file)
+  end
+
+  def test_string
+    str = '<html><body><p>hi</p></body></html>'
+    xp = XML::HTMLParser.string(str)
+
+    assert_instance_of(XML::HTMLParser, xp)
+    assert_instance_of(XML::HTMLParser, xp)
+    assert_equal(str, xp.string)
+    assert_equal(str, xp.input.string)
+
+    doc = xp.parse
+    assert_instance_of(XML::Document, doc)
+    assert_instance_of(XML::Parser::Context, xp.context)
+  end
+
+  def test_io
+    File.open(html_file) do |io|
+      xp = XML::HTMLParser.io(io)
+      assert_instance_of(XML::HTMLParser, xp)
+      assert_equal(io, xp.io)
+      assert_equal(io, xp.input.io)
+
+      doc = xp.parse
+      assert_instance_of(XML::Document, doc)
+      assert_instance_of(XML::Parser::Context, xp.context)
+    end
+  end
+
+  def test_string_io
+    data = File.read(html_file)
+    io = StringIO.new(data)
+    xp = XML::HTMLParser.io(io)
+    assert_instance_of(XML::HTMLParser, xp)
+    assert_equal(io, xp.io)
+    assert_equal(io, xp.input.io)
+
+    doc = xp.parse
+    assert_instance_of(XML::Document, doc)
+    assert_instance_of(XML::Parser::Context, xp.context)
+  end
+
+  def test_libxml_html_parser_parse
     doc = @xp.parse
 
     assert_instance_of XML::Document, doc
@@ -54,10 +106,10 @@ class TC_XML_HTMLParser < Test::Unit::TestCase
     assert_equal 'World', world.content
   end
 
-  def test_libxml_html_parser_context()
+  def test_libxml_html_parser_context
     doc = @xp.parse
     assert_instance_of(XML::Document, doc)
     assert_instance_of(XML::Parser::Context, @xp.context)
   assert @xp.context.html?
   end
-end # TC_XML_HTMLParser
+end
