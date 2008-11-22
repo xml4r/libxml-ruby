@@ -37,7 +37,6 @@ class HtmlParserTest < Test::Unit::TestCase
 
     doc = xp.parse
     assert_instance_of(XML::Document, doc)
-    assert_instance_of(XML::Parser::Context, xp.context)
   end
 
   def test_io
@@ -49,7 +48,6 @@ class HtmlParserTest < Test::Unit::TestCase
 
       doc = xp.parse
       assert_instance_of(XML::Document, doc)
-      assert_instance_of(XML::Parser::Context, xp.context)
     end
   end
 
@@ -63,7 +61,6 @@ class HtmlParserTest < Test::Unit::TestCase
 
     doc = xp.parse
     assert_instance_of(XML::Document, doc)
-    assert_instance_of(XML::Parser::Context, xp.context)
   end
 
   def test_libxml_html_parser_parse
@@ -104,12 +101,5 @@ class HtmlParserTest < Test::Unit::TestCase
     world = br.next
     assert_instance_of XML::Node, world
     assert_equal 'World', world.content
-  end
-
-  def test_libxml_html_parser_context
-    doc = @xp.parse
-    assert_instance_of(XML::Document, doc)
-    assert_instance_of(XML::Parser::Context, @xp.context)
-  assert @xp.context.html?
   end
 end

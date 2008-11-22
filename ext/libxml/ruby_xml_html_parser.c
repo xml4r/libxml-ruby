@@ -6,8 +6,6 @@
 
 VALUE cXMLHTMLParser;
 static ID INPUT_ATTR;
-static ID CONTEXT_ATTR;
-
 
 /*
 * Document-class: LibXML::XML::HTMLParser
@@ -28,34 +26,48 @@ static VALUE
 rxml_html_parser_initialize(VALUE self) {
   VALUE input = rb_class_new_instance(0, NULL, cXMLInput);
   rb_iv_set(self, "@input", input);
-  rb_iv_set(self, "@context", Qnil);
   return self;
 }
 
-static htmlParserCtxtPtr
-rxml_html_parser_file_ctxt(VALUE input) {
+static htmlDocPtr
+rxml_html_parser_read_file(VALUE input) {
   VALUE file = rb_ivar_get(input, FILE_ATTR);
   VALUE encoding = rb_ivar_get(input, ENCODING_ATTR);
-  VALUE encodingStr = rxml_input_encoding_to_s(Qnil, encoding);
+  VALUE encoding_str = rxml_input_encoding_to_s(Qnil, encoding);
+  char *xencoding_str = (encoding_str == Qnil ? NULL : StringValuePtr(encoding_str));
+  int options = 0;
 
-  return htmlCreateFileParserCtxt(StringValuePtr(file), StringValuePtr(encodingStr));
+  return htmlReadFile(StringValuePtr(file), xencoding_str, options);
 }
 
-static htmlParserCtxtPtr
-rxml_html_parser_str_ctxt(VALUE input) {
-  VALUE data = rb_ivar_get(input, STRING_ATTR);
-  return htmlCreateMemoryParserCtxt(StringValuePtr(data), RSTRING_LEN(data));
-}
-
-/*static htmlDocPtr
-rxml_html_parser_io_ctxt(VALUE input) {
-  VALUE io = rb_ivar_get(input, IO_ATTR);
+static htmlDocPtr
+rxml_html_parser_read_string(VALUE input) {
+  VALUE string = rb_ivar_get(input, STRING_ATTR);
+  VALUE base_url = rb_ivar_get(input, BASE_URL_ATTR);
+  char *xbase_url = (base_url == Qnil ? NULL : StringValuePtr(base_url));
   VALUE encoding = rb_ivar_get(input, ENCODING_ATTR);
-  xmlCharEncoding xmlEncoding = NUM2INT(encoding);
+  VALUE encoding_str = rxml_input_encoding_to_s(Qnil, encoding);
+  char *xencoding_str = (encoding_str == Qnil ? NULL : StringValuePtr(encoding_str));
+  int options = 0;
 
+  return htmlReadMemory(StringValuePtr(string), RSTRING_LEN(string),
+                        xbase_url, encoding_str, options);
+}
+
+static htmlDocPtr
+rxml_html_parser_read_io(VALUE input) {
+  VALUE io = rb_ivar_get(input, IO_ATTR);
+  VALUE base_url = rb_ivar_get(input, BASE_URL_ATTR);
+  char *xbase_url = (base_url == Qnil ? NULL : StringValuePtr(base_url));
+  VALUE encoding = rb_ivar_get(input, ENCODING_ATTR);
+  VALUE encoding_str = rxml_input_encoding_to_s(Qnil, encoding);
+  char *xencoding_str = (encoding_str == Qnil ? NULL : StringValuePtr(encoding_str));
+  int options = 0;
+  
   return htmlReadIO((xmlInputReadCallback) rxml_read_callback, NULL,
-        				     io, NULL, xmlEncoding);
-}*/
+        				     io, 
+                     xbase_url, xencoding_str, options);
+}
 
 /*
  * call-seq:
@@ -67,35 +79,22 @@ rxml_html_parser_io_ctxt(VALUE input) {
  */
 static VALUE
 rxml_html_parser_parse(VALUE self) {
-  xmlParserCtxtPtr ctxt;
-  VALUE context;
   VALUE input = rb_ivar_get(self, INPUT_ATTR);
-
-  context = rb_ivar_get(self, CONTEXT_ATTR);
-  if (context != Qnil)
-    rb_raise(rb_eRuntimeError, "You cannot parse a data source twice");
+  htmlDocPtr xdoc;
 
   if (rb_ivar_get(input, FILE_ATTR) != Qnil)
-    ctxt = rxml_html_parser_file_ctxt(input);
+    xdoc = rxml_html_parser_read_file(input);
   else if (rb_ivar_get(input, STRING_ATTR) != Qnil)
-    ctxt = rxml_html_parser_str_ctxt(input);
-  /*else if (rb_ivar_get(input, IO_ATTR) != Qnil)
-    ctxt = rxml_html_parser_io_ctxt(input);
-  else if (rb_ivar_get(input, DOCUMENT_ATTR) != Qnil)
-    ctxt = rxml_html_parser_parse_document(input);*/
+    xdoc = rxml_html_parser_read_string(input);
+  else if (rb_ivar_get(input, IO_ATTR) != Qnil)
+    xdoc = rxml_html_parser_read_io(input);
   else
     rb_raise(rb_eArgError, "You must specify a parser data source");
   
-  if (!ctxt)
+  if (!xdoc)
     rxml_raise(&xmlLastError);
 
-  context = rxml_parser_context_wrap(ctxt);
-  rb_ivar_set(self, CONTEXT_ATTR, context);
- 
-  if (htmlParseDocument(ctxt) == -1)
-    rxml_raise(&ctxt->lastError);
-
-  return rxml_document_wrap(ctxt->myDoc);
+  return rxml_document_wrap(xdoc);
 }
 
 // Rdoc needs to know 
@@ -107,13 +106,11 @@ rxml_html_parser_parse(VALUE self) {
 void
 ruby_init_html_parser(void) {	
   INPUT_ATTR = rb_intern("@input");
-  CONTEXT_ATTR = rb_intern("@context");
 
   cXMLHTMLParser = rb_define_class_under(mXML, "HTMLParser", rb_cObject);
  
   /* Atributes */
   rb_define_attr(cXMLHTMLParser, "input", 1, 0);
-  rb_define_attr(cXMLHTMLParser, "context", 1, 0);
 
   /* Instance methods */
   rb_define_method(cXMLHTMLParser, "initialize", rxml_html_parser_initialize, 0);

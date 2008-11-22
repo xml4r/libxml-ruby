@@ -7,11 +7,11 @@
 
 extern VALUE cXMLInput;
 
+extern ID BASE_URL_ATTR;
 extern ID ENCODING_ATTR;
 extern ID FILE_ATTR;
-extern ID STRING_ATTR;
-extern ID DOCUMENT_ATTR;
 extern ID IO_ATTR;
+extern ID STRING_ATTR;
 
 void ruby_init_xml_input();
 int rxml_read_callback(void *context, char *buffer, int len);

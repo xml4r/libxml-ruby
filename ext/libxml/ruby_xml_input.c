@@ -52,11 +52,10 @@ VALUE cXMLInput;
 *   document.encoding = document
 *   doc << XML::Node.new */
 
-
+ID BASE_URL_ATTR;
 ID ENCODING_ATTR;
 ID FILE_ATTR;
 ID STRING_ATTR;
-ID DOCUMENT_ATTR;
 ID IO_ATTR;
 
 static ID READ_METHOD;
@@ -204,9 +203,8 @@ static VALUE
 rxml_input_file_set(VALUE self, VALUE FILE) {
   Check_Type(FILE, T_STRING);
   rb_ivar_set(self, FILE_ATTR, FILE);
-  rb_ivar_set(self, STRING_ATTR, Qnil);
-  rb_ivar_set(self, DOCUMENT_ATTR, Qnil);
   rb_ivar_set(self, IO_ATTR, Qnil);
+  rb_ivar_set(self, STRING_ATTR, Qnil);
   return self;
 }
 
@@ -233,35 +231,8 @@ static VALUE
 rxml_input_string_set(VALUE self, VALUE string) {
   Check_Type(string, T_STRING);
   rb_ivar_set(self, FILE_ATTR, Qnil);
+  rb_ivar_set(self, IO_ATTR, Qnil);
   rb_ivar_set(self, STRING_ATTR, string);
-  rb_ivar_set(self, DOCUMENT_ATTR, Qnil);
-  rb_ivar_set(self, IO_ATTR, Qnil);
-  return self;
-}
-
-/*
- * call-seq:
- *    input.document -> "document"
- * 
- * Obtain the document this parser will read from.
- */
-static VALUE
-rxml_input_document_get(VALUE self) {
-  return rb_ivar_get(self, DOCUMENT_ATTR);
-}
-
-/*
- * call-seq:
- *    input.document = LibXML::XML::Document.new
- * 
- * Set the document this parser will read from.
- */
-static VALUE
-rxml_input_document_set(VALUE self, VALUE document) {
-  rb_ivar_set(self, FILE_ATTR, Qnil);
-  rb_ivar_set(self, STRING_ATTR, Qnil);
-  rb_ivar_set(self, DOCUMENT_ATTR, document);
-  rb_ivar_set(self, IO_ATTR, Qnil);
   return self;
 }
 
@@ -285,9 +256,8 @@ rxml_input_io_get(VALUE self) {
 static VALUE
 rxml_input_io_set(VALUE self, VALUE io) {
   rb_ivar_set(self, FILE_ATTR, Qnil);
-  rb_ivar_set(self, STRING_ATTR, Qnil);
-  rb_ivar_set(self, DOCUMENT_ATTR, Qnil);
   rb_ivar_set(self, IO_ATTR, io);
+  rb_ivar_set(self, STRING_ATTR, Qnil);
   return self;
 }
 
@@ -307,10 +277,12 @@ rxml_input_io_set(VALUE self, VALUE io) {
 
 void
 ruby_init_xml_input(void) {	
-  FILE_ATTR = rb_intern("@FILE");
-  STRING_ATTR = rb_intern("@string");
-  DOCUMENT_ATTR = rb_intern("@document");
+  BASE_URL_ATTR = rb_intern("@base_url");
+  ENCODING_ATTR = rb_intern("@encoding");
+  FILE_ATTR = rb_intern("@file");
   IO_ATTR = rb_intern("@io");
+  STRING_ATTR = rb_intern("@string");
+
   READ_METHOD = rb_intern("read");
 
   cXMLInput = rb_define_class_under(mXML, "Input", rb_cObject);
@@ -342,14 +314,14 @@ ruby_init_xml_input(void) {
   rb_define_const(cXMLInput, "EUC_JP", INT2NUM(XML_CHAR_ENCODING_EUC_JP));       /* EUC-JP */
   rb_define_const(cXMLInput, "ASCII", INT2NUM(XML_CHAR_ENCODING_ASCII));         /* pure ASCII */
 
+  rb_define_attr(cXMLInput, "base_url", 1, 1);
   rb_define_attr(cXMLInput, "encoding", 1, 1);
+
   rb_define_method(cXMLInput, "initialize", rxml_input_initialize, 0);
   rb_define_method(cXMLInput, "file", rxml_input_file_get, 0);
   rb_define_method(cXMLInput, "file=", rxml_input_file_set, 1);
   rb_define_method(cXMLInput, "string", rxml_input_string_get, 0);
   rb_define_method(cXMLInput, "string=", rxml_input_string_set, 1);
-  rb_define_method(cXMLInput, "document", rxml_input_document_get, 0);
-  rb_define_method(cXMLInput, "document=", rxml_input_document_set, 1);
   rb_define_method(cXMLInput, "io", rxml_input_io_get, 0);
   rb_define_method(cXMLInput, "io=", rxml_input_io_set, 1);
 }
