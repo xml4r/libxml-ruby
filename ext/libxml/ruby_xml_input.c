@@ -20,7 +20,12 @@ VALUE cXMLInput;
 * but instead will use the various Document and Parser apis.
 * For example:
 *
-*   document = Document.file('my_file') 
+*   parser = XML::Parser.file('my_file') 
+*   parser = XML::Parser.string('<myxml/>') 
+*   parser = XML::Parser.io(File.open('my_file')) 
+*
+*  XML::HTMLParser, XML::Reader, XML::SaxParser and
+*  XML::Document work in the same way.
 *
 * LibXML converts all data sources to UTF8 internally before 
 * processing them.  By default, LibXML will determine a data

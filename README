@@ -4,12 +4,11 @@
 The libxml gem provides Ruby language bindings for GNOME's Libxml2
 XML toolkit. It is free software, released under the MIT License.
 
-libxml-ruby provides several advantages over REXML:
+We think libxml-ruby is the best XML library for Ruby because:
 
-* Speed - libxml is many times faster than REXML
-* Features - libxml provides a number of additional features over REXML, including XML Schema Validation, RelaxNg validation, xslt (see libxslt-ruby)
-* Conformance - libxml passes all 1800+ tests from the OASIS XML Tests Suite 
-
+* Speed - Its much faster than REXML and Hpricot
+* Features - It provides an amazing number of featues
+* Conformance - It passes all 1800+ tests from the OASIS XML Tests Suite
 
 == Requirements
 libxml-ruby requires Ruby 1.8.4 or higher.  It is dependent on 
@@ -41,23 +40,78 @@ libxml2 and iconv.  The gem also includes a Microsoft VC++ 2008
 solution.  If you wish to run a debug version of libxml-ruby on
 Windows, then it is highly recommended you use VC++.
 
-== Functionality
-LibXML is a highly conformant XML parser, passing all 1800+ tests 
-from the OASIS XML Tests Suite.  It includes rich functionality such as:
+== Getting Started
+Using libxml is easy. First decide what parser you want to use:
 
-* DOM (LibXML::XML::Parser)
-* SAX (LibXML::XML::SaxParser)
-* HTML Parsing (LibXML::XML::HTMLParser)
-* Reader (LibXML::XML::Reader)
-* XPath (LibXML::XML::XPath)
-* XPointer (LibXML::XML::XPointer)
+ * Generally you'll want to use the XML::Parser which provides
+   a tree based API
+ * For large documents that won't fit into memory, or if you
+   prefer an input based API, then use XML::Reader
+ * If you are parsing HTML files, then use XML::HTMLParser
+ * If you are masochistic or old stream, then use the XML::SaxParser
+   which provides a callback API.
+
+Once you choose a parser, then choose a datasource and its
+encoding.  Libxml can parse files, strings, URIs and IO stream.
+For more information, see XML::Input.
+
+== Advanced Functionality
+Beyond the basics of parsing and processing XML and HTML documents,
+lLibxml provides a wealth of additional functionality.
+
+Most commonly, you'll want to use its XML::XPath support, which makes
+it easy to search for data inside and XML document.  Although not as
+popular, XML::XPointer provides another API for finding data inside
+an XML document.
+
+Often times you'll need to validate data before processing it. For example,
+if you accept user generated content submitted over the Web, you'll
+want to first verify it does not contain malicious code such as embedded scripts.
+This can be done using libxml's powerful set of validators:
+
 * DTDs (LibXML::XML::Dtd)
-* RelaxNG Schemas (LibXML::XML::RelaxNG)
+* Relax Schemas (LibXML::XML::RelaxNG)
 * XML Schema (LibXML::XML::Schema)
-* XSLT (http://rubyforge.org/projects/libxsl/)
 
-libxml-ruby provides impressive coverage of libxml's functionality 
-through an easy-to-use C api.  
+Finally, if you'd like to use XSL Transformations to process data,
+then also install the libxslt gem which is available at
+http://rubyforge.org/projects/libxsl/.
+
+== Usage
+For in-depth information about using libxml-ruby please refer
+to its online Rdoc documentation.
+
+All libxml classes are in the LibXML::XML module. The easiest
+way to use libxml is to require 'xml'.  This will mixin
+the LibXML module into the global namespace, allowing you to
+write code like this:
+
+  require 'xml'
+  document = XML::Document.new
+
+However, when creating an application or library you plan to
+redistribute, it is best to not add the LibXML module to the global
+namespace, in which case you can either write your code like this:
+
+  require 'libxml'
+  document = LibXML::XML::Document.new
+
+or, more conveniently, utilize a proper namespace for you own work
+and include LibXML into it. For example:
+
+  require 'libxml'
+
+  mdoule MyApplication
+    include LibXML
+
+    class MyClass
+      def some_method
+        document = XML::Document.new
+      end
+    end
+  end
+
+For simplicity's sake, the documentation uses the xml module in its examples.
 
 == Performance
 In addition to being feature rich and conformation, the main reason
@@ -80,138 +134,17 @@ From https://svn.concord.org/svn/projects/trunk/common/ruby/xml_benchmarks/
  hpricot   5.359000   0.062000   5.421000 (  5.516000)
  rexml    22.859000   0.047000  22.906000 ( 23.203000) 
 
-== USAGE
-For in-depth information about using libxml-ruby please refer
-to its online Rdoc documentation.  
-
-All libxml classes are in the LibXML::XML module. The most
-expedient way to use libxml is to require 'xml'.  This will mixin
-the LibXML module into the global namespace, allowing you to 
-write code like this: 
-
-  require 'xml'
-  document = XML::Document.new
-
-However, when creating an application or library you plan to 
-redistribute, it is best to not add the LibXML module to the global
-namespace, in which case you can either write your code like this:
-
-  require 'libxml'
-  document = LibXML::XML::Document.new
-
-or, more conveniently, utilize a proper namespace for you own work
-and include LibXML into it. For example:
-
-  require 'libxml'
-
-  mdoule MyApplication
-    include LibXML
-
-    class MyClass
-      def some_method
-        document = XML::Document.new
-      end
-    end
-  end
-
-For simplicity's sake we will use require 'xml in the basic examples
-shown below.
-
-=== READING
-There are several ways to read xml documents.
-
-  require 'xml'
-  doc = XML::Document.file('output.xml')
-  root = doc.root
-  
-  puts "Root element name: #{root.name}"
-  
-  elem3 = root.find('elem3').to_a.first
-  puts "Elem3: #{elem3['attr']}"
-  
-  doc.find('//root_node/foo/bar').each do |node|
-    puts "Node path: #{node.path} \t Contents: #{node.content}"
-  end
-
-And your terminal should look like this:
-
-  Root element name: root_node
-  Elem3: baz
-  Node path: /root_node/foo/bar[1]         Contents: 1
-  Node path: /root_node/foo/bar[2]         Contents: 2
-  Node path: /root_node/foo/bar[3]         Contents: 3
-  Node path: /root_node/foo/bar[4]         Contents: 4
-  Node path: /root_node/foo/bar[5]         Contents: 5
-  Node path: /root_node/foo/bar[6]         Contents: 6
-  Node path: /root_node/foo/bar[7]         Contents: 7
-  Node path: /root_node/foo/bar[8]         Contents: 8
-  Node path: /root_node/foo/bar[9]         Contents: 9
-  Node path: /root_node/foo/bar[10]        Contents: 10
-
-=== WRITING
-To write a simple document:
-
-  require 'xml'
-  
-  doc = XML::Document.new()
-  doc.root = XML::Node.new('root_node')
-  root = doc.root
-  
-  root << elem1 = XML::Node.new('elem1')
-  elem1['attr1'] = 'val1'
-  elem1['attr2'] = 'val2'
-  
-  root << elem2 = XML::Node.new('elem2')
-  elem2['attr1'] = 'val1'
-  elem2['attr2'] = 'val2'
-  
-  root << elem3 = XML::Node.new('elem3')
-  elem3 << elem4 = XML::Node.new('elem4')
-  elem3 << elem5 = XML::Node.new('elem5')
-  
-  elem5 << elem6 = XML::Node.new('elem6')
-  elem6 << 'Content for element 6'
-  
-  elem3['attr'] = 'baz'
-  
-  format = true
-  doc.save('output.xml', format)
-
-The file output.xml contains:
-
-  <?xml version="1.0"?>
-  <root_node>
-    <elem1 attr1="val1" attr2="val2"/>
-    <elem2 attr1="val1" attr2="val2"/>
-    <elem3 attr="baz">
-      <elem4/>
-      <elem5>
-        <elem6>Content for element 6</elem6>
-      </elem5>
-    </elem3>
-    <foo>
-      <bar>1</bar>
-      <bar>2</bar>
-      <bar>3</bar>
-      <bar>4</bar>
-      <bar>5</bar>
-      <bar>6</bar>
-      <bar>7</bar>
-      <bar>8</bar>
-      <bar>9</bar>
-      <bar>10</bar>
-    </foo>
-  </root_node>
 
 == DOCUMENTATION
+For more information please refer to the documentation.
+
 RDoc comments are included - run 'rake doc' to generate documentation.
 You can find the latest documentation at:
 
 * http://libxml.rubyforge.org/rdoc/
 
+If you have any questions, please send email to libxml-devel@rubyforge.org.
+
 == License
 See LICENSE for license information.
 
-== MORE INFORMATION
-For more information please refer to the documentation.  If you have any
-questions, please send email to libxml-devel@rubyforge.org.

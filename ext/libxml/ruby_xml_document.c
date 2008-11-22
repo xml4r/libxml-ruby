@@ -15,7 +15,7 @@
 *  doc.root << XML::Node.new('elem1')
 *  doc.save('output.xml', format)
 * 
-* To read a document
+* To read a document from a file:
 * 
 *   doc = XML::Document.file('my_file')
 *
@@ -24,6 +24,33 @@
 *   parser = XML::Parser.new
 *   parser.file = 'my_file'
 *   doc = parser.parse
+*
+* To write a file:
+*
+*
+*  doc = XML::Document.new()
+*  doc.root = XML::Node.new('root_node')
+*  root = doc.root
+*  
+*  root << elem1 = XML::Node.new('elem1')
+*  elem1['attr1'] = 'val1'
+*  elem1['attr2'] = 'val2'
+*
+*  root << elem2 = XML::Node.new('elem2')
+*  elem2['attr1'] = 'val1'
+*  elem2['attr2'] = 'val2'
+*
+*  root << elem3 = XML::Node.new('elem3')
+*  elem3 << elem4 = XML::Node.new('elem4')
+*  elem3 << elem5 = XML::Node.new('elem5')
+*
+*  elem5 << elem6 = XML::Node.new('elem6')
+*  elem6 << 'Content for element 6'
+*
+*  elem3['attr'] = 'baz'
+*  
+*  format = true
+*  doc.save('output.xml', format)
 */
 
 #include <stdarg.h>
