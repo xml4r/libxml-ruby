@@ -898,13 +898,13 @@ static VALUE
 rxml_document_validate_schema(VALUE self, VALUE schema) {
   xmlSchemaValidCtxtPtr vptr;
   xmlDocPtr xdoc;
-  rxml_schema *c_schema;
+  xmlSchemaPtr xschema;
   int is_invalid;
 
   Data_Get_Struct(self, xmlDoc, xdoc);
-  Data_Get_Struct(schema, rxml_schema, c_schema);
+  Data_Get_Struct(schema, xmlSchema, xschema);
 
-  vptr = xmlSchemaNewValidCtxt(c_schema->schema);
+  vptr = xmlSchemaNewValidCtxt(xschema);
 
   xmlSchemaSetValidErrors(vptr, (xmlSchemaValidityErrorFunc)LibXML_validity_error,
                                 (xmlSchemaValidityWarningFunc)LibXML_validity_warning, NULL);
@@ -915,7 +915,8 @@ rxml_document_validate_schema(VALUE self, VALUE schema) {
   {
     rxml_raise(&xmlLastError);
     return Qfalse;
-  } else
+  } 
+  else
   {
 	  return Qtrue;
   }
@@ -935,13 +936,13 @@ static VALUE
 rxml_document_validate_relaxng(VALUE self, VALUE relaxng) {
   xmlRelaxNGValidCtxtPtr vptr;
   xmlDocPtr xdoc;
-  rxml_relaxng *c_relaxng;
+  xmlRelaxNGPtr xrelaxng;
   int is_invalid;
 
   Data_Get_Struct(self, xmlDoc, xdoc);
-  Data_Get_Struct(relaxng, rxml_relaxng, c_relaxng);
+  Data_Get_Struct(relaxng, xmlRelaxNG, xrelaxng);
 
-  vptr = xmlRelaxNGNewValidCtxt(c_relaxng->relaxng);
+  vptr = xmlRelaxNGNewValidCtxt(xrelaxng);
 
   xmlRelaxNGSetValidErrors(vptr, (xmlRelaxNGValidityErrorFunc)LibXML_validity_error,
                                 (xmlRelaxNGValidityWarningFunc)LibXML_validity_warning, NULL);
@@ -970,10 +971,10 @@ rxml_document_validate_dtd(VALUE self, VALUE dtd) {
   VALUE error = Qnil;
   xmlValidCtxt ctxt;
   xmlDocPtr xdoc;
-  rxml_dtd *c_dtd;
+  xmlDtdPtr xdtd;
 
   Data_Get_Struct(self, xmlDoc, xdoc);
-  Data_Get_Struct(dtd, rxml_dtd, c_dtd);
+  Data_Get_Struct(dtd, xmlDtd, xdtd);
 
   ctxt.userData = &error;
   ctxt.error = (xmlValidityErrorFunc)LibXML_validity_error;
@@ -984,7 +985,7 @@ rxml_document_validate_dtd(VALUE self, VALUE dtd) {
   ctxt.vstateNr = 0;
   ctxt.vstateTab = NULL;
 
-  if (xmlValidateDtd(&ctxt, xdoc, c_dtd->dtd))
+  if (xmlValidateDtd(&ctxt, xdoc, xdtd))
   {
     return(Qtrue);
   }

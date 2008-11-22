@@ -18,7 +18,7 @@ VALUE cXMLNS;
 
 static VALUE
 rxml_ns_alloc(VALUE klass) {
-  return Data_Wrap_Struct(cXMLNS, NULL, NULL, NULL);
+  return Data_Wrap_Struct(klass, NULL, NULL, NULL);
 }
 
 /*

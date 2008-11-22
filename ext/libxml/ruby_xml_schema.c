@@ -39,39 +39,28 @@ VALUE cXMLSchema;
 #endif
 
 static void
-rxml_schema_mark(rxml_schema *rxschema) {
-  return;
-}
-
-static void
-rxml_schema_free(rxml_schema *rxschema) {
-  if (rxschema->schema != NULL) {
-    xmlSchemaFree(rxschema->schema);
-    rxschema->schema = NULL;
-  }
-
-  ruby_xfree(rxschema);
+rxml_schema_free(xmlSchemaPtr xschema) {
+  xmlSchemaFree(xschema);
 }
 
 /*
  * call-seq:
- *    XML::Schema.new(schema_uri) -> schema
+ *    XML::Schema.initialize(schema_uri) -> schema
  * 
  * Create a new schema from the specified URI.
  */
 static VALUE
 rxml_schema_init_from_uri(VALUE class, VALUE uri) {
-  xmlSchemaParserCtxtPtr parser;
-  rxml_schema *schema;
+  xmlSchemaParserCtxtPtr xparser;
+  xmlSchemaPtr xschema;
 
   Check_Type(uri, T_STRING);
 
-  parser = xmlSchemaNewParserCtxt(StringValuePtr(uri));
-  schema = ALLOC(rxml_schema);
-  schema->schema = xmlSchemaParse(parser);
-  xmlSchemaFreeParserCtxt(parser);
-
-  return Data_Wrap_Struct(cXMLSchema, rxml_schema_mark, rxml_schema_free, schema);
+  xparser = xmlSchemaNewParserCtxt(StringValuePtr(uri));
+  xschema = xmlSchemaParse(xparser);
+  xmlSchemaFreeParserCtxt(xparser);
+  
+  return Data_Wrap_Struct(cXMLSchema, NULL, rxml_schema_free, xschema);
 }
 
 /*
@@ -83,17 +72,16 @@ rxml_schema_init_from_uri(VALUE class, VALUE uri) {
 static VALUE
 rxml_schema_init_from_document(VALUE class, VALUE document) {
   xmlDocPtr xdoc;
-  rxml_schema *schema;
-  xmlSchemaParserCtxtPtr parser;
+  xmlSchemaPtr xschema;
+  xmlSchemaParserCtxtPtr xparser;
 
   Data_Get_Struct(document, xmlDoc, xdoc);
 
-  parser = xmlSchemaNewDocParserCtxt(xdoc);
-  schema = ALLOC(rxml_schema);
-  schema->schema = xmlSchemaParse(parser);
-  xmlSchemaFreeParserCtxt(parser);
+  xparser = xmlSchemaNewDocParserCtxt(xdoc);
+  xschema = xmlSchemaParse(xparser);
+  xmlSchemaFreeParserCtxt(xparser);
 
-  return Data_Wrap_Struct(cXMLSchema, rxml_schema_mark, rxml_schema_free, schema);
+  return Data_Wrap_Struct(cXMLSchema, NULL, rxml_schema_free, xschema);
 }
 
 /*
@@ -104,17 +92,16 @@ rxml_schema_init_from_document(VALUE class, VALUE document) {
  */
 static VALUE
 rxml_schema_init_from_string(VALUE self, VALUE schema_str) {
-  xmlSchemaParserCtxtPtr  parser;
-  rxml_schema *rxschema;
+  xmlSchemaParserCtxtPtr  xparser;
+  xmlSchemaPtr xschema;
 
   Check_Type(schema_str, T_STRING);
 
-  parser = xmlSchemaNewMemParserCtxt(StringValuePtr(schema_str), strlen(StringValuePtr(schema_str)));
-  rxschema = ALLOC(rxml_schema);
-  rxschema->schema = xmlSchemaParse(parser);
-  xmlSchemaFreeParserCtxt(parser);
+  xparser = xmlSchemaNewMemParserCtxt(StringValuePtr(schema_str), strlen(StringValuePtr(schema_str)));
+  xschema = xmlSchemaParse(xparser);
+  xmlSchemaFreeParserCtxt(xparser);
 
-  return Data_Wrap_Struct(cXMLSchema, rxml_schema_mark, rxml_schema_free, rxschema);
+  return Data_Wrap_Struct(cXMLSchema, NULL, rxml_schema_free, xschema);
 }
   
 /* TODO what is this patch doing here?

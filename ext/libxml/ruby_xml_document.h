@@ -14,5 +14,4 @@ void ruby_init_xml_document();
 __declspec(dllexport) 
 #endif
 VALUE rxml_document_wrap(xmlDocPtr xnode);
-
 #endif

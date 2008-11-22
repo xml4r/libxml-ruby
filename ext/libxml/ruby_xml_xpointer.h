@@ -20,8 +20,6 @@ typedef struct rxml_xpointer {
   */
 } rxml_xpointer;
 
-VALUE rxml_xpointer_point(VALUE class, VALUE node, VALUE xptr_string);
-VALUE rxml_xpointer_point2(VALUE node, VALUE xptr_string);
 void ruby_init_xml_xpointer(void);
 
 #endif

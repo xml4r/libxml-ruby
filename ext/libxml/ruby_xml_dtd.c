@@ -31,20 +31,13 @@
 VALUE cXMLDtd;
 
 void
-rxml_dtd_free(rxml_dtd *rxdtd) {
-  if (rxdtd->dtd != NULL) {
-    xmlFreeDtd(rxdtd->dtd);
-    rxdtd->dtd = NULL;
-  }
-
-  ruby_xfree(rxdtd);
+rxml_dtd_free(xmlDtdPtr xdtd) {
+  xmlFreeDtd(xdtd);
 }
 
-static void
-rxml_dtd_mark(rxml_dtd *rxdtd) {
-  return;
-  //if (rxdtd == NULL) return;
-  //if (!NIL_P(rxd->xmlver)) rb_gc_mark(rxd->xmlver);
+static VALUE
+rxml_dtd_alloc(VALUE klass) {
+  return Data_Wrap_Struct(klass, NULL, rxml_dtd_free, NULL);
 }
 
 /*
@@ -56,12 +49,12 @@ rxml_dtd_mark(rxml_dtd *rxdtd) {
  * identifiers.
  */
 static VALUE
-rxml_dtd_initialize(int argc, VALUE *argv, VALUE class) {
-  rxml_dtd *rxdtd;
+rxml_dtd_initialize(int argc, VALUE *argv, VALUE self) {
   VALUE external, system, dtd_string;
   xmlParserInputBufferPtr buffer;
   xmlCharEncoding enc = XML_CHAR_ENCODING_NONE;
   xmlChar *new_string;
+  xmlDtdPtr xdtd;
 
   // 1 argument -- string               --> parsujeme jako dtd
   // 2 argumenty -- public, system      --> bude se hledat
@@ -71,114 +64,42 @@ rxml_dtd_initialize(int argc, VALUE *argv, VALUE class) {
 
     Check_Type(external, T_STRING);
     Check_Type(system,   T_STRING);
-    rxdtd = ALLOC(rxml_dtd);
-    rxdtd->dtd = xmlParseDTD( (xmlChar*)StringValuePtr(external),
-                              (xmlChar*)StringValuePtr(system) );
-    if (rxdtd->dtd == NULL) {
-      ruby_xfree(rxdtd);
-      return(Qfalse);
-    }
+    
+    xdtd = xmlParseDTD((xmlChar*)StringValuePtr(external),
+                       (xmlChar*)StringValuePtr(system));
 
-    xmlSetTreeDoc( (xmlNodePtr)rxdtd->dtd, NULL );
-    return( Data_Wrap_Struct(cXMLDtd, rxml_dtd_mark, rxml_dtd_free, rxdtd) );
+    if (xdtd == NULL)
+      rxml_raise(&xmlLastError);
+
+    DATA_PTR(self) = xdtd;
+
+    xmlSetTreeDoc((xmlNodePtr)xdtd, NULL);
     break;
 
-/*
-SV *
-new(CLASS, external, system)
-        char * CLASS
-        char * external
-        char * system
-    ALIAS:
-        parse_uri = 1
-    PREINIT:
-        xmlDtdPtr dtd = NULL;
-    CODE:
-        LibXML_error = sv_2mortal(newSVpv("", 0));
-        dtd = xmlParseDTD((const xmlChar*)external, (const xmlChar*)system);
-        if ( dtd == NULL ) {
-            XSRETURN_UNDEF;
-        }
-        xmlSetTreeDoc((xmlNodePtr)dtd, NULL);
-        RETVAL = PmmNodeToSv( (xmlNodePtr) dtd, NULL );
-    OUTPUT:
-        RETVAL
-*/
-
   case 1:
-
     rb_scan_args(argc, argv, "10", &dtd_string);
+    Check_Type(dtd_string, T_STRING);
+
     buffer = xmlAllocParserInputBuffer(enc);
-    //if ( !buffer) return Qnil
     new_string = xmlStrdup((xmlChar*)StringValuePtr(dtd_string));
     xmlParserInputBufferPush(buffer, xmlStrlen(new_string), (const char*)new_string);
 
-    rxdtd = ALLOC(rxml_dtd);
-    rxdtd->dtd = xmlIOParseDTD(NULL, buffer, enc);
+    xdtd = xmlIOParseDTD(NULL, buffer, enc);
 
-    // NOTE: For some reason freeing this InputBuffer causes a segfault! 
-    // xmlFreeParserInputBuffer(buffer); 
+    if (xdtd == NULL)
+      rxml_raise(&xmlLastError);
+
+    xmlFreeParserInputBuffer(buffer); 
     xmlFree(new_string);
 
-    return( Data_Wrap_Struct(cXMLDtd, rxml_dtd_mark, rxml_dtd_free, rxdtd) );
-
+    DATA_PTR(self) = xdtd;
     break;
-/*
-SV * parse_string(CLASS, str, ...)
-        char * CLASS
-        char * str
-    PREINIT:
-        STRLEN n_a;
-        xmlDtdPtr res;
-        SV * encoding_sv;
-        xmlParserInputBufferPtr buffer;
-        xmlCharEncoding enc = XML_CHAR_ENCODING_NONE;
-        xmlChar * new_string;
-        STRLEN len;
-    CODE:
-        LibXML_init_error();
-        if (items > 2) {
-            encoding_sv = ST(2);
-            if (items > 3) {
-                croak("parse_string: too many parameters");
-            }
-            // warn("getting encoding...\n"); 
-            enc = xmlParseCharEncoding(SvPV(encoding_sv, n_a));
-            if (enc == XML_CHAR_ENCODING_ERROR) {
-                croak("Parse of encoding %s failed: %s", SvPV(encoding_sv, n_a), SvPV(LibXML_error, n_a));
-            }
-        }
-        buffer = xmlAllocParserInputBuffer(enc);
-        // buffer = xmlParserInputBufferCreateMem(str, xmlStrlen(str), enc); 
-        if ( !buffer)
-            croak("cant create buffer!\n" );
-
-        new_string = xmlStrdup((const xmlChar*)str);
-        xmlParserInputBufferPush(buffer, xmlStrlen(new_string), (const char*)new_string);
-
-        res = xmlIOParseDTD(NULL, buffer, enc);
-
-        // NOTE: For some reason freeing this InputBuffer causes a segfault! 
-        // xmlFreeParserInputBuffer(buffer); 
-        xmlFree(new_string);
-
-        sv_2mortal( LibXML_error );
-        LibXML_croak_error();
-
-        if (res == NULL) {
-            croak("no DTD parsed!");
-        }
-        RETVAL = PmmNodeToSv((xmlNodePtr)res, NULL);
-    OUTPUT:
-        RETVAL
- */
     
   default:
     rb_raise(rb_eArgError, "wrong number of arguments (need 1 or 2)");
   }
 
-  //docobj = rxml_document_new2(cXMLDocument, xmlver);
-  return Qnil;
+  return self;
 }
 
 // Rdoc needs to know 
@@ -188,9 +109,9 @@ SV * parse_string(CLASS, str, ...)
 #endif
 
 void
-ruby_init_xml_dtd(void) {
+ruby_init_xml_dtd() {
   cXMLDtd = rb_define_class_under(mXML, "Dtd", rb_cObject);
-  rb_define_singleton_method(cXMLDtd, "new", rxml_dtd_initialize, -1);
-  //rb_define_method(cXMLDocument, "xinclude", rxml_document_xinclude, 0);
+  rb_define_alloc_func(cXMLNS, rxml_dtd_alloc);
+  rb_define_method(cXMLDtd, "initialize", rxml_dtd_initialize, -1);
 }
 
