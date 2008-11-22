@@ -62,7 +62,6 @@ rxml_xpath_object_free(xmlXPathObjectPtr xpop)
 VALUE
 rxml_xpath_object_wrap(xmlXPathObjectPtr xpop)
 {
-  xmlDocPtr xdoc;
   VALUE rval;
 
   if ( xpop==NULL )
