@@ -2,25 +2,25 @@ module LibXML
   module XML
     class HTMLParser
       def self.file(value)
-        parser = Parser.new
+        parser = self.new
         parser.input.file = value
         parser
       end
 
       def self.string(value)
-        parser = Parser.new
+        parser = self.new
         parser.input.string = value
         parser
       end
 
       def self.document(value)
-        parser = Parser.new
+        parser = self.new
         parser.input.document = value
         parser
       end
 
       def self.io(value)
-        parser = Parser.new
+        parser = self.new
         parser.input.io = value
         parser
       end

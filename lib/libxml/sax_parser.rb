@@ -1,6 +1,30 @@
 module LibXML
   module XML
     class SaxParser
+      def self.file(value)
+        parser = self.new
+        parser.input.file = value
+        parser
+      end
+
+      def self.string(value)
+        parser = self.new
+        parser.input.string = value
+        parser
+      end
+
+      def self.document(value)
+        parser = self.new
+        parser.input.document = value
+        parser
+      end
+
+      def self.io(value)
+        parser = self.new
+        parser.input.io = value
+        parser
+      end
+
       def filename=(value)
         warn("SaxParser.filename is deprecated.  Use SaxParser#file instead.")
         self.file = value
