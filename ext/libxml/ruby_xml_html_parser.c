@@ -102,10 +102,8 @@ rxml_html_parser_parse(VALUE self) {
   context = rxml_parser_context_wrap(ctxt);
   rb_ivar_set(self, CONTEXT_ATTR, context);
  
-  if (htmlParseDocument(ctxt) == -1 || !ctxt->wellFormed) {
-    xmlFreeDoc(ctxt->myDoc);
+  if (htmlParseDocument(ctxt) == -1)
     rxml_raise(&ctxt->lastError);
-  }
 
   return rxml_document_wrap(ctxt->myDoc);
 }
