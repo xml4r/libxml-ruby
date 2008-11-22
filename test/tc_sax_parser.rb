@@ -59,6 +59,10 @@ class TestSaxParser < Test::Unit::TestCase
     @xp = nil
   end
 
+  def saxtest_file
+    File.join(File.dirname(__FILE__), 'model/saxtest.xml')
+  end
+
   def verify
     assert_equal [1], @xp.callbacks.test[:startdoc]
     assert_equal [[2,'test',{'uga'=>'booga','foo'=>'bar'}],[3,'fixnum',{}],[6,'fixnum',{}]],
@@ -72,26 +76,44 @@ class TestSaxParser < Test::Unit::TestCase
     assert_equal [17], @xp.callbacks.test[:enddoc]
   end
   
-  def test_string_without_callbacks
-    @xp.string = File.read(File.join(File.dirname(__FILE__), 'model/saxtest.xml'))
+  def test_string_no_callbacks
+    @xp.string = File.read(saxtest_file)
     assert_equal true, @xp.parse
   end
 
-  def test_file_without_callbacks
-    @xp.file = File.join(File.dirname(__FILE__), 'model/saxtest.xml')
+  def test_file_no_callbacks
+    @xp.file = File.join(saxtest_file)
     assert_equal true, @xp.parse
   end
 
-  def test_string_with_callbacks
+  def test_string
     @xp.callbacks = TestCaseCallbacks.new
-    @xp.string = File.read(File.join(File.dirname(__FILE__), 'model/saxtest.xml'))
+    @xp.string = File.read(saxtest_file)
     @xp.parse
     verify
   end
 
-  def test_file_with_callbacks
+  def test_file
     @xp.callbacks = TestCaseCallbacks.new
-    @xp.file = File.join(File.dirname(__FILE__), 'model/saxtest.xml')
+    @xp.file = saxtest_file
+    @xp.parse
+    verify
+  end
+
+  def test_io
+    File.open(saxtest_file) do |file|
+      @xp.callbacks = TestCaseCallbacks.new
+      @xp.io = file
+      @xp.parse
+      verify
+    end
+  end
+
+  def test_string_io
+    data = File.read(saxtest_file)
+
+    @xp.callbacks = TestCaseCallbacks.new
+    @xp.io = StringIO.new(data)
     @xp.parse
     verify
   end

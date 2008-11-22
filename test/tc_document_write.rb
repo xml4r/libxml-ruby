@@ -132,29 +132,15 @@ class TestDocumentWrite < Test::Unit::TestCase
 
   def test_encoding_utf
     @doc.root = XML::Node.new('rubynet')
-    @doc.encoding = XML::Encoding.encoding_to_s(XML::Encoding::UTF8)
+    @doc.encoding = XML::Input.encoding_to_s(XML::Input::UTF8)
     assert_instance_of(XML::Node, @doc.root)
     assert_equal("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<rubynet/>\n", @doc.to_s)
   end
 
   def test_encoding_latin1
     @doc.root = XML::Node.new('rubynet')
-    @doc.encoding = XML::Encoding.encoding_to_s(XML::Encoding::ISO_8859_1)
+    @doc.encoding = XML::Input.encoding_to_s(XML::Input::ISO_8859_1)
     assert_instance_of(XML::Node, @doc.root)
     assert_equal("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n<rubynet/>\n", @doc.to_s)
-  end
-
-  def test_encoding_to_s
-    doc = XML::Document.new
-    doc.encoding = 'UTF-8'
-    doc.root = XML::Node.new 'node'
-    doc.root.content = '&#1;'
-
-    xml = doc.to_s(true, 'UTF-8')
-    puts xml
-
-    parser = XML::Parser.string(xml)
-    doc = parser.parse
-    p doc.root.content
   end
 end

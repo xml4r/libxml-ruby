@@ -5,11 +5,12 @@
 /*
  * SAX CALLBACK HANDLERS
  */ 
-static void internal_subset_func(rxml_sax_parser *cbp, 
+static void internal_subset_func(void *ctxt, 
        const char *name,
        const char *extid,
        const char *sysid) {
-  VALUE handler = cbp->callbackHandler;
+  VALUE self = (VALUE) ctxt;
+  VALUE handler = rb_ivar_get(self, CALLBACKS_ATTR);
   
   if (handler != Qnil) {
     VALUE rname = name ? rb_str_new2(name) : Qnil;
@@ -19,49 +20,55 @@ static void internal_subset_func(rxml_sax_parser *cbp,
   }    
 }
 
-static void is_standalone_func(rxml_sax_parser *cbp) {
-  VALUE handler = cbp->callbackHandler;
+static void is_standalone_func(void *ctxt) {
+  VALUE self = (VALUE) ctxt;
+  VALUE handler = rb_ivar_get(self, CALLBACKS_ATTR);
   
   if (handler != Qnil) {
     rb_funcall(handler, cbidOnIsStandalone,0);
   }    
 }
 
-static void has_internal_subset_func(rxml_sax_parser *cbp) {
-  VALUE handler = cbp->callbackHandler;
+static void has_internal_subset_func(void *ctxt) {
+  VALUE self = (VALUE) ctxt;
+  VALUE handler = rb_ivar_get(self, CALLBACKS_ATTR);
   
   if (handler != Qnil) {
     rb_funcall(handler, cbidOnHasInternalSubset, 0);
   }    
 }
 
-static void has_external_subset_func(rxml_sax_parser *cbp) {
-  VALUE handler = cbp->callbackHandler;
+static void has_external_subset_func(void *ctxt) {
+  VALUE self = (VALUE) ctxt;
+  VALUE handler = rb_ivar_get(self, CALLBACKS_ATTR);
   
   if (handler != Qnil) {
     rb_funcall(handler, cbidOnHasExternalSubset, 0);
   }    
 }
 
-static void start_document_func(rxml_sax_parser *cbp) {
-  VALUE handler = cbp->callbackHandler;
+static void start_document_func(void *ctxt) {
+  VALUE self = (VALUE) ctxt;
+  VALUE handler = rb_ivar_get(self, CALLBACKS_ATTR);
   
   if (handler != Qnil) {
     rb_funcall(handler, cbidOnStartDocument, 0);
   }    
 }
 
-static void end_document_func(rxml_sax_parser *cbp) {
-  VALUE handler = cbp->callbackHandler;
+static void end_document_func(void *ctxt) {
+  VALUE self = (VALUE) ctxt;
+  VALUE handler = rb_ivar_get(self, CALLBACKS_ATTR);
   
   if (handler != Qnil) {
     rb_funcall(handler, cbidOnEndDocument, 0);
   }    
 }
 
-static void start_element_func(rxml_sax_parser *cbp, 
+static void start_element_func(void *ctxt, 
        const char *name, const char **attrs) {  
-  VALUE handler = cbp->callbackHandler;
+  VALUE self = (VALUE) ctxt;
+  VALUE handler = rb_ivar_get(self, CALLBACKS_ATTR);
   VALUE ahsh = rb_hash_new();
   const char *attr, *value;
   
@@ -77,26 +84,29 @@ static void start_element_func(rxml_sax_parser *cbp,
   }    
 }        
 
-static void end_element_func(rxml_sax_parser *cbp, const char *name) {
-  VALUE handler = cbp->callbackHandler;
+static void end_element_func(void *ctxt, const char *name) {
+  VALUE self = (VALUE) ctxt;
+  VALUE handler = rb_ivar_get(self, CALLBACKS_ATTR);
   
   if (handler != Qnil) {
     rb_funcall(handler, cbidOnEndElement, 1, rb_str_new2(name));
   }    
 }
 
-static void reference_func(rxml_sax_parser *cbp, 
+static void reference_func(void *ctxt, 
        const char *name) {
-  VALUE handler = cbp->callbackHandler;
+  VALUE self = (VALUE) ctxt;
+  VALUE handler = rb_ivar_get(self, CALLBACKS_ATTR);
   
   if (handler != Qnil) {
     rb_funcall(handler, cbidOnReference,1,rb_str_new2(name));
   }    
 }
 
-static void characters_func(rxml_sax_parser *cbp, 
+static void characters_func(void *ctxt, 
        const char *chars, int len) {
-  VALUE handler = cbp->callbackHandler;
+  VALUE self = (VALUE) ctxt;
+  VALUE handler = rb_ivar_get(self, CALLBACKS_ATTR);
   
   if (handler != Qnil) {
     VALUE rchars = rb_str_new(chars, len);
@@ -104,9 +114,10 @@ static void characters_func(rxml_sax_parser *cbp,
   }    
 }
 
-static void processing_instruction_func(rxml_sax_parser *cbp, 
+static void processing_instruction_func(void *ctxt, 
        const char *target, const char *data) {
-  VALUE handler = cbp->callbackHandler;
+  VALUE self = (VALUE) ctxt;
+  VALUE handler = rb_ivar_get(self, CALLBACKS_ATTR);
   
   if (handler != Qnil) {
     VALUE rtarget = target ? rb_str_new2(target) : Qnil;
@@ -115,9 +126,10 @@ static void processing_instruction_func(rxml_sax_parser *cbp,
   }    
 }
 
-static void comment_func(rxml_sax_parser *cbp, 
+static void comment_func(void *ctxt, 
        const char *msg) {
-  VALUE handler = cbp->callbackHandler;
+  VALUE self = (VALUE) ctxt;
+  VALUE handler = rb_ivar_get(self, CALLBACKS_ATTR);
   
   if (handler != Qnil) {
     rb_funcall(handler, cbidOnComment,1,rb_str_new2(msg));
@@ -136,47 +148,52 @@ static void comment_func(rxml_sax_parser *cbp,
   while (0)
   
 // TODO these next three should actually be formatting messages.
-static void warning_func(rxml_sax_parser *cbp, 
+static void warning_func(void *ctxt, 
        const char *msg, ...) {
-  VALUE handler = cbp->callbackHandler;
+  VALUE self = (VALUE) ctxt;
+  VALUE handler = rb_ivar_get(self, CALLBACKS_ATTR);
   
   if (handler != Qnil) {
     FORMAT_AND_CALL(cbidOnXmlParserWarning);
   }    
 }
 
-static void error_func(rxml_sax_parser *cbp, 
+static void error_func(void *ctxt, 
        const char *msg, ...) {
-  VALUE handler = cbp->callbackHandler;
+  VALUE self = (VALUE) ctxt;
+  VALUE handler = rb_ivar_get(self, CALLBACKS_ATTR);
   
   if (handler != Qnil) {
     FORMAT_AND_CALL(cbidOnXmlParserError);
   }    
 }
 
-static void fatal_error_func(rxml_sax_parser *cbp, 
+static void fatal_error_func(void *ctxt, 
        const char *msg, ...) {
-  VALUE handler = cbp->callbackHandler;
+  VALUE self = (VALUE) ctxt;
+  VALUE handler = rb_ivar_get(self, CALLBACKS_ATTR);
   
   if (handler != Qnil) {
     FORMAT_AND_CALL(cbidOnXmlParserFatalError);
   }    
 }
 
-static void cdata_block_func(rxml_sax_parser *cbp, 
+static void cdata_block_func(void *ctxt, 
        const char *value, int len) {
-  VALUE handler = cbp->callbackHandler;
+  VALUE self = (VALUE) ctxt;
+  VALUE handler = rb_ivar_get(self, CALLBACKS_ATTR);
   
   if (handler != Qnil) {
     rb_funcall(handler, cbidOnCdataBlock,1,rb_str_new(value, len));
   }    
 }
 
-static void external_subset_func(rxml_sax_parser *cbp, 
+static void external_subset_func(void *ctxt, 
        const char *name,
        const char *extid,
        const char *sysid) {
-  VALUE handler = cbp->callbackHandler;
+  VALUE self = (VALUE) ctxt;
+  VALUE handler = rb_ivar_get(self, CALLBACKS_ATTR);
   
   if (handler != Qnil) {
     VALUE rname = name ? rb_str_new2(name) : Qnil;
@@ -186,7 +203,7 @@ static void external_subset_func(rxml_sax_parser *cbp,
   }    
 }
 
-static xmlSAXHandler rubySAXHandlerStruct = {
+static xmlSAXHandler rxml_sax_hander_struct = {
   (internalSubsetSAXFunc)internal_subset_func,
   (isStandaloneSAXFunc)is_standalone_func,
   (hasInternalSubsetSAXFunc)has_internal_subset_func,
