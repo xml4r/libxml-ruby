@@ -1,0 +1,334 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang='en'>
+  <head>
+    <title>Class: LibXML::XML::XPath::Object [LibXML]</title>
+    <meta content='text/html; charset=utf-8' http-equiv='Content-Type'>
+    <link href='../../../.././rdoc-style.css' media='screen' rel='stylesheet' type='text/css'>
+    <script type='text/javascript'>
+      //<![CDATA[
+        function popupCode(url) {
+          window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+        }
+        
+        function toggleCode(id) {
+          var code = document.getElementById(id)
+        
+          code.style.display = code.style.display != 'block' ? 'block' : 'none'
+          return true
+        }
+        
+        // Make codeblocks hidden by default
+        document.writeln('<' + 'style type="text/css">.method .source pre { display: none }<\/style>')
+      //]]>
+    </script>
+  </head>
+  <body class='page'>
+    <div class='class' id='wrapper'>
+      <div class='header'>
+        <h1 class='name'>
+          <span class='type'>Class</span>
+          LibXML::XML::XPath::Object
+        </h1>
+        <ol class='paths'>
+          <li>
+            <a href="../../../../files/ext/libxml/ruby_xml_xpath_c.html">ext/libxml/ruby_xml_xpath.c</a>
+          </li>
+          <li class='other'>
+            <a href="../../../../files/lib/libxml/xpath_object_rb.html">lib/libxml/xpath_object.rb</a>
+          </li>
+          <li>
+            <a class='show' href='#' onclick='this.parentNode.parentNode.className += " expanded"; this.parentNode.removeChild(this); return false'>show all</a>
+          </li>
+        </ol>
+        <div class='parent'>
+          Parent:
+          <strong><a href="Object.html">LibXML::XML::XPath::Object</a></strong>
+        </div>
+      </div>
+      <div id='content'>
+        <div id='text'>
+          <div id='description'>
+            <p>
+            A collection of nodes returned from the evaluation of an <a
+            href="../XPath.html">XML::XPath</a> or <a
+            href="../XPointer.html">XML::XPointer</a> expression.
+            </p>
+          </div>
+          <div id='method-list'>
+            <h2>Methods</h2>
+            <h3>public instance</h3>
+            <ol>
+              <li><a href="#M000062"></a></li>
+              <li><a href="#M000064"></a></li>
+              <li><a href="#M000055"></a></li>
+              <li><a href="#M000057"></a></li>
+              <li><a href="#M000058"></a></li>
+              <li><a href="#M000059"></a></li>
+              <li><a href="#M000065">set</a></li>
+              <li><a href="#M000060"></a></li>
+              <li><a href="#M000063"></a></li>
+              <li><a href="#M000061"></a></li>
+              <li><a href="#M000056"></a></li>
+            </ol>
+          </div>
+          <div id='context'>
+            <div id='includes'>
+              <h2>Included modules</h2>
+              <ol>
+                <li>Enumerable</li>
+              </ol>
+            </div>
+          </div>
+          <div id='section'>
+            <div id='attribute-list'>
+              <h3 class='section-bar'>Attributes</h3>
+              <div class='name-list'>
+                <table>
+                  <tr class='top-aligned-row context-row'>
+                    <td class='context-item-name'>
+                      context
+                    </td>
+                    <td class='context-item-value'>
+                      [R]
+                    </td>
+                    <td class='context-item-desc'>
+                      
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+            <div id='methods'>
+              <h3>Public instance methods</h3>
+              <div class='public-instance method' id='method-M000062'>
+                <a name='M000062'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>xpath_object[i] &rarr; node<br /></span>
+                </div>
+                <div class='description'>
+                  <p>
+                  array index into set of nodes
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000062-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000062-source'>/*&#x000A; * call-seq:&#x000A; * xpath_object[i] -&gt; node&#x000A; *&#x000A; * array index into set of nodes&#x000A; */&#x000A;static VALUE&#x000A;rxml_xpath_object_aref(VALUE self, VALUE aref) </pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000064'>
+                <a name='M000064'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>nodes.debug &rarr; (true|false)<br /></span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Dump libxml debugging information to stdout. Requires Libxml be compiled
+                  with debugging enabled.
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000064-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000064-source'>/* &#x000A; * call-seq:&#x000A; *    nodes.debug -&gt; (true|false)&#x000A; * &#x000A; * Dump libxml debugging information to stdout.&#x000A; * Requires Libxml be compiled with debugging enabled.&#x000A; */&#x000A;static VALUE&#x000A;rxml_xpath_object_debug(VALUE self) </pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000055'>
+                <a name='M000055'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>xpath_object.each { |node| ... } &rarr; self<br /></span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Call the supplied block for each node in this set.
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000055-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000055-source'>/*&#x000A; * call-seq:&#x000A; *    xpath_object.each { |node| ... } -&gt; self&#x000A; * &#x000A; * Call the supplied block for each node in this set.&#x000A; */&#x000A;static VALUE&#x000A;rxml_xpath_object_each(VALUE self)&#x000A;{&#x000A;  xmlXPathObjectPtr xpop;&#x000A;  int i;&#x000A;&#x000A;  if ( rxml_xpath_object_empty_q(self) == Qtrue )&#x000A;    return Qnil;&#x000A;&#x000A;  Data_Get_Struct(self,xmlXPathObject,xpop);&#x000A;&#x000A;  for (i = 0; i &lt; xpop-&gt;nodesetval-&gt;nodeNr; i++) {&#x000A;    rb_yield(rxml_xpath_object_tabref(xpop,i));&#x000A;  }&#x000A;  return(self);&#x000A;}</pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000057'>
+                <a name='M000057'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>xpath_object.empty? &rarr; (true|false)<br /></span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Determine whether this nodeset is empty (contains no nodes).
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000057-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000057-source'>/*&#x000A; * call-seq:&#x000A; *    xpath_object.empty? -&gt; (true|false)&#x000A; *&#x000A; * Determine whether this nodeset is empty (contains no nodes).&#x000A; */&#x000A;static VALUE&#x000A;rxml_xpath_object_empty_q(VALUE self) </pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000058'>
+                <a name='M000058'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>xpath_object.first &rarr; node<br /></span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Returns the first node in this node set, or nil if none exist.
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000058-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000058-source'>/*&#x000A; * call-seq:&#x000A; *    xpath_object.first -&gt; node&#x000A; *&#x000A; * Returns the first node in this node set, or nil if none exist.&#x000A; */&#x000A;static VALUE&#x000A;rxml_xpath_object_first(VALUE self) </pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000059'>
+                <a name='M000059'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>xpath_object.length &rarr; num<br /></span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Obtain the length of the nodesetval node list.
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000059-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000059-source'>/*&#x000A; * call-seq:&#x000A; *    xpath_object.length -&gt; num&#x000A; * &#x000A; * Obtain the length of the nodesetval node list.&#x000A; */&#x000A;static VALUE&#x000A;rxml_xpath_object_length(VALUE self) </pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000065'>
+                <a name='M000065'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>set</span>
+                  <span class='arguments'>()</span>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000065-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000065-source'>   <span class="ruby-comment cmt"># File lib/libxml/xpath_object.rb, line 5</span>&#x000A;5:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">set</span>&#x000A;6:           <span class="ruby-identifier">warn</span>(<span class="ruby-value str">&quot;XPath::Object#set is deprecated.  Simply use the XPath::Object API instead&quot;</span>)&#x000A;7:           <span class="ruby-keyword kw">self</span>&#x000A;8:         <span class="ruby-keyword kw">end</span></pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000060'>
+                <a name='M000060'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>xpath_object.length &rarr; num<br /></span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Obtain the length of the nodesetval node list.
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000060-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000060-source'>/*&#x000A; * call-seq:&#x000A; *    xpath_object.length -&gt; num&#x000A; * &#x000A; * Obtain the length of the nodesetval node list.&#x000A; */&#x000A;static VALUE&#x000A;rxml_xpath_object_length(VALUE self) </pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000063'>
+                <a name='M000063'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>xpath_object.string &rarr; String<br /></span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Returns the original <a href="../XPath.html">XPath</a> expression as a
+                  string.
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000063-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000063-source'>/*&#x000A; * call-seq:&#x000A; *    xpath_object.string -&gt; String&#x000A; * &#x000A; * Returns the original XPath expression as a string.&#x000A; */&#x000A;static VALUE&#x000A;rxml_xpath_object_string(VALUE self)&#x000A;{&#x000A;  xmlXPathObjectPtr xpop;&#x000A;&#x000A;  Data_Get_Struct(self,xmlXPathObject,xpop);&#x000A;&#x000A;  if (xpop-&gt;stringval == NULL)&#x000A;    return Qnil;&#x000A;&#x000A;  return rb_str_new2((const char*) xpop-&gt;stringval);&#x000A;}</pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000061'>
+                <a name='M000061'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>xpath_object.to_a &rarr; [node, ..., node]<br /></span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Obtain an array of the nodes in this set.
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000061-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000061-source'>/*&#x000A; * call-seq:&#x000A; *    xpath_object.to_a -&gt; [node, ..., node]&#x000A; * &#x000A; * Obtain an array of the nodes in this set.&#x000A; */&#x000A;static VALUE&#x000A;rxml_xpath_object_to_a(VALUE self)&#x000A;{&#x000A;  VALUE set_ary, nodeobj;&#x000A;  xmlXPathObjectPtr xpop;&#x000A;  int i;&#x000A;  &#x000A;  Data_Get_Struct(self,xmlXPathObject,xpop);&#x000A;&#x000A;  set_ary = rb_ary_new();&#x000A;  if (!((xpop-&gt;nodesetval == NULL) || (xpop-&gt;nodesetval-&gt;nodeNr == 0))) {&#x000A;    for (i = 0; i &lt; xpop-&gt;nodesetval-&gt;nodeNr; i++) {&#x000A;      nodeobj = rxml_xpath_object_tabref(xpop, i);&#x000A;      rb_ary_push(set_ary, nodeobj);&#x000A;    }&#x000A;  }&#x000A;  &#x000A;  return(set_ary);&#x000A;}</pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000056'>
+                <a name='M000056'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>xpath_object.xpath_type &rarr; int<br /></span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Returns the <a href="../XPath.html">XPath</a> type of the result object.
+                  Possible values are defined as constants on the <a
+                  href="../XPath.html">XML::XPath</a> class and include:
+                  </p>
+                  <ul>
+                  <li>XML::XPath::UNDEFINED
+                  
+                  </li>
+                  <li>XML::XPath::NODESET
+                  
+                  </li>
+                  <li>XML::XPath::BOOLEAN
+                  
+                  </li>
+                  <li>XML::XPath::NUMBER
+                  
+                  </li>
+                  <li>XML::XPath::STRING
+                  
+                  </li>
+                  <li>XML::XPath::POINT
+                  
+                  </li>
+                  <li>XML::XPath::RANGE
+                  
+                  </li>
+                  <li>XML::XPath::LOCATIONSET
+                  
+                  </li>
+                  <li>XML::XPath::USERS
+                  
+                  </li>
+                  <li>XML::XPath::XSLT_TREE
+                  
+                  </li>
+                  </ul>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000056-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000056-source'>/*&#x000A; * call-seq:&#x000A; *    xpath_object.xpath_type -&gt; int&#x000A; * &#x000A; * Returns the XPath type of the result object. &#x000A; * Possible values are defined as constants&#x000A; * on the XML::XPath class and include:&#x000A; * &#x000A; * * XML::XPath::UNDEFINED&#x000A; * * XML::XPath::NODESET&#x000A; * * XML::XPath::BOOLEAN&#x000A; * * XML::XPath::NUMBER&#x000A; * * XML::XPath::STRING&#x000A; * * XML::XPath::POINT&#x000A; * * XML::XPath::RANGE&#x000A; * * XML::XPath::LOCATIONSET&#x000A; * * XML::XPath::USERS&#x000A; * * XML::XPath::XSLT_TREE &#x000A; */&#x000A;static VALUE&#x000A;rxml_xpath_object_get_type(VALUE self)&#x000A;{&#x000A;  xmlXPathObjectPtr xpop;&#x000A;&#x000A;  Data_Get_Struct(self,xmlXPathObject,xpop);&#x000A;&#x000A;  return INT2FIX(xpop-&gt;type);&#x000A;}</pre>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id='footer-push'></div>
+    </div>
+    <div id='footer'>
+      <a href="http://github.com/mislav/hanna"><strong>Hanna</strong> RDoc template</a>
+      hand-crafted by
+      <strong><a href="http://mislav.caboo.se/">Mislav</a></strong>
+    </div>
+  </body>
+</html>

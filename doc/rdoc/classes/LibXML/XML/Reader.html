@@ -1,0 +1,1411 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang='en'>
+  <head>
+    <title>Class: LibXML::XML::Reader [LibXML]</title>
+    <meta content='text/html; charset=utf-8' http-equiv='Content-Type'>
+    <link href='../../.././rdoc-style.css' media='screen' rel='stylesheet' type='text/css'>
+    <script type='text/javascript'>
+      //<![CDATA[
+        function popupCode(url) {
+          window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+        }
+        
+        function toggleCode(id) {
+          var code = document.getElementById(id)
+        
+          code.style.display = code.style.display != 'block' ? 'block' : 'none'
+          return true
+        }
+        
+        // Make codeblocks hidden by default
+        document.writeln('<' + 'style type="text/css">.method .source pre { display: none }<\/style>')
+      //]]>
+    </script>
+  </head>
+  <body class='page'>
+    <div class='class' id='wrapper'>
+      <div class='header'>
+        <h1 class='name'>
+          <span class='type'>Class</span>
+          LibXML::XML::Reader
+        </h1>
+        <ol class='paths'>
+          <li>
+            <a href="../../../files/ext/libxml/ruby_xml_attr_c.html">ext/libxml/ruby_xml_attr.c</a>
+          </li>
+          <li class='other'>
+            <a href="../../../files/lib/libxml/reader_rb.html">lib/libxml/reader.rb</a>
+          </li>
+          <li>
+            <a class='show' href='#' onclick='this.parentNode.parentNode.className += " expanded"; this.parentNode.removeChild(this); return false'>show all</a>
+          </li>
+        </ol>
+        <div class='parent'>
+          Parent:
+          <strong>Object</strong>
+        </div>
+      </div>
+      <div id='content'>
+        <div id='text'>
+          <div id='description'>
+            <p>
+            The <a href="Reader.html">XML::Reader</a> class provides a simpler,
+            alternative way of parsing an <a href="../XML.html">XML</a> document in
+            contrast to <a href="Parser.html">XML::Parser</a> or <a
+            href="SaxParser.html">XML::SaxParser</a>. A <a
+            href="Reader.html">XML::Reader</a> instance acts like a cursor going
+            forward in a document stream, stopping at each node it encounters. To
+            advance to the next node, simply cadd <a
+            href="Reader.html#M000297">XML::Reader#read</a>.
+            </p>
+            <p>
+            The <a href="Reader.html">XML::Reader</a> API closely matches the DOM Core
+            specification and supports namespaces, xml:base, entity handling and DTDs.
+            </p>
+            <p>
+            To summarize, <a href="Reader.html">XML::Reader</a> provides a far simpler
+            API to use versus <a href="SaxParser.html">XML::SaxParser</a> and is more
+            memory efficient than using <a href="Parser.html">XML::Parser</a> to create
+            a DOM tree.
+            </p>
+            <p>
+            Example:
+            </p>
+            <pre>&#x000A; parser = XML::Reader.new(&quot;&lt;foo&gt;&lt;bar&gt;1&lt;/bar&gt;&lt;bar&gt;2&lt;/bar&gt;&lt;bar&gt;3&lt;/bar&gt;&lt;/foo&gt;&quot;)&#x000A; parser.read&#x000A; assert_equal('foo', parser.name)&#x000A; assert_equal(nil, parser.value)&#x000A;&#x000A; 3.times do |i|&#x000A;   parser.read&#x000A;   assert_equal(XML::Reader::TYPE_ELEMENT, parser.node_type)&#x000A;   assert_equal('bar', parser.name)&#x000A;   parser.read&#x000A;   assert_equal(XML::Reader::TYPE_TEXT, parser.node_type)&#x000A;   assert_equal((i + 1).to_s, parser.value)&#x000A;   parser.read&#x000A;   assert_equal(XML::Reader::TYPE_END_ELEMENT, parser.node_type)&#x000A; end</pre>
+            <p>
+            For a more in depth tutorial, albeit in C, see <a
+            href="http://xmlsoft.org/xmlreader.html.">xmlsoft.org/xmlreader.html.</a>
+            </p>
+          </div>
+          <div id='method-list'>
+            <h2>Methods</h2>
+            <h3>public class</h3>
+            <ol>
+              <li><a href="#M000286"></a></li>
+              <li><a href="#M000287"></a></li>
+              <li><a href="#M000289"></a></li>
+              <li><a href="#M000288"></a></li>
+            </ol>
+            <h3>public instance</h3>
+            <ol>
+              <li><a href="#M000320"></a></li>
+              <li><a href="#M000307"></a></li>
+              <li><a href="#M000311"></a></li>
+              <li><a href="#M000325"></a></li>
+              <li><a href="#M000290"></a></li>
+              <li><a href="#M000326"></a></li>
+              <li><a href="#M000328"></a></li>
+              <li><a href="#M000316"></a></li>
+              <li><a href="#M000329"></a></li>
+              <li><a href="#M000310"></a></li>
+              <li><a href="#M000324"></a></li>
+              <li><a href="#M000319"></a></li>
+              <li><a href="#M000321"></a></li>
+              <li><a href="#M000327"></a></li>
+              <li><a href="#M000309"></a></li>
+              <li><a href="#M000323"></a></li>
+              <li><a href="#M000291"></a></li>
+              <li><a href="#M000294"></a></li>
+              <li><a href="#M000292"></a></li>
+              <li><a href="#M000293"></a></li>
+              <li><a href="#M000308"></a></li>
+              <li><a href="#M000330"></a></li>
+              <li><a href="#M000312"></a></li>
+              <li><a href="#M000295"></a></li>
+              <li><a href="#M000296"></a></li>
+              <li><a href="#M000305"></a></li>
+              <li><a href="#M000306"></a></li>
+              <li><a href="#M000315"></a></li>
+              <li><a href="#M000317"></a></li>
+              <li><a href="#M000297"></a></li>
+              <li><a href="#M000298"></a></li>
+              <li><a href="#M000299"></a></li>
+              <li><a href="#M000300"></a></li>
+              <li><a href="#M000301"></a></li>
+              <li><a href="#M000302"></a></li>
+              <li><a href="#M000303"></a></li>
+              <li><a href="#M000332">reset_error_handler</a></li>
+              <li><a href="#M000304"></a></li>
+              <li><a href="#M000333">set_error_handler</a></li>
+              <li><a href="#M000318"></a></li>
+              <li><a href="#M000331"></a></li>
+              <li><a href="#M000322"></a></li>
+              <li><a href="#M000313"></a></li>
+              <li><a href="#M000314"></a></li>
+            </ol>
+          </div>
+          <div id='section'>
+            <div id='constants-list'>
+              <h3 class='section-bar'>Constants</h3>
+              <div class='name-list'>
+                <table summary='Constants'>
+                  <tr class='top-aligned-row context-row'>
+                    <td class='context-item-name'>
+                      LOADDTD
+                    </td>
+                    <td>
+                      =
+                    </td>
+                    <td class='context-item-value'>
+                      INT2FIX(XML_PARSER_LOADDTD)
+                    </td>
+                  </tr>
+                  <tr class='top-aligned-row context-row'>
+                    <td class='context-item-name'>
+                      DEFAULTATTRS
+                    </td>
+                    <td>
+                      =
+                    </td>
+                    <td class='context-item-value'>
+                      INT2FIX(XML_PARSER_DEFAULTATTRS)
+                    </td>
+                  </tr>
+                  <tr class='top-aligned-row context-row'>
+                    <td class='context-item-name'>
+                      VALIDATE
+                    </td>
+                    <td>
+                      =
+                    </td>
+                    <td class='context-item-value'>
+                      INT2FIX(XML_PARSER_VALIDATE)
+                    </td>
+                  </tr>
+                  <tr class='top-aligned-row context-row'>
+                    <td class='context-item-name'>
+                      SUBST_ENTITIES
+                    </td>
+                    <td>
+                      =
+                    </td>
+                    <td class='context-item-value'>
+                      INT2FIX(XML_PARSER_SUBST_ENTITIES)
+                    </td>
+                  </tr>
+                  <tr class='top-aligned-row context-row'>
+                    <td class='context-item-name'>
+                      SEVERITY_VALIDITY_WARNING
+                    </td>
+                    <td>
+                      =
+                    </td>
+                    <td class='context-item-value'>
+                      INT2FIX(XML_PARSER_SEVERITY_VALIDITY_WARNING)
+                    </td>
+                  </tr>
+                  <tr class='top-aligned-row context-row'>
+                    <td class='context-item-name'>
+                      SEVERITY_VALIDITY_ERROR
+                    </td>
+                    <td>
+                      =
+                    </td>
+                    <td class='context-item-value'>
+                      INT2FIX(XML_PARSER_SEVERITY_VALIDITY_ERROR)
+                    </td>
+                  </tr>
+                  <tr class='top-aligned-row context-row'>
+                    <td class='context-item-name'>
+                      SEVERITY_WARNING
+                    </td>
+                    <td>
+                      =
+                    </td>
+                    <td class='context-item-value'>
+                      INT2FIX(XML_PARSER_SEVERITY_WARNING)
+                    </td>
+                  </tr>
+                  <tr class='top-aligned-row context-row'>
+                    <td class='context-item-name'>
+                      SEVERITY_ERROR
+                    </td>
+                    <td>
+                      =
+                    </td>
+                    <td class='context-item-value'>
+                      INT2FIX(XML_PARSER_SEVERITY_ERROR)
+                    </td>
+                  </tr>
+                  <tr class='top-aligned-row context-row'>
+                    <td class='context-item-name'>
+                      TYPE_NONE
+                    </td>
+                    <td>
+                      =
+                    </td>
+                    <td class='context-item-value'>
+                      INT2FIX(XML_READER_TYPE_NONE)
+                    </td>
+                  </tr>
+                  <tr class='top-aligned-row context-row'>
+                    <td class='context-item-name'>
+                      TYPE_ELEMENT
+                    </td>
+                    <td>
+                      =
+                    </td>
+                    <td class='context-item-value'>
+                      INT2FIX(XML_READER_TYPE_ELEMENT)
+                    </td>
+                  </tr>
+                  <tr class='top-aligned-row context-row'>
+                    <td class='context-item-name'>
+                      TYPE_ATTRIBUTE
+                    </td>
+                    <td>
+                      =
+                    </td>
+                    <td class='context-item-value'>
+                      INT2FIX(XML_READER_TYPE_ATTRIBUTE)
+                    </td>
+                  </tr>
+                  <tr class='top-aligned-row context-row'>
+                    <td class='context-item-name'>
+                      TYPE_TEXT
+                    </td>
+                    <td>
+                      =
+                    </td>
+                    <td class='context-item-value'>
+                      INT2FIX(XML_READER_TYPE_TEXT)
+                    </td>
+                  </tr>
+                  <tr class='top-aligned-row context-row'>
+                    <td class='context-item-name'>
+                      TYPE_CDATA
+                    </td>
+                    <td>
+                      =
+                    </td>
+                    <td class='context-item-value'>
+                      INT2FIX(XML_READER_TYPE_CDATA)
+                    </td>
+                  </tr>
+                  <tr class='top-aligned-row context-row'>
+                    <td class='context-item-name'>
+                      TYPE_ENTITY_REFERENCE
+                    </td>
+                    <td>
+                      =
+                    </td>
+                    <td class='context-item-value'>
+                      INT2FIX(XML_READER_TYPE_ENTITY_REFERENCE)
+                    </td>
+                  </tr>
+                  <tr class='top-aligned-row context-row'>
+                    <td class='context-item-name'>
+                      TYPE_ENTITY
+                    </td>
+                    <td>
+                      =
+                    </td>
+                    <td class='context-item-value'>
+                      INT2FIX(XML_READER_TYPE_ENTITY)
+                    </td>
+                  </tr>
+                  <tr class='top-aligned-row context-row'>
+                    <td class='context-item-name'>
+                      TYPE_PROCESSING_INSTRUCTION
+                    </td>
+                    <td>
+                      =
+                    </td>
+                    <td class='context-item-value'>
+                      INT2FIX(XML_READER_TYPE_PROCESSING_INSTRUCTION)
+                    </td>
+                  </tr>
+                  <tr class='top-aligned-row context-row'>
+                    <td class='context-item-name'>
+                      TYPE_COMMENT
+                    </td>
+                    <td>
+                      =
+                    </td>
+                    <td class='context-item-value'>
+                      INT2FIX(XML_READER_TYPE_COMMENT)
+                    </td>
+                  </tr>
+                  <tr class='top-aligned-row context-row'>
+                    <td class='context-item-name'>
+                      TYPE_DOCUMENT
+                    </td>
+                    <td>
+                      =
+                    </td>
+                    <td class='context-item-value'>
+                      INT2FIX(XML_READER_TYPE_DOCUMENT)
+                    </td>
+                  </tr>
+                  <tr class='top-aligned-row context-row'>
+                    <td class='context-item-name'>
+                      TYPE_DOCUMENT_TYPE
+                    </td>
+                    <td>
+                      =
+                    </td>
+                    <td class='context-item-value'>
+                      INT2FIX(XML_READER_TYPE_DOCUMENT_TYPE)
+                    </td>
+                  </tr>
+                  <tr class='top-aligned-row context-row'>
+                    <td class='context-item-name'>
+                      TYPE_DOCUMENT_FRAGMENT
+                    </td>
+                    <td>
+                      =
+                    </td>
+                    <td class='context-item-value'>
+                      INT2FIX(XML_READER_TYPE_DOCUMENT_FRAGMENT)
+                    </td>
+                  </tr>
+                  <tr class='top-aligned-row context-row'>
+                    <td class='context-item-name'>
+                      TYPE_NOTATION
+                    </td>
+                    <td>
+                      =
+                    </td>
+                    <td class='context-item-value'>
+                      INT2FIX(XML_READER_TYPE_NOTATION)
+                    </td>
+                  </tr>
+                  <tr class='top-aligned-row context-row'>
+                    <td class='context-item-name'>
+                      TYPE_WHITESPACE
+                    </td>
+                    <td>
+                      =
+                    </td>
+                    <td class='context-item-value'>
+                      INT2FIX(XML_READER_TYPE_WHITESPACE)
+                    </td>
+                  </tr>
+                  <tr class='top-aligned-row context-row'>
+                    <td class='context-item-name'>
+                      TYPE_SIGNIFICANT_WHITESPACE
+                    </td>
+                    <td>
+                      =
+                    </td>
+                    <td class='context-item-value'>
+                      INT2FIX(XML_READER_TYPE_SIGNIFICANT_WHITESPACE)
+                    </td>
+                  </tr>
+                  <tr class='top-aligned-row context-row'>
+                    <td class='context-item-name'>
+                      TYPE_END_ELEMENT
+                    </td>
+                    <td>
+                      =
+                    </td>
+                    <td class='context-item-value'>
+                      INT2FIX(XML_READER_TYPE_END_ELEMENT)
+                    </td>
+                  </tr>
+                  <tr class='top-aligned-row context-row'>
+                    <td class='context-item-name'>
+                      TYPE_END_ENTITY
+                    </td>
+                    <td>
+                      =
+                    </td>
+                    <td class='context-item-value'>
+                      INT2FIX(XML_READER_TYPE_END_ENTITY)
+                    </td>
+                  </tr>
+                  <tr class='top-aligned-row context-row'>
+                    <td class='context-item-name'>
+                      TYPE_XML_DECLARATION
+                    </td>
+                    <td>
+                      =
+                    </td>
+                    <td class='context-item-value'>
+                      INT2FIX(XML_READER_TYPE_XML_DECLARATION)
+                    </td>
+                  </tr>
+                  <tr class='top-aligned-row context-row'>
+                    <td class='context-item-name'>
+                      MODE_INITIAL
+                    </td>
+                    <td>
+                      =
+                    </td>
+                    <td class='context-item-value'>
+                      INT2FIX(XML_TEXTREADER_MODE_INITIAL)
+                    </td>
+                    <td>
+                      &nbsp;
+                    </td>
+                    <td class='context-item-desc'>
+                      
+                      Read states
+                    </td>
+                  </tr>
+                  <tr class='top-aligned-row context-row'>
+                    <td class='context-item-name'>
+                      MODE_INTERACTIVE
+                    </td>
+                    <td>
+                      =
+                    </td>
+                    <td class='context-item-value'>
+                      INT2FIX(XML_TEXTREADER_MODE_INTERACTIVE)
+                    </td>
+                  </tr>
+                  <tr class='top-aligned-row context-row'>
+                    <td class='context-item-name'>
+                      MODE_ERROR
+                    </td>
+                    <td>
+                      =
+                    </td>
+                    <td class='context-item-value'>
+                      INT2FIX(XML_TEXTREADER_MODE_ERROR)
+                    </td>
+                  </tr>
+                  <tr class='top-aligned-row context-row'>
+                    <td class='context-item-name'>
+                      MODE_EOF
+                    </td>
+                    <td>
+                      =
+                    </td>
+                    <td class='context-item-value'>
+                      INT2FIX(XML_TEXTREADER_MODE_EOF)
+                    </td>
+                  </tr>
+                  <tr class='top-aligned-row context-row'>
+                    <td class='context-item-name'>
+                      MODE_CLOSED
+                    </td>
+                    <td>
+                      =
+                    </td>
+                    <td class='context-item-value'>
+                      INT2FIX(XML_TEXTREADER_MODE_CLOSED)
+                    </td>
+                  </tr>
+                  <tr class='top-aligned-row context-row'>
+                    <td class='context-item-name'>
+                      MODE_READING
+                    </td>
+                    <td>
+                      =
+                    </td>
+                    <td class='context-item-value'>
+                      INT2FIX(XML_TEXTREADER_MODE_READING)
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+            <div id='methods'>
+              <h3>Public class methods</h3>
+              <div class='public-class method' id='method-M000286'>
+                <a name='M000286'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>XML::Reader.file(path, encoding=nil, options=0) &rarr; reader<br /></span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Parse an <a href="../XML.html">XML</a> file from the filesystem or the
+                  network. The parsing flags options are a combination of xmlParserOption.
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000286-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000286-source'>/*&#x000A; * call-seq:&#x000A; *    XML::Reader.file(path, encoding=nil, options=0) -&gt; reader&#x000A; *&#x000A; * Parse an XML file from the filesystem or the network. The parsing flags &#x000A; * options are a combination of xmlParserOption. &#x000A; */&#x000A;static VALUE&#x000A;rxml_reader_new_file(int argc, VALUE *argv, VALUE self)&#x000A;{&#x000A;  xmlTextReaderPtr reader;&#x000A;  VALUE path, encoding, options;&#x000A;&#x000A;  rb_scan_args(argc, argv, &quot;12&quot;, &amp;path, &amp;encoding, &amp;options);&#x000A;&#x000A;  reader = xmlReaderForFile(RVAL2CSTR(path), &#x000A;                            NIL_P(encoding) ? NULL : RVAL2CSTR(encoding), &#x000A;                            NIL_P(options) ? 0 : FIX2INT(options));&#x000A;  if (reader == NULL)&#x000A;    rb_raise(rb_eRuntimeError, &#x000A;             &quot;cannot create text reader for given XML file at path '%s'&quot;, &#x000A;             RVAL2CSTR(path));&#x000A;&#x000A;  return rxml_reader_new(self, reader); &#x000A;}</pre>
+                </div>
+              </div>
+              <div class='public-class method' id='method-M000287'>
+                <a name='M000287'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>XML::Reader.io(io, url=nil, encoding=nil, options=0) &rarr; reader<br /></span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Parse an <a href="../XML.html">XML</a> file from a file handle. The parsing
+                  flags options are a combination of xmlParserOption.
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000287-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000287-source'>/*&#x000A; * call-seq:&#x000A; *    XML::Reader.io(io, url=nil, encoding=nil, options=0) -&gt; reader&#x000A; *&#x000A; * Parse an XML file from a file handle. The parsing flags options are&#x000A; * a combination of xmlParserOption. &#x000A; */&#x000A;static VALUE&#x000A;rxml_reader_new_io(int argc, VALUE *argv, VALUE self)&#x000A;{&#x000A;  xmlTextReaderPtr reader;&#x000A;  VALUE io, url, encoding, options;&#x000A;&#x000A;  rb_scan_args(argc, argv, &quot;13&quot;, &amp;io, &amp;url, &amp;encoding, &amp;options);&#x000A;&#x000A;  reader = xmlReaderForIO((xmlInputReadCallback) rxml_read_callback, NULL, io,&#x000A;                          NIL_P(url) ? NULL : RVAL2CSTR(url),&#x000A;                          NIL_P(encoding) ? NULL : RVAL2CSTR(encoding), &#x000A;                          NIL_P(options) ? 0 : FIX2INT(options));&#x000A;  if (reader == NULL)&#x000A;    rb_raise(rb_eRuntimeError, &quot;cannot create text reader for given stream&quot;);&#x000A;&#x000A;  return rxml_reader_new(self, reader); &#x000A;}</pre>
+                </div>
+              </div>
+              <div class='public-class method' id='method-M000289'>
+                <a name='M000289'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>
+                    XML::Reader.new(data, url=nil, encoding=nil, options=0) &rarr; reader<br />
+                    XML::Reader.string(data, url=nil, encoding=nil, options=0) &rarr; reader<br />
+                  </span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Create an <a href="../XML.html">XML</a> text reader for an <a
+                  href="../XML.html">XML</a> in-memory document. The parsing flags options
+                  are a combination of xmlParserOption.
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000289-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000289-source'>/*&#x000A; * call-seq:&#x000A; *    XML::Reader.new(data, url=nil, encoding=nil, options=0) -&gt; reader&#x000A; *    XML::Reader.string(data, url=nil, encoding=nil, options=0) -&gt; reader&#x000A; *&#x000A; * Create an XML text reader for an XML in-memory document. The parsing flags&#x000A; * options are a combination of xmlParserOption.&#x000A; */&#x000A;static VALUE&#x000A;rxml_reader_new_data(int argc, VALUE *argv, VALUE self)&#x000A;{&#x000A;  xmlTextReaderPtr reader;&#x000A;  VALUE data, url, encoding, options;&#x000A;  char *c_data;&#x000A;&#x000A;  rb_scan_args(argc, argv, &quot;13&quot;, &amp;data, &amp;url, &amp;encoding, &amp;options);&#x000A;&#x000A;  c_data = RVAL2CSTR(data);&#x000A;  reader = xmlReaderForMemory(c_data,&#x000A;                              strlen(c_data), &#x000A;                              NIL_P(url) ? NULL : RVAL2CSTR(url),&#x000A;                              NIL_P(encoding) ? NULL : RVAL2CSTR(encoding), &#x000A;                              NIL_P(options) ? 0 : FIX2INT(options));&#x000A;  if (reader == NULL)&#x000A;    rb_raise(rb_eRuntimeError, &quot;cannot create text reader for given data&quot;);&#x000A;&#x000A;  return rxml_reader_new(self, reader); &#x000A;}</pre>
+                </div>
+              </div>
+              <div class='public-class method' id='method-M000288'>
+                <a name='M000288'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>
+                    XML::Reader.walker(doc) &rarr; reader<br />
+                    XML::Reader.document(doc) &rarr; reader<br />
+                  </span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Create an <a href="../XML.html">XML</a> text reader for a preparsed
+                  document.
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000288-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000288-source'>/*&#x000A; * call-seq:&#x000A; *    XML::Reader.walker(doc) -&gt; reader&#x000A; *    XML::Reader.document(doc) -&gt; reader&#x000A; *&#x000A; * Create an XML text reader for a preparsed document.&#x000A; */&#x000A;VALUE&#x000A;rxml_reader_new_walker(VALUE self, VALUE doc)&#x000A;{&#x000A;  xmlDocPtr xdoc;&#x000A;  xmlTextReaderPtr reader;&#x000A;  &#x000A;  Data_Get_Struct(doc, xmlDoc, xdoc);&#x000A; &#x000A;  reader = xmlReaderWalker(xdoc);  &#x000A;  if (reader == NULL)&#x000A;    rb_raise(rb_eRuntimeError, &quot;cannot create text reader for given document&quot;);&#x000A;&#x000A;  return rxml_reader_new(self, reader); &#x000A;}</pre>
+                </div>
+              </div>
+              <h3>Public instance methods</h3>
+              <div class='public-instance method' id='method-M000320'>
+                <a name='M000320'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>reader[key] &rarr; value<br /></span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Provide the value of the attribute with the specified index (if
+                  <tt>key</tt> is an integer) or with the specified name (if <tt>key</tt> is
+                  a string) relative to the containing element, as a string.
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000320-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000320-source'>/*&#x000A; * call-seq:&#x000A; *    reader[key] -&gt; value&#x000A; *&#x000A; * Provide the value of the attribute with the specified index (if +key+ is an &#x000A; * integer) or with the specified name (if +key+ is a string) relative to the &#x000A; * containing element, as a string.&#x000A; */&#x000A;static VALUE&#x000A;rxml_reader_attribute(VALUE self, VALUE key)&#x000A;{&#x000A;  xmlTextReaderPtr reader;&#x000A;  xmlChar *attr;&#x000A;&#x000A;  reader = rxml_text_reader_get(self);&#x000A;&#x000A;  if (TYPE(key) == T_FIXNUM) {&#x000A;    attr = xmlTextReaderGetAttributeNo(reader, FIX2INT(key));&#x000A;  }&#x000A;  else {&#x000A;    attr = xmlTextReaderGetAttribute(reader, (const xmlChar *)RVAL2CSTR(key));&#x000A;  }&#x000A;  return CSTR2RVAL2(attr);&#x000A;}</pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000307'>
+                <a name='M000307'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>reader.attribute_count &rarr; count<br /></span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Provide the number of attributes of the current node.
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000307-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000307-source'>/*&#x000A; * call-seq:&#x000A; *    reader.attribute_count -&gt; count&#x000A; *&#x000A; * Provide the number of attributes of the current node.&#x000A; */&#x000A;static VALUE&#x000A;rxml_reader_attr_count(VALUE self)&#x000A;{&#x000A;  return INT2FIX(xmlTextReaderAttributeCount(rxml_text_reader_get(self)));&#x000A;}</pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000311'>
+                <a name='M000311'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>reader.base_uri &rarr; URI<br /></span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Determine the base URI of the node.
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000311-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000311-source'>/*&#x000A; * call-seq:&#x000A; *    reader.base_uri -&gt; URI&#x000A; *&#x000A; * Determine the base URI of the node.&#x000A; */&#x000A;static VALUE&#x000A;rxml_reader_base_uri(VALUE self)&#x000A;{&#x000A;  return CSTR2RVAL(xmlTextReaderConstBaseUri(rxml_text_reader_get(self)));&#x000A;}</pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000325'>
+                <a name='M000325'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>reader.byte_consumed &rarr; value<br /></span>
+                </div>
+                <div class='description'>
+                  <p>
+                  This method provides the current index of the parser used by the reader,
+                  relative to the start of the current entity.
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000325-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000325-source'>/*&#x000A; * call-seq:&#x000A; *    reader.byte_consumed -&gt; value&#x000A; *&#x000A; * This method provides the current index of the parser used by the reader, &#x000A; * relative to the start of the current entity. &#x000A; */&#x000A;static VALUE&#x000A;rxml_reader_byte_consumed(VALUE self)&#x000A;{&#x000A;  return INT2NUM(xmlTextReaderByteConsumed(rxml_text_reader_get(self)));&#x000A;}</pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000290'>
+                <a name='M000290'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>parser.close &rarr; code<br /></span>
+                </div>
+                <div class='description'>
+                  <p>
+                  This method releases any resources allocated by the current instance
+                  changes the state to Closed and close any underlying input.
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000290-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000290-source'>/*&#x000A; * call-seq:&#x000A; *    parser.close -&gt; code&#x000A; *&#x000A; * This method releases any resources allocated by the current instance &#x000A; * changes the state to Closed and close any underlying input.&#x000A; */&#x000A;static VALUE&#x000A;rxml_reader_close(VALUE self)&#x000A;{&#x000A;  return INT2FIX(xmlTextReaderClose(rxml_text_reader_get(self)));&#x000A;}</pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000326'>
+                <a name='M000326'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>reader.column_number &rarr; number<br /></span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Provide the column number of the current parsing point.
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000326-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000326-source'>/*&#x000A; * call-seq:&#x000A; *    reader.column_number -&gt; number&#x000A; *&#x000A; * Provide the column number of the current parsing point.&#x000A; */&#x000A;static VALUE&#x000A;rxml_reader_column_number(VALUE self)&#x000A;{&#x000A;  return INT2NUM(xmlTextReaderGetParserColumnNumber(rxml_text_reader_get(self)));&#x000A;}</pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000328'>
+                <a name='M000328'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>reader.default? &rarr; bool<br /></span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Return whether an Attribute node was generated from the default value
+                  defined in the DTD or schema.
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000328-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000328-source'>/*&#x000A; * call-seq:&#x000A; *    reader.default? -&gt; bool&#x000A; *&#x000A; * Return whether an Attribute node was generated from the default value &#x000A; * defined in the DTD or schema.&#x000A; */&#x000A;static VALUE&#x000A;rxml_reader_default(VALUE self)&#x000A;{&#x000A;  return xmlTextReaderIsDefault(rxml_text_reader_get(self)) ? Qtrue : Qfalse;&#x000A;}</pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000316'>
+                <a name='M000316'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>reader.depth &rarr; depth<br /></span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Get the depth of the node in the tree.
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000316-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000316-source'>/*&#x000A; * call-seq:&#x000A; *    reader.depth -&gt; depth&#x000A; *&#x000A; * Get the depth of the node in the tree.&#x000A; */&#x000A;static VALUE&#x000A;rxml_reader_depth(VALUE self)&#x000A;{&#x000A;  return INT2FIX(xmlTextReaderDepth(rxml_text_reader_get(self)));&#x000A;}</pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000329'>
+                <a name='M000329'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>reader.empty_element? &rarr; bool<br /></span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Check if the current node is empty.
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000329-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000329-source'>/*&#x000A; * call-seq:&#x000A; *    reader.empty_element? -&gt; bool&#x000A; *&#x000A; * Check if the current node is empty.&#x000A; */&#x000A;static VALUE&#x000A;rxml_reader_empty_element(VALUE self)&#x000A;{&#x000A;  return xmlTextReaderIsEmptyElement(rxml_text_reader_get(self)) ? Qtrue : Qfalse;&#x000A;}</pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000310'>
+                <a name='M000310'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>reader.encoding &rarr; encoding<br /></span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Determine the encoding of the document being read.
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000310-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000310-source'>/*&#x000A; * call-seq:&#x000A; *    reader.encoding -&gt; encoding&#x000A; *&#x000A; * Determine the encoding of the document being read.&#x000A; */&#x000A;static VALUE&#x000A;rxml_reader_encoding(VALUE self)&#x000A;{&#x000A;  return CSTR2RVAL(xmlTextReaderConstEncoding(rxml_text_reader_get(self)));&#x000A;}</pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000324'>
+                <a name='M000324'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>reader.expand &rarr; node<br /></span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Read the contents of the current node and the full subtree. It then makes
+                  the subtree available until the next read call.
+                  </p>
+                  <p>
+                  Return an <a href="Node.html">XML::Node</a> object, or nil in case of
+                  error.
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000324-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000324-source'>/*&#x000A; * call-seq:&#x000A; *    reader.expand -&gt; node&#x000A; *&#x000A; * Read the contents of the current node and the full subtree. It then makes &#x000A; * the subtree available until the next read call.&#x000A; *&#x000A; * Return an XML::Node object, or nil in case of error.&#x000A; */&#x000A;static VALUE&#x000A;rxml_reader_expand(VALUE self)&#x000A;{&#x000A;  xmlNodePtr node;&#x000A;  xmlDocPtr doc;&#x000A;  xmlTextReaderPtr reader = rxml_text_reader_get(self);&#x000A;  node = xmlTextReaderExpand(reader);&#x000A;  &#x000A;  if (!node)&#x000A;    return Qnil;&#x000A;    &#x000A;  /* Okay this is tricky.  By accessing the returned node, we&#x000A;     take ownership of the reader's document.  Thus we need to&#x000A;     tell the reader to not free it.  Otherwise it will be&#x000A;     freed twice - once when the Ruby document wrapper goes&#x000A;     out of scope and once when the reader goes out of scope. */&#x000A;&#x000A;  xmlTextReaderPreserve(reader);&#x000A;  doc = xmlTextReaderCurrentDoc(reader);&#x000A;  rxml_document_wrap(doc);&#x000A;&#x000A;  return rxml_node2_wrap(cXMLNode, node);&#x000A;}</pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000319'>
+                <a name='M000319'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>reader.has_attributes? &rarr; bool<br /></span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Get whether the node has attributes.
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000319-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000319-source'>/*&#x000A; * call-seq:&#x000A; *    reader.has_attributes? -&gt; bool&#x000A; *&#x000A; * Get whether the node has attributes.&#x000A; */&#x000A;static VALUE&#x000A;rxml_reader_has_attributes(VALUE self)&#x000A;{&#x000A;  return xmlTextReaderHasAttributes(rxml_text_reader_get(self)) ? Qtrue : Qfalse;&#x000A;}</pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000321'>
+                <a name='M000321'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>reader.has_value? &rarr; bool<br /></span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Get whether the node can have a text value.
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000321-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000321-source'>/*&#x000A; * call-seq:&#x000A; *    reader.has_value? -&gt; bool&#x000A; *&#x000A; * Get whether the node can have a text value.&#x000A; */&#x000A;static VALUE&#x000A;rxml_reader_has_value(VALUE self)&#x000A;{&#x000A;  return xmlTextReaderHasValue(rxml_text_reader_get(self)) ? Qtrue : Qfalse;&#x000A;}</pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000327'>
+                <a name='M000327'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>reader.line_number &rarr; number<br /></span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Provide the line number of the current parsing point.
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000327-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000327-source'>/*&#x000A; * call-seq:&#x000A; *    reader.line_number -&gt; number&#x000A; *&#x000A; * Provide the line number of the current parsing point.&#x000A; */&#x000A;static VALUE&#x000A;rxml_reader_line_number(VALUE self)&#x000A;{&#x000A;  return INT2NUM(xmlTextReaderGetParserLineNumber(rxml_text_reader_get(self)));&#x000A;}</pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000309'>
+                <a name='M000309'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>reader.local_name &rarr; name<br /></span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Return the local name of the node.
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000309-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000309-source'>/* &#x000A; * call-seq:&#x000A; *    reader.local_name -&gt; name&#x000A; *&#x000A; * Return the local name of the node.&#x000A; */&#x000A;static VALUE&#x000A;rxml_reader_local_name(VALUE self)&#x000A;{&#x000A;  return CSTR2RVAL(xmlTextReaderConstLocalName(rxml_text_reader_get(self)));&#x000A;}</pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000323'>
+                <a name='M000323'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>reader.lookup_namespace(prefix) &rarr; value<br /></span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Resolve a namespace prefix in the scope of the current element. To return
+                  the default namespace, specify nil as <tt>prefix</tt>.
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000323-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000323-source'>/*&#x000A; * call-seq:&#x000A; *    reader.lookup_namespace(prefix) -&gt; value&#x000A; *&#x000A; * Resolve a namespace prefix in the scope of the current element.&#x000A; * To return the default namespace, specify nil as +prefix+.&#x000A; */&#x000A;static VALUE&#x000A;rxml_reader_lookup_namespace(VALUE self, VALUE prefix)&#x000A;{&#x000A;  return CSTR2RVAL2(xmlTextReaderLookupNamespace(rxml_text_reader_get(self), (const xmlChar *)RVAL2CSTR(prefix)));&#x000A;}</pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000291'>
+                <a name='M000291'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>parser.move_to_attribute(val) &rarr; code<br /></span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Move the position of the current instance to the attribute with the
+                  specified index (if <tt>val</tt> is an integer) or name (if <tt>val</tt> is
+                  a string) relative to the containing element.
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000291-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000291-source'>/*&#x000A; * call-seq:&#x000A; *   parser.move_to_attribute(val) -&gt; code&#x000A; *&#x000A; * Move the position of the current instance to the attribute with the &#x000A; * specified index (if +val+ is an integer) or name (if +val+ is a string) &#x000A; * relative to the containing element.&#x000A; */&#x000A;static VALUE&#x000A;rxml_reader_move_to_attr(VALUE self, VALUE val)&#x000A;{&#x000A;  xmlTextReaderPtr reader;&#x000A;  int ret;&#x000A;&#x000A;  reader = rxml_text_reader_get(self);&#x000A;&#x000A;  if (TYPE(val) == T_FIXNUM) {&#x000A;    ret = xmlTextReaderMoveToAttributeNo(reader, FIX2INT(val));&#x000A;  }&#x000A;  else {&#x000A;    ret = xmlTextReaderMoveToAttribute(reader, (const xmlChar *)RVAL2CSTR(val));&#x000A;  }&#x000A;&#x000A;  return INT2FIX(ret);&#x000A;}</pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000294'>
+                <a name='M000294'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>reader.move_to_element &rarr; code<br /></span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Move the position of the current instance to the node that contains the
+                  current attribute node.
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000294-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000294-source'>/*&#x000A; * call-seq:&#x000A; *    reader.move_to_element -&gt; code&#x000A; *&#x000A; * Move the position of the current instance to the node that contains the &#x000A; * current attribute node.&#x000A; */&#x000A;static VALUE&#x000A;rxml_reader_move_to_element(VALUE self)&#x000A;{&#x000A;  return INT2FIX(xmlTextReaderMoveToElement(rxml_text_reader_get(self)));&#x000A;}</pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000292'>
+                <a name='M000292'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>reader.move_to_first_attribute &rarr; code<br /></span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Move the position of the current instance to the first attribute associated
+                  with the current node.
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000292-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000292-source'>/*&#x000A; * call-seq:&#x000A; *    reader.move_to_first_attribute -&gt; code&#x000A; *&#x000A; * Move the position of the current instance to the first attribute associated&#x000A; * with the current node.&#x000A; */&#x000A;static VALUE&#x000A;rxml_reader_move_to_first_attr(VALUE self)&#x000A;{&#x000A;  return INT2FIX(xmlTextReaderMoveToFirstAttribute(rxml_text_reader_get(self)));&#x000A;}</pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000293'>
+                <a name='M000293'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>reader.move_to_next_attribute &rarr; code<br /></span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Move the position of the current instance to the next attribute associated
+                  with the current node.
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000293-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000293-source'>/*&#x000A; * call-seq:&#x000A; *    reader.move_to_next_attribute -&gt; code&#x000A; *&#x000A; * Move the position of the current instance to the next attribute associated &#x000A; * with the current node.&#x000A; */&#x000A;static VALUE&#x000A;rxml_reader_move_to_next_attr(VALUE self)&#x000A;{&#x000A;  return INT2FIX(xmlTextReaderMoveToNextAttribute(rxml_text_reader_get(self)));&#x000A;}</pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000308'>
+                <a name='M000308'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>reader.name &rarr; name<br /></span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Return the qualified name of the node.
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000308-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000308-source'>/* &#x000A; * call-seq:&#x000A; *    reader.name -&gt; name&#x000A; *&#x000A; * Return the qualified name of the node.&#x000A; */&#x000A;static VALUE&#x000A;rxml_reader_name(VALUE self)&#x000A;{&#x000A;  return CSTR2RVAL(xmlTextReaderConstName(rxml_text_reader_get(self)));&#x000A;}</pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000330'>
+                <a name='M000330'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>reader.namespace_declaration? &rarr; bool<br /></span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Determine whether the current node is a namespace declaration rather than a
+                  regular attribute.
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000330-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000330-source'>/*&#x000A; * call-seq:&#x000A; *    reader.namespace_declaration? -&gt; bool&#x000A; *&#x000A; * Determine whether the current node is a namespace declaration rather than a &#x000A; * regular attribute.&#x000A; */&#x000A;static VALUE&#x000A;rxml_reader_namespace_declaration(VALUE self)&#x000A;{&#x000A;  return xmlTextReaderIsNamespaceDecl(rxml_text_reader_get(self)) ? Qtrue : Qfalse;&#x000A;}</pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000312'>
+                <a name='M000312'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>reader.namespace_uri &rarr; URI<br /></span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Determine the namespace URI of the node.
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000312-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000312-source'>/*&#x000A; * call-seq:&#x000A; *    reader.namespace_uri -&gt; URI&#x000A; *&#x000A; * Determine the namespace URI of the node.&#x000A; */&#x000A;static VALUE&#x000A;rxml_reader_namespace_uri(VALUE self)&#x000A;{&#x000A;  return CSTR2RVAL(xmlTextReaderConstNamespaceUri(rxml_text_reader_get(self)));&#x000A;}</pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000295'>
+                <a name='M000295'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>reader.next &rarr; code<br /></span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Skip to the node following the current one in document order while avoiding
+                  the subtree if any.
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000295-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000295-source'>/*&#x000A; * call-seq:&#x000A; *    reader.next -&gt; code&#x000A; *&#x000A; * Skip to the node following the current one in document order while avoiding &#x000A; * the subtree if any.&#x000A; */&#x000A;static VALUE&#x000A;rxml_reader_next(VALUE self)&#x000A;{&#x000A;  return INT2FIX(xmlTextReaderNext(rxml_text_reader_get(self)));&#x000A;}</pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000296'>
+                <a name='M000296'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>reader.next_sibling &rarr; code<br /></span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Skip to the node following the current one in document order while avoiding
+                  the subtree if any. Currently implemented only for Readers built on a
+                  document.
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000296-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000296-source'>/*&#x000A; * call-seq:&#x000A; *    reader.next_sibling -&gt; code&#x000A; *&#x000A; * Skip to the node following the current one in document order while avoiding &#x000A; * the subtree if any. Currently implemented only for Readers built on a &#x000A; * document.&#x000A; */&#x000A;static VALUE&#x000A;rxml_reader_next_sibling(VALUE self)&#x000A;{&#x000A;  return INT2FIX(xmlTextReaderNextSibling(rxml_text_reader_get(self)));&#x000A;}</pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000305'>
+                <a name='M000305'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>reader.node_type &rarr; type<br /></span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Get the node type of the current node. Reference: <a
+                  href="http://dotgnu.org/pnetlib-doc/System/Xml/XmlNodeType.html">dotgnu.org/pnetlib-doc/System/Xml/XmlNodeType.html</a>
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000305-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000305-source'>/*&#x000A; * call-seq:&#x000A; *    reader.node_type -&gt; type&#x000A; *&#x000A; * Get the node type of the current node. Reference: &#x000A; * http://dotgnu.org/pnetlib-doc/System/Xml/XmlNodeType.html&#x000A; */&#x000A;static VALUE&#x000A;rxml_reader_node_type(VALUE self)&#x000A;{&#x000A;  return INT2FIX(xmlTextReaderNodeType(rxml_text_reader_get(self)));&#x000A;}</pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000306'>
+                <a name='M000306'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>reader.normalization &rarr; value<br /></span>
+                </div>
+                <div class='description'>
+                  <p>
+                  The value indicating whether to normalize white space and attribute values.
+                  Since attribute value and end of line normalizations are a MUST in the <a
+                  href="../XML.html">XML</a> specification only the value true is accepted.
+                  The broken bahaviour of accepting out of range character entities like
+                  &amp;0; is of course not supported either.
+                  </p>
+                  <p>
+                  Return 1 or -1 in case of error.
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000306-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000306-source'>/*&#x000A; * call-seq:&#x000A; *    reader.normalization -&gt; value&#x000A; *&#x000A; * The value indicating whether to normalize white space and attribute values. &#x000A; * Since attribute value and end of line normalizations are a MUST in the XML &#x000A; * specification only the value true is accepted. The broken bahaviour of &#x000A; * accepting out of range character entities like &amp;#0; is of course not &#x000A; * supported either.&#x000A; *&#x000A; * Return 1 or -1 in case of error.&#x000A; */&#x000A;static VALUE&#x000A;rxml_reader_normalization(VALUE self)&#x000A;{&#x000A;  return INT2FIX(xmlTextReaderNormalization(rxml_text_reader_get(self)));&#x000A;}</pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000315'>
+                <a name='M000315'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>reader.prefix &rarr; prefix<br /></span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Get a shorthand reference to the namespace associated with the node.
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000315-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000315-source'>/* &#x000A; * call-seq:&#x000A; *    reader.prefix -&gt; prefix&#x000A; *&#x000A; * Get a shorthand reference to the namespace associated with the node.&#x000A; */&#x000A;static VALUE&#x000A;rxml_reader_prefix(VALUE self)&#x000A;{&#x000A;  return CSTR2RVAL(xmlTextReaderConstPrefix(rxml_text_reader_get(self)));&#x000A;}</pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000317'>
+                <a name='M000317'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>reader.quote_char &rarr; char<br /></span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Get the quotation mark character used to enclose the value of an attribute,
+                  as an integer value (and -1 in case of error).
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000317-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000317-source'>/*&#x000A; * call-seq:&#x000A; *    reader.quote_char -&gt; char&#x000A; *&#x000A; * Get the quotation mark character used to enclose the value of an attribute,&#x000A; * as an integer value (and -1 in case of error).&#x000A; */&#x000A;static VALUE&#x000A;rxml_reader_quote_char(VALUE self)&#x000A;{&#x000A;  return INT2FIX(xmlTextReaderQuoteChar(rxml_text_reader_get(self)));&#x000A;}</pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000297'>
+                <a name='M000297'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>reader.read &rarr; code<br /></span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Move the position of the current instance to the next node in the stream,
+                  exposing its properties.
+                  </p>
+                  <p>
+                  Return 1 if the node was read successfully, 0 if there is no more nodes to
+                  read, or -1 in case of error.
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000297-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000297-source'>/*&#x000A; * call-seq:&#x000A; *    reader.read -&gt; code&#x000A; *&#x000A; * Move the position of the current instance to the next node in the stream, &#x000A; * exposing its properties.&#x000A; *&#x000A; * Return 1 if the node was read successfully, 0 if there is no more nodes to &#x000A; * read, or -1 in case of error.&#x000A; */&#x000A;static VALUE&#x000A;rxml_reader_read(VALUE self)&#x000A;{&#x000A;  return INT2FIX(xmlTextReaderRead(rxml_text_reader_get(self)));&#x000A;}</pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000298'>
+                <a name='M000298'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>reader.read_attribute_value &rarr; code<br /></span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Parse an attribute value into one or more Text and EntityReference nodes.
+                  </p>
+                  <p>
+                  Return 1 in case of success, 0 if the reader was not positionned on an
+                  attribute node or all the attribute values have been read, or -1 in case of
+                  error.
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000298-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000298-source'>/*&#x000A; * call-seq:&#x000A; *    reader.read_attribute_value -&gt; code&#x000A; *&#x000A; * Parse an attribute value into one or more Text and EntityReference nodes.&#x000A; *&#x000A; * Return 1 in case of success, 0 if the reader was not positionned on an &#x000A; * attribute node or all the attribute values have been read, or -1 in case of &#x000A; * error.&#x000A; */&#x000A;static VALUE&#x000A;rxml_reader_read_attr_value(VALUE self)&#x000A;{&#x000A;  return INT2FIX(xmlTextReaderReadAttributeValue(rxml_text_reader_get(self)));&#x000A;}</pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000299'>
+                <a name='M000299'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>reader.read_inner_xml &rarr; data<br /></span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Read the contents of the current node, including child nodes and markup.
+                  </p>
+                  <p>
+                  Return a string containing the <a href="../XML.html">XML</a> content, or
+                  nil if the current node is neither an element nor attribute, or has no
+                  child nodes.
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000299-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000299-source'>/*&#x000A; * call-seq:&#x000A; *    reader.read_inner_xml -&gt; data&#x000A; *&#x000A; * Read the contents of the current node, including child nodes and markup.&#x000A; *&#x000A; * Return a string containing the XML content, or nil if the current node is &#x000A; * neither an element nor attribute, or has no child nodes. &#x000A; */&#x000A;static VALUE&#x000A;rxml_reader_read_inner_xml(VALUE self)&#x000A;{&#x000A;  return CSTR2RVAL2(xmlTextReaderReadInnerXml(rxml_text_reader_get(self)));&#x000A;}</pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000300'>
+                <a name='M000300'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>reader.read_outer_xml &rarr; data<br /></span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Read the contents of the current node, including child nodes and markup.
+                  </p>
+                  <p>
+                  Return a string containing the <a href="../XML.html">XML</a> content, or
+                  nil if the current node is neither an element nor attribute, or has no
+                  child nodes.
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000300-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000300-source'>/*&#x000A; * call-seq:&#x000A; *    reader.read_outer_xml -&gt; data&#x000A; *&#x000A; * Read the contents of the current node, including child nodes and markup.&#x000A; *&#x000A; * Return a string containing the XML content, or nil if the current node is &#x000A; * neither an element nor attribute, or has no child nodes. &#x000A; */&#x000A;static VALUE&#x000A;rxml_reader_read_outer_xml(VALUE self)&#x000A;{&#x000A;  return CSTR2RVAL2(xmlTextReaderReadOuterXml(rxml_text_reader_get(self)));&#x000A;}</pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000301'>
+                <a name='M000301'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>reader.read_state &rarr; state<br /></span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Get the read state of the reader.
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000301-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000301-source'>/*&#x000A; * call-seq:&#x000A; *    reader.read_state -&gt; state&#x000A; *&#x000A; * Get the read state of the reader.&#x000A; */&#x000A;static VALUE&#x000A;rxml_reader_read_state(VALUE self)&#x000A;{&#x000A;  return INT2FIX(xmlTextReaderReadState(rxml_text_reader_get(self)));&#x000A;}</pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000302'>
+                <a name='M000302'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>reader.read_string &rarr; string<br /></span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Read the contents of an element or a text node as a string.
+                  </p>
+                  <p>
+                  Return a string containing the contents of the Element or Text node, or nil
+                  if the reader is positioned on any other type of node.
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000302-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000302-source'>/*&#x000A; * call-seq:&#x000A; *    reader.read_string -&gt; string&#x000A; *&#x000A; * Read the contents of an element or a text node as a string.&#x000A; *&#x000A; * Return a string containing the contents of the Element or Text node, or nil &#x000A; * if the reader is positioned on any other type of node.&#x000A; */&#x000A;static VALUE&#x000A;rxml_reader_read_string(VALUE self)&#x000A;{&#x000A;  return CSTR2RVAL2(xmlTextReaderReadString(rxml_text_reader_get(self)));&#x000A;}</pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000303'>
+                <a name='M000303'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>reader.relax_ng_validate(rng) &rarr; code<br /></span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Use <a href="RelaxNG.html">RelaxNG</a> to validate the document as it is
+                  processed. Activation is only possible before the first read. If
+                  <tt>rng</tt> is nil, the <a href="RelaxNG.html">RelaxNG</a> validation is
+                  desactivated.
+                  </p>
+                  <p>
+                  Return 0 in case the <a href="RelaxNG.html">RelaxNG</a> validation could be
+                  (des)activated and -1 in case of error.
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000303-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000303-source'>/*&#x000A; * call-seq:&#x000A; *    reader.relax_ng_validate(rng) -&gt; code&#x000A; *&#x000A; * Use RelaxNG to validate the document as it is processed. Activation is only &#x000A; * possible before the first read. If +rng+ is nil, the RelaxNG validation is&#x000A; * desactivated.&#x000A; *&#x000A; * Return 0 in case the RelaxNG validation could be (des)activated and -1 in &#x000A; * case of error.&#x000A; */ &#x000A;static VALUE&#x000A;rxml_reader_relax_ng_validate(VALUE self, VALUE rng)&#x000A;{&#x000A;  return INT2FIX(xmlTextReaderRelaxNGValidate(rxml_text_reader_get(self), NIL_P(rng) ? NULL : RVAL2CSTR(rng)));&#x000A;}</pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000332'>
+                <a name='M000332'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>reset_error_handler</span>
+                  <span class='arguments'>()</span>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000332-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000332-source'>   <span class="ruby-comment cmt"># File lib/libxml/reader.rb, line 4</span>&#x000A;4:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">reset_error_handler</span>&#x000A;5:         <span class="ruby-identifier">warn</span>(<span class="ruby-value str">'reset_error_handler is deprecated.  Use Error.reset_handler instead'</span>)&#x000A;6:         <span class="ruby-constant">Error</span>.<span class="ruby-identifier">reset_handler</span>&#x000A;7:       <span class="ruby-keyword kw">end</span></pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000304'>
+                <a name='M000304'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>reader.schema_validate(schema) &rarr; code<br /></span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Use W3C XSD schema to validate the document as it is processed. Activation
+                  is only possible before the first read. If <tt>schema</tt> is nil, then <a
+                  href="../XML.html">XML</a> <a href="Schema.html">Schema</a> validation is
+                  desactivated.
+                  </p>
+                  <p>
+                  Return 0 in case the schemas validation could be (de)activated and -1 in
+                  case of error.
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000304-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000304-source'>/*&#x000A; * call-seq:&#x000A; *    reader.schema_validate(schema) -&gt; code&#x000A; * &#x000A; * Use W3C XSD schema to validate the document as it is processed. Activation &#x000A; * is only possible before the first read. If +schema+ is nil, then XML Schema&#x000A; * validation is desactivated.&#x000A; *&#x000A; * Return 0 in case the schemas validation could be (de)activated and -1 in &#x000A; * case of error.&#x000A; */&#x000A;static VALUE&#x000A;rxml_reader_schema_validate(VALUE self, VALUE xsd)&#x000A;{&#x000A;  return INT2FIX(xmlTextReaderSchemaValidate(rxml_text_reader_get(self), NIL_P(xsd) ? NULL : RVAL2CSTR(xsd)));&#x000A;}</pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000333'>
+                <a name='M000333'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>set_error_handler</span>
+                  <span class='arguments'>(&amp;block)</span>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000333-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000333-source'>    <span class="ruby-comment cmt"># File lib/libxml/reader.rb, line 9</span>&#x000A; 9:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">set_error_handler</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)&#x000A;10:         <span class="ruby-identifier">warn</span>(<span class="ruby-value str">'set_error_handler is deprecated.  Use Error.set_handler instead'</span>)&#x000A;11:         <span class="ruby-constant">Error</span>.<span class="ruby-identifier">set_handler</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)&#x000A;12:       <span class="ruby-keyword kw">end</span></pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000318'>
+                <a name='M000318'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>reader.standalone &rarr; code<br /></span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Determine the standalone status of the document being read.
+                  </p>
+                  <p>
+                  Return 1 if the document was declared to be standalone, 0 if it was
+                  declared to be not standalone, or -1 if the document did not specify its
+                  standalone status or in case of error.
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000318-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000318-source'>/*&#x000A; * call-seq:&#x000A; *    reader.standalone -&gt; code&#x000A; *&#x000A; * Determine the standalone status of the document being read.&#x000A; *&#x000A; * Return 1 if the document was declared to be standalone, 0 if it was &#x000A; * declared to be not standalone, or -1 if the document did not specify its &#x000A; * standalone status or in case of error.&#x000A; */&#x000A;static VALUE&#x000A;rxml_reader_standalone(VALUE self)&#x000A;{&#x000A;  return INT2FIX(xmlTextReaderStandalone(rxml_text_reader_get(self)));&#x000A;}</pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000331'>
+                <a name='M000331'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>reader.valid? &rarr; bool<br /></span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Retrieve the validity status from the parser context.
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000331-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000331-source'>/*&#x000A; * call-seq:&#x000A; *    reader.valid? -&gt; bool&#x000A; *&#x000A; * Retrieve the validity status from the parser context.&#x000A; */&#x000A;static VALUE&#x000A;rxml_reader_valid(VALUE self)&#x000A;{&#x000A;  return xmlTextReaderIsValid(rxml_text_reader_get(self)) ? Qtrue : Qfalse;&#x000A;}</pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000322'>
+                <a name='M000322'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>reader.value &rarr; text<br /></span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Provide the text value of the node if present.
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000322-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000322-source'>/*&#x000A; * call-seq:&#x000A; *    reader.value -&gt; text&#x000A; *&#x000A; * Provide the text value of the node if present.&#x000A; */&#x000A;static VALUE&#x000A;rxml_reader_value(VALUE self)&#x000A;{&#x000A;  return CSTR2RVAL(xmlTextReaderConstValue(rxml_text_reader_get(self)));&#x000A;}</pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000313'>
+                <a name='M000313'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>reader.xml_lang &rarr; value<br /></span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Get the xml:lang scope within which the node resides.
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000313-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000313-source'>/*&#x000A; * call-seq:&#x000A; *    reader.xml_lang -&gt; value&#x000A; *&#x000A; * Get the xml:lang scope within which the node resides.&#x000A; */&#x000A;static VALUE&#x000A;rxml_reader_xml_lang(VALUE self)&#x000A;{&#x000A;  return CSTR2RVAL(xmlTextReaderConstXmlLang(rxml_text_reader_get(self)));&#x000A;}</pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000314'>
+                <a name='M000314'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>reader.xml_version &rarr; version<br /></span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Determine the <a href="../XML.html">XML</a> version of the document being
+                  read.
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000314-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000314-source'>/*&#x000A; * call-seq:&#x000A; *    reader.xml_version -&gt; version&#x000A; *&#x000A; * Determine the XML version of the document being read.&#x000A; */&#x000A;static VALUE&#x000A;rxml_reader_xml_version(VALUE self)&#x000A;{&#x000A;  return CSTR2RVAL(xmlTextReaderConstXmlVersion(rxml_text_reader_get(self)));&#x000A;}</pre>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id='footer-push'></div>
+    </div>
+    <div id='footer'>
+      <a href="http://github.com/mislav/hanna"><strong>Hanna</strong> RDoc template</a>
+      hand-crafted by
+      <strong><a href="http://mislav.caboo.se/">Mislav</a></strong>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,140 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang='en'>
+  <head>
+    <title>Class: LibXML::XML::Schema [LibXML]</title>
+    <meta content='text/html; charset=utf-8' http-equiv='Content-Type'>
+    <link href='../../.././rdoc-style.css' media='screen' rel='stylesheet' type='text/css'>
+    <script type='text/javascript'>
+      //<![CDATA[
+        function popupCode(url) {
+          window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+        }
+        
+        function toggleCode(id) {
+          var code = document.getElementById(id)
+        
+          code.style.display = code.style.display != 'block' ? 'block' : 'none'
+          return true
+        }
+        
+        // Make codeblocks hidden by default
+        document.writeln('<' + 'style type="text/css">.method .source pre { display: none }<\/style>')
+      //]]>
+    </script>
+  </head>
+  <body class='page'>
+    <div class='class' id='wrapper'>
+      <div class='header'>
+        <h1 class='name'>
+          <span class='type'>Class</span>
+          LibXML::XML::Schema
+        </h1>
+        <ol class='paths'>
+          <li>
+            <a href="../../../files/ext/libxml/ruby_xml_attr_c.html">ext/libxml/ruby_xml_attr.c</a>
+          </li>
+        </ol>
+        <div class='parent'>
+          Parent:
+          <strong>Object</strong>
+        </div>
+      </div>
+      <div id='content'>
+        <div id='text'>
+          <div id='description'>
+            <p>
+            The <a href="Schema.html">XML::Schema</a> class is used to prepare <a
+            href="../XML.html">XML</a> Schemas for validation of xml documents.
+            </p>
+            <p>
+            Schemas can be created from <a href="../XML.html">XML</a> documents,
+            strings or URIs using the corresponding methods (new for URIs).
+            </p>
+            <p>
+            Once a schema is prepared, an <a href="../XML.html">XML</a> document can be
+            validated by the <a
+            href="Document.html#M000423">XML::Document#validate_schema</a> method
+            providing the <a href="Schema.html">XML::Schema</a> object as parameter.
+            The method return true if the document validates, false otherwise.
+            </p>
+            <p>
+            Basic usage:
+            </p>
+            <pre>&#x000A; # parse schema as xml document&#x000A; schema_document = XML::Document.file('schema.rng')&#x000A;&#x000A; # prepare schema for validation&#x000A; schema = XML::Schema.document(schema_document)&#x000A;&#x000A; # parse xml document to be validated&#x000A; instance = XML::Document.file('instance.xml')&#x000A;&#x000A; # validate&#x000A; instance.validate_schema(schema)</pre>
+          </div>
+          <div id='method-list'>
+            <h2>Methods</h2>
+            <h3>public class</h3>
+            <ol>
+              <li><a href="#M000242"></a></li>
+              <li><a href="#M000241"></a></li>
+              <li><a href="#M000240"></a></li>
+            </ol>
+          </div>
+          <div id='section'>
+            <div id='methods'>
+              <h3>Public class methods</h3>
+              <div class='public-class method' id='method-M000242'>
+                <a name='M000242'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>XML::Schema.document(document) &rarr; schema<br /></span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Create a new schema from the specified document.
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000242-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000242-source'>/*&#x000A; * call-seq:&#x000A; *    XML::Schema.document(document) -&gt; schema&#x000A; * &#x000A; * Create a new schema from the specified document.&#x000A; */&#x000A;static VALUE&#x000A;rxml_schema_init_from_document(VALUE class, VALUE document) </pre>
+                </div>
+              </div>
+              <div class='public-class method' id='method-M000241'>
+                <a name='M000241'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>XML::Schema.string("schema_data") &rarr; "value"<br /></span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Create a new schema using the specified string.
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000241-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000241-source'>/*&#x000A; * call-seq:&#x000A; *    XML::Schema.string(&quot;schema_data&quot;) -&gt; &quot;value&quot;&#x000A; * &#x000A; * Create a new schema using the specified string.&#x000A; */&#x000A;static VALUE&#x000A;rxml_schema_init_from_string(VALUE self, VALUE schema_str) </pre>
+                </div>
+              </div>
+              <div class='public-class method' id='method-M000240'>
+                <a name='M000240'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>XML::Schema.initialize(schema_uri) &rarr; schema<br /></span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Create a new schema from the specified URI.
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000240-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000240-source'>/*&#x000A; * call-seq:&#x000A; *    XML::Schema.initialize(schema_uri) -&gt; schema&#x000A; * &#x000A; * Create a new schema from the specified URI.&#x000A; */&#x000A;static VALUE&#x000A;rxml_schema_init_from_uri(VALUE class, VALUE uri) </pre>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id='footer-push'></div>
+    </div>
+    <div id='footer'>
+      <a href="http://github.com/mislav/hanna"><strong>Hanna</strong> RDoc template</a>
+      hand-crafted by
+      <strong><a href="http://mislav.caboo.se/">Mislav</a></strong>
+    </div>
+  </body>
+</html>

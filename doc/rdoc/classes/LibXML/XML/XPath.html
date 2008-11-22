@@ -1,0 +1,215 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang='en'>
+  <head>
+    <title>Module: LibXML::XML::XPath [LibXML]</title>
+    <meta content='text/html; charset=utf-8' http-equiv='Content-Type'>
+    <link href='../../.././rdoc-style.css' media='screen' rel='stylesheet' type='text/css'>
+    <script type='text/javascript'>
+      //<![CDATA[
+        function popupCode(url) {
+          window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+        }
+        
+        function toggleCode(id) {
+          var code = document.getElementById(id)
+        
+          code.style.display = code.style.display != 'block' ? 'block' : 'none'
+          return true
+        }
+        
+        // Make codeblocks hidden by default
+        document.writeln('<' + 'style type="text/css">.method .source pre { display: none }<\/style>')
+      //]]>
+    </script>
+  </head>
+  <body class='page'>
+    <div class='class' id='wrapper'>
+      <div class='header'>
+        <h1 class='name'>
+          <span class='type'>Module</span>
+          LibXML::XML::XPath
+        </h1>
+        <ol class='paths'>
+          <li>
+            <a href="../../../files/ext/libxml/ruby_xml_attr_c.html">ext/libxml/ruby_xml_attr.c</a>
+          </li>
+          <li class='other'>
+            <a href="../../../files/lib/libxml/xpath_object_rb.html">lib/libxml/xpath_object.rb</a>
+          </li>
+          <li>
+            <a class='show' href='#' onclick='this.parentNode.parentNode.className += " expanded"; this.parentNode.removeChild(this); return false'>show all</a>
+          </li>
+        </ol>
+      </div>
+      <div id='content'>
+        <div id='text'>
+          <div id='description'>
+            <p>
+            The <a href="XPath.html">XML::XPath</a> module is used to query <a
+            href="../XML.html">XML</a> documents. It is usually accessed via the <a
+            href="Document.html#M000430">XML::Document#find</a> or <a
+            href="Node.html#M000191">XML::Node#find</a> methods. For example:
+            </p>
+            <pre>&#x000A; document.find('/foo', namespaces) -&gt; XML::XPath::Object</pre>
+            <p>
+            The optional namespaces parameter can be a string, array or hash table.
+            </p>
+            <pre>&#x000A;  document.find('/foo', 'xlink:http://www.w3.org/1999/xlink')&#x000A;  document.find('/foo', ['xlink:http://www.w3.org/1999/xlink',&#x000A;                         'xi:http://www.w3.org/2001/XInclude')&#x000A;  document.find('/foo', 'xlink' =&gt; 'http://www.w3.org/1999/xlink',&#x000A;                            'xi' =&gt; 'http://www.w3.org/2001/XInclude')</pre>
+            <h3>Working With Default Namespaces</h3>
+            <p>
+            Finding namespaced elements and attributes can be tricky. Lets work through
+            an example of a document with a default namespace:
+            </p>
+            <pre>&#x000A; &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;&#x000A; &lt;feed xmlns=&quot;http://www.w3.org/2005/Atom&quot;&gt;&#x000A;   &lt;title type=&quot;text&quot;&gt;Phil Bogle's Contacts&lt;/title&gt;&#x000A; &lt;/feed&gt;</pre>
+            <p>
+            To find nodes you must define the atom namespace for libxml. One way to do
+            this is:
+            </p>
+            <pre>&#x000A;  node = doc.find('atom:title', 'atom:http://www.w3.org/2005/Atom')</pre>
+            <p>
+            Alternatively, you can register the default namespace like this:
+            </p>
+            <pre>&#x000A;  doc.root.register_default_namespace('atom')&#x000A;  node = doc.find('atom:title')</pre>
+            <h3>More Complex Namespace Examples</h3>
+            <p>
+            Lets work through some more complex examples using the following xml
+            document:
+            </p>
+            <pre>&#x000A; &lt;soap:Envelope xmlns:soap=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;&gt;&#x000A;   &lt;soap:Body&gt;&#x000A;     &lt;getManufacturerNamesResponse xmlns=&quot;http://services.somewhere.com&quot;&gt;&#x000A;       &lt;IDAndNameList xmlns=&quot;http://services.somewhere.com&quot;&gt;&#x000A;         &lt;ns1:IdAndName xmlns:ns1=&quot;http://domain.somewhere.com&quot;/&gt;&#x000A;       &lt;/IDAndNameList&gt;&#x000A;     &lt;/getManufacturerNamesResponse&gt;&#x000A; &lt;/soap:Envelope&gt;&#x000A;&#x000A; # Since the soap namespace is defined on the root&#x000A; # node we can directly use it.&#x000A; doc.find('/soap:Envelope')&#x000A;&#x000A; # Since the ns1 namespace is not defined on the root node&#x000A; # we have to first register it with the xpath engine.&#x000A; doc.find('//ns1:IdAndName',&#x000A;          'ns1:http://domain.somewhere.com')&#x000A;&#x000A; # Since the getManufacturerNamesResponse element uses a default&#x000A; # namespace we first have to give it a prefix and register&#x000A; # it with the xpath engine.&#x000A; doc.find('//ns:getManufacturerNamesResponse',&#x000A;           'ns:http://services.somewhere.com')&#x000A;&#x000A; # Here is an example showing a complex namespace aware&#x000A; # xpath expression.&#x000A; doc.find('/soap:Envelope/soap:Body/ns0:getManufacturerNamesResponse/ns0:IDAndNameList/ns1:IdAndName',&#x000A;          ['ns0:http://services.somewhere.com', 'ns1:http://domain.somewhere.com'])</pre>
+          </div>
+          <div id='section'>
+            <div id='class-list'>
+              <h3>Classes and Modules</h3>
+              Class <a href="XPath/Context.html" class="link">LibXML::XML::XPath::Context</a><br />
+              Class <a href="XPath/Expression.html" class="link">LibXML::XML::XPath::Expression</a><br />
+              Class <a href="XPath/Object.html" class="link">LibXML::XML::XPath::Object</a><br />
+            </div>
+            <div id='constants-list'>
+              <h3 class='section-bar'>Constants</h3>
+              <div class='name-list'>
+                <table summary='Constants'>
+                  <tr class='top-aligned-row context-row'>
+                    <td class='context-item-name'>
+                      UNDEFINED
+                    </td>
+                    <td>
+                      =
+                    </td>
+                    <td class='context-item-value'>
+                      INT2NUM(XPATH_UNDEFINED)
+                    </td>
+                  </tr>
+                  <tr class='top-aligned-row context-row'>
+                    <td class='context-item-name'>
+                      NODESET
+                    </td>
+                    <td>
+                      =
+                    </td>
+                    <td class='context-item-value'>
+                      INT2NUM(XPATH_NODESET)
+                    </td>
+                  </tr>
+                  <tr class='top-aligned-row context-row'>
+                    <td class='context-item-name'>
+                      BOOLEAN
+                    </td>
+                    <td>
+                      =
+                    </td>
+                    <td class='context-item-value'>
+                      INT2NUM(XPATH_BOOLEAN)
+                    </td>
+                  </tr>
+                  <tr class='top-aligned-row context-row'>
+                    <td class='context-item-name'>
+                      NUMBER
+                    </td>
+                    <td>
+                      =
+                    </td>
+                    <td class='context-item-value'>
+                      INT2NUM(XPATH_NUMBER)
+                    </td>
+                  </tr>
+                  <tr class='top-aligned-row context-row'>
+                    <td class='context-item-name'>
+                      STRING
+                    </td>
+                    <td>
+                      =
+                    </td>
+                    <td class='context-item-value'>
+                      INT2NUM(XPATH_STRING)
+                    </td>
+                  </tr>
+                  <tr class='top-aligned-row context-row'>
+                    <td class='context-item-name'>
+                      POINT
+                    </td>
+                    <td>
+                      =
+                    </td>
+                    <td class='context-item-value'>
+                      INT2NUM(XPATH_POINT)
+                    </td>
+                  </tr>
+                  <tr class='top-aligned-row context-row'>
+                    <td class='context-item-name'>
+                      RANGE
+                    </td>
+                    <td>
+                      =
+                    </td>
+                    <td class='context-item-value'>
+                      INT2NUM(XPATH_RANGE)
+                    </td>
+                  </tr>
+                  <tr class='top-aligned-row context-row'>
+                    <td class='context-item-name'>
+                      LOCATIONSET
+                    </td>
+                    <td>
+                      =
+                    </td>
+                    <td class='context-item-value'>
+                      INT2NUM(XPATH_LOCATIONSET)
+                    </td>
+                  </tr>
+                  <tr class='top-aligned-row context-row'>
+                    <td class='context-item-name'>
+                      USERS
+                    </td>
+                    <td>
+                      =
+                    </td>
+                    <td class='context-item-value'>
+                      INT2NUM(XPATH_USERS)
+                    </td>
+                  </tr>
+                  <tr class='top-aligned-row context-row'>
+                    <td class='context-item-name'>
+                      XSLT_TREE
+                    </td>
+                    <td>
+                      =
+                    </td>
+                    <td class='context-item-value'>
+                      INT2NUM(XPATH_XSLT_TREE)
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id='footer-push'></div>
+    </div>
+    <div id='footer'>
+      <a href="http://github.com/mislav/hanna"><strong>Hanna</strong> RDoc template</a>
+      hand-crafted by
+      <strong><a href="http://mislav.caboo.se/">Mislav</a></strong>
+    </div>
+  </body>
+</html>

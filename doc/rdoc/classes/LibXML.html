@@ -1,0 +1,178 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang='en'>
+  <head>
+    <title>Module: LibXML [LibXML]</title>
+    <meta content='text/html; charset=utf-8' http-equiv='Content-Type'>
+    <link href='.././rdoc-style.css' media='screen' rel='stylesheet' type='text/css'>
+    <script type='text/javascript'>
+      //<![CDATA[
+        function popupCode(url) {
+          window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+        }
+        
+        function toggleCode(id) {
+          var code = document.getElementById(id)
+        
+          code.style.display = code.style.display != 'block' ? 'block' : 'none'
+          return true
+        }
+        
+        // Make codeblocks hidden by default
+        document.writeln('<' + 'style type="text/css">.method .source pre { display: none }<\/style>')
+      //]]>
+    </script>
+  </head>
+  <body class='page'>
+    <div class='class' id='wrapper'>
+      <div class='header'>
+        <h1 class='name'>
+          <span class='type'>Module</span>
+          LibXML
+        </h1>
+        <ol class='paths'>
+          <li>
+            <a href="../files/ext/libxml/libxml_c.html">ext/libxml/libxml.c</a>
+          </li>
+          <li class='other'>
+            <a href="../files/ext/libxml/ruby_xml_attr_c.html">ext/libxml/ruby_xml_attr.c</a>
+          </li>
+          <li class='other'>
+            <a href="../files/ext/libxml/ruby_xml_attributes_c.html">ext/libxml/ruby_xml_attributes.c</a>
+          </li>
+          <li class='other'>
+            <a href="../files/ext/libxml/ruby_xml_document_c.html">ext/libxml/ruby_xml_document.c</a>
+          </li>
+          <li class='other'>
+            <a href="../files/ext/libxml/ruby_xml_dtd_c.html">ext/libxml/ruby_xml_dtd.c</a>
+          </li>
+          <li class='other'>
+            <a href="../files/ext/libxml/ruby_xml_error_c.html">ext/libxml/ruby_xml_error.c</a>
+          </li>
+          <li class='other'>
+            <a href="../files/ext/libxml/ruby_xml_html_parser_c.html">ext/libxml/ruby_xml_html_parser.c</a>
+          </li>
+          <li class='other'>
+            <a href="../files/ext/libxml/ruby_xml_input_c.html">ext/libxml/ruby_xml_input.c</a>
+          </li>
+          <li class='other'>
+            <a href="../files/ext/libxml/ruby_xml_input_cbg_c.html">ext/libxml/ruby_xml_input_cbg.c</a>
+          </li>
+          <li class='other'>
+            <a href="../files/ext/libxml/ruby_xml_node_c.html">ext/libxml/ruby_xml_node.c</a>
+          </li>
+          <li class='other'>
+            <a href="../files/ext/libxml/ruby_xml_ns_c.html">ext/libxml/ruby_xml_ns.c</a>
+          </li>
+          <li class='other'>
+            <a href="../files/ext/libxml/ruby_xml_parser_c.html">ext/libxml/ruby_xml_parser.c</a>
+          </li>
+          <li class='other'>
+            <a href="../files/ext/libxml/ruby_xml_reader_c.html">ext/libxml/ruby_xml_reader.c</a>
+          </li>
+          <li class='other'>
+            <a href="../files/ext/libxml/ruby_xml_relaxng_c.html">ext/libxml/ruby_xml_relaxng.c</a>
+          </li>
+          <li class='other'>
+            <a href="../files/ext/libxml/ruby_xml_sax_parser_c.html">ext/libxml/ruby_xml_sax_parser.c</a>
+          </li>
+          <li class='other'>
+            <a href="../files/ext/libxml/ruby_xml_schema_c.html">ext/libxml/ruby_xml_schema.c</a>
+          </li>
+          <li class='other'>
+            <a href="../files/ext/libxml/ruby_xml_state_c.html">ext/libxml/ruby_xml_state.c</a>
+          </li>
+          <li class='other'>
+            <a href="../files/ext/libxml/ruby_xml_xinclude_c.html">ext/libxml/ruby_xml_xinclude.c</a>
+          </li>
+          <li class='other'>
+            <a href="../files/ext/libxml/ruby_xml_xpath_c.html">ext/libxml/ruby_xml_xpath.c</a>
+          </li>
+          <li class='other'>
+            <a href="../files/ext/libxml/ruby_xml_xpointer_c.html">ext/libxml/ruby_xml_xpointer.c</a>
+          </li>
+          <li class='other'>
+            <a href="../files/lib/libxml/attr_rb.html">lib/libxml/attr.rb</a>
+          </li>
+          <li class='other'>
+            <a href="../files/lib/libxml/attributes_rb.html">lib/libxml/attributes.rb</a>
+          </li>
+          <li class='other'>
+            <a href="../files/lib/libxml/document_rb.html">lib/libxml/document.rb</a>
+          </li>
+          <li class='other'>
+            <a href="../files/lib/libxml/error_rb.html">lib/libxml/error.rb</a>
+          </li>
+          <li class='other'>
+            <a href="../files/lib/libxml/hpricot_rb.html">lib/libxml/hpricot.rb</a>
+          </li>
+          <li class='other'>
+            <a href="../files/lib/libxml/html_parser_rb.html">lib/libxml/html_parser.rb</a>
+          </li>
+          <li class='other'>
+            <a href="../files/lib/libxml/node_rb.html">lib/libxml/node.rb</a>
+          </li>
+          <li class='other'>
+            <a href="../files/lib/libxml/parser_rb.html">lib/libxml/parser.rb</a>
+          </li>
+          <li class='other'>
+            <a href="../files/lib/libxml/parser_context_rb.html">lib/libxml/parser_context.rb</a>
+          </li>
+          <li class='other'>
+            <a href="../files/lib/libxml/parser_options_rb.html">lib/libxml/parser_options.rb</a>
+          </li>
+          <li class='other'>
+            <a href="../files/lib/libxml/properties_rb.html">lib/libxml/properties.rb</a>
+          </li>
+          <li class='other'>
+            <a href="../files/lib/libxml/reader_rb.html">lib/libxml/reader.rb</a>
+          </li>
+          <li class='other'>
+            <a href="../files/lib/libxml/sax_callbacks_rb.html">lib/libxml/sax_callbacks.rb</a>
+          </li>
+          <li class='other'>
+            <a href="../files/lib/libxml/sax_parser_rb.html">lib/libxml/sax_parser.rb</a>
+          </li>
+          <li class='other'>
+            <a href="../files/lib/libxml/tree_rb.html">lib/libxml/tree.rb</a>
+          </li>
+          <li class='other'>
+            <a href="../files/lib/libxml/xpath_object_rb.html">lib/libxml/xpath_object.rb</a>
+          </li>
+          <li>
+            <a class='show' href='#' onclick='this.parentNode.parentNode.className += " expanded"; this.parentNode.removeChild(this); return false'>show all</a>
+          </li>
+        </ol>
+      </div>
+      <div id='content'>
+        <div id='text'>
+          <div id='description'>
+            <pre>&#x000A;   call-seq:&#x000A;      XML.memory_used -&gt; num_bytes&#x000A;&#x000A;   Perform a parser memory dump (requires memory debugging&#x000A;   support in libxml).&#x000A;   # ---&#x000A;&#x000A;   call-seq:&#x000A;      attr.value = &quot;value&quot;&#x000A;&#x000A;   Sets the value of this attribute.&#x000A;   # ---&#x000A;&#x000A;   call-seq:&#x000A;      attributes.first -&gt; XML::Attr&#x000A;&#x000A;   Returns the first attribute.&#x000A;&#x000A;    doc.root.attributes.first&#x000A;   # ---&#x000A;&#x000A;   call-seq:&#x000A;      document.reader -&gt; reader&#x000A;&#x000A;   Create a XML::Reader from the document. This is a shortcut to&#x000A;   XML::Reader.walker().&#x000A;   # ---&#x000A;   Note that buffer is freed by xmlParserInputBufferPush  # ---&#x000A;   Wrap error up as Ruby object and send it off to ruby   # ---&#x000A;&#x000A;   call-seq:&#x000A;      parser.parse -&gt; document&#x000A;&#x000A;   Parse the input XML and create an XML::Document with&#x000A;   it's content. If an error occurs, XML::Parser::ParseError&#x000A;   is thrown.&#x000A;   # ---&#x000A;&#x000A;   call-seq:&#x000A;      input.io = IO&#x000A;&#x000A;   Set the IO instance this parser works with.&#x000A;   # ---&#x000A;&#x000A;   call-seq:&#x000A;      input.io = IO&#x000A;&#x000A;   Set the IO instance this parser works with.&#x000A;   # ---&#x000A;&#x000A;   call-seq:&#x000A;      remove_scheme&#x000A;&#x000A;   No documentation available.&#x000A;   # ---&#x000A;&#x000A;   call-seq:&#x000A;      XML::Node.new_text(content = nil) -&gt; XML::Node&#x000A;&#x000A;   Create a new text node, optionally setting&#x000A;   the node's content.&#x000A;&#x000A;   # ---&#x000A;&#x000A;   call-seq:&#x000A;      ns.prefix? -&gt; (true|false)&#x000A;&#x000A;   Determine whether this namespace has a prefix.&#x000A;   # ---&#x000A;  else if (rb_ivar_get(input, DOCUMENT_ATTR) != Qnil)&#x000A;    ctxt = rxml_parser_parse_document(input);  # ---&#x000A;   Rdoc needs to know.   # ---&#x000A;&#x000A;   Document-class: LibXML::XML::RelaxNG&#x000A;&#x000A;   The XML::RelaxNG class is used to prepare RelaxNG schemas for validation&#x000A;   of xml documents.&#x000A;&#x000A;   Schemas can be created from XML documents, strings or URIs using the&#x000A;   corresponding methods (new for URIs).&#x000A;&#x000A;   Once a schema is prepared, an XML document can be validated by the&#x000A;   XML::Document#validate_relaxng method providing the XML::RelaxNG object&#x000A;   as parameter. The method will raise an exception if the document is&#x000A;   not valid.&#x000A;&#x000A;   Basic Usage:&#x000A;&#x000A;    # parse schema as xml document&#x000A;    relaxng_document = XML::Document.file('schema.rng')&#x000A;&#x000A;    # prepare schema for validation&#x000A;    relaxng_schema = XML::RelaxNG.document(relaxng_document)&#x000A;&#x000A;    # parse xml document to be validated&#x000A;    instance = XML::Document.file('instance.xml')&#x000A;&#x000A;    # validate&#x000A;    instance.validate_relaxng(relaxng_schema)&#x000A;   # ---&#x000A;&#x000A;   call-seq:&#x000A;      parser.parse -&gt; (true|false)&#x000A;&#x000A;   Parse the input XML, generating callbacks to the object&#x000A;   registered via the +callbacks+ attributesibute.&#x000A;   # ---&#x000A;&#x000A;   Document-class: LibXML::XML::Schema&#x000A;&#x000A;   The XML::Schema class is used to prepare XML Schemas for validation of xml&#x000A;   documents.&#x000A;&#x000A;   Schemas can be created from XML documents, strings or URIs using the&#x000A;   corresponding methods (new for URIs).&#x000A;&#x000A;   Once a schema is prepared, an XML document can be validated by the&#x000A;   XML::Document#validate_schema method providing the XML::Schema object&#x000A;   as parameter. The method return true if the document validates, false&#x000A;   otherwise.&#x000A;&#x000A;   Basic usage:&#x000A;&#x000A;    # parse schema as xml document&#x000A;    schema_document = XML::Document.file('schema.rng')&#x000A;&#x000A;    # prepare schema for validation&#x000A;    schema = XML::Schema.document(schema_document)&#x000A;&#x000A;    # parse xml document to be validated&#x000A;    instance = XML::Document.file('instance.xml')&#x000A;&#x000A;    # validate&#x000A;    instance.validate_schema(schema)&#x000A;   # ---&#x000A;   $Id$   # ---&#x000A;&#x000A;  Document-class: LibXML::XML::XInclude&#x000A;&#x000A;  The ruby bindings do not currently expose libxml's&#x000A;  XInclude fuctionality.&#x000A;  # ---&#x000A;&#x000A;   Document-class: LibXML::XML::XPath&#x000A;&#x000A;   The XML::XPath module is used to query XML documents. It is&#x000A;   usually accessed via the XML::Document#find or&#x000A;   XML::Node#find methods.  For example:&#x000A;&#x000A;    document.find('/foo', namespaces) -&gt; XML::XPath::Object&#x000A;&#x000A;   The optional namespaces parameter can be a string, array or&#x000A;   hash table.&#x000A;&#x000A;     document.find('/foo', 'xlink:http://www.w3.org/1999/xlink')&#x000A;     document.find('/foo', ['xlink:http://www.w3.org/1999/xlink',&#x000A;                            'xi:http://www.w3.org/2001/XInclude')&#x000A;     document.find('/foo', 'xlink' =&gt; 'http://www.w3.org/1999/xlink',&#x000A;                               'xi' =&gt; 'http://www.w3.org/2001/XInclude')&#x000A;&#x000A;   === Working With Default Namespaces&#x000A;&#x000A;   Finding namespaced elements and attributes can be tricky.&#x000A;   Lets work through an example of a document with a default&#x000A;   namespace:&#x000A;&#x000A;    &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;&#x000A;    &lt;feed xmlns=&quot;http://www.w3.org/2005/Atom&quot;&gt;&#x000A;      &lt;title type=&quot;text&quot;&gt;Phil Bogle's Contacts&lt;/title&gt;&#x000A;    &lt;/feed&gt;&#x000A;&#x000A;   To find nodes you must define the atom namespace for&#x000A;   libxml.  One way to do this is:&#x000A;&#x000A;     node = doc.find('atom:title', 'atom:http://www.w3.org/2005/Atom')&#x000A;&#x000A;   Alternatively, you can register the default namespace like this:&#x000A;&#x000A;     doc.root.register_default_namespace('atom')&#x000A;     node = doc.find('atom:title')&#x000A;&#x000A;   === More Complex Namespace Examples&#x000A;&#x000A;   Lets work through some more complex examples using the&#x000A;   following xml document:&#x000A;&#x000A;    &lt;soap:Envelope xmlns:soap=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;&gt;&#x000A;      &lt;soap:Body&gt;&#x000A;        &lt;getManufacturerNamesResponse xmlns=&quot;http://services.somewhere.com&quot;&gt;&#x000A;          &lt;IDAndNameList xmlns=&quot;http://services.somewhere.com&quot;&gt;&#x000A;            &lt;ns1:IdAndName xmlns:ns1=&quot;http://domain.somewhere.com&quot;/&gt;&#x000A;          &lt;/IDAndNameList&gt;&#x000A;        &lt;/getManufacturerNamesResponse&gt;&#x000A;    &lt;/soap:Envelope&gt;&#x000A;&#x000A;    # Since the soap namespace is defined on the root&#x000A;    # node we can directly use it.&#x000A;    doc.find('/soap:Envelope')&#x000A;&#x000A;    # Since the ns1 namespace is not defined on the root node&#x000A;    # we have to first register it with the xpath engine.&#x000A;    doc.find('//ns1:IdAndName',&#x000A;             'ns1:http://domain.somewhere.com')&#x000A;&#x000A;    # Since the getManufacturerNamesResponse element uses a default&#x000A;    # namespace we first have to give it a prefix and register&#x000A;    # it with the xpath engine.&#x000A;    doc.find('//ns:getManufacturerNamesResponse',&#x000A;              'ns:http://services.somewhere.com')&#x000A;&#x000A;    # Here is an example showing a complex namespace aware&#x000A;    # xpath expression.&#x000A;    doc.find('/soap:Envelope/soap:Body/ns0:getManufacturerNamesResponse/ns0:IDAndNameList/ns1:IdAndName',&#x000A;             ['ns0:http://services.somewhere.com', 'ns1:http://domain.somewhere.com'])&#x000A;   # ---&#x000A;&#x000A;   call-seq:&#x000A;      XML::XPointer.range(start_node, end_node) -&gt; xpath&#x000A;&#x000A;   Create an xpath representing the range between the supplied&#x000A;   start and end node.&#x000A;   # ---</pre>
+            <p>
+            # $Id: libxml.rb 374 2008-07-11 04:51:41Z cfis $ # Please see the <a
+            href="../files/LICENSE.html">LICENSE</a> file for copyright and
+            distribution information # &#8212; # $Id: libxml.rb 374 2008-07-11
+            04:51:41Z cfis $ # Please see the <a
+            href="../files/LICENSE.html">LICENSE</a> file for copyright and
+            distribution information # &#8212; # $Id: libxml.rb 374 2008-07-11
+            04:51:41Z cfis $ # &#8212; # $Id: libxml.rb 374 2008-07-11 04:51:41Z cfis $
+            # &#8212; # This is for backwards compatibility and is DEPRECATED # &#8212;
+            # This is for backwards compatibility and is DEPRECATED
+            </p>
+          </div>
+          <div id='section'>
+            <div id='class-list'>
+              <h3>Classes and Modules</h3>
+              Module <a href="LibXML/XML.html" class="link">LibXML::XML</a><br />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id='footer-push'></div>
+    </div>
+    <div id='footer'>
+      <a href="http://github.com/mislav/hanna"><strong>Hanna</strong> RDoc template</a>
+      hand-crafted by
+      <strong><a href="http://mislav.caboo.se/">Mislav</a></strong>
+    </div>
+  </body>
+</html>

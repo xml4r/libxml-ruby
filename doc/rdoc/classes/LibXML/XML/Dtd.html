@@ -1,0 +1,105 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang='en'>
+  <head>
+    <title>Class: LibXML::XML::Dtd [LibXML]</title>
+    <meta content='text/html; charset=utf-8' http-equiv='Content-Type'>
+    <link href='../../.././rdoc-style.css' media='screen' rel='stylesheet' type='text/css'>
+    <script type='text/javascript'>
+      //<![CDATA[
+        function popupCode(url) {
+          window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+        }
+        
+        function toggleCode(id) {
+          var code = document.getElementById(id)
+        
+          code.style.display = code.style.display != 'block' ? 'block' : 'none'
+          return true
+        }
+        
+        // Make codeblocks hidden by default
+        document.writeln('<' + 'style type="text/css">.method .source pre { display: none }<\/style>')
+      //]]>
+    </script>
+  </head>
+  <body class='page'>
+    <div class='class' id='wrapper'>
+      <div class='header'>
+        <h1 class='name'>
+          <span class='type'>Class</span>
+          LibXML::XML::Dtd
+        </h1>
+        <ol class='paths'>
+          <li>
+            <a href="../../../files/ext/libxml/ruby_xml_attr_c.html">ext/libxml/ruby_xml_attr.c</a>
+          </li>
+        </ol>
+        <div class='parent'>
+          Parent:
+          <strong>Object</strong>
+        </div>
+      </div>
+      <div id='content'>
+        <div id='text'>
+          <div id='description'>
+            <p>
+            The <a href="Dtd.html">XML::Dtd</a> class is used to prepare DTD&#8217;s
+            for validation of xml documents.
+            </p>
+            <p>
+            DTDs can be created from a string or a pair of public and system
+            identifiers. Once a <a href="Dtd.html">Dtd</a> object is instantiated, an
+            <a href="../XML.html">XML</a> document can be validated by the <a
+            href="Document.html#M000422">XML::Document#validate</a> method providing
+            the <a href="Dtd.html">XML::Dtd</a> object as parameeter. The method will
+            raise an exception if the document is not valid.
+            </p>
+            <p>
+            Basic usage:
+            </p>
+            <pre>&#x000A; # parse DTD&#x000A; dtd = XML::Dtd.new(&lt;&lt;EOF)&#x000A; &lt;!ELEMENT root (item*) &gt;&#x000A; &lt;!ELEMENT item (#PCDATA) &gt;&#x000A; EOF&#x000A;&#x000A; # parse xml document to be validated&#x000A; instance = XML::Document.file('instance.xml')&#x000A;&#x000A; # validate&#x000A; instance.validate(dtd)</pre>
+          </div>
+          <div id='method-list'>
+            <h2>Methods</h2>
+            <h3>public class</h3>
+            <ol>
+              <li><a href="#M000392"></a></li>
+            </ol>
+          </div>
+          <div id='section'>
+            <div id='methods'>
+              <h3>Public class methods</h3>
+              <div class='public-class method' id='method-M000392'>
+                <a name='M000392'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>
+                    XML::Dtd.new("public system") &rarr; dtd<br />
+                    XML::Dtd.new("public", "system") &rarr; dtd<br />
+                  </span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Create a new <a href="Dtd.html">Dtd</a> from the specified public and
+                  system identifiers.
+                  </p>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000392-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000392-source'>/*&#x000A; * call-seq:&#x000A; *    XML::Dtd.new(&quot;public system&quot;) -&gt; dtd&#x000A; *    XML::Dtd.new(&quot;public&quot;, &quot;system&quot;) -&gt; dtd&#x000A; * &#x000A; * Create a new Dtd from the specified public and system&#x000A; * identifiers.&#x000A; */&#x000A;static VALUE&#x000A;rxml_dtd_initialize(int argc, VALUE *argv, VALUE self) </pre>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id='footer-push'></div>
+    </div>
+    <div id='footer'>
+      <a href="http://github.com/mislav/hanna"><strong>Hanna</strong> RDoc template</a>
+      hand-crafted by
+      <strong><a href="http://mislav.caboo.se/">Mislav</a></strong>
+    </div>
+  </body>
+</html>

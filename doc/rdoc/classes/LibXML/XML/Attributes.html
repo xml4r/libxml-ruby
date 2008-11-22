@@ -1,0 +1,275 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang='en'>
+  <head>
+    <title>Class: LibXML::XML::Attributes [LibXML]</title>
+    <meta content='text/html; charset=utf-8' http-equiv='Content-Type'>
+    <link href='../../.././rdoc-style.css' media='screen' rel='stylesheet' type='text/css'>
+    <script type='text/javascript'>
+      //<![CDATA[
+        function popupCode(url) {
+          window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+        }
+        
+        function toggleCode(id) {
+          var code = document.getElementById(id)
+        
+          code.style.display = code.style.display != 'block' ? 'block' : 'none'
+          return true
+        }
+        
+        // Make codeblocks hidden by default
+        document.writeln('<' + 'style type="text/css">.method .source pre { display: none }<\/style>')
+      //]]>
+    </script>
+  </head>
+  <body class='page'>
+    <div class='class' id='wrapper'>
+      <div class='header'>
+        <h1 class='name'>
+          <span class='type'>Class</span>
+          LibXML::XML::Attributes
+        </h1>
+        <ol class='paths'>
+          <li>
+            <a href="../../../files/ext/libxml/ruby_xml_attr_c.html">ext/libxml/ruby_xml_attr.c</a>
+          </li>
+          <li class='other'>
+            <a href="../../../files/lib/libxml/attributes_rb.html">lib/libxml/attributes.rb</a>
+          </li>
+          <li>
+            <a class='show' href='#' onclick='this.parentNode.parentNode.className += " expanded"; this.parentNode.removeChild(this); return false'>show all</a>
+          </li>
+        </ol>
+        <div class='parent'>
+          Parent:
+          <strong>Object</strong>
+        </div>
+      </div>
+      <div id='content'>
+        <div id='text'>
+          <div id='description'>
+            <p>
+            Provides access to an element&#8217;s attributes (<a
+            href="Attr.html">XML::Attr</a>).
+            </p>
+            <p>
+            Basic Usage:
+            </p>
+            <pre>&#x000A; require 'xml'&#x000A;&#x000A; doc = XML::Document.new(&lt;some_file&gt;)&#x000A; attributes = doc.root.attributes&#x000A;&#x000A; attributes.each do |attribute|&#x000A;   ..&#x000A; end&#x000A;&#x000A; attributes['foo'] = 'bar'&#x000A; attribute = attributes.get_attribute['foo']&#x000A; attribute.value == 'foo'</pre>
+            <p>
+            To access a namespaced attribute:
+            </p>
+            <pre>&#x000A; XLINK_URI = 'http://www.w3.org/1999/xlink'&#x000A;&#x000A; attribute = attributes.get_attribute_ns(XLINK_URI, 'title')&#x000A; attribute.value = 'My title'</pre>
+          </div>
+          <div id='method-list'>
+            <h2>Methods</h2>
+            <h3>public instance</h3>
+            <ol>
+              <li><a href="#M000253"></a></li>
+              <li><a href="#M000254"></a></li>
+              <li><a href="#M000255"></a></li>
+              <li><a href="#M000257"></a></li>
+              <li><a href="#M000251"></a></li>
+              <li><a href="#M000252"></a></li>
+              <li><a href="#M000256"></a></li>
+              <li><a href="#M000250"></a></li>
+              <li><a href="#M000258">to_h</a></li>
+            </ol>
+          </div>
+          <div id='context'>
+            <div id='includes'>
+              <h2>Included modules</h2>
+              <ol>
+                <li>Enumerable</li>
+              </ol>
+            </div>
+          </div>
+          <div id='section'>
+            <div id='methods'>
+              <h3>Public instance methods</h3>
+              <div class='public-instance method' id='method-M000253'>
+                <a name='M000253'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>attributes["name"] &rarr; String<br /></span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Fetches an attribute value. If you want to access the underlying Attribute
+                  itself use get_attribute.
+                  </p>
+                  <p>
+                  name: The name of the attribute, not including any namespaces.
+                  </p>
+                  <pre>&#x000A; doc.root.attributes['att'] -&gt; 'some value'</pre>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000253-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000253-source'>/*&#x000A; * call-seq:&#x000A; *    attributes[&quot;name&quot;] -&gt; String&#x000A; * &#x000A; * Fetches an attribute value. If you want to access the underlying&#x000A; * Attribute itself use get_attribute.  &#x000A; *&#x000A; * name: The name of the attribute, not including any namespaces.&#x000A; *  &#x000A; *  doc.root.attributes['att'] -&gt; 'some value'&#x000A; */&#x000A;VALUE&#x000A;rxml_attributes_attribute_get(VALUE self, VALUE name) </pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000254'>
+                <a name='M000254'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>attributes["name"] = "value"<br /></span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Sets an attribute value. If you want to get the Attribute itself, use
+                  get_attribute.
+                  </p>
+                  <p>
+                  name: The name of the attribute, not including any namespaces. value: The
+                  new value of the namespace.
+                  </p>
+                  <pre>&#x000A; doc.root.attributes['att'] = 'some value'</pre>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000254-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000254-source'>/*&#x000A; * call-seq:&#x000A; *    attributes[&quot;name&quot;] = &quot;value&quot;&#x000A; * &#x000A; * Sets an attribute value. If you want to get the Attribute itself,&#x000A; * use get_attribute.  &#x000A; *&#x000A; * name: The name of the attribute, not including any namespaces.&#x000A; * value: The new value of the namespace.&#x000A; *  &#x000A; *  doc.root.attributes['att'] = 'some value'&#x000A; */&#x000A;VALUE&#x000A;rxml_attributes_attribute_set(VALUE self, VALUE name, VALUE value) </pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000255'>
+                <a name='M000255'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>attributes.each {block} &rarr; XML::Attr<br /></span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Iterates over each attribute.
+                  </p>
+                  <pre>&#x000A; doc.root.attributes.each {|attribute| puts attribute.name}</pre>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000255-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000255-source'>/*&#x000A; * call-seq:&#x000A; *    attributes.each {block} -&gt; XML::Attr&#x000A; * &#x000A; * Iterates over each attribute.&#x000A; *  &#x000A; *  doc.root.attributes.each {|attribute| puts attribute.name}&#x000A; */&#x000A;static VALUE&#x000A;rxml_attributes_each(VALUE self) </pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000257'>
+                <a name='M000257'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>attributes.first &rarr; XML::Attr<br /></span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Returns the first attribute.
+                  </p>
+                  <pre>&#x000A; doc.root.attributes.first</pre>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000257-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000257-source'>/*&#x000A; * call-seq:&#x000A; *    attributes.first -&gt; XML::Attr&#x000A; * &#x000A; * Returns the first attribute.&#x000A; *&#x000A; *  doc.root.attributes.first&#x000A; */&#x000A;static VALUE&#x000A;rxml_attributes_first(VALUE self) </pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000251'>
+                <a name='M000251'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>attributes.get_attribute("name") &rarr; XML::Attr<br /></span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Returns the specified attribute.
+                  </p>
+                  <p>
+                  name: The name of the attribute, not including a namespace.
+                  </p>
+                  <pre>&#x000A; doc.root.attributes.get_attribute(&quot;foo&quot;)</pre>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000251-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000251-source'>/*&#x000A; * call-seq:&#x000A; *    attributes.get_attribute(&quot;name&quot;) -&gt; XML::Attr&#x000A; * &#x000A; * Returns the specified attribute.&#x000A; * &#x000A; * name: The name of the attribute, not including a namespace.&#x000A; *&#x000A; *  doc.root.attributes.get_attribute(&quot;foo&quot;)&#x000A; */&#x000A;static VALUE&#x000A;rxml_attributes_get_attribute(VALUE self, VALUE name) </pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000252'>
+                <a name='M000252'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>attributes.get_attribute_ns("namespace", "name") &rarr; XML::Attr<br /></span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Returns the specified attribute.
+                  </p>
+                  <p>
+                  namespace: The URI of the attribute&#8217;s namespace. name: The name of
+                  the attribute, not including a namespace.
+                  </p>
+                  <pre>&#x000A; doc.root.attributes.get_attribute_ns('http://www.w3.org/1999/xlink', 'href')</pre>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000252-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000252-source'>/*&#x000A; * call-seq:&#x000A; *    attributes.get_attribute_ns(&quot;namespace&quot;, &quot;name&quot;) -&gt; XML::Attr&#x000A; * &#x000A; * Returns the specified attribute.&#x000A; * &#x000A; * namespace: The URI of the attribute's namespace.&#x000A; * name: The name of the attribute, not including a namespace.&#x000A; *&#x000A; *  doc.root.attributes.get_attribute_ns('http://www.w3.org/1999/xlink', 'href')&#x000A; */&#x000A;static VALUE&#x000A;rxml_attributes_get_attribute_ns(VALUE self, VALUE namespace, VALUE name) </pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000256'>
+                <a name='M000256'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>attributes.length &rarr; Integer<br /></span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Returns the number of attributes.
+                  </p>
+                  <pre>&#x000A; doc.root.attributes.length</pre>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000256-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000256-source'>/*&#x000A; * call-seq:&#x000A; *    attributes.length -&gt; Integer&#x000A; * &#x000A; * Returns the number of attributes.&#x000A; *&#x000A; *  doc.root.attributes.length&#x000A; */&#x000A;static VALUE&#x000A;rxml_attributes_length(VALUE self) </pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000250'>
+                <a name='M000250'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>attributes.node &rarr; XML::Node<br /></span>
+                </div>
+                <div class='description'>
+                  <p>
+                  Return the node that owns this attributes list.
+                  </p>
+                  <pre>&#x000A; doc.root.attributes.node == doc.root</pre>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000250-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000250-source'>/*&#x000A; * call-seq:&#x000A; *   attributes.node -&gt; XML::Node&#x000A; * &#x000A; * Return the node that owns this attributes list.&#x000A; *&#x000A; *  doc.root.attributes.node == doc.root&#x000A; */&#x000A;VALUE&#x000A;rxml_attributes_node_get(VALUE self) </pre>
+                </div>
+              </div>
+              <div class='public-instance method' id='method-M000258'>
+                <a name='M000258'>      </a>
+                <div class='synopsis'>
+                  <span class='name'>to_h</span>
+                  <span class='arguments'>()</span>
+                </div>
+                <div class='source'>
+                  <a class='source-toggle' href='#' onclick="toggleCode('M000258-source'); return false">
+                    [show source]
+                  </a>
+                  <pre id='M000258-source'>    <span class="ruby-comment cmt"># File lib/libxml/attributes.rb, line 7</span>&#x000A; 7:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">to_h</span>&#x000A; 8:         <span class="ruby-identifier">inject</span>({}) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">hash</span>, <span class="ruby-identifier">attr</span><span class="ruby-operator">|</span>&#x000A; 9:           <span class="ruby-identifier">hash</span>[<span class="ruby-identifier">attr</span>.<span class="ruby-identifier">name</span>] = <span class="ruby-identifier">attr</span>.<span class="ruby-identifier">value</span>&#x000A;10:           <span class="ruby-identifier">hash</span>&#x000A;11:         <span class="ruby-keyword kw">end</span>&#x000A;12:       <span class="ruby-keyword kw">end</span></pre>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id='footer-push'></div>
+    </div>
+    <div id='footer'>
+      <a href="http://github.com/mislav/hanna"><strong>Hanna</strong> RDoc template</a>
+      hand-crafted by
+      <strong><a href="http://mislav.caboo.se/">Mislav</a></strong>
+    </div>
+  </body>
+</html>
