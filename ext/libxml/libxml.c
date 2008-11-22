@@ -857,7 +857,6 @@ Init_libxml_ruby(void) {
   rb_define_module_function(mXML, "memory_used", rxml_memory_used, 0);
 
   /* Now initialize all the other modules */
-  ruby_init_xml_encoding();      
   ruby_init_xml_error();
   ruby_init_xml_input();
   ruby_init_state();

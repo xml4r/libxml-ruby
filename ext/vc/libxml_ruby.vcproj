@@ -206,10 +206,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\libxml\ruby_xml_encoding.c"
-				>
-			</File>
-			<File
 				RelativePath="..\libxml\ruby_xml_error.c"
 				>
 			</File>
@@ -309,10 +305,6 @@
 			</File>
 			<File
 				RelativePath="..\libxml\ruby_xml_dtd.h"
-				>
-			</File>
-			<File
-				RelativePath="..\libxml\ruby_xml_encoding.h"
 				>
 			</File>
 			<File

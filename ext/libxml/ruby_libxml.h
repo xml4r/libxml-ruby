@@ -40,8 +40,6 @@
 #include <libxml/xpointer.h>
 #endif
 
-
-#include "ruby_xml_encoding.h"
 #include "ruby_xml_error.h"
 #include "ruby_xml_input.h"
 #include "ruby_xml_state.h"

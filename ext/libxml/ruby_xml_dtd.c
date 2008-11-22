@@ -80,6 +80,7 @@ rxml_dtd_initialize(int argc, VALUE *argv, VALUE self) {
     rb_scan_args(argc, argv, "10", &dtd_string);
     Check_Type(dtd_string, T_STRING);
 
+    /* Note that buffer is freed by xmlParserInputBufferPush*/
     buffer = xmlAllocParserInputBuffer(enc);
     new_string = xmlStrdup((xmlChar*)StringValuePtr(dtd_string));
     xmlParserInputBufferPush(buffer, xmlStrlen(new_string), (const char*)new_string);
@@ -89,7 +90,6 @@ rxml_dtd_initialize(int argc, VALUE *argv, VALUE self) {
     if (xdtd == NULL)
       rxml_raise(&xmlLastError);
 
-    xmlFreeParserInputBuffer(buffer); 
     xmlFree(new_string);
 
     DATA_PTR(self) = xdtd;
@@ -111,7 +111,7 @@ rxml_dtd_initialize(int argc, VALUE *argv, VALUE self) {
 void
 ruby_init_xml_dtd() {
   cXMLDtd = rb_define_class_under(mXML, "Dtd", rb_cObject);
-  rb_define_alloc_func(cXMLNS, rxml_dtd_alloc);
+  rb_define_alloc_func(cXMLDtd, rxml_dtd_alloc);
   rb_define_method(cXMLDtd, "initialize", rxml_dtd_initialize, -1);
 }
 

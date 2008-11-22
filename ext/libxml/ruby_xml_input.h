@@ -15,5 +15,6 @@ extern ID IO_ATTR;
 
 void ruby_init_xml_input();
 int rxml_read_callback(void *context, char *buffer, int len);
+VALUE rxml_input_encoding_to_s(VALUE self, VALUE encoding);
 
 #endif

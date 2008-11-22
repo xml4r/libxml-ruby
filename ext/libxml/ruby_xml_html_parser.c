@@ -36,7 +36,7 @@ htmlParserCtxtPtr
 rxml_html_parser_file_ctxt(VALUE input) {
   VALUE file = rb_ivar_get(input, FILE_ATTR);
   VALUE encoding = rb_ivar_get(input, ENCODING_ATTR);
-  VALUE encodingStr = rxml_encoding_to_s(Qnil, encoding);
+  VALUE encodingStr = rxml_input_encoding_to_s(Qnil, encoding);
 
   return htmlCreateFileParserCtxt(StringValuePtr(file), StringValuePtr(encodingStr));
 }
