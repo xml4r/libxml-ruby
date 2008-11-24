@@ -1,5 +1,12 @@
 (See log/ChangeLog for more detailed changes derived directly from source control.)
 
+== 0.9.4 / 2008-11-22 Charlie Savage
+
+* Update HTML parser so that it can read files, strings and io
+  streams.
+
+* Additional C code cleanup.
+
 == 0.9.3 / 2008-11-22 Charlie Savage
 
 * Fixed segementation fault caused by documents being freed
