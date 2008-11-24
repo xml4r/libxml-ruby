@@ -5,6 +5,8 @@
 * Update HTML parser so that it can read files, strings and io
   streams.
 
+* Update HTML parser to support user specified encodings.
+
 * Additional C code cleanup.
 
 == 0.9.3 / 2008-11-22 Charlie Savage
