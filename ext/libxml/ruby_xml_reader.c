@@ -355,7 +355,7 @@ static VALUE
 rxml_reader_read_inner_xml(VALUE self)
 {
   const xmlChar *result = xmlTextReaderReadInnerXml(rxml_text_reader_get(self));
-  return rb_str_new2(result);
+  return (result == NULL ? Qnil : rb_str_new2(result));
 }
 
 /*
@@ -371,7 +371,7 @@ static VALUE
 rxml_reader_read_outer_xml(VALUE self)
 {
   const xmlChar *result = xmlTextReaderReadOuterXml(rxml_text_reader_get(self));
-  return rb_str_new2(result);
+  return (result == NULL ? Qnil : rb_str_new2(result));
 }
 
 /*
@@ -399,7 +399,7 @@ static VALUE
 rxml_reader_read_string(VALUE self)
 {
   const xmlChar *result = xmlTextReaderReadString(rxml_text_reader_get(self));
-  return rb_str_new2(result);
+  return (result == NULL ? Qnil : rb_str_new2(result));
 }
 
 /*
@@ -451,7 +451,7 @@ static VALUE
 rxml_reader_name(VALUE self)
 {
   const xmlChar *result = xmlTextReaderConstName(rxml_text_reader_get(self));
-  return rb_str_new2(result);
+  return (result == NULL ? Qnil : rb_str_new2(result));
 }
 
 /* 
@@ -464,7 +464,7 @@ static VALUE
 rxml_reader_local_name(VALUE self)
 {
   const xmlChar *result = xmlTextReaderConstLocalName(rxml_text_reader_get(self));
-  return rb_str_new2(result);
+  return (result == NULL ? Qnil : rb_str_new2(result));
 }
 
 /*
@@ -489,7 +489,7 @@ static VALUE
 rxml_reader_encoding(VALUE self)
 {
   const xmlChar *result = xmlTextReaderConstEncoding(rxml_text_reader_get(self));
-  return rb_str_new2(result);
+  return (result == NULL ? Qnil : rb_str_new2(result));
 }
 
 /*
@@ -502,7 +502,7 @@ static VALUE
 rxml_reader_base_uri(VALUE self)
 {
   const xmlChar *result = xmlTextReaderConstBaseUri(rxml_text_reader_get(self));
-  return rb_str_new2(result);
+  return (result == NULL ? Qnil : rb_str_new2(result));
 }
 
 /*
@@ -515,7 +515,7 @@ static VALUE
 rxml_reader_namespace_uri(VALUE self)
 {
   const xmlChar *result = xmlTextReaderConstNamespaceUri(rxml_text_reader_get(self));
-  return rb_str_new2(result);
+  return (result == NULL ? Qnil : rb_str_new2(result));
 }
 
 /*
@@ -528,7 +528,7 @@ static VALUE
 rxml_reader_value(VALUE self)
 {
   const xmlChar *result = xmlTextReaderConstValue(rxml_text_reader_get(self));
-  return rb_str_new2(result);
+  return (result == NULL ? Qnil : rb_str_new2(result));
 }
 
 /* 
@@ -541,7 +541,7 @@ static VALUE
 rxml_reader_prefix(VALUE self)
 {
   const xmlChar *result = xmlTextReaderConstPrefix(rxml_text_reader_get(self));
-  return rb_str_new2(result);
+  return (result == NULL ? Qnil : rb_str_new2(result));
 }
 
 /*
@@ -595,7 +595,7 @@ static VALUE
 rxml_reader_xml_lang(VALUE self)
 {
   const xmlChar *result = xmlTextReaderConstXmlLang(rxml_text_reader_get(self));
-  return rb_str_new2(result);
+  return (result == NULL ? Qnil : rb_str_new2(result));
 }
 
 /*
@@ -608,7 +608,7 @@ static VALUE
 rxml_reader_xml_version(VALUE self)
 {
   const xmlChar *result = xmlTextReaderConstXmlVersion(rxml_text_reader_get(self));
-  return rb_str_new2(result);
+  return (result == NULL ? Qnil : rb_str_new2(result));
 }
 
 /*
@@ -657,7 +657,7 @@ rxml_reader_attribute(VALUE self, VALUE key)
   else {
     attr = xmlTextReaderGetAttribute(reader, (const xmlChar *)StringValueCStr(key));
   }
-  return rb_str_new2(attr);
+  return (attr == NULL ? Qnil : rb_str_new2(attr));
 }
 
 /*
@@ -671,7 +671,7 @@ static VALUE
 rxml_reader_lookup_namespace(VALUE self, VALUE prefix)
 {
   const xmlChar *result = xmlTextReaderLookupNamespace(rxml_text_reader_get(self), (const xmlChar *)StringValueCStr(prefix));
-  return rb_str_new2(result);
+  return (result == NULL ? Qnil : rb_str_new2(result));
 }
 
 /*
