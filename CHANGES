@@ -1,6 +1,6 @@
 (See log/ChangeLog for more detailed changes derived directly from source control.)
 
-== 0.9.4 / 2008-11-22 Charlie Savage
+== 0.9.4 / 2008-11-24 Charlie Savage
 
 * Update HTML parser so that it can read files, strings and io
   streams.
