@@ -15,7 +15,7 @@ class HtmlParserTest < Test::Unit::TestCase
   end
 
   def html_file
-    File.expand_path(File.join(File.dirname(__FILE__), 'model/rubynet.xml'))
+    File.expand_path(File.join(File.dirname(__FILE__), 'model/ruby-lang.html'))
   end
 
   # -----  Sources  ------
