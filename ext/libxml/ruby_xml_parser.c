@@ -81,7 +81,7 @@ rxml_parser_io_ctxt(VALUE input) {
 
   return xmlCreateIOParserCtxt(NULL, NULL,
 	 			                      (xmlInputReadCallback) rxml_read_callback,
-				                      NULL, io, xmlEncoding);
+				                      NULL, (void *)io, xmlEncoding);
 }
 
 

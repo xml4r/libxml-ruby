@@ -40,22 +40,6 @@ VALUE cXMLReader;
  *
  * For a more in depth tutorial, albeit in C, see http://xmlsoft.org/xmlreader.html.*/
 
-#define CSTR2RVAL(x)  (x == NULL ? Qnil : rb_str_new2((const char *)x))
-#define RVAL2CSTR(x)  (StringValueCStr(x))
-
-static inline VALUE 
-__rb_str_new_and_free(xmlChar *x)
-{
-  if (x != NULL) {
-    VALUE v = rb_str_new2((const char *)x);
-    xmlFree(x);
-    return v;
-  }
-  return Qnil;
-}
-
-#define CSTR2RVAL2(x) (__rb_str_new_and_free(x))
-
 
 static VALUE
 rxml_reader_new(VALUE class, xmlTextReaderPtr reader)
@@ -66,9 +50,9 @@ rxml_reader_new(VALUE class, xmlTextReaderPtr reader)
 static xmlTextReaderPtr
 rxml_text_reader_get(VALUE obj)
 {
-  xmlTextReaderPtr ptr;
-  Data_Get_Struct(obj, xmlTextReader, ptr);
-  return ptr;
+  xmlTextReaderPtr xreader;
+  Data_Get_Struct(obj, xmlTextReader, xreader);
+  return xreader;
 }
 
 /*
@@ -81,20 +65,24 @@ rxml_text_reader_get(VALUE obj)
 static VALUE
 rxml_reader_new_file(int argc, VALUE *argv, VALUE self)
 {
-  xmlTextReaderPtr reader;
-  VALUE path, encoding, options;
+  xmlTextReaderPtr xreader;
+  VALUE rpath, rencoding, roptions;
+  char *xpath;
+  char *xencoding;
+  int options;
 
-  rb_scan_args(argc, argv, "12", &path, &encoding, &options);
+  rb_scan_args(argc, argv, "12", &rpath, &rencoding, &roptions);
 
-  reader = xmlReaderForFile(RVAL2CSTR(path), 
-                            NIL_P(encoding) ? NULL : RVAL2CSTR(encoding), 
-                            NIL_P(options) ? 0 : FIX2INT(options));
-  if (reader == NULL)
-    rb_raise(rb_eRuntimeError, 
-             "cannot create text reader for given XML file at path '%s'", 
-             RVAL2CSTR(path));
+  xpath = NIL_P(rpath) ? NULL : StringValueCStr(rpath);
+  xencoding = NIL_P(rencoding) ? NULL : StringValueCStr(rencoding);
+  options = NIL_P(roptions) ? 0 : FIX2INT(roptions);
 
-  return rxml_reader_new(self, reader); 
+  xreader = xmlReaderForFile(xpath, xencoding, options);
+
+  if (xreader == NULL)
+    rxml_raise(&xmlLastError);
+
+  return rxml_reader_new(self, xreader); 
 }
 
 /*
@@ -107,19 +95,26 @@ rxml_reader_new_file(int argc, VALUE *argv, VALUE self)
 static VALUE
 rxml_reader_new_io(int argc, VALUE *argv, VALUE self)
 {
-  xmlTextReaderPtr reader;
-  VALUE io, url, encoding, options;
+  xmlTextReaderPtr xreader;
+  VALUE rio, rurl, rencoding, roptions;
+  char *xurl;
+  char *xencoding;
+  int options;
 
-  rb_scan_args(argc, argv, "13", &io, &url, &encoding, &options);
+  rb_scan_args(argc, argv, "13", &rio, &rurl, &rencoding, &roptions);
 
-  reader = xmlReaderForIO((xmlInputReadCallback) rxml_read_callback, NULL, io,
-                          NIL_P(url) ? NULL : RVAL2CSTR(url),
-                          NIL_P(encoding) ? NULL : RVAL2CSTR(encoding), 
-                          NIL_P(options) ? 0 : FIX2INT(options));
-  if (reader == NULL)
-    rb_raise(rb_eRuntimeError, "cannot create text reader for given stream");
+  xurl = NIL_P(rurl) ? NULL : StringValueCStr(rurl);
+  xencoding = NIL_P(rencoding) ? NULL : StringValueCStr(rencoding);
+  options = NIL_P(roptions) ? 0 : FIX2INT(roptions);
 
-  return rxml_reader_new(self, reader); 
+  xreader = xmlReaderForIO((xmlInputReadCallback) rxml_read_callback, NULL,
+                           (void *)rio,
+                           xurl, xencoding, options);
+
+  if (xreader == NULL)
+    rxml_raise(&xmlLastError);
+
+  return rxml_reader_new(self, xreader); 
 }
 
 /*
@@ -133,15 +128,16 @@ VALUE
 rxml_reader_new_walker(VALUE self, VALUE doc)
 {
   xmlDocPtr xdoc;
-  xmlTextReaderPtr reader;
+  xmlTextReaderPtr xreader;
   
   Data_Get_Struct(doc, xmlDoc, xdoc);
  
-  reader = xmlReaderWalker(xdoc);  
-  if (reader == NULL)
-    rb_raise(rb_eRuntimeError, "cannot create text reader for given document");
+  xreader = xmlReaderWalker(xdoc);  
 
-  return rxml_reader_new(self, reader); 
+  if (xreader == NULL)
+    rxml_raise(&xmlLastError);
+
+  return rxml_reader_new(self, xreader); 
 }
 
 /*
@@ -155,22 +151,27 @@ rxml_reader_new_walker(VALUE self, VALUE doc)
 static VALUE
 rxml_reader_new_data(int argc, VALUE *argv, VALUE self)
 {
-  xmlTextReaderPtr reader;
-  VALUE data, url, encoding, options;
-  char *c_data;
+  xmlTextReaderPtr xreader;
+  VALUE rdata, rurl, rencoding, roptions;
+  char *xdata;
+  char *xurl;
+  char *xencoding;
+  int options;
 
-  rb_scan_args(argc, argv, "13", &data, &url, &encoding, &options);
+  rb_scan_args(argc, argv, "13", &rdata, &rurl, &rencoding, &roptions);
 
-  c_data = RVAL2CSTR(data);
-  reader = xmlReaderForMemory(c_data,
-                              strlen(c_data), 
-                              NIL_P(url) ? NULL : RVAL2CSTR(url),
-                              NIL_P(encoding) ? NULL : RVAL2CSTR(encoding), 
-                              NIL_P(options) ? 0 : FIX2INT(options));
-  if (reader == NULL)
-    rb_raise(rb_eRuntimeError, "cannot create text reader for given data");
+  xdata = NIL_P(rdata) ? NULL : StringValueCStr(rdata);
+  xurl = NIL_P(rurl) ? NULL : StringValueCStr(rurl);
+  xencoding = NIL_P(rencoding) ? NULL : StringValueCStr(rencoding);
+  options = NIL_P(roptions) ? 0 : FIX2INT(roptions);
 
-  return rxml_reader_new(self, reader); 
+  xreader = xmlReaderForMemory(xdata, strlen(xdata), 
+                              xurl, xencoding, options);
+
+  if (xreader == NULL)
+    rxml_raise(&xmlLastError);
+
+  return rxml_reader_new(self, xreader); 
 }
 
 /*
@@ -197,16 +198,16 @@ rxml_reader_close(VALUE self)
 static VALUE
 rxml_reader_move_to_attr(VALUE self, VALUE val)
 {
-  xmlTextReaderPtr reader;
+  xmlTextReaderPtr xreader;
   int ret;
 
-  reader = rxml_text_reader_get(self);
+  xreader = rxml_text_reader_get(self);
 
   if (TYPE(val) == T_FIXNUM) {
-    ret = xmlTextReaderMoveToAttributeNo(reader, FIX2INT(val));
+    ret = xmlTextReaderMoveToAttributeNo(xreader, FIX2INT(val));
   }
   else {
-    ret = xmlTextReaderMoveToAttribute(reader, (const xmlChar *)RVAL2CSTR(val));
+    ret = xmlTextReaderMoveToAttribute(xreader, (const xmlChar *)StringValueCStr(val));
   }
 
   return INT2FIX(ret);
@@ -353,7 +354,8 @@ rxml_reader_read_attr_value(VALUE self)
 static VALUE
 rxml_reader_read_inner_xml(VALUE self)
 {
-  return CSTR2RVAL2(xmlTextReaderReadInnerXml(rxml_text_reader_get(self)));
+  const xmlChar *result = xmlTextReaderReadInnerXml(rxml_text_reader_get(self));
+  return rb_str_new2(result);
 }
 
 /*
@@ -368,7 +370,8 @@ rxml_reader_read_inner_xml(VALUE self)
 static VALUE
 rxml_reader_read_outer_xml(VALUE self)
 {
-  return CSTR2RVAL2(xmlTextReaderReadOuterXml(rxml_text_reader_get(self)));
+  const xmlChar *result = xmlTextReaderReadOuterXml(rxml_text_reader_get(self));
+  return rb_str_new2(result);
 }
 
 /*
@@ -395,7 +398,8 @@ rxml_reader_read_state(VALUE self)
 static VALUE
 rxml_reader_read_string(VALUE self)
 {
-  return CSTR2RVAL2(xmlTextReaderReadString(rxml_text_reader_get(self)));
+  const xmlChar *result = xmlTextReaderReadString(rxml_text_reader_get(self));
+  return rb_str_new2(result);
 }
 
 /*
@@ -412,7 +416,8 @@ rxml_reader_read_string(VALUE self)
 static VALUE
 rxml_reader_relax_ng_validate(VALUE self, VALUE rng)
 {
-  return INT2FIX(xmlTextReaderRelaxNGValidate(rxml_text_reader_get(self), NIL_P(rng) ? NULL : RVAL2CSTR(rng)));
+  char *xrng = NIL_P(rng) ? NULL : StringValueCStr(rng);
+  return INT2FIX(xmlTextReaderRelaxNGValidate(rxml_text_reader_get(self), xrng));
 }
 
 #if LIBXML_VERSION >= 20620
@@ -430,7 +435,9 @@ rxml_reader_relax_ng_validate(VALUE self, VALUE rng)
 static VALUE
 rxml_reader_schema_validate(VALUE self, VALUE xsd)
 {
-  return INT2FIX(xmlTextReaderSchemaValidate(rxml_text_reader_get(self), NIL_P(xsd) ? NULL : RVAL2CSTR(xsd)));
+    char *xxsd = NIL_P(xsd) ? NULL : StringValueCStr(xsd);
+    int status = xmlTextReaderSchemaValidate(rxml_text_reader_get(self), xxsd);
+    return INT2FIX(status);
 }
 #endif
 
@@ -443,7 +450,8 @@ rxml_reader_schema_validate(VALUE self, VALUE xsd)
 static VALUE
 rxml_reader_name(VALUE self)
 {
-  return CSTR2RVAL(xmlTextReaderConstName(rxml_text_reader_get(self)));
+  const xmlChar *result = xmlTextReaderConstName(rxml_text_reader_get(self));
+  return rb_str_new2(result);
 }
 
 /* 
@@ -455,7 +463,8 @@ rxml_reader_name(VALUE self)
 static VALUE
 rxml_reader_local_name(VALUE self)
 {
-  return CSTR2RVAL(xmlTextReaderConstLocalName(rxml_text_reader_get(self)));
+  const xmlChar *result = xmlTextReaderConstLocalName(rxml_text_reader_get(self));
+  return rb_str_new2(result);
 }
 
 /*
@@ -479,7 +488,8 @@ rxml_reader_attr_count(VALUE self)
 static VALUE
 rxml_reader_encoding(VALUE self)
 {
-  return CSTR2RVAL(xmlTextReaderConstEncoding(rxml_text_reader_get(self)));
+  const xmlChar *result = xmlTextReaderConstEncoding(rxml_text_reader_get(self));
+  return rb_str_new2(result);
 }
 
 /*
@@ -491,7 +501,8 @@ rxml_reader_encoding(VALUE self)
 static VALUE
 rxml_reader_base_uri(VALUE self)
 {
-  return CSTR2RVAL(xmlTextReaderConstBaseUri(rxml_text_reader_get(self)));
+  const xmlChar *result = xmlTextReaderConstBaseUri(rxml_text_reader_get(self));
+  return rb_str_new2(result);
 }
 
 /*
@@ -503,7 +514,8 @@ rxml_reader_base_uri(VALUE self)
 static VALUE
 rxml_reader_namespace_uri(VALUE self)
 {
-  return CSTR2RVAL(xmlTextReaderConstNamespaceUri(rxml_text_reader_get(self)));
+  const xmlChar *result = xmlTextReaderConstNamespaceUri(rxml_text_reader_get(self));
+  return rb_str_new2(result);
 }
 
 /*
@@ -515,7 +527,8 @@ rxml_reader_namespace_uri(VALUE self)
 static VALUE
 rxml_reader_value(VALUE self)
 {
-  return CSTR2RVAL(xmlTextReaderConstValue(rxml_text_reader_get(self)));
+  const xmlChar *result = xmlTextReaderConstValue(rxml_text_reader_get(self));
+  return rb_str_new2(result);
 }
 
 /* 
@@ -527,7 +540,8 @@ rxml_reader_value(VALUE self)
 static VALUE
 rxml_reader_prefix(VALUE self)
 {
-  return CSTR2RVAL(xmlTextReaderConstPrefix(rxml_text_reader_get(self)));
+  const xmlChar *result = xmlTextReaderConstPrefix(rxml_text_reader_get(self));
+  return rb_str_new2(result);
 }
 
 /*
@@ -580,7 +594,8 @@ rxml_reader_standalone(VALUE self)
 static VALUE
 rxml_reader_xml_lang(VALUE self)
 {
-  return CSTR2RVAL(xmlTextReaderConstXmlLang(rxml_text_reader_get(self)));
+  const xmlChar *result = xmlTextReaderConstXmlLang(rxml_text_reader_get(self));
+  return rb_str_new2(result);
 }
 
 /*
@@ -592,7 +607,8 @@ rxml_reader_xml_lang(VALUE self)
 static VALUE
 rxml_reader_xml_version(VALUE self)
 {
-  return CSTR2RVAL(xmlTextReaderConstXmlVersion(rxml_text_reader_get(self)));
+  const xmlChar *result = xmlTextReaderConstXmlVersion(rxml_text_reader_get(self));
+  return rb_str_new2(result);
 }
 
 /*
@@ -639,9 +655,9 @@ rxml_reader_attribute(VALUE self, VALUE key)
     attr = xmlTextReaderGetAttributeNo(reader, FIX2INT(key));
   }
   else {
-    attr = xmlTextReaderGetAttribute(reader, (const xmlChar *)RVAL2CSTR(key));
+    attr = xmlTextReaderGetAttribute(reader, (const xmlChar *)StringValueCStr(key));
   }
-  return CSTR2RVAL2(attr);
+  return rb_str_new2(attr);
 }
 
 /*
@@ -654,7 +670,8 @@ rxml_reader_attribute(VALUE self, VALUE key)
 static VALUE
 rxml_reader_lookup_namespace(VALUE self, VALUE prefix)
 {
-  return CSTR2RVAL2(xmlTextReaderLookupNamespace(rxml_text_reader_get(self), (const xmlChar *)RVAL2CSTR(prefix)));
+  const xmlChar *result = xmlTextReaderLookupNamespace(rxml_text_reader_get(self), (const xmlChar *)StringValueCStr(prefix));
+  return rb_str_new2(result);
 }
 
 /*

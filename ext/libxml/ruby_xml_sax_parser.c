@@ -79,13 +79,13 @@ rxml_sax_parser_initialize(VALUE self) {
 static int
 rxml_sax_parser_parse_file(VALUE self, VALUE input) {
   VALUE file = rb_ivar_get(input, FILE_ATTR);
-  return xmlSAXUserParseFile(&rxml_sax_hander_struct, self, StringValuePtr(file));
+  return xmlSAXUserParseFile((xmlSAXHandlerPtr)&rxml_sax_hander_struct, (void *)self, StringValuePtr(file));
 }
 
 static int
 rxml_sax_parser_parse_string(VALUE self, VALUE input) {
   VALUE str = rb_ivar_get(input, STRING_ATTR);
-  return xmlSAXUserParseMemory(&rxml_sax_hander_struct, self, StringValuePtr(str), RSTRING_LEN(str));
+  return xmlSAXUserParseMemory((xmlSAXHandlerPtr)&rxml_sax_hander_struct, (void *)self, StringValuePtr(str), RSTRING_LEN(str));
 }
 
 static int
@@ -93,9 +93,9 @@ rxml_sax_parser_parse_io(VALUE self, VALUE input) {
   VALUE io = rb_ivar_get(input, IO_ATTR);
   VALUE encoding = rb_ivar_get(input, ENCODING_ATTR);
   xmlCharEncoding xmlEncoding = NUM2INT(encoding);
-  xmlParserCtxtPtr ctxt = xmlCreateIOParserCtxt(&rxml_sax_hander_struct, self,
+  xmlParserCtxtPtr ctxt = xmlCreateIOParserCtxt((xmlSAXHandlerPtr)&rxml_sax_hander_struct, (void *)self,
 	 			                                        (xmlInputReadCallback) rxml_read_callback,
-				                                         NULL, io, xmlEncoding);
+				                                         NULL, (void *)io, xmlEncoding);
   return xmlParseDocument(ctxt);
 }
 

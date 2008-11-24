@@ -6,20 +6,8 @@
 #define __rxml_XPOINTER__
 
 extern VALUE cXMLXPointer;
-extern VALUE eXMLXPointerInvalidExpression;
-
-typedef struct rxml_xpointer {
-  VALUE xd;
-  VALUE ctxt;
-  /*
-   * This needs to go into a xpointer data struct:
-   *
-   * xmlLocationSetPtr xptr;
-   *
-   * I also need an xpointer data struct type.
-  */
-} rxml_xpointer;
 
 void ruby_init_xml_xpointer(void);
+VALUE rxml_xpointer_point2(VALUE node, VALUE xptr_str);
 
 #endif

@@ -51,7 +51,7 @@ rxml_html_parser_read_string(VALUE input) {
   int options = 0;
 
   return htmlReadMemory(StringValuePtr(string), RSTRING_LEN(string),
-                        xbase_url, encoding_str, options);
+                        xbase_url, xencoding_str, options);
 }
 
 static htmlDocPtr
@@ -65,7 +65,7 @@ rxml_html_parser_read_io(VALUE input) {
   int options = 0;
   
   return htmlReadIO((xmlInputReadCallback) rxml_read_callback, NULL,
-        				     io, 
+        				     (void *)io, 
                      xbase_url, xencoding_str, options);
 }
 
