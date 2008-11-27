@@ -33,13 +33,13 @@ module LibXML
 
       def level_to_s
         case self.level
-          when NONE:
+          when NONE
             ''
-          when WARNING:
+          when WARNING
             'Warning:'
-          when ERROR:
+          when ERROR
             'Error:'
-          when FATAL:
+          when FATAL
             'Fatal error:'
         end
       end

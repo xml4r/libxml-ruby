@@ -35,6 +35,16 @@ static ID ERROR_HANDLER_ID;
 */
 
 
+static void
+rxml_set_handler(VALUE self, VALUE block)
+{
+  #ifdef RB_CVAR_SET_4ARGS
+    rb_cvar_set(self, ERROR_HANDLER_ID, block, 0);
+  #else
+    rb_cvar_set(self, ERROR_HANDLER_ID, block);
+  #endif
+}
+
 /*
  * call-seq:
  *    Error.set_error_handler {|error| ... }
@@ -55,7 +65,7 @@ rxml_error_set_handler(VALUE self)
 
   /* Embed the block within the Error class to avoid it to be collected.
      Previous handler will be overwritten if it exists. */
-  rb_cvar_set(self, ERROR_HANDLER_ID, block, 0);
+  rxml_set_handler(self, block);
 
   return self;
 }
@@ -68,7 +78,7 @@ rxml_error_set_handler(VALUE self)
 static VALUE
 rxml_error_reset_handler(VALUE self)
 {
-  rb_cvar_set(self, ERROR_HANDLER_ID, Qnil, 0);
+  rxml_set_handler(self, Qnil);
   return self;
 }
 
@@ -153,7 +163,7 @@ ruby_init_xml_error() {
 
   /* Ruby callback to receive errors - set it to nil by default. */
   ERROR_HANDLER_ID = rb_intern("@@__error_handler_callback__");
-  rb_cvar_set(eXMLError, ERROR_HANDLER_ID, Qnil, 0);
+  rxml_set_handler(eXMLError, Qnil);
 
   /* Error attributes */
   rb_define_attr(eXMLError, "level", 1, 0);

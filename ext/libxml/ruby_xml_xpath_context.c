@@ -205,8 +205,8 @@ rxml_xpath_context_register_namespaces(VALUE self, VALUE nslist) {
     rxml_xpath_context_register_namespace(self, rprefix, ruri);
     break;
   case T_ARRAY:
-    for (i = 0; i < RARRAY(nslist)->len; i++) {
-      rxml_xpath_context_register_namespaces(self, RARRAY(nslist)->ptr[i]);
+    for (i = 0; i < RARRAY_LEN(nslist); i++) {
+      rxml_xpath_context_register_namespaces(self, RARRAY_PTR(nslist)[i]);
     }
     break;
   case T_HASH:
