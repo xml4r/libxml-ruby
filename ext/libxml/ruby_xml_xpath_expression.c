@@ -63,7 +63,6 @@ void
 ruby_init_xml_xpath_expression(void) {
   cXMLXPathExpression = rb_define_class_under(mXPath, "Expression", rb_cObject);
   rb_define_alloc_func(cXMLXPathExpression, rxml_xpath_expression_alloc);
-  rb_define_singleton_method(rb_cRegexp, "compile", rb_class_new_instance, 1);
-
+  rb_define_singleton_method(cXMLXPathExpression, "compile", rb_class_new_instance, 1);
   rb_define_method(cXMLXPathExpression, "initialize", rxml_xpath_expression_initialize, 1);
 }
