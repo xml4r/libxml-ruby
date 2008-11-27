@@ -25,7 +25,7 @@ task :install do
   # Copy the import library (used by libxslt)
   cp(EXTENSION_LIB_NAME, dest_path)
 
-  # Copy dllss
+  # Copy dlls
   Dir.glob('*.dll').each do |dll|
     cp(dll, dest_path)
   end
