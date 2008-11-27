@@ -79,7 +79,8 @@ unless (have_library('xml2', 'xmlParseDoc') or
         find_library('xml2', 'xmlParseDoc', '/opt/lib', '/usr/local/lib', '/usr/lib')) and 
        (have_header('libxml/xmlversion.h') or
         find_header('libxml/xmlversion.h',
-                    "#{CONFIG['prefix']}/include", 
+                    "#{CONFIG['prefix']}/include",
+                    "#{CONFIG['prefix']}/include/libxml2",
                     '/opt/include/libxml2', 
                     '/usr/local/include/libxml2', 
                     '/usr/include/libxml2'))
