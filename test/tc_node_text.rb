@@ -1,17 +1,17 @@
 require 'xml'
 require 'test/unit'
 
-class TC_XML_Node_text < Test::Unit::TestCase
-  def setup
-    @t=XML::Node.new_text("testdata")
-    assert_instance_of(XML::Node,@t)
-  end
-
+class TestTextNode < Test::Unit::TestCase
   def test_content
-    assert_equal("testdata",@t.content)
+    node = XML::Node.new_text('testdata')
+    assert_instance_of(XML::Node, node)
+    assert_equal('testdata', node.content)
   end
 
-  def test_type
-    assert_equal(true,@t.text?)
+  def test_invalid_content
+    error = assert_raise(TypeError) do
+      node = XML::Node.new_text(nil)
+    end
+    assert_equal('wrong argument type nil (expected String)', error.to_s)
   end
 end

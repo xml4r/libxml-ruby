@@ -75,7 +75,7 @@ rxml_attr_wrap(xmlAttrPtr xattr)
 static VALUE
 rxml_attr_alloc(VALUE klass)
 {
-  return Data_Wrap_Struct(cXMLAttr,
+  return Data_Wrap_Struct(klass,
                           rxml_attr_mark, rxml_attr_free,
                           NULL);
 }
@@ -145,7 +145,7 @@ rxml_attr_child_get(VALUE self) {
   if (xattr->children == NULL)
     return(Qnil);
   else
-    return(rxml_node2_wrap(cXMLNode, (xmlNodePtr)xattr->children));
+    return(rxml_node_wrap(cXMLNode, (xmlNodePtr)xattr->children));
 }
 
 
@@ -215,7 +215,7 @@ rxml_attr_last_get(VALUE self) {
   if (xattr->last == NULL)
     return(Qnil);
   else
-    return(rxml_node2_wrap(cXMLNode, xattr->last));
+    return(rxml_node_wrap(cXMLNode, xattr->last));
 }
 
 
@@ -346,7 +346,7 @@ rxml_attr_parent_get(VALUE self) {
   if (xattr->parent == NULL)
     return(Qnil);
   else
-    return(rxml_node2_wrap(cXMLNode, xattr->parent));
+    return(rxml_node_wrap(cXMLNode, xattr->parent));
 }
 
 

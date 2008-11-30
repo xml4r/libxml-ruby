@@ -27,6 +27,206 @@ check_string_or_symbol( VALUE val ) {
   return rb_obj_as_string( val );
 }
 
+/*
+ * memory2 implementation: xmlNode->_private holds a reference
+ * to the wrapping ruby object VALUE when there is one.
+ * traversal for marking is upward, and top levels are marked
+ * through and lower level mark entry.
+ *
+ * All ruby retrieval for an xml
+ * node will result in the same ruby instance. When all handles to them
+ * go out of scope, then ruby_xfree gets called and _private is set to NULL.
+ * If the xmlNode has no parent or document, then call xmlFree.
+ */
+void
+rxml_node2_free(xmlNodePtr xnode) {
+  /* Set _private to NULL so that we won't reuse the 
+     same, freed, Ruby wrapper object later.*/
+  xnode->_private = NULL;
+
+  if (xnode->doc == NULL && xnode->parent == NULL)
+    xmlFreeNode(xnode);
+}
+
+void
+rxml_node_mark_common(xmlNodePtr xnode) {
+  if (xnode->parent == NULL)
+    return;
+
+  if (xnode->doc != NULL)
+  {
+    if (xnode->doc->_private == NULL)
+      rb_bug("XmlNode Doc is not bound! (%s:%d)", __FILE__,__LINE__);
+    rb_gc_mark((VALUE)xnode->doc->_private);
+  } else
+  {
+    while (xnode->parent != NULL )
+      xnode = xnode->parent;
+
+    if (xnode->_private == NULL)
+      rb_warning("XmlNode Root Parent is not bound! (%s:%d)", __FILE__,__LINE__);
+    else
+      rb_gc_mark((VALUE)xnode->_private);
+  }
+}
+
+void
+rxml_node_mark(xmlNodePtr xnode) {
+  if (xnode == NULL ) return;
+
+  if (xnode->_private == NULL ) {
+    rb_warning("XmlNode is not bound! (%s:%d)",
+	       __FILE__,__LINE__);
+    return;
+  }
+
+  rxml_node_mark_common(xnode);
+}
+
+VALUE
+rxml_node_wrap(VALUE class, xmlNodePtr xnode)
+{
+  VALUE obj;
+
+  // This node is already wrapped
+  if (xnode->_private != NULL) {
+    return (VALUE)xnode->_private;
+  }
+
+  obj=Data_Wrap_Struct(class,
+                       rxml_node_mark, rxml_node2_free,
+                       xnode);
+
+  xnode->_private=(void*)obj;
+  return obj;
+}
+
+
+static VALUE
+rxml_node_alloc(VALUE klass)
+{
+  return Data_Wrap_Struct(klass,
+                          rxml_node_mark, rxml_node2_free,
+                          NULL);
+}
+
+/*
+ * call-seq:
+ *    XML::Node.new_cdata(content = nil) -> XML::Node
+ * 
+ * Create a new #CDATA node, optionally setting
+ * the node's content.
+ */
+static VALUE
+rxml_node_new_cdata(int argc, VALUE *argv, VALUE klass) {
+  VALUE content = Qnil;
+  xmlNodePtr xnode;
+
+  rb_scan_args(argc, argv, "01", &content);
+  
+  if (NIL_P(content))
+  {
+    xnode = xmlNewCDataBlock(NULL, NULL , 0);
+  }
+  else
+  {
+    content = rb_obj_as_string(content);
+    xnode = xmlNewCDataBlock(NULL, (xmlChar*)StringValuePtr(content), RSTRING_LEN(content));
+  }
+
+  if (xnode == NULL)
+    rxml_raise(&xmlLastError);
+
+  return rxml_node_wrap(klass, xnode);
+}
+
+
+/*
+ * call-seq:
+ *    XML::Node.new_comment(content = nil) -> XML::Node
+ * 
+ * Create a new comment node, optionally setting
+ * the node's content.
+ * 
+ */
+static VALUE
+rxml_node_new_comment(int argc, VALUE *argv, VALUE klass) {
+  VALUE content = Qnil;
+  xmlNodePtr xnode;
+
+  rb_scan_args(argc, argv, "01", &content);
+  
+  if (NIL_P(content))
+  {
+    xnode = xmlNewComment(NULL);
+  }
+  else
+  {
+    content = rb_obj_as_string(content);
+    xnode = xmlNewComment((xmlChar*)StringValueCStr(content));
+  }
+
+  if (xnode == NULL)
+    rxml_raise(&xmlLastError);
+
+  return rxml_node_wrap(klass, xnode);
+}
+
+ /*
+ * call-seq: 
+ *    XML::Node.new_text(content) -> XML::Node
+ * 
+ * Create a new text node.
+ * 
+ */
+static VALUE
+rxml_node_new_text(VALUE klass, VALUE content) {
+  xmlNodePtr xnode;
+  Check_Type(content, T_STRING);
+  content = rb_obj_as_string(content);
+
+  xnode = xmlNewText((xmlChar*)StringValueCStr(content));
+
+  if (xnode == NULL)
+    rxml_raise(&xmlLastError);
+
+  return rxml_node_wrap(klass, xnode);
+}
+
+
+
+/*
+ * call-seq:
+ *    XML::Node.initialize(name, content = nil, namespace = nil) -> XML::Node
+ * 
+ * Creates a new element with the specified name, content and
+ * namespace. The content and namespace may be nil.
+ */
+static VALUE
+rxml_node_initialize(int argc, VALUE *argv, VALUE self) {
+  VALUE name;
+  VALUE content;
+  VALUE ns;
+  xmlNodePtr xnode = NULL;
+  xmlNsPtr xns = NULL;
+
+  rb_scan_args(argc, argv, "12", &name, &content, &ns);
+
+  name = check_string_or_symbol(name);
+
+  if (!NIL_P(ns))
+    Data_Get_Struct(ns, xmlNs, xns);
+
+  xnode = xmlNewNode(xns, (xmlChar*)StringValuePtr(name));
+  xnode->_private = (void*)self;
+  DATA_PTR(self) = xnode;
+
+  if (!NIL_P(content))
+    rxml_node_content_set(self, content);
+
+  return self;
+}
+
 
 /*
  * call-seq:
@@ -158,7 +358,7 @@ rxml_node_first_get(VALUE self) {
   Data_Get_Struct(self, xmlNode, xnode);
 
   if (xnode->children)
-    return(rxml_node2_wrap(cXMLNode, xnode->children));
+    return(rxml_node_wrap(cXMLNode, xnode->children));
   else
     return(Qnil);
 }
@@ -186,11 +386,11 @@ rxml_node_child_set_aux(VALUE self, VALUE rnode) {
     rxml_raise(&xmlLastError);
   } else if ( ret==chld ) {
     /* child was added whole to parent and we need to return it as a new object */
-    return rxml_node2_wrap(cXMLNode,chld);
+    return rxml_node_wrap(cXMLNode,chld);
   }
   /* else */
   /* If it was a text node, then ret should be parent->last, so we will just return ret. */
-  return rxml_node2_wrap(cXMLNode,ret);
+  return rxml_node_wrap(cXMLNode,ret);
 }
 
 /*
@@ -355,7 +555,7 @@ rxml_node_each(VALUE self) {
   xchild = xnode->children;
   
   while (xchild) {
-    rb_yield(rxml_node2_wrap(cXMLNode, xchild));
+    rb_yield(rxml_node_wrap(cXMLNode, xchild));
     xchild = xchild->next;
   }
   return Qnil;
@@ -411,80 +611,6 @@ rxml_node_eql_q(VALUE self, VALUE other) {
   }    
 }
 
-/*
- * call-seq:
- *    XML::Node.new_cdata(content = nil) -> XML::Node
- * 
- * Create a new #CDATA node, optionally setting
- * the node's content.
- */
-static VALUE
-rxml_node_new_cdata(int argc, VALUE *argv, VALUE class) {
-  xmlNodePtr xnode;
-  VALUE str=Qnil;
-
-  switch(argc) {
-  case 1:
-    str = argv[0];
-    Check_Type(str, T_STRING);
-    if (!NIL_P(str)) {
-      xnode = xmlNewCDataBlock(NULL, (xmlChar*)StringValuePtr(str), xmlStrlen((xmlChar*)StringValuePtr(str)));
-    } else {
-      xnode = xmlNewCDataBlock(NULL, NULL , 0);
-    }
-
-    if (xnode == NULL)
-      return(Qnil);
-      
-    return rxml_node2_wrap(class,xnode);
-
-  default:
-    rb_raise(rb_eArgError, "wrong number of arguments (1)");
-  }
-
-  // not reached
-  return(Qnil);
-}
-
-
-/*
- * call-seq:
- *    XML::Node.new_comment(content = nil) -> XML::Node
- * 
- * Create a new comment node, optionally setting
- * the node's content.
- * 
- */
-static VALUE
-rxml_node_new_comment(int argc, VALUE *argv, VALUE class) {
-  xmlNodePtr xnode;
-  VALUE str=Qnil;
-
-  switch(argc) {
-  case 1:
-    str = argv[0];
-    Check_Type(str, T_STRING);
-// TODO  xmlNewComment wrongly? adds \n before and after the comment
-    if (!NIL_P(str)) {
-      xnode = xmlNewComment((xmlChar*)StringValuePtr(str));
-    } else {
-      xnode = xmlNewComment(NULL);
-    }
-
-    if (xnode == NULL)
-      return(Qnil);
-
-    return rxml_node2_wrap(class,xnode);
-
-  default:
-    rb_raise(rb_eArgError, "wrong number of arguments (1)");
-  }
-
-  // not reached
-  return(Qnil);
-}
-
- 
 /*
  * call-seq:
  *    node.lang -> "string"
@@ -544,7 +670,7 @@ rxml_node_last_get(VALUE self) {
   Data_Get_Struct(self, xmlNode, xnode);
 
   if (xnode->last)
-    return(rxml_node2_wrap(cXMLNode, xnode->last));
+    return(rxml_node_wrap(cXMLNode, xnode->last));
   else
     return(Qnil);
 }
@@ -831,144 +957,7 @@ rxml_node_namespace_set(int argc, VALUE *argv, VALUE self) {
   return(Qnil);
 }
 
-
-/*
- * memory2 implementation: xmlNode->_private holds a reference
- * to the wrapping ruby object VALUE when there is one.
- * traversal for marking is upward, and top levels are marked
- * through and lower level mark entry.
- *
- * All ruby retrieval for an xml
- * node will result in the same ruby instance. When all handles to them
- * go out of scope, then ruby_xfree gets called and _private is set to NULL.
- * If the xmlNode has no parent or document, then call xmlFree.
- */
-void
-rxml_node2_free(xmlNodePtr xnode) {
-  xnode->_private = NULL;
-
-  if (xnode->doc == NULL && xnode->parent == NULL)
-    xmlFreeNode(xnode);
-}
-
-void
-rxml_node_mark_common(xmlNodePtr xnode) {
-  if (xnode->parent == NULL ) {
-#ifdef NODE_DEBUG
-    fprintf(stderr,"mark no parent r=0x%x *n=0x%x\n",rxn,node);
-#endif
-  } else if (xnode->doc != NULL ) {
-    if (xnode->doc->_private == NULL) {
-      rb_bug("XmlNode Doc is not bound! (%s:%d)",
-	     __FILE__,__LINE__);
-    }
-    rb_gc_mark((VALUE)xnode->doc->_private);
-  } else {
-    while (xnode->parent != NULL )
-      xnode = xnode->parent;
-    if (xnode->_private == NULL )
-      rb_warning("XmlNode Root Parent is not bound! (%s:%d)",
-		 __FILE__,__LINE__);
-    else {
-      rb_gc_mark((VALUE)xnode->_private);
-    }
-  }
-}
-
-void
-rxml_node2_mark(xmlNodePtr xnode) {
-  if (xnode == NULL ) return;
-
-  if (xnode->_private == NULL ) {
-    rb_warning("XmlNode is not bound! (%s:%d)",
-	       __FILE__,__LINE__);
-    return;
-  }
-
-  rxml_node_mark_common(xnode);
-}
-
-VALUE
-rxml_node2_wrap(VALUE class, xmlNodePtr xnode)
-{
-  VALUE obj;
-
-  // This node is already wrapped
-  if (xnode->_private != NULL) {
-    return (VALUE)xnode->_private;
-  }
-
-  obj=Data_Wrap_Struct(class,
-                       rxml_node2_mark, rxml_node2_free,
-                       xnode);
-
-  xnode->_private=(void*)obj;
-  return obj;
-}
-
-/*
- * call-seq:
- *    XML::Node.new_string(namespace, name, content) -> XML::Node
- * 
- * Create a new element node in the specified namespace with the 
- * supplied name and content.
- */
-static VALUE
-rxml_node_new_string(VALUE klass, VALUE ns, VALUE name, VALUE val)
-{
-  xmlNodePtr xnode;
-  xmlNsPtr xns = NULL;
-  VALUE node;
-
-  if (!NIL_P(ns)) {
-    Data_Get_Struct(ns, xmlNs, xns);
-  }
-  
-  xnode = xmlNewNode(xns,(xmlChar*)StringValuePtr(name));
-  xnode->_private=NULL;
-
-  node = rxml_node2_wrap(klass, xnode);
-  rb_obj_call_init(node, 0, NULL);
-  
-  if (!NIL_P(val))
-  {
-    if (TYPE(val) != T_STRING)
-      val = rb_obj_as_string(val);
-
-    rxml_node_content_set(node, val);
-  }
-  return node;
-}
-
-/*
- * call-seq:
- *    XML::Node.new(name, content = nil) -> XML::Node
- *    XML::Node.new_element(name, content = nil) -> XML::Node
- * 
- * Create a new element node with the specified name, optionally setting
- * the node's content.
- * backward compatibility for <.5 new
- */
-static VALUE
-rxml_node_new_string_bc(int argc, VALUE *argv, VALUE class)
-{
-  VALUE content=Qnil;
-  VALUE name=Qnil;
-  switch(argc) {
-  case 2:
-    content=argv[1];
-    if ( TYPE(content) != T_STRING)
-      content=rb_obj_as_string(content);
-    
-  case 1:
-    name=check_string_or_symbol( argv[0] );
-    return rxml_node_new_string(class,Qnil,name,content);
-
-  default:
-    rb_raise(rb_eArgError, "wrong number of arguments (1 or 2) given %d",argc);
-  }
-}
-
+ 
 /*
  * call-seq:
  *    node.next -> XML::Node
@@ -982,7 +971,7 @@ rxml_node_next_get(VALUE self) {
   Data_Get_Struct(self, xmlNode, xnode);
 
   if (xnode->next)
-    return(rxml_node2_wrap(cXMLNode, xnode->next));
+    return(rxml_node_wrap(cXMLNode, xnode->next));
   else
     return(Qnil);
 }
@@ -1008,7 +997,7 @@ rxml_node_next_set(VALUE self, VALUE rnode) {
   if (ret == NULL)
     rxml_raise(&xmlLastError);
 
-  return(rxml_node2_wrap(cXMLNode, ret));
+  return(rxml_node_wrap(cXMLNode, ret));
 }
 
 
@@ -1076,7 +1065,7 @@ rxml_node_parent_get(VALUE self) {
   Data_Get_Struct(self, xmlNode, xnode);
 
   if (xnode->parent)
-    return(rxml_node2_wrap(cXMLNode, xnode->parent));
+    return(rxml_node_wrap(cXMLNode, xnode->parent));
   else
     return(Qnil);
 }
@@ -1150,7 +1139,7 @@ rxml_node_prev_get(VALUE self) {
   if (node == NULL)
     return(Qnil);
   else
-    return(rxml_node2_wrap(cXMLNode, node));
+    return(rxml_node_wrap(cXMLNode, node));
 }
 
 
@@ -1174,7 +1163,7 @@ rxml_node_prev_set(VALUE self, VALUE rnode) {
   if (ret == NULL)
     rxml_raise(&xmlLastError);
 
-  return(rxml_node2_wrap(cXMLNode, ret));
+  return(rxml_node_wrap(cXMLNode, ret));
 }
 
 /*
@@ -1300,7 +1289,7 @@ rxml_node_sibling_set(VALUE self, VALUE rnode) {
     rxml_raise(&xmlLastError);
 
   if (ret->_private==NULL)
-    obj=rxml_node2_wrap(cXMLNode,ret);
+    obj=rxml_node_wrap(cXMLNode,ret);
   else
     obj=(VALUE)ret->_private;
 
@@ -1401,38 +1390,9 @@ rxml_node_copy(VALUE self, VALUE deep) {
   xcopy = xmlCopyNode(xnode, recursive);
 
   if (xcopy)
-    return rxml_node2_wrap(cXMLNode, xcopy);
+    return rxml_node_wrap(cXMLNode, xcopy);
   else
     return Qnil;
-}
-
- /*
- * call-seq: 
- *    XML::Node.new_text(content = nil) -> XML::Node
- * 
- * Create a new text node, optionally setting
- * the node's content.
- * 
- */
-static VALUE
-rxml_node_new_text(VALUE class, VALUE text)
-{
-  VALUE obj;
-  xmlNodePtr xnode;
-  
-  if ( NIL_P(text) )
-    return Qnil;
-
-  if (TYPE(text) != T_STRING )
-    rb_raise(rb_eTypeError, "requires string argument");
-  
-  xnode=xmlNewText((xmlChar*)STR2CSTR(text));
-  if ( xnode == NULL )
-    return Qnil;
-  
-  obj=rxml_node2_wrap(class,xnode);
-  rb_obj_call_init(obj,0,NULL);
-  return obj;
 }
 
 void
@@ -1506,11 +1466,14 @@ ruby_init_xml_node(void) {
   rb_define_const(cXMLNode, "DOCB_DOCUMENT_NODE", Qnil);
 #endif
   
-  rb_define_singleton_method(cXMLNode, "new", rxml_node_new_string_bc, -1);
   rb_define_singleton_method(cXMLNode, "new_cdata", rxml_node_new_cdata, -1);
   rb_define_singleton_method(cXMLNode, "new_comment", rxml_node_new_comment, -1); 
   rb_define_singleton_method(cXMLNode, "new_text", rxml_node_new_text, 1); 
-  
+
+  /* Initialization */
+  rb_define_alloc_func(cXMLNode, rxml_node_alloc);
+  rb_define_method(cXMLNode, "initialize", rxml_node_initialize, -1);
+
   /* Traversal */
   rb_include_module(cXMLNode, rb_mEnumerable);
   rb_define_method(cXMLNode, "[]", rxml_node_attribute_get, 1);
@@ -1530,7 +1493,6 @@ ruby_init_xml_node(void) {
   rb_define_method(cXMLNode, "next=", rxml_node_next_set, 1);
   rb_define_method(cXMLNode, "prev=", rxml_node_prev_set, 1);
 
- 
   /* Rest of the node api */
   rb_define_method(cXMLNode, "attributes", rxml_node_attributes_get, 0);
   rb_define_method(cXMLNode, "base", rxml_node_base_get, 0);

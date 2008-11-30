@@ -704,7 +704,7 @@ rxml_reader_expand(VALUE self)
   doc = xmlTextReaderCurrentDoc(reader);
   rxml_document_wrap(doc);
 
-  return rxml_node2_wrap(cXMLNode, node);
+  return rxml_node_wrap(cXMLNode, node);
 }
 
 #if LIBXML_VERSION >= 20618
