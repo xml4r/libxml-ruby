@@ -17,6 +17,8 @@ VALUE cXMLNode;
  * documented in the DOM Level 3 specification found at:
  * http://www.w3.org/TR/DOM-Level-3-Core/. */
 
+static VALUE rxml_node_content_set(VALUE self, VALUE content);
+
 VALUE check_string_or_symbol(VALUE val)
 {
   if (TYPE(val) != T_STRING && TYPE(val) != T_SYMBOL)

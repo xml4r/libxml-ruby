@@ -1,8 +1,25 @@
 (See log/ChangeLog for more detailed changes derived directly from source control.)
 
-== 0.9.5 / 2008-11-30 Charlie Savage
+== 0.9.5 / 2008-11-29 Charlie Savage
 
 * Ruby 1.9.1 preview release compatability (Felipe Contreras)
+
+* Update Node#remove! to return the removed node and to set
+  its document to nil.  This allows the node to be either
+  moved to another document, another part of the same document
+  or to be freed on the next garbage collection once its
+  references have gone out of scope.
+
+* Fix bug where XPathExpression#compile mistakenly overwrote
+  RegExp#compile.
+
+* Update Node to use standard ruby allocators and initializers.
+
+* Update HTML parser to be more forgiving of invalid documents.
+
+* Update include paths for Darwin Ports on OS X.
+
+* Updated C code base to use BSD/Allman style
 
 
 == 0.9.4 / 2008-11-24 Charlie Savage

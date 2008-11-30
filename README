@@ -33,7 +33,9 @@ If you are running Windows, make sure to install the Win32 RubyGem
 which includes an already built binary file.  The binary is built
 against libxml2 version 2.7.2 and iconv version 1.11.  Both of these
 are also included as pre-built binaries, and should be put either in
-the libxml/lib directory or on the Windows path.
+the libxml/lib directory or on the Windows path.  Due to a bug
+in ruby-gems, you cannot install the gem to a path that contains
+spaces (see http://rubyforge.org/tracker/?func=detail&aid=23003&group_id=126&atid=577).
 
 The Windows binaries are built with MingW and include libxml-ruby, 
 libxml2 and iconv.  The gem also includes a Microsoft VC++ 2008
