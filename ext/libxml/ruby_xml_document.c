@@ -60,6 +60,21 @@
 
 VALUE cXMLDocument;
 
+static void LibXML_validity_warning(void * ctxt, const char * msg, va_list ap)
+{
+  if (rb_block_given_p())
+  {
+    char buff[1024];
+    snprintf(buff, 1024, msg, ap);
+    rb_yield(rb_ary_new3(2, rb_str_new2(buff), Qfalse));
+  }
+  else
+  {
+    fprintf(stderr, "warning -- found validity error: ");
+    fprintf(stderr, msg, ap);
+  }
+}
+
 void rxml_document_free(xmlDocPtr xdoc)
 {
   xdoc->_private = NULL;
@@ -889,19 +904,19 @@ void LibXML_validity_error(void * ctxt, const char * msg, va_list ap)
   }
 }
 
-void LibXML_validity_warning(void * ctxt, const char * msg, va_list ap)
+/*
+ * call-seq:
+ *    document.order_elements! 
+ * 
+ * Call this routine to speed up XPath computation on static documents.
+ * This stamps all the element nodes with the document order. 
+ */
+static VALUE rxml_document_order_elements(VALUE self)
 {
-  if (rb_block_given_p())
-  {
-    char buff[1024];
-    snprintf(buff, 1024, msg, ap);
-    rb_yield(rb_ary_new3(2, rb_str_new2(buff), Qfalse));
-  }
-  else
-  {
-    fprintf(stderr, "warning -- found validity error: ");
-    fprintf(stderr, msg, ap);
-  }
+  xmlDocPtr xdoc;
+
+  Data_Get_Struct(self, xmlDoc, xdoc);
+  return LONG2FIX(xmlXPathOrderDocElems(xdoc));
 }
 
 /*
@@ -1062,6 +1077,7 @@ void ruby_init_xml_document(void)
   rb_define_method(cXMLDocument, "last?", rxml_document_last_q, 0);
   rb_define_method(cXMLDocument, "next", rxml_document_next_get, 0);
   rb_define_method(cXMLDocument, "next?", rxml_document_next_q, 0);
+  rb_define_method(cXMLDocument, "order_elements!", rxml_document_order_elements, 0);
   rb_define_method(cXMLDocument, "parent", rxml_document_parent_get, 0);
   rb_define_method(cXMLDocument, "parent?", rxml_document_parent_q, 0);
   rb_define_method(cXMLDocument, "prev", rxml_document_prev_get, 0);
