@@ -10,15 +10,15 @@
  *
  * XML::SaxParser provides a callback based API for parsing documents,
  * in contrast to XML::Parser's tree based API and XML::Reader's stream
- * based API.  
+ * based API.
  *
- * Note that the XML::SaxParser API is fairly complex, not well standardized, 
+ * Note that the XML::SaxParser API is fairly complex, not well standardized,
  * and does not directly support validation making entity, namespace and
  * base processing relatively hard.
  *
  * To use the XML::SaxParser, register a callback class via the
- * XML::SaxParser#callbacks=.  It is easiest to include the 
- * XML::SaxParser::Callbacks module in your class and override 
+ * XML::SaxParser#callbacks=.  It is easiest to include the
+ * XML::SaxParser::Callbacks module in your class and override
  * the methods as needed.
  *
  * Basic example:
@@ -64,54 +64,55 @@ VALUE cbidOnExternalSubset;
 /*
  * call-seq:
  *    sax_parser.initialize -> sax_parser
- * 
+ *
  * Initiliazes instance of parser.
  */
-static VALUE
-rxml_sax_parser_initialize(VALUE self) {
+static VALUE rxml_sax_parser_initialize(VALUE self)
+{
   VALUE input = rb_class_new_instance(0, NULL, cXMLInput);
   rb_iv_set(self, "@input", input);
   return self;
 }
 
-
 /* Parsing data sources */
-static int
-rxml_sax_parser_parse_file(VALUE self, VALUE input) {
+static int rxml_sax_parser_parse_file(VALUE self, VALUE input)
+{
   VALUE file = rb_ivar_get(input, FILE_ATTR);
-  return xmlSAXUserParseFile((xmlSAXHandlerPtr)&rxml_sax_hander_struct, (void *)self, StringValuePtr(file));
+  return xmlSAXUserParseFile((xmlSAXHandlerPtr) & rxml_sax_hander_struct,
+      (void *) self, StringValuePtr(file));
 }
 
-static int
-rxml_sax_parser_parse_string(VALUE self, VALUE input) {
+static int rxml_sax_parser_parse_string(VALUE self, VALUE input)
+{
   VALUE str = rb_ivar_get(input, STRING_ATTR);
-  return xmlSAXUserParseMemory((xmlSAXHandlerPtr)&rxml_sax_hander_struct, (void *)self, StringValuePtr(str), RSTRING_LEN(str));
+  return xmlSAXUserParseMemory((xmlSAXHandlerPtr) & rxml_sax_hander_struct,
+      (void *) self, StringValuePtr(str), RSTRING_LEN(str));
 }
 
-static int
-rxml_sax_parser_parse_io(VALUE self, VALUE input) {
+static int rxml_sax_parser_parse_io(VALUE self, VALUE input)
+{
   VALUE io = rb_ivar_get(input, IO_ATTR);
   VALUE encoding = rb_ivar_get(input, ENCODING_ATTR);
   xmlCharEncoding xmlEncoding = NUM2INT(encoding);
-  xmlParserCtxtPtr ctxt = xmlCreateIOParserCtxt((xmlSAXHandlerPtr)&rxml_sax_hander_struct, (void *)self,
-	 			                                        (xmlInputReadCallback) rxml_read_callback,
-				                                         NULL, (void *)io, xmlEncoding);
+  xmlParserCtxtPtr ctxt =
+      xmlCreateIOParserCtxt((xmlSAXHandlerPtr) & rxml_sax_hander_struct,
+          (void *) self, (xmlInputReadCallback) rxml_read_callback, NULL,
+          (void *) io, xmlEncoding);
   return xmlParseDocument(ctxt);
 }
-
 
 /*
  * call-seq:
  *    parser.parse -> (true|false)
- * 
+ *
  * Parse the input XML, generating callbacks to the object
  * registered via the +callbacks+ attributesibute.
  */
-static VALUE
-rxml_sax_parser_parse(VALUE self) {
+static VALUE rxml_sax_parser_parse(VALUE self)
+{
   int status;
   VALUE input = rb_ivar_get(self, INPUT_ATTR);
-  
+
   if (rb_ivar_get(input, FILE_ATTR) != Qnil)
     status = rxml_sax_parser_parse_file(self, input);
   else if (rb_ivar_get(input, STRING_ATTR) != Qnil)
@@ -120,7 +121,7 @@ rxml_sax_parser_parse(VALUE self) {
     status = rxml_sax_parser_parse_io(self, input);
   else
     rb_raise(rb_eArgError, "You must specify a parser data source");
-  
+
   if (status)
   {
     rxml_raise(&xmlLastError);
@@ -128,18 +129,18 @@ rxml_sax_parser_parse(VALUE self) {
   }
   else
   {
-    return(Qtrue);
+    return (Qtrue);
   }
 }
 
-// Rdoc needs to know 
+// Rdoc needs to know
 #ifdef RDOC_NEVER_DEFINED
-  mLibXML = rb_define_module("LibXML");
-  mXML = rb_define_module_under(mLibXML, "XML");
+mLibXML = rb_define_module("LibXML");
+mXML = rb_define_module_under(mLibXML, "XML");
 #endif
 
-void
-ruby_init_xml_sax_parser(void) {
+void ruby_init_xml_sax_parser(void)
+{
   /* SaxParser */
   cXMLSaxParser = rb_define_class_under(mXML, "SaxParser", rb_cObject);
 

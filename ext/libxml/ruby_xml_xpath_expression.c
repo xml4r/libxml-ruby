@@ -8,8 +8,8 @@
 
 /*
  * Document-class: LibXML::XML::XPath::Expression
- * 
- * The XML::XPath::Expression class is used to compile  
+ *
+ * The XML::XPath::Expression class is used to compile
  * XPath expressions so they can be parsed only once
  * but reused multiple times.
  *
@@ -23,46 +23,47 @@
 
 VALUE cXMLXPathExpression;
 
-static void
-rxml_xpath_expression_free(xmlXPathCompExprPtr expr) {
+static void rxml_xpath_expression_free(xmlXPathCompExprPtr expr)
+{
   xmlXPathFreeCompExpr(expr);
 }
 
-static VALUE
-rxml_xpath_expression_alloc(VALUE klass) {
-  return Data_Wrap_Struct(cXMLXPathExpression,
-						  NULL,
-						  rxml_xpath_expression_free,
-						  NULL);
+static VALUE rxml_xpath_expression_alloc(VALUE klass)
+{
+  return Data_Wrap_Struct(cXMLXPathExpression, NULL,
+      rxml_xpath_expression_free, NULL);
 }
 
 /* call-seq:
  *    XPath::Expression.new(expression) -> XPath::Expression
- * 
- * Compiled XPatch expression. Work faster when find called many times 
+ *
+ * Compiled XPatch expression. Work faster when find called many times
  * same expression.
  *
  *  doc = XML::Document.string('<header><first>hi</first></header>')
  *  expr = XPath::Expression.new('//first')
  *  nodes = doc.find(expr)
  */
-static VALUE
-rxml_xpath_expression_initialize(VALUE self, VALUE expression) {
-  xmlXPathCompExprPtr compexpr = xmlXPathCompile(StringValueCStr(expression));  
+static VALUE rxml_xpath_expression_initialize(VALUE self, VALUE expression)
+{
+  xmlXPathCompExprPtr compexpr = xmlXPathCompile(StringValueCStr(expression));
 
-  if (compexpr == NULL) {
-	  xmlErrorPtr xerror = xmlGetLastError();
-	  rxml_raise(xerror);
+  if (compexpr == NULL)
+  {
+    xmlErrorPtr xerror = xmlGetLastError();
+    rxml_raise(xerror);
   }
 
-  DATA_PTR(self) = compexpr;
+  DATA_PTR( self) = compexpr;
   return self;
 }
 
-void
-ruby_init_xml_xpath_expression(void) {
+void ruby_init_xml_xpath_expression(void)
+{
   cXMLXPathExpression = rb_define_class_under(mXPath, "Expression", rb_cObject);
   rb_define_alloc_func(cXMLXPathExpression, rxml_xpath_expression_alloc);
-  rb_define_singleton_method(cXMLXPathExpression, "compile", rb_class_new_instance, 1);
-  rb_define_method(cXMLXPathExpression, "initialize", rxml_xpath_expression_initialize, 1);
+  rb_define_singleton_method(cXMLXPathExpression, "compile",
+      rb_class_new_instance, 1);
+  rb_define_method(cXMLXPathExpression, "initialize",
+      rxml_xpath_expression_initialize, 1);
 }

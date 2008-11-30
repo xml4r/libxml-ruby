@@ -11,11 +11,11 @@ VALUE cXMLReader;
  *
  * The XML::Reader class provides a simpler, alternative way of parsing an XML
  * document in contrast to XML::Parser or XML::SaxParser.  A XML::Reader instance
- * acts like a cursor going forward in a document stream, stopping at each node 
+ * acts like a cursor going forward in a document stream, stopping at each node
  * it encounters.  To advance to the next node, simply cadd XML::Reader#read.
- * 
+ *
  * The XML::Reader API closely matches the DOM Core specification and supports
- * namespaces, xml:base, entity handling and DTDs.  
+ * namespaces, xml:base, entity handling and DTDs.
  *
  * To summarize, XML::Reader provides a far simpler API to use versus XML::SaxParser
  * and is more memory efficient than using XML::Parser to create a DOM tree.
@@ -26,7 +26,7 @@ VALUE cXMLReader;
  *  parser.read
  *  assert_equal('foo', parser.name)
  *  assert_equal(nil, parser.value)
- *  
+ *
  *  3.times do |i|
  *    parser.read
  *    assert_equal(XML::Reader::TYPE_ELEMENT, parser.node_type)
@@ -40,15 +40,12 @@ VALUE cXMLReader;
  *
  * For a more in depth tutorial, albeit in C, see http://xmlsoft.org/xmlreader.html.*/
 
-
-static VALUE
-rxml_reader_new(VALUE class, xmlTextReaderPtr reader)
+static VALUE rxml_reader_new(VALUE class, xmlTextReaderPtr reader)
 {
   return Data_Wrap_Struct(class, NULL, xmlFreeTextReader, reader);
 }
 
-static xmlTextReaderPtr
-rxml_text_reader_get(VALUE obj)
+static xmlTextReaderPtr rxml_text_reader_get(VALUE obj)
 {
   xmlTextReaderPtr xreader;
   Data_Get_Struct(obj, xmlTextReader, xreader);
@@ -59,11 +56,10 @@ rxml_text_reader_get(VALUE obj)
  * call-seq:
  *    XML::Reader.file(path, encoding=nil, options=0) -> reader
  *
- * Parse an XML file from the filesystem or the network. The parsing flags 
- * options are a combination of xmlParserOption. 
+ * Parse an XML file from the filesystem or the network. The parsing flags
+ * options are a combination of xmlParserOption.
  */
-static VALUE
-rxml_reader_new_file(int argc, VALUE *argv, VALUE self)
+static VALUE rxml_reader_new_file(int argc, VALUE *argv, VALUE self)
 {
   xmlTextReaderPtr xreader;
   VALUE rpath, rencoding, roptions;
@@ -82,7 +78,7 @@ rxml_reader_new_file(int argc, VALUE *argv, VALUE self)
   if (xreader == NULL)
     rxml_raise(&xmlLastError);
 
-  return rxml_reader_new(self, xreader); 
+  return rxml_reader_new(self, xreader);
 }
 
 /*
@@ -90,10 +86,9 @@ rxml_reader_new_file(int argc, VALUE *argv, VALUE self)
  *    XML::Reader.io(io, url=nil, encoding=nil, options=0) -> reader
  *
  * Parse an XML file from a file handle. The parsing flags options are
- * a combination of xmlParserOption. 
+ * a combination of xmlParserOption.
  */
-static VALUE
-rxml_reader_new_io(int argc, VALUE *argv, VALUE self)
+static VALUE rxml_reader_new_io(int argc, VALUE *argv, VALUE self)
 {
   xmlTextReaderPtr xreader;
   VALUE rio, rurl, rencoding, roptions;
@@ -108,13 +103,12 @@ rxml_reader_new_io(int argc, VALUE *argv, VALUE self)
   options = NIL_P(roptions) ? 0 : FIX2INT(roptions);
 
   xreader = xmlReaderForIO((xmlInputReadCallback) rxml_read_callback, NULL,
-                           (void *)rio,
-                           xurl, xencoding, options);
+      (void *) rio, xurl, xencoding, options);
 
   if (xreader == NULL)
     rxml_raise(&xmlLastError);
 
-  return rxml_reader_new(self, xreader); 
+  return rxml_reader_new(self, xreader);
 }
 
 /*
@@ -124,20 +118,19 @@ rxml_reader_new_io(int argc, VALUE *argv, VALUE self)
  *
  * Create an XML text reader for a preparsed document.
  */
-VALUE
-rxml_reader_new_walker(VALUE self, VALUE doc)
+VALUE rxml_reader_new_walker(VALUE self, VALUE doc)
 {
   xmlDocPtr xdoc;
   xmlTextReaderPtr xreader;
-  
+
   Data_Get_Struct(doc, xmlDoc, xdoc);
- 
-  xreader = xmlReaderWalker(xdoc);  
+
+  xreader = xmlReaderWalker(xdoc);
 
   if (xreader == NULL)
     rxml_raise(&xmlLastError);
 
-  return rxml_reader_new(self, xreader); 
+  return rxml_reader_new(self, xreader);
 }
 
 /*
@@ -148,8 +141,7 @@ rxml_reader_new_walker(VALUE self, VALUE doc)
  * Create an XML text reader for an XML in-memory document. The parsing flags
  * options are a combination of xmlParserOption.
  */
-static VALUE
-rxml_reader_new_data(int argc, VALUE *argv, VALUE self)
+static VALUE rxml_reader_new_data(int argc, VALUE *argv, VALUE self)
 {
   xmlTextReaderPtr xreader;
   VALUE rdata, rurl, rencoding, roptions;
@@ -165,24 +157,22 @@ rxml_reader_new_data(int argc, VALUE *argv, VALUE self)
   xencoding = NIL_P(rencoding) ? NULL : StringValueCStr(rencoding);
   options = NIL_P(roptions) ? 0 : FIX2INT(roptions);
 
-  xreader = xmlReaderForMemory(xdata, strlen(xdata), 
-                              xurl, xencoding, options);
+  xreader = xmlReaderForMemory(xdata, strlen(xdata), xurl, xencoding, options);
 
   if (xreader == NULL)
     rxml_raise(&xmlLastError);
 
-  return rxml_reader_new(self, xreader); 
+  return rxml_reader_new(self, xreader);
 }
 
 /*
  * call-seq:
  *    parser.close -> code
  *
- * This method releases any resources allocated by the current instance 
+ * This method releases any resources allocated by the current instance
  * changes the state to Closed and close any underlying input.
  */
-static VALUE
-rxml_reader_close(VALUE self)
+static VALUE rxml_reader_close(VALUE self)
 {
   return INT2FIX(xmlTextReaderClose(rxml_text_reader_get(self)));
 }
@@ -191,23 +181,25 @@ rxml_reader_close(VALUE self)
  * call-seq:
  *   parser.move_to_attribute(val) -> code
  *
- * Move the position of the current instance to the attribute with the 
- * specified index (if +val+ is an integer) or name (if +val+ is a string) 
+ * Move the position of the current instance to the attribute with the
+ * specified index (if +val+ is an integer) or name (if +val+ is a string)
  * relative to the containing element.
  */
-static VALUE
-rxml_reader_move_to_attr(VALUE self, VALUE val)
+static VALUE rxml_reader_move_to_attr(VALUE self, VALUE val)
 {
   xmlTextReaderPtr xreader;
   int ret;
 
   xreader = rxml_text_reader_get(self);
 
-  if (TYPE(val) == T_FIXNUM) {
+  if (TYPE(val) == T_FIXNUM)
+  {
     ret = xmlTextReaderMoveToAttributeNo(xreader, FIX2INT(val));
   }
-  else {
-    ret = xmlTextReaderMoveToAttribute(xreader, (const xmlChar *)StringValueCStr(val));
+  else
+  {
+    ret = xmlTextReaderMoveToAttribute(xreader,
+        (const xmlChar *) StringValueCStr(val));
   }
 
   return INT2FIX(ret);
@@ -220,8 +212,7 @@ rxml_reader_move_to_attr(VALUE self, VALUE val)
  * Move the position of the current instance to the first attribute associated
  * with the current node.
  */
-static VALUE
-rxml_reader_move_to_first_attr(VALUE self)
+static VALUE rxml_reader_move_to_first_attr(VALUE self)
 {
   return INT2FIX(xmlTextReaderMoveToFirstAttribute(rxml_text_reader_get(self)));
 }
@@ -230,11 +221,10 @@ rxml_reader_move_to_first_attr(VALUE self)
  * call-seq:
  *    reader.move_to_next_attribute -> code
  *
- * Move the position of the current instance to the next attribute associated 
+ * Move the position of the current instance to the next attribute associated
  * with the current node.
  */
-static VALUE
-rxml_reader_move_to_next_attr(VALUE self)
+static VALUE rxml_reader_move_to_next_attr(VALUE self)
 {
   return INT2FIX(xmlTextReaderMoveToNextAttribute(rxml_text_reader_get(self)));
 }
@@ -243,11 +233,10 @@ rxml_reader_move_to_next_attr(VALUE self)
  * call-seq:
  *    reader.move_to_element -> code
  *
- * Move the position of the current instance to the node that contains the 
+ * Move the position of the current instance to the node that contains the
  * current attribute node.
  */
-static VALUE
-rxml_reader_move_to_element(VALUE self)
+static VALUE rxml_reader_move_to_element(VALUE self)
 {
   return INT2FIX(xmlTextReaderMoveToElement(rxml_text_reader_get(self)));
 }
@@ -256,11 +245,10 @@ rxml_reader_move_to_element(VALUE self)
  * call-seq:
  *    reader.next -> code
  *
- * Skip to the node following the current one in document order while avoiding 
+ * Skip to the node following the current one in document order while avoiding
  * the subtree if any.
  */
-static VALUE
-rxml_reader_next(VALUE self)
+static VALUE rxml_reader_next(VALUE self)
 {
   return INT2FIX(xmlTextReaderNext(rxml_text_reader_get(self)));
 }
@@ -269,12 +257,11 @@ rxml_reader_next(VALUE self)
  * call-seq:
  *    reader.next_sibling -> code
  *
- * Skip to the node following the current one in document order while avoiding 
- * the subtree if any. Currently implemented only for Readers built on a 
+ * Skip to the node following the current one in document order while avoiding
+ * the subtree if any. Currently implemented only for Readers built on a
  * document.
  */
-static VALUE
-rxml_reader_next_sibling(VALUE self)
+static VALUE rxml_reader_next_sibling(VALUE self)
 {
   return INT2FIX(xmlTextReaderNextSibling(rxml_text_reader_get(self)));
 }
@@ -283,11 +270,10 @@ rxml_reader_next_sibling(VALUE self)
  * call-seq:
  *    reader.node_type -> type
  *
- * Get the node type of the current node. Reference: 
+ * Get the node type of the current node. Reference:
  * http://dotgnu.org/pnetlib-doc/System/Xml/XmlNodeType.html
  */
-static VALUE
-rxml_reader_node_type(VALUE self)
+static VALUE rxml_reader_node_type(VALUE self)
 {
   return INT2FIX(xmlTextReaderNodeType(rxml_text_reader_get(self)));
 }
@@ -296,16 +282,15 @@ rxml_reader_node_type(VALUE self)
  * call-seq:
  *    reader.normalization -> value
  *
- * The value indicating whether to normalize white space and attribute values. 
- * Since attribute value and end of line normalizations are a MUST in the XML 
- * specification only the value true is accepted. The broken bahaviour of 
- * accepting out of range character entities like &#0; is of course not 
+ * The value indicating whether to normalize white space and attribute values.
+ * Since attribute value and end of line normalizations are a MUST in the XML
+ * specification only the value true is accepted. The broken bahaviour of
+ * accepting out of range character entities like &#0; is of course not
  * supported either.
  *
  * Return 1 or -1 in case of error.
  */
-static VALUE
-rxml_reader_normalization(VALUE self)
+static VALUE rxml_reader_normalization(VALUE self)
 {
   return INT2FIX(xmlTextReaderNormalization(rxml_text_reader_get(self)));
 }
@@ -314,14 +299,13 @@ rxml_reader_normalization(VALUE self)
  * call-seq:
  *    reader.read -> code
  *
- * Move the position of the current instance to the next node in the stream, 
+ * Move the position of the current instance to the next node in the stream,
  * exposing its properties.
  *
- * Return 1 if the node was read successfully, 0 if there is no more nodes to 
+ * Return 1 if the node was read successfully, 0 if there is no more nodes to
  * read, or -1 in case of error.
  */
-static VALUE
-rxml_reader_read(VALUE self)
+static VALUE rxml_reader_read(VALUE self)
 {
   return INT2FIX(xmlTextReaderRead(rxml_text_reader_get(self)));
 }
@@ -332,12 +316,11 @@ rxml_reader_read(VALUE self)
  *
  * Parse an attribute value into one or more Text and EntityReference nodes.
  *
- * Return 1 in case of success, 0 if the reader was not positionned on an 
- * attribute node or all the attribute values have been read, or -1 in case of 
+ * Return 1 in case of success, 0 if the reader was not positionned on an
+ * attribute node or all the attribute values have been read, or -1 in case of
  * error.
  */
-static VALUE
-rxml_reader_read_attr_value(VALUE self)
+static VALUE rxml_reader_read_attr_value(VALUE self)
 {
   return INT2FIX(xmlTextReaderReadAttributeValue(rxml_text_reader_get(self)));
 }
@@ -348,11 +331,10 @@ rxml_reader_read_attr_value(VALUE self)
  *
  * Read the contents of the current node, including child nodes and markup.
  *
- * Return a string containing the XML content, or nil if the current node is 
- * neither an element nor attribute, or has no child nodes. 
+ * Return a string containing the XML content, or nil if the current node is
+ * neither an element nor attribute, or has no child nodes.
  */
-static VALUE
-rxml_reader_read_inner_xml(VALUE self)
+static VALUE rxml_reader_read_inner_xml(VALUE self)
 {
   const xmlChar *result = xmlTextReaderReadInnerXml(rxml_text_reader_get(self));
   return (result == NULL ? Qnil : rb_str_new2(result));
@@ -364,11 +346,10 @@ rxml_reader_read_inner_xml(VALUE self)
  *
  * Read the contents of the current node, including child nodes and markup.
  *
- * Return a string containing the XML content, or nil if the current node is 
- * neither an element nor attribute, or has no child nodes. 
+ * Return a string containing the XML content, or nil if the current node is
+ * neither an element nor attribute, or has no child nodes.
  */
-static VALUE
-rxml_reader_read_outer_xml(VALUE self)
+static VALUE rxml_reader_read_outer_xml(VALUE self)
 {
   const xmlChar *result = xmlTextReaderReadOuterXml(rxml_text_reader_get(self));
   return (result == NULL ? Qnil : rb_str_new2(result));
@@ -380,8 +361,7 @@ rxml_reader_read_outer_xml(VALUE self)
  *
  * Get the read state of the reader.
  */
-static VALUE
-rxml_reader_read_state(VALUE self)
+static VALUE rxml_reader_read_state(VALUE self)
 {
   return INT2FIX(xmlTextReaderReadState(rxml_text_reader_get(self)));
 }
@@ -392,11 +372,10 @@ rxml_reader_read_state(VALUE self)
  *
  * Read the contents of an element or a text node as a string.
  *
- * Return a string containing the contents of the Element or Text node, or nil 
+ * Return a string containing the contents of the Element or Text node, or nil
  * if the reader is positioned on any other type of node.
  */
-static VALUE
-rxml_reader_read_string(VALUE self)
+static VALUE rxml_reader_read_string(VALUE self)
 {
   const xmlChar *result = xmlTextReaderReadString(rxml_text_reader_get(self));
   return (result == NULL ? Qnil : rb_str_new2(result));
@@ -406,15 +385,14 @@ rxml_reader_read_string(VALUE self)
  * call-seq:
  *    reader.relax_ng_validate(rng) -> code
  *
- * Use RelaxNG to validate the document as it is processed. Activation is only 
+ * Use RelaxNG to validate the document as it is processed. Activation is only
  * possible before the first read. If +rng+ is nil, the RelaxNG validation is
  * desactivated.
  *
- * Return 0 in case the RelaxNG validation could be (des)activated and -1 in 
+ * Return 0 in case the RelaxNG validation could be (des)activated and -1 in
  * case of error.
- */ 
-static VALUE
-rxml_reader_relax_ng_validate(VALUE self, VALUE rng)
+ */
+static VALUE rxml_reader_relax_ng_validate(VALUE self, VALUE rng)
 {
   char *xrng = NIL_P(rng) ? NULL : StringValueCStr(rng);
   return INT2FIX(xmlTextReaderRelaxNGValidate(rxml_text_reader_get(self), xrng));
@@ -424,46 +402,45 @@ rxml_reader_relax_ng_validate(VALUE self, VALUE rng)
 /*
  * call-seq:
  *    reader.schema_validate(schema) -> code
- * 
- * Use W3C XSD schema to validate the document as it is processed. Activation 
+ *
+ * Use W3C XSD schema to validate the document as it is processed. Activation
  * is only possible before the first read. If +schema+ is nil, then XML Schema
  * validation is desactivated.
  *
- * Return 0 in case the schemas validation could be (de)activated and -1 in 
+ * Return 0 in case the schemas validation could be (de)activated and -1 in
  * case of error.
  */
 static VALUE
 rxml_reader_schema_validate(VALUE self, VALUE xsd)
 {
-    char *xxsd = NIL_P(xsd) ? NULL : StringValueCStr(xsd);
-    int status = xmlTextReaderSchemaValidate(rxml_text_reader_get(self), xxsd);
-    return INT2FIX(status);
+  char *xxsd = NIL_P(xsd) ? NULL : StringValueCStr(xsd);
+  int status = xmlTextReaderSchemaValidate(rxml_text_reader_get(self), xxsd);
+  return INT2FIX(status);
 }
 #endif
 
-/* 
+/*
  * call-seq:
  *    reader.name -> name
  *
  * Return the qualified name of the node.
  */
-static VALUE
-rxml_reader_name(VALUE self)
+static VALUE rxml_reader_name(VALUE self)
 {
   const xmlChar *result = xmlTextReaderConstName(rxml_text_reader_get(self));
   return (result == NULL ? Qnil : rb_str_new2(result));
 }
 
-/* 
+/*
  * call-seq:
  *    reader.local_name -> name
  *
  * Return the local name of the node.
  */
-static VALUE
-rxml_reader_local_name(VALUE self)
+static VALUE rxml_reader_local_name(VALUE self)
 {
-  const xmlChar *result = xmlTextReaderConstLocalName(rxml_text_reader_get(self));
+  const xmlChar *result = xmlTextReaderConstLocalName(
+      rxml_text_reader_get(self));
   return (result == NULL ? Qnil : rb_str_new2(result));
 }
 
@@ -473,8 +450,7 @@ rxml_reader_local_name(VALUE self)
  *
  * Provide the number of attributes of the current node.
  */
-static VALUE
-rxml_reader_attr_count(VALUE self)
+static VALUE rxml_reader_attr_count(VALUE self)
 {
   return INT2FIX(xmlTextReaderAttributeCount(rxml_text_reader_get(self)));
 }
@@ -485,10 +461,10 @@ rxml_reader_attr_count(VALUE self)
  *
  * Determine the encoding of the document being read.
  */
-static VALUE
-rxml_reader_encoding(VALUE self)
+static VALUE rxml_reader_encoding(VALUE self)
 {
-  const xmlChar *result = xmlTextReaderConstEncoding(rxml_text_reader_get(self));
+  const xmlChar *result =
+      xmlTextReaderConstEncoding(rxml_text_reader_get(self));
   return (result == NULL ? Qnil : rb_str_new2(result));
 }
 
@@ -498,8 +474,7 @@ rxml_reader_encoding(VALUE self)
  *
  * Determine the base URI of the node.
  */
-static VALUE
-rxml_reader_base_uri(VALUE self)
+static VALUE rxml_reader_base_uri(VALUE self)
 {
   const xmlChar *result = xmlTextReaderConstBaseUri(rxml_text_reader_get(self));
   return (result == NULL ? Qnil : rb_str_new2(result));
@@ -511,10 +486,10 @@ rxml_reader_base_uri(VALUE self)
  *
  * Determine the namespace URI of the node.
  */
-static VALUE
-rxml_reader_namespace_uri(VALUE self)
+static VALUE rxml_reader_namespace_uri(VALUE self)
 {
-  const xmlChar *result = xmlTextReaderConstNamespaceUri(rxml_text_reader_get(self));
+  const xmlChar *result = xmlTextReaderConstNamespaceUri(rxml_text_reader_get(
+      self));
   return (result == NULL ? Qnil : rb_str_new2(result));
 }
 
@@ -524,21 +499,19 @@ rxml_reader_namespace_uri(VALUE self)
  *
  * Provide the text value of the node if present.
  */
-static VALUE
-rxml_reader_value(VALUE self)
+static VALUE rxml_reader_value(VALUE self)
 {
   const xmlChar *result = xmlTextReaderConstValue(rxml_text_reader_get(self));
   return (result == NULL ? Qnil : rb_str_new2(result));
 }
 
-/* 
+/*
  * call-seq:
  *    reader.prefix -> prefix
  *
  * Get a shorthand reference to the namespace associated with the node.
  */
-static VALUE
-rxml_reader_prefix(VALUE self)
+static VALUE rxml_reader_prefix(VALUE self)
 {
   const xmlChar *result = xmlTextReaderConstPrefix(rxml_text_reader_get(self));
   return (result == NULL ? Qnil : rb_str_new2(result));
@@ -550,8 +523,7 @@ rxml_reader_prefix(VALUE self)
  *
  * Get the depth of the node in the tree.
  */
-static VALUE
-rxml_reader_depth(VALUE self)
+static VALUE rxml_reader_depth(VALUE self)
 {
   return INT2FIX(xmlTextReaderDepth(rxml_text_reader_get(self)));
 }
@@ -563,8 +535,7 @@ rxml_reader_depth(VALUE self)
  * Get the quotation mark character used to enclose the value of an attribute,
  * as an integer value (and -1 in case of error).
  */
-static VALUE
-rxml_reader_quote_char(VALUE self)
+static VALUE rxml_reader_quote_char(VALUE self)
 {
   return INT2FIX(xmlTextReaderQuoteChar(rxml_text_reader_get(self)));
 }
@@ -575,12 +546,11 @@ rxml_reader_quote_char(VALUE self)
  *
  * Determine the standalone status of the document being read.
  *
- * Return 1 if the document was declared to be standalone, 0 if it was 
- * declared to be not standalone, or -1 if the document did not specify its 
+ * Return 1 if the document was declared to be standalone, 0 if it was
+ * declared to be not standalone, or -1 if the document did not specify its
  * standalone status or in case of error.
  */
-static VALUE
-rxml_reader_standalone(VALUE self)
+static VALUE rxml_reader_standalone(VALUE self)
 {
   return INT2FIX(xmlTextReaderStandalone(rxml_text_reader_get(self)));
 }
@@ -591,8 +561,7 @@ rxml_reader_standalone(VALUE self)
  *
  * Get the xml:lang scope within which the node resides.
  */
-static VALUE
-rxml_reader_xml_lang(VALUE self)
+static VALUE rxml_reader_xml_lang(VALUE self)
 {
   const xmlChar *result = xmlTextReaderConstXmlLang(rxml_text_reader_get(self));
   return (result == NULL ? Qnil : rb_str_new2(result));
@@ -604,10 +573,10 @@ rxml_reader_xml_lang(VALUE self)
  *
  * Determine the XML version of the document being read.
  */
-static VALUE
-rxml_reader_xml_version(VALUE self)
+static VALUE rxml_reader_xml_version(VALUE self)
 {
-  const xmlChar *result = xmlTextReaderConstXmlVersion(rxml_text_reader_get(self));
+  const xmlChar *result = xmlTextReaderConstXmlVersion(rxml_text_reader_get(
+      self));
   return (result == NULL ? Qnil : rb_str_new2(result));
 }
 
@@ -617,10 +586,10 @@ rxml_reader_xml_version(VALUE self)
  *
  * Get whether the node has attributes.
  */
-static VALUE
-rxml_reader_has_attributes(VALUE self)
+static VALUE rxml_reader_has_attributes(VALUE self)
 {
-  return xmlTextReaderHasAttributes(rxml_text_reader_get(self)) ? Qtrue : Qfalse;
+  return xmlTextReaderHasAttributes(rxml_text_reader_get(self)) ? Qtrue
+      : Qfalse;
 }
 
 /*
@@ -629,8 +598,7 @@ rxml_reader_has_attributes(VALUE self)
  *
  * Get whether the node can have a text value.
  */
-static VALUE
-rxml_reader_has_value(VALUE self)
+static VALUE rxml_reader_has_value(VALUE self)
 {
   return xmlTextReaderHasValue(rxml_text_reader_get(self)) ? Qtrue : Qfalse;
 }
@@ -639,23 +607,25 @@ rxml_reader_has_value(VALUE self)
  * call-seq:
  *    reader[key] -> value
  *
- * Provide the value of the attribute with the specified index (if +key+ is an 
- * integer) or with the specified name (if +key+ is a string) relative to the 
+ * Provide the value of the attribute with the specified index (if +key+ is an
+ * integer) or with the specified name (if +key+ is a string) relative to the
  * containing element, as a string.
  */
-static VALUE
-rxml_reader_attribute(VALUE self, VALUE key)
+static VALUE rxml_reader_attribute(VALUE self, VALUE key)
 {
   xmlTextReaderPtr reader;
   xmlChar *attr;
 
   reader = rxml_text_reader_get(self);
 
-  if (TYPE(key) == T_FIXNUM) {
+  if (TYPE(key) == T_FIXNUM)
+  {
     attr = xmlTextReaderGetAttributeNo(reader, FIX2INT(key));
   }
-  else {
-    attr = xmlTextReaderGetAttribute(reader, (const xmlChar *)StringValueCStr(key));
+  else
+  {
+    attr = xmlTextReaderGetAttribute(reader, (const xmlChar *) StringValueCStr(
+        key));
   }
   return (attr == NULL ? Qnil : rb_str_new2(attr));
 }
@@ -667,10 +637,10 @@ rxml_reader_attribute(VALUE self, VALUE key)
  * Resolve a namespace prefix in the scope of the current element.
  * To return the default namespace, specify nil as +prefix+.
  */
-static VALUE
-rxml_reader_lookup_namespace(VALUE self, VALUE prefix)
+static VALUE rxml_reader_lookup_namespace(VALUE self, VALUE prefix)
 {
-  const xmlChar *result = xmlTextReaderLookupNamespace(rxml_text_reader_get(self), (const xmlChar *)StringValueCStr(prefix));
+  const xmlChar *result = xmlTextReaderLookupNamespace(rxml_text_reader_get(
+      self), (const xmlChar *) StringValueCStr(prefix));
   return (result == NULL ? Qnil : rb_str_new2(result));
 }
 
@@ -678,27 +648,26 @@ rxml_reader_lookup_namespace(VALUE self, VALUE prefix)
  * call-seq:
  *    reader.expand -> node
  *
- * Read the contents of the current node and the full subtree. It then makes 
+ * Read the contents of the current node and the full subtree. It then makes
  * the subtree available until the next read call.
  *
  * Return an XML::Node object, or nil in case of error.
  */
-static VALUE
-rxml_reader_expand(VALUE self)
+static VALUE rxml_reader_expand(VALUE self)
 {
   xmlNodePtr node;
   xmlDocPtr doc;
   xmlTextReaderPtr reader = rxml_text_reader_get(self);
   node = xmlTextReaderExpand(reader);
-  
+
   if (!node)
     return Qnil;
-    
+
   /* Okay this is tricky.  By accessing the returned node, we
-     take ownership of the reader's document.  Thus we need to
-     tell the reader to not free it.  Otherwise it will be
-     freed twice - once when the Ruby document wrapper goes
-     out of scope and once when the reader goes out of scope. */
+   take ownership of the reader's document.  Thus we need to
+   tell the reader to not free it.  Otherwise it will be
+   freed twice - once when the Ruby document wrapper goes
+   out of scope and once when the reader goes out of scope. */
 
   xmlTextReaderPreserve(reader);
   doc = xmlTextReaderCurrentDoc(reader);
@@ -712,8 +681,8 @@ rxml_reader_expand(VALUE self)
  * call-seq:
  *    reader.byte_consumed -> value
  *
- * This method provides the current index of the parser used by the reader, 
- * relative to the start of the current entity. 
+ * This method provides the current index of the parser used by the reader,
+ * relative to the start of the current entity.
  */
 static VALUE
 rxml_reader_byte_consumed(VALUE self)
@@ -752,11 +721,10 @@ rxml_reader_line_number(VALUE self)
  * call-seq:
  *    reader.default? -> bool
  *
- * Return whether an Attribute node was generated from the default value 
+ * Return whether an Attribute node was generated from the default value
  * defined in the DTD or schema.
  */
-static VALUE
-rxml_reader_default(VALUE self)
+static VALUE rxml_reader_default(VALUE self)
 {
   return xmlTextReaderIsDefault(rxml_text_reader_get(self)) ? Qtrue : Qfalse;
 }
@@ -765,13 +733,13 @@ rxml_reader_default(VALUE self)
  * call-seq:
  *    reader.namespace_declaration? -> bool
  *
- * Determine whether the current node is a namespace declaration rather than a 
+ * Determine whether the current node is a namespace declaration rather than a
  * regular attribute.
  */
-static VALUE
-rxml_reader_namespace_declaration(VALUE self)
+static VALUE rxml_reader_namespace_declaration(VALUE self)
 {
-  return xmlTextReaderIsNamespaceDecl(rxml_text_reader_get(self)) ? Qtrue : Qfalse;
+  return xmlTextReaderIsNamespaceDecl(rxml_text_reader_get(self)) ? Qtrue
+      : Qfalse;
 }
 
 /*
@@ -780,10 +748,10 @@ rxml_reader_namespace_declaration(VALUE self)
  *
  * Check if the current node is empty.
  */
-static VALUE
-rxml_reader_empty_element(VALUE self)
+static VALUE rxml_reader_empty_element(VALUE self)
 {
-  return xmlTextReaderIsEmptyElement(rxml_text_reader_get(self)) ? Qtrue : Qfalse;
+  return xmlTextReaderIsEmptyElement(rxml_text_reader_get(self)) ? Qtrue
+      : Qfalse;
 }
 
 /*
@@ -792,23 +760,21 @@ rxml_reader_empty_element(VALUE self)
  *
  * Retrieve the validity status from the parser context.
  */
-static VALUE
-rxml_reader_valid(VALUE self)
+static VALUE rxml_reader_valid(VALUE self)
 {
   return xmlTextReaderIsValid(rxml_text_reader_get(self)) ? Qtrue : Qfalse;
 }
 
-/* Rdoc needs to know. */ 
+/* Rdoc needs to know. */
 #ifdef RDOC_NEVER_DEFINED
-  mLibXML = rb_define_module("LibXML");
-  mXML = rb_define_module_under(mLibXML, "XML");
+mLibXML = rb_define_module("LibXML");
+mXML = rb_define_module_under(mLibXML, "XML");
 #endif
 
-void
-ruby_init_xml_reader(void)
+void ruby_init_xml_reader(void)
 {
   cXMLReader = rb_define_class_under(mXML, "Reader", rb_cObject);
- 
+
   rb_define_singleton_method(cXMLReader, "file", rxml_reader_new_file, -1);
   rb_define_singleton_method(cXMLReader, "io", rxml_reader_new_io, -1);
   rb_define_singleton_method(cXMLReader, "walker", rxml_reader_new_walker, 1);
@@ -819,23 +785,28 @@ ruby_init_xml_reader(void)
   rb_define_method(cXMLReader, "close", rxml_reader_close, 0);
 
   rb_define_method(cXMLReader, "move_to_attribute", rxml_reader_move_to_attr, 1);
-  rb_define_method(cXMLReader, "move_to_first_attribute", rxml_reader_move_to_first_attr, 0);
-  rb_define_method(cXMLReader, "move_to_next_attribute", rxml_reader_move_to_next_attr, 0);
-  rb_define_method(cXMLReader, "move_to_element", rxml_reader_move_to_element, 0);
+  rb_define_method(cXMLReader, "move_to_first_attribute",
+      rxml_reader_move_to_first_attr, 0);
+  rb_define_method(cXMLReader, "move_to_next_attribute",
+      rxml_reader_move_to_next_attr, 0);
+  rb_define_method(cXMLReader, "move_to_element", rxml_reader_move_to_element,
+      0);
   rb_define_method(cXMLReader, "next", rxml_reader_next, 0);
   rb_define_method(cXMLReader, "next_sibling", rxml_reader_next_sibling, 0);
   rb_define_method(cXMLReader, "read", rxml_reader_read, 0);
-  rb_define_method(cXMLReader, "read_attribute_value", rxml_reader_read_attr_value, 0);
+  rb_define_method(cXMLReader, "read_attribute_value",
+      rxml_reader_read_attr_value, 0);
   rb_define_method(cXMLReader, "read_inner_xml", rxml_reader_read_inner_xml, 0);
   rb_define_method(cXMLReader, "read_outer_xml", rxml_reader_read_outer_xml, 0);
   rb_define_method(cXMLReader, "read_state", rxml_reader_read_state, 0);
   rb_define_method(cXMLReader, "read_string", rxml_reader_read_string, 0);
 
-  rb_define_method(cXMLReader, "relax_ng_validate", rxml_reader_relax_ng_validate, 1);
+  rb_define_method(cXMLReader, "relax_ng_validate",
+      rxml_reader_relax_ng_validate, 1);
 #if LIBXML_VERSION >= 20620
   rb_define_method(cXMLReader, "schema_validate", rxml_reader_schema_validate, 1);
 #endif
-  
+
   rb_define_method(cXMLReader, "node_type", rxml_reader_node_type, 0);
   rb_define_method(cXMLReader, "normalization", rxml_reader_normalization, 0);
   rb_define_method(cXMLReader, "attribute_count", rxml_reader_attr_count, 0);
@@ -848,15 +819,16 @@ ruby_init_xml_reader(void)
   rb_define_method(cXMLReader, "xml_version", rxml_reader_xml_version, 0);
   rb_define_method(cXMLReader, "prefix", rxml_reader_prefix, 0);
   rb_define_method(cXMLReader, "depth", rxml_reader_depth, 0);
-  rb_define_method(cXMLReader, "quote_char", rxml_reader_quote_char, 0); 
+  rb_define_method(cXMLReader, "quote_char", rxml_reader_quote_char, 0);
   rb_define_method(cXMLReader, "standalone", rxml_reader_standalone, 0);
-  
+
   rb_define_method(cXMLReader, "has_attributes?", rxml_reader_has_attributes, 0);
   rb_define_method(cXMLReader, "[]", rxml_reader_attribute, 1);
   rb_define_method(cXMLReader, "has_value?", rxml_reader_has_value, 0);
   rb_define_method(cXMLReader, "value", rxml_reader_value, 0);
 
-  rb_define_method(cXMLReader, "lookup_namespace", rxml_reader_lookup_namespace, 1);
+  rb_define_method(cXMLReader, "lookup_namespace",
+      rxml_reader_lookup_namespace, 1);
   rb_define_method(cXMLReader, "expand", rxml_reader_expand, 0);
 
 #if LIBXML_VERSION >= 20618
@@ -868,43 +840,65 @@ ruby_init_xml_reader(void)
 #endif
   rb_define_method(cXMLReader, "default?", rxml_reader_default, 0);
   rb_define_method(cXMLReader, "empty_element?", rxml_reader_empty_element, 0);
-  rb_define_method(cXMLReader, "namespace_declaration?", rxml_reader_namespace_declaration, 0);
+  rb_define_method(cXMLReader, "namespace_declaration?",
+      rxml_reader_namespace_declaration, 0);
   rb_define_method(cXMLReader, "valid?", rxml_reader_valid, 0);
 
   rb_define_const(cXMLReader, "LOADDTD", INT2FIX(XML_PARSER_LOADDTD));
   rb_define_const(cXMLReader, "DEFAULTATTRS", INT2FIX(XML_PARSER_DEFAULTATTRS));
   rb_define_const(cXMLReader, "VALIDATE", INT2FIX(XML_PARSER_VALIDATE));
-  rb_define_const(cXMLReader, "SUBST_ENTITIES", INT2FIX(XML_PARSER_SUBST_ENTITIES));
+  rb_define_const(cXMLReader, "SUBST_ENTITIES", INT2FIX(
+      XML_PARSER_SUBST_ENTITIES));
 
-  rb_define_const(cXMLReader, "SEVERITY_VALIDITY_WARNING", INT2FIX(XML_PARSER_SEVERITY_VALIDITY_WARNING));
-  rb_define_const(cXMLReader, "SEVERITY_VALIDITY_ERROR", INT2FIX(XML_PARSER_SEVERITY_VALIDITY_ERROR));
-  rb_define_const(cXMLReader, "SEVERITY_WARNING", INT2FIX(XML_PARSER_SEVERITY_WARNING));
-  rb_define_const(cXMLReader, "SEVERITY_ERROR", INT2FIX(XML_PARSER_SEVERITY_ERROR));
+  rb_define_const(cXMLReader, "SEVERITY_VALIDITY_WARNING", INT2FIX(
+      XML_PARSER_SEVERITY_VALIDITY_WARNING));
+  rb_define_const(cXMLReader, "SEVERITY_VALIDITY_ERROR", INT2FIX(
+      XML_PARSER_SEVERITY_VALIDITY_ERROR));
+  rb_define_const(cXMLReader, "SEVERITY_WARNING", INT2FIX(
+      XML_PARSER_SEVERITY_WARNING));
+  rb_define_const(cXMLReader, "SEVERITY_ERROR", INT2FIX(
+      XML_PARSER_SEVERITY_ERROR));
 
   rb_define_const(cXMLReader, "TYPE_NONE", INT2FIX(XML_READER_TYPE_NONE));
   rb_define_const(cXMLReader, "TYPE_ELEMENT", INT2FIX(XML_READER_TYPE_ELEMENT));
-  rb_define_const(cXMLReader, "TYPE_ATTRIBUTE", INT2FIX(XML_READER_TYPE_ATTRIBUTE));
+  rb_define_const(cXMLReader, "TYPE_ATTRIBUTE", INT2FIX(
+      XML_READER_TYPE_ATTRIBUTE));
   rb_define_const(cXMLReader, "TYPE_TEXT", INT2FIX(XML_READER_TYPE_TEXT));
   rb_define_const(cXMLReader, "TYPE_CDATA", INT2FIX(XML_READER_TYPE_CDATA));
-  rb_define_const(cXMLReader, "TYPE_ENTITY_REFERENCE", INT2FIX(XML_READER_TYPE_ENTITY_REFERENCE));
+  rb_define_const(cXMLReader, "TYPE_ENTITY_REFERENCE", INT2FIX(
+      XML_READER_TYPE_ENTITY_REFERENCE));
   rb_define_const(cXMLReader, "TYPE_ENTITY", INT2FIX(XML_READER_TYPE_ENTITY));
-  rb_define_const(cXMLReader, "TYPE_PROCESSING_INSTRUCTION", INT2FIX(XML_READER_TYPE_PROCESSING_INSTRUCTION));
+  rb_define_const(cXMLReader, "TYPE_PROCESSING_INSTRUCTION", INT2FIX(
+      XML_READER_TYPE_PROCESSING_INSTRUCTION));
   rb_define_const(cXMLReader, "TYPE_COMMENT", INT2FIX(XML_READER_TYPE_COMMENT));
-  rb_define_const(cXMLReader, "TYPE_DOCUMENT", INT2FIX(XML_READER_TYPE_DOCUMENT));
-  rb_define_const(cXMLReader, "TYPE_DOCUMENT_TYPE", INT2FIX(XML_READER_TYPE_DOCUMENT_TYPE));
-  rb_define_const(cXMLReader, "TYPE_DOCUMENT_FRAGMENT", INT2FIX(XML_READER_TYPE_DOCUMENT_FRAGMENT));
-  rb_define_const(cXMLReader, "TYPE_NOTATION", INT2FIX(XML_READER_TYPE_NOTATION));
-  rb_define_const(cXMLReader, "TYPE_WHITESPACE", INT2FIX(XML_READER_TYPE_WHITESPACE));
-  rb_define_const(cXMLReader, "TYPE_SIGNIFICANT_WHITESPACE", INT2FIX(XML_READER_TYPE_SIGNIFICANT_WHITESPACE));
-  rb_define_const(cXMLReader, "TYPE_END_ELEMENT", INT2FIX(XML_READER_TYPE_END_ELEMENT));
-  rb_define_const(cXMLReader, "TYPE_END_ENTITY", INT2FIX(XML_READER_TYPE_END_ENTITY));
-  rb_define_const(cXMLReader, "TYPE_XML_DECLARATION", INT2FIX(XML_READER_TYPE_XML_DECLARATION));
+  rb_define_const(cXMLReader, "TYPE_DOCUMENT",
+      INT2FIX(XML_READER_TYPE_DOCUMENT));
+  rb_define_const(cXMLReader, "TYPE_DOCUMENT_TYPE", INT2FIX(
+      XML_READER_TYPE_DOCUMENT_TYPE));
+  rb_define_const(cXMLReader, "TYPE_DOCUMENT_FRAGMENT", INT2FIX(
+      XML_READER_TYPE_DOCUMENT_FRAGMENT));
+  rb_define_const(cXMLReader, "TYPE_NOTATION",
+      INT2FIX(XML_READER_TYPE_NOTATION));
+  rb_define_const(cXMLReader, "TYPE_WHITESPACE", INT2FIX(
+      XML_READER_TYPE_WHITESPACE));
+  rb_define_const(cXMLReader, "TYPE_SIGNIFICANT_WHITESPACE", INT2FIX(
+      XML_READER_TYPE_SIGNIFICANT_WHITESPACE));
+  rb_define_const(cXMLReader, "TYPE_END_ELEMENT", INT2FIX(
+      XML_READER_TYPE_END_ELEMENT));
+  rb_define_const(cXMLReader, "TYPE_END_ENTITY", INT2FIX(
+      XML_READER_TYPE_END_ENTITY));
+  rb_define_const(cXMLReader, "TYPE_XML_DECLARATION", INT2FIX(
+      XML_READER_TYPE_XML_DECLARATION));
 
   /* Read states */
-  rb_define_const(cXMLReader, "MODE_INITIAL", INT2FIX(XML_TEXTREADER_MODE_INITIAL));
-  rb_define_const(cXMLReader, "MODE_INTERACTIVE", INT2FIX(XML_TEXTREADER_MODE_INTERACTIVE));
+  rb_define_const(cXMLReader, "MODE_INITIAL", INT2FIX(
+      XML_TEXTREADER_MODE_INITIAL));
+  rb_define_const(cXMLReader, "MODE_INTERACTIVE", INT2FIX(
+      XML_TEXTREADER_MODE_INTERACTIVE));
   rb_define_const(cXMLReader, "MODE_ERROR", INT2FIX(XML_TEXTREADER_MODE_ERROR));
   rb_define_const(cXMLReader, "MODE_EOF", INT2FIX(XML_TEXTREADER_MODE_EOF));
-  rb_define_const(cXMLReader, "MODE_CLOSED", INT2FIX(XML_TEXTREADER_MODE_CLOSED));
-  rb_define_const(cXMLReader, "MODE_READING", INT2FIX(XML_TEXTREADER_MODE_READING));
+  rb_define_const(cXMLReader, "MODE_CLOSED",
+      INT2FIX(XML_TEXTREADER_MODE_CLOSED));
+  rb_define_const(cXMLReader, "MODE_READING", INT2FIX(
+      XML_TEXTREADER_MODE_READING));
 }

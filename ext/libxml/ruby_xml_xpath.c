@@ -8,9 +8,9 @@
 
 /*
  * Document-class: LibXML::XML::XPath
- * 
- * The XML::XPath module is used to query XML documents. It is 
- * usually accessed via the XML::Document#find or 
+ *
+ * The XML::XPath module is used to query XML documents. It is
+ * usually accessed via the XML::Document#find or
  * XML::Node#find methods.  For example:
  *
  *  document.find('/foo', namespaces) -> XML::XPath::Object
@@ -27,7 +27,7 @@
  *
  * === Working With Default Namespaces
  *
- * Finding namespaced elements and attributes can be tricky.  
+ * Finding namespaced elements and attributes can be tricky.
  * Lets work through an example of a document with a default
  * namespace:
  *
@@ -48,7 +48,7 @@
  *
  * === More Complex Namespace Examples
  *
- * Lets work through some more complex examples using the 
+ * Lets work through some more complex examples using the
  * following xml document:
  *
  *  <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
@@ -60,37 +60,37 @@
  *      </getManufacturerNamesResponse>
  *  </soap:Envelope>
  *
- *  # Since the soap namespace is defined on the root 
+ *  # Since the soap namespace is defined on the root
  *  # node we can directly use it.
  *  doc.find('/soap:Envelope')
  *
  *  # Since the ns1 namespace is not defined on the root node
  *  # we have to first register it with the xpath engine.
- *  doc.find('//ns1:IdAndName', 
+ *  doc.find('//ns1:IdAndName',
  *           'ns1:http://domain.somewhere.com')
- *             
- *  # Since the getManufacturerNamesResponse element uses a default 
+ *
+ *  # Since the getManufacturerNamesResponse element uses a default
  *  # namespace we first have to give it a prefix and register
  *  # it with the xpath engine.
- *  doc.find('//ns:getManufacturerNamesResponse', 
+ *  doc.find('//ns:getManufacturerNamesResponse',
  *            'ns:http://services.somewhere.com')
  *
  *  # Here is an example showing a complex namespace aware
  *  # xpath expression.
- *  doc.find('/soap:Envelope/soap:Body/ns0:getManufacturerNamesResponse/ns0:IDAndNameList/ns1:IdAndName', 
-             ['ns0:http://services.somewhere.com', 'ns1:http://domain.somewhere.com'])
+ *  doc.find('/soap:Envelope/soap:Body/ns0:getManufacturerNamesResponse/ns0:IDAndNameList/ns1:IdAndName',
+ ['ns0:http://services.somewhere.com', 'ns1:http://domain.somewhere.com'])
  */
 
 VALUE mXPath;
 
-// Rdoc needs to know 
+// Rdoc needs to know
 #ifdef RDOC_NEVER_DEFINED
-  mLibXML = rb_define_module("LibXML");
-  mXML = rb_define_module_under(mLibXML, "XML");
+mLibXML = rb_define_module("LibXML");
+mXML = rb_define_module_under(mLibXML, "XML");
 #endif
 
-void
-ruby_init_xml_xpath(void) {
+void ruby_init_xml_xpath(void)
+{
   mXPath = rb_define_module_under(mXML, "XPath");
 
   rb_define_const(mXPath, "UNDEFINED", INT2NUM(XPATH_UNDEFINED));

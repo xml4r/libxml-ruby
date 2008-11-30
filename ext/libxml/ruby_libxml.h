@@ -19,11 +19,6 @@
 #include <libxml/HTMLparser.h>
 #include <libxml/xmlreader.h>
 
-// Maybe not yet defined in ruby
-#ifndef RSTRING_LEN
-#define RSTRING_LEN(x) RSTRING(x)->len
-#endif
-
 // not in Ruby 1.9
 #ifndef GetWriteFile
 #define GetWriteFile(fp) rb_io_stdio_file(fp)
