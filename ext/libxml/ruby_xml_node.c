@@ -845,14 +845,10 @@ rxml_node_namespace_set(int argc, VALUE *argv, VALUE self) {
  */
 void
 rxml_node2_free(xmlNodePtr xnode) {
+  xnode->_private = NULL;
 
-  if (xnode != NULL) {
-    xnode->_private=NULL;
-
-    if (xnode->doc==NULL && xnode->parent==NULL) {
-      xmlFreeNode(xnode);
-    }
-  }
+  if (xnode->doc == NULL && xnode->parent == NULL)
+    xmlFreeNode(xnode);
 }
 
 void
@@ -1223,16 +1219,28 @@ rxml_node_property_set(VALUE self, VALUE name, VALUE value) {
 
 /*
  * call-seq:
-*    node.remove! -> nil
+*    node.remove! -> node
 *
-* Removes this node from it's parent.
-*/
+* Removes this node and its children from its 
+* document tree by setting its document,
+* parent and siblings to nil.  You can add 
+* the returned node back into a document. 
+* Otherwise, the node will be freed once 
+* any references to it go out of scope. */
+
 static VALUE
 rxml_node_remove_ex(VALUE self) {
   xmlNodePtr xnode;
   Data_Get_Struct(self, xmlNode, xnode);
+  /* Unlink the node from its parent. */
   xmlUnlinkNode(xnode);
-  return(Qnil);
+  /* Now set the nodes parent to nil so it can
+     be freed if the reference to it goes out of scope*/
+  xmlSetTreeDoc(xnode, NULL);
+
+  /* Now return the removed node so the user can
+     do something wiht it.*/
+  return self;
 }
 
 

@@ -60,9 +60,21 @@ class TestNodeEdit < Test::Unit::TestCase
       @doc.root.to_s.gsub(/\n\s*/,'')
   end
   
-  def test_remove_node()
+  def test_remove_node
     first_node.remove!
     assert_equal('<test><num>two</num><num>three</num></test>',
+                 @doc.root.to_s.gsub(/\n\s*/,''))
+  end
+
+  def test_reuse_removed_node
+    # Remove the node
+    node = @doc.root.first.remove!
+    assert_not_nil(node)
+
+    # Add it to the end of the documnet
+    @doc.root.last.next = node
+
+    assert_equal('<test><num>two</num><num>three</num><num>one</num></test>',
                  @doc.root.to_s.gsub(/\n\s*/,''))
   end
 
