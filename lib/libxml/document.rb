@@ -17,10 +17,10 @@ module LibXML
         Parser.io(value).parse
       end
 
-      # Returns a new XML::XPathContext for the current node.
+      # Returns a new XML::XPathContext for the document.
       #
       # call-seq:
-      #   node.context(namespaces=nil) -> XPath::Context
+      #   document.context(namespaces=nil) -> XPath::Context
       #
       # Namespaces is an optional array of XML::NS objects
       def context(nslist = nil)
