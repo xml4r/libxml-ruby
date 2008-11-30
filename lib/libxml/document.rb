@@ -17,6 +17,20 @@ module LibXML
         Parser.io(value).parse
       end
 
+      # Returns a new XML::XPathContext for the current node.
+      #
+      # call-seq:
+      #   node.context(namespaces=nil) -> XPath::Context
+      #
+      # Namespaces is an optional array of XML::NS objects
+      def context(nslist = nil)
+        context = XPath::Context.new(self)
+        context.node = self.root
+        context.register_namespaces_from_node(self.root)
+        context.register_namespaces(nslist) if nslist
+        context
+      end
+
       # Return the nodes matching the specified xpath expression, 
       # optionally using the specified namespace.  For more 
       # information about working with namespaces, please refer
@@ -47,13 +61,9 @@ module LibXML
       #  nodes = nil
       #  GC.start
       def find(xpath, nslist = nil)
-        context = XPath::Context.new(self)
-        context.node = self.root  
-        context.register_namespaces_from_node(self.root)
-        context.register_namespaces(nslist) if nslist
-
-        context.find(xpath)
+        self.context(nslist).find(xpath)
       end
+
     
       # Return the first node matching the specified xpath expression.
       # For more information, please refer to the documentation

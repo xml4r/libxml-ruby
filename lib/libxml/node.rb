@@ -32,22 +32,35 @@ module LibXML
         copy(false)
       end
     
-      # Return nodes matching the specified xpath expression.
-      # For more information, please refer to the documentation
-      # for XML::Document#find.
-      def find(xpath, nslist = nil)
+      # Returns a new XML::XPathContext for the current node.
+      #
+      # call-seq:
+      #   node.context(namespaces=nil) -> XPath::Context
+      #
+      # Namespaces is an optional array of XML::NS objects
+      def context(nslist = nil)
         if not self.doc
-          raise(TypeError, "A node must belong to a document before " +
-                           "it can be searched with XPath.")
+          raise(TypeError, "A node must belong to a document before a xpath context can be created")
         end
-      
+
         context = XPath::Context.new(self)
-        context.node = self  
+        context.node = self
         context.register_namespaces_from_node(self)
         context.register_namespaces_from_node(self.doc.root)
         context.register_namespaces(nslist) if nslist
+        context
+      end
 
-        context.find(xpath)
+      # Return nodes matching the specified xpath expression.
+      # For more information, please refer to the documentation
+      # for XML::Document#find.
+      #
+      # call-seq:
+      #   node.find(namespaces=nil) -> XPath::XPathObject
+      #
+      # Namespaces is an optional array of XML::NS objects
+      def find(xpath, nslist = nil)
+        self.context(nslist).find(xpath)
       end
     
       # Return the first node matching the specified xpath expression.

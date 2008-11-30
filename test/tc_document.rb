@@ -16,7 +16,12 @@ class TC_XML_Document < Test::Unit::TestCase
     @doc = nil
   end
 
-  def test_libxml_document_find
+  def test_context
+    context = @doc.context
+    assert_instance_of(XML::XPath::Context, context)
+  end
+
+  def test_find
     set = @doc.find('/ruby_array/fixnum')
     assert_instance_of(XML::XPath::Object, set)
     assert_raise(NoMethodError) {

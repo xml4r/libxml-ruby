@@ -48,32 +48,29 @@ static VALUE rxml_xpath_context_initialize(VALUE self, VALUE node)
 {
   xmlDocPtr xdoc;
   VALUE document;
-#ifndef LIBXML_XPATH_ENABLED
-  rb_raise(rb_eTypeError, "libxml was not compiled with XPath support.");
-#endif
 
   if (rb_obj_is_kind_of(node, cXMLNode) == Qtrue)
   {
     document = rb_funcall(node, rb_intern("doc"), 0);
-if  NIL_P(document)
-  rb_raise(rb_eTypeError, "Supplied node must belong to a document.");
-}
-else if (rb_obj_is_kind_of(node, cXMLDocument) == Qtrue)
-{
-  document = node;
-}
-else
-{
-  rb_raise(rb_eTypeError, "Supplied argument must be a document or node.");
-}
+    if (NIL_P(document))
+    rb_raise(rb_eTypeError, "Supplied node must belong to a document.");
+  }
+  else if (rb_obj_is_kind_of(node, cXMLDocument) == Qtrue)
+  {
+    document = node;
+  }
+  else
+  {
+    rb_raise(rb_eTypeError, "Supplied argument must be a document or node.");
+  }
 
-Data_Get_Struct(document, xmlDoc, xdoc);
-DATA_PTR(self) = xmlXPathNewContext(xdoc);
+  Data_Get_Struct(document, xmlDoc, xdoc);
+  DATA_PTR(self) = xmlXPathNewContext(xdoc);
 
-/* Save the doc as an attribute, this will expose it to Ruby's GC. */
-rb_iv_set(self, "@doc", document);
+  /* Save the doc as an attribute, this will expose it to Ruby's GC. */
+  rb_iv_set(self, "@doc", document);
 
-return self;
+  return self;
 }
 
 /*
@@ -287,19 +284,67 @@ static VALUE rxml_xpath_context_find(VALUE self, VALUE xpath_expr)
   return result;
 }
 
+
+/*
+ * call-seq:
+ *    context.enable_cache(size = nil)
+ *
+ * Enables an XPath::Context's built-in cache.  If the cache is
+ * enabled then XPath objects will be cached internally for reuse.
+ * The size parameter controls sets the maximum number of XPath objects 
+ * that will be cached per XPath object type (node-set, string, number,
+ * boolean, and misc objects).  Set size to nil to use the default
+ * cache size of 100.
+ */
+static VALUE
+rxml_xpath_context_enable_cache(int argc,  VALUE *argv, VALUE self)
+{
+  xmlXPathContextPtr xctxt;
+  VALUE size;
+  int value = -1;
+
+  Data_Get_Struct(self, xmlXPathContext, xctxt);
+
+  if (rb_scan_args(argc, argv, "01", &size) == 1)
+  {
+	  value = NUM2INT(size);
+  }
+
+  if (xmlXPathContextSetCache(xctxt, 1, value, 0) == -1)
+    rxml_raise(&xmlLastError);
+
+  return self;
+}
+
+/*
+ * call-seq:
+ *    context.disable_cache
+ * 
+ * Disables an XPath::Context's built-in cache.
+ */
+static VALUE
+rxml_xpath_context_disable_cache(VALUE self) {
+  xmlXPathContextPtr xctxt;
+  Data_Get_Struct(self, xmlXPathContext, xctxt);
+
+  if (xmlXPathContextSetCache(xctxt, 0, 0, 0) == -1)
+    rxml_raise(&xmlLastError);
+
+  return self;
+}
+
+
 void ruby_init_xml_xpath_context(void)
 {
   cXMLXPathContext = rb_define_class_under(mXPath, "Context", rb_cObject);
   rb_define_alloc_func(cXMLXPathContext, rxml_xpath_context_alloc);
   rb_define_attr(cXMLXPathContext, "doc", 1, 0);
-  rb_define_method(cXMLXPathContext, "initialize",
-      rxml_xpath_context_initialize, 1);
-  rb_define_method(cXMLXPathContext, "register_namespaces",
-      rxml_xpath_context_register_namespaces, 1);
-  rb_define_method(cXMLXPathContext, "register_namespaces_from_node",
-      rxml_xpath_context_register_namespaces_from_node, 1);
-  rb_define_method(cXMLXPathContext, "register_namespace",
-      rxml_xpath_context_register_namespace, 2);
+  rb_define_method(cXMLXPathContext, "initialize", rxml_xpath_context_initialize, 1);
+  rb_define_method(cXMLXPathContext, "register_namespaces", rxml_xpath_context_register_namespaces, 1);
+  rb_define_method(cXMLXPathContext, "register_namespaces_from_node", rxml_xpath_context_register_namespaces_from_node, 1);
+  rb_define_method(cXMLXPathContext, "register_namespace", rxml_xpath_context_register_namespace, 2);
   rb_define_method(cXMLXPathContext, "node=", rxml_xpath_context_node_set, 1);
   rb_define_method(cXMLXPathContext, "find", rxml_xpath_context_find, 1);
+  rb_define_method(cXMLXPathContext, "enable_cache", rxml_xpath_context_enable_cache, -1);
+  rb_define_method(cXMLXPathContext, "disable_cache", rxml_xpath_context_disable_cache, 0);
 }

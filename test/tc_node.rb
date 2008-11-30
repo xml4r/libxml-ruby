@@ -31,9 +31,16 @@ class TestNode < Test::Unit::TestCase
     end
   end
 
-  def test_find_class
-    set = @doc.find('/ruby_array/fixnum')
-    assert_instance_of(XML::XPath::Object, set)
+  def test_context
+    node = @doc.root
+    context = node.context
+    assert_instance_of(XML::XPath::Context, context)
+  end
+
+  def test_find
+    root = @doc.root
+    nodes = root.find('/ruby_array/fixnum')
+    assert_instance_of(XML::XPath::Object, nodes)
   end
 
   def test_node_child_get
