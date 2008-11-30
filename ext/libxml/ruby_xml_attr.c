@@ -111,7 +111,7 @@ static VALUE rxml_attr_initialize(int argc, VALUE *argv, VALUE self)
   if (xnode->type != XML_ELEMENT_NODE)
     rb_raise(rb_eArgError, "Attributes can only be created on element nodes.");
 
-  if NIL_P(ns)
+  if (NIL_P(ns))
   {
     xattr = xmlNewProp(xnode, (xmlChar*)StringValuePtr(name), (xmlChar*)StringValuePtr(value));
   }

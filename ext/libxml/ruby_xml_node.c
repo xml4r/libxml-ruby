@@ -593,7 +593,7 @@ if(self == other)
 {
   return Qtrue;
 }
-else if NIL_P(other)
+else if (NIL_P(other))
 {
   return Qfalse;
 }
