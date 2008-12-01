@@ -83,7 +83,7 @@ VALUE rxml_xpath_object_wrap(xmlXPathObjectPtr xpop)
     xmlXPathFreeObject(xpop);
     break;
   case XPATH_STRING:
-    rval = rb_str_new2(xpop->stringval);
+    rval = rb_str_new2((const char*)xpop->stringval);
 
     xmlXPathFreeObject(xpop);
     break;

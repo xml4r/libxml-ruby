@@ -494,7 +494,7 @@ static VALUE rxml_document_encoding_set(VALUE self, VALUE encoding)
 
   Check_Type(encoding, T_STRING);
   Data_Get_Struct(self, xmlDoc, xdoc);
-  xdoc->encoding = xmlStrdup(StringValuePtr(encoding));
+  xdoc->encoding = xmlStrdup((xmlChar *)StringValuePtr(encoding));
   return (rxml_document_encoding_get(self));
 }
 

@@ -43,27 +43,23 @@ solution.  If you wish to run a debug version of libxml-ruby on
 Windows, then it is highly recommended you use VC++.
 
 == Getting Started
-Using libxml is easy. First decide what parser you want to use:
-
- * Generally you'll want to use the XML::Parser which provides
-   a tree based API
- * For large documents that won't fit into memory, or if you
-   prefer an input based API, then use XML::Reader
- * If you are parsing HTML files, then use XML::HTMLParser
- * If you are masochistic or old stream, then use the XML::SaxParser
-   which provides a callback API.
+Using libxml is easy. First decide what parser you want to use.
+Generally you'll want to use the LibXML::XML::Parser which provides a tree based API.
+For larger documents that don't fit into memory, or if you prefer an input based API,
+then use LibXML::XML::Reader. If you are parsing HTML files, then use LibXML::XML::HTMLParser.
+Finally, if you are masochistic, then use the LibXML::XML::SaxParser, which provides a callback API.
 
 Once you choose a parser, then choose a datasource and its
 encoding.  Libxml can parse files, strings, URIs and IO stream.
-For more information, see XML::Input.
+For more information, see LibXML::XML::Input.
 
 == Advanced Functionality
 Beyond the basics of parsing and processing XML and HTML documents,
 lLibxml provides a wealth of additional functionality.
 
-Most commonly, you'll want to use its XML::XPath support, which makes
+Most commonly, you'll want to use its LibXML::XML::XPath support, which makes
 it easy to search for data inside and XML document.  Although not as
-popular, XML::XPointer provides another API for finding data inside
+popular, LibXML::XML::XPointer provides another API for finding data inside
 an XML document.
 
 Often times you'll need to validate data before processing it. For example,

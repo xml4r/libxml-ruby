@@ -19,6 +19,26 @@
 #include <libxml/HTMLparser.h>
 #include <libxml/xmlreader.h>
 
+/* Needed for Ruby 1.8.5 */
+#ifndef RARRAY_LEN
+#define RARRAY_LEN(s) (RARRAY(s)->len)
+#endif
+
+/* Needed for Ruby 1.8.5 */
+#ifndef RARRAY_PTR
+#define RARRAY_PTR(s) (RARRAY(s)->ptr)
+#endif
+
+/* Needed for Ruby 1.8.5 */
+#ifndef RSTRING_LEN
+#define RSTRING_LEN(s) (RSTRING(s)->len)
+#endif
+
+/* Needed for Ruby 1.8.5 */
+#ifndef RSTRING_PTR
+#define RSTRING_PTR(s) (RSTRING(s)->ptr)
+#endif
+
 // not in Ruby 1.9
 #ifndef GetWriteFile
 #define GetWriteFile(fp) rb_io_stdio_file(fp)

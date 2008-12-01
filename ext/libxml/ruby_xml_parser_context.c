@@ -432,7 +432,7 @@ static VALUE rxml_parser_context_subset_internal_q(VALUE self)
 
 /*
  * call-seq:
- *    context.subset_name -> "name"
+ *    context.subset_internal_name -> "name"
  *
  * Obtain this context's subset name (valid only if
  * either of subset_external? or subset_internal?
@@ -594,64 +594,37 @@ void ruby_init_xml_parser_context(void)
   cXMLParserContext = rb_define_class_under(cXMLParser, "Context", rb_cObject);
   rb_undef_alloc_func(cXMLParserContext);
 
-  rb_define_method(cXMLParserContext, "data_directory",
-      rxml_parser_context_data_directory_get, 0);
+  rb_define_method(cXMLParserContext, "data_directory", rxml_parser_context_data_directory_get, 0);
   rb_define_method(cXMLParserContext, "depth", rxml_parser_context_depth_get, 0);
-  rb_define_method(cXMLParserContext, "disable_sax?",
-      rxml_parser_context_disable_sax_q, 0);
-  rb_define_method(cXMLParserContext, "docbook?",
-      rxml_parser_context_docbook_q, 0);
-  rb_define_method(cXMLParserContext, "encoding",
-      rxml_parser_context_encoding_get, 0);
+  rb_define_method(cXMLParserContext, "disable_sax?", rxml_parser_context_disable_sax_q, 0);
+  rb_define_method(cXMLParserContext, "docbook?", rxml_parser_context_docbook_q, 0);
+  rb_define_method(cXMLParserContext, "encoding", rxml_parser_context_encoding_get, 0);
   rb_define_method(cXMLParserContext, "errno", rxml_parser_context_errno_get, 0);
   rb_define_method(cXMLParserContext, "html?", rxml_parser_context_html_q, 0);
-  rb_define_method(cXMLParserContext, "io_max_num_streams",
-      rxml_parser_context_io_max_num_streams_get, 0);
-  rb_define_method(cXMLParserContext, "io_num_streams",
-      rxml_parser_context_io_num_streams_get, 0);
-  rb_define_method(cXMLParserContext, "keep_blanks?",
-      rxml_parser_context_keep_blanks_q, 0);
-  rb_define_method(cXMLParserContext, "name_node",
-      rxml_parser_context_name_node_get, 0);
-  rb_define_method(cXMLParserContext, "name_depth",
-      rxml_parser_context_name_depth_get, 0);
-  rb_define_method(cXMLParserContext, "name_depth_max",
-      rxml_parser_context_name_depth_max_get, 0);
-  rb_define_method(cXMLParserContext, "name_tab",
-      rxml_parser_context_name_tab_get, 0);
+  rb_define_method(cXMLParserContext, "io_max_num_streams", rxml_parser_context_io_max_num_streams_get, 0);
+  rb_define_method(cXMLParserContext, "io_num_streams", rxml_parser_context_io_num_streams_get, 0);
+  rb_define_method(cXMLParserContext, "keep_blanks?", rxml_parser_context_keep_blanks_q, 0);
+  rb_define_method(cXMLParserContext, "name_node", rxml_parser_context_name_node_get, 0);
+  rb_define_method(cXMLParserContext, "name_depth", rxml_parser_context_name_depth_get, 0);
+  rb_define_method(cXMLParserContext, "name_depth_max", rxml_parser_context_name_depth_max_get, 0);
+  rb_define_method(cXMLParserContext, "name_tab", rxml_parser_context_name_tab_get, 0);
   rb_define_method(cXMLParserContext, "node", rxml_parser_context_node_get, 0);
-  rb_define_method(cXMLParserContext, "node_depth",
-      rxml_parser_context_node_depth_get, 0);
-  rb_define_method(cXMLParserContext, "node_depth_max",
-      rxml_parser_context_node_depth_max_get, 0);
-  rb_define_method(cXMLParserContext, "num_chars",
-      rxml_parser_context_num_chars_get, 0);
-  rb_define_method(cXMLParserContext, "replace_entities?",
-      rxml_parser_context_replace_entities_q, 0);
-  rb_define_method(cXMLParserContext, "replace_entities=",
-      rxml_parser_context_replace_entities_set, 1);
-  rb_define_method(cXMLParserContext, "space_depth",
-      rxml_parser_context_space_depth_get, 0);
-  rb_define_method(cXMLParserContext, "space_depth_max",
-      rxml_parser_context_space_depth_max_get, 0);
-  rb_define_method(cXMLParserContext, "subset_external?",
-      rxml_parser_context_subset_external_q, 0);
-  rb_define_method(cXMLParserContext, "subset_external_system_id",
-      rxml_parser_context_subset_external_system_id_get, 0);
-  rb_define_method(cXMLParserContext, "subset_external_uri",
-      rxml_parser_context_subset_name_get, 0);
-  rb_define_method(cXMLParserContext, "subset_internal?",
-      rxml_parser_context_subset_internal_q, 0);
-  rb_define_method(cXMLParserContext, "subset_internal_name",
-      rxml_parser_context_subset_name_get, 0);
+  rb_define_method(cXMLParserContext, "node_depth", rxml_parser_context_node_depth_get, 0);
+  rb_define_method(cXMLParserContext, "node_depth_max", rxml_parser_context_node_depth_max_get, 0);
+  rb_define_method(cXMLParserContext, "num_chars", rxml_parser_context_num_chars_get, 0);
+  rb_define_method(cXMLParserContext, "replace_entities?", rxml_parser_context_replace_entities_q, 0);
+  rb_define_method(cXMLParserContext, "replace_entities=", rxml_parser_context_replace_entities_set, 1);
+  rb_define_method(cXMLParserContext, "space_depth", rxml_parser_context_space_depth_get, 0);
+  rb_define_method(cXMLParserContext, "space_depth_max", rxml_parser_context_space_depth_max_get, 0);
+  rb_define_method(cXMLParserContext, "subset_external?", rxml_parser_context_subset_external_q, 0);
+  rb_define_method(cXMLParserContext, "subset_external_system_id", rxml_parser_context_subset_external_system_id_get, 0);
+  rb_define_method(cXMLParserContext, "subset_external_uri", rxml_parser_context_subset_external_uri_get, 0);
+  rb_define_method(cXMLParserContext, "subset_internal?", rxml_parser_context_subset_internal_q, 0);
+  rb_define_method(cXMLParserContext, "subset_internal_name", rxml_parser_context_subset_name_get, 0);
   rb_define_method(cXMLParserContext, "stats?", rxml_parser_context_stats_q, 0);
-  rb_define_method(cXMLParserContext, "standalone?",
-      rxml_parser_context_standalone_q, 0);
+  rb_define_method(cXMLParserContext, "standalone?", rxml_parser_context_standalone_q, 0);
   rb_define_method(cXMLParserContext, "valid", rxml_parser_context_valid_q, 0);
-  rb_define_method(cXMLParserContext, "validate?",
-      rxml_parser_context_validate_q, 0);
-  rb_define_method(cXMLParserContext, "version",
-      rxml_parser_context_version_get, 0);
-  rb_define_method(cXMLParserContext, "well_formed?",
-      rxml_parser_context_well_formed_q, 0);
+  rb_define_method(cXMLParserContext, "validate?", rxml_parser_context_validate_q, 0);
+  rb_define_method(cXMLParserContext, "version", rxml_parser_context_version_get, 0);
+  rb_define_method(cXMLParserContext, "well_formed?", rxml_parser_context_well_formed_q, 0);
 }

@@ -37,7 +37,7 @@ static VALUE rxml_ns_initialize(VALUE self, VALUE node, VALUE href,
 
   Data_Get_Struct(node, xmlNode, xnode);
   /* Prefix can be null - that means its the default namespace */
-  xmlPrefix = NIL_P(prefix) ? NULL : StringValuePtr(prefix);
+  xmlPrefix = NIL_P(prefix) ? NULL : (xmlChar *)StringValuePtr(prefix);
   xns = xmlNewNs(xnode, (xmlChar*) StringValuePtr(href), xmlPrefix);
 
   DATA_PTR( self) = xns;

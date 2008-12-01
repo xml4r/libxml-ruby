@@ -564,7 +564,7 @@ static VALUE rxml_default_tree_indent_string_get(VALUE class)
 static VALUE rxml_default_tree_indent_string_set(VALUE class, VALUE string)
 {
   Check_Type(string, T_STRING);
-  xmlTreeIndentString = xmlStrdup(StringValuePtr(string));
+  xmlTreeIndentString = xmlStrdup((xmlChar *)StringValuePtr(string));
   return (string);
 }
 

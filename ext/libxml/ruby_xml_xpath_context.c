@@ -146,8 +146,8 @@ static VALUE rxml_xpath_context_register_namespaces_from_node(VALUE self,
        Skip it for now. */
       if (xns->prefix)
       {
-        VALUE prefix = rb_str_new2(xns->prefix);
-        VALUE uri = rb_str_new2(xns->href);
+        VALUE prefix = rb_str_new2((const char*)xns->prefix);
+        VALUE uri = rb_str_new2((const char*)xns->href);
         rxml_xpath_context_register_namespace(self, prefix, uri);
       }
       xns = xns->next;

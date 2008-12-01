@@ -46,7 +46,7 @@ static VALUE rxml_xpath_expression_alloc(VALUE klass)
  */
 static VALUE rxml_xpath_expression_initialize(VALUE self, VALUE expression)
 {
-  xmlXPathCompExprPtr compexpr = xmlXPathCompile(StringValueCStr(expression));
+  xmlXPathCompExprPtr compexpr = xmlXPathCompile((const xmlChar*)StringValueCStr(expression));
 
   if (compexpr == NULL)
   {
