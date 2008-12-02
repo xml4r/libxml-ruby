@@ -181,6 +181,7 @@ VALUE rxml_input_encoding_to_s(VALUE self, VALUE encoding)
  */
 static VALUE rxml_input_initialize(VALUE self)
 {
+  rb_ivar_set(self, BASE_URL_ATTR, Qnil);
   rb_ivar_set(self, ENCODING_ATTR, INT2NUM(XML_CHAR_ENCODING_UTF8));
   return self;
 }
