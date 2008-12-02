@@ -82,12 +82,14 @@ static VALUE rxml_xpath_context_initialize(VALUE self, VALUE node)
 
  *   context.register_namespace('xi', 'http://www.w3.org/2001/XInclude')
  */
-static VALUE rxml_xpath_context_register_namespace(VALUE self, VALUE prefix,
-    VALUE uri)
+static VALUE rxml_xpath_context_register_namespace(VALUE self, VALUE prefix, VALUE uri)
 {
   xmlXPathContextPtr ctxt;
-
   Data_Get_Struct(self, xmlXPathContext, ctxt);
+
+  /* Prefix could be a symbol. */
+  prefix = rb_obj_as_string(prefix);
+  
   if (xmlXPathRegisterNs(ctxt, (xmlChar*) StringValuePtr(prefix),
       (xmlChar*) StringValuePtr(uri)) == 0)
   {
@@ -168,7 +170,9 @@ static int iterate_ns_hash(st_data_t prefix, st_data_t uri, st_data_t self)
  * call-seq:
  *    context.register_namespaces(["prefix:uri"]) -> self
  *
- * Register the specified namespaces in this context.
+ * Register the specified namespaces in this context.  There are
+ * three different forms that libxml accepts.  These include
+ * a string, an array of string, or a hash table:
  *
  *   context.register_namespaces('xi:http://www.w3.org/2001/XInclude')
  *   context.register_namespaces(['xlink:http://www.w3.org/1999/xlink',

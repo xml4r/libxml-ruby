@@ -34,14 +34,16 @@ class TestXPath < Test::Unit::TestCase
     assert_equal(3, nodes.length)
   end
 
-  def test_default_ns
-    # Pull all nodes with http://services.somewhere.com namespace
+  def test_default_ns1
+    # Find all nodes with http://services.somewhere.com namespace
     nodes = @doc.find('//*[namespace-uri()="http://services.somewhere.com"]')
     assert_equal(2, nodes.length)
     assert_equal('getManufacturerNamesResponse', nodes[0].name)
     assert_equal('IDAndNameList', nodes[1].name)
+  end
 
-    # Pull all nodes with http://services.somewhere.com namespace
+  def test_default_ns2
+    # Find all nodes with http://services.somewhere.com namespace
     nodes = @doc.find('//ns:*', 'ns:http://services.somewhere.com')
     assert_equal(2, nodes.length)
     assert_equal('getManufacturerNamesResponse', nodes[0].name)
@@ -55,6 +57,31 @@ class TestXPath < Test::Unit::TestCase
     nodes = @doc.find('/soap:Envelope/soap:Body/ns0:getManufacturerNamesResponse/ns0:IDAndNameList/ns1:IdAndName',
                       ['ns0:http://services.somewhere.com', 'ns1:http://domain.somewhere.com'])
     assert_equal(3, nodes.length)
+  end
+
+  def test_default_ns3
+    # Find all nodes with http://services.somewhere.com namespace
+    nodes = @doc.find('//ns:*', 'ns' => 'http://services.somewhere.com')
+    assert_equal(2, nodes.length)
+    assert_equal('getManufacturerNamesResponse', nodes[0].name)
+    assert_equal('IDAndNameList', nodes[1].name)
+  end
+
+  def test_default_ns4
+    # Find all nodes with http://services.somewhere.com namespace
+    nodes = @doc.find('//ns:*', :ns => 'http://services.somewhere.com')
+    assert_equal(2, nodes.length)
+    assert_equal('getManufacturerNamesResponse', nodes[0].name)
+    assert_equal('IDAndNameList', nodes[1].name)
+  end
+
+  def test_default_ns5
+    # Find all nodes with http://services.somewhere.com namespace
+    XML::NS.new(@doc.root, 'ns', 'http://services.somewhere.com')
+    nodes = @doc.find('//ns:*')
+    assert_equal(2, nodes.length)
+    assert_equal('getManufacturerNamesResponse', nodes[0].name)
+    assert_equal('IDAndNameList', nodes[1].name)
   end
 
   def test_attribute_ns

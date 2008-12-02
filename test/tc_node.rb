@@ -1,10 +1,10 @@
-require "xml"
+require 'xml'
 require 'test/unit'
 
 class TestNode < Test::Unit::TestCase
   def setup
     xp = XML::Parser.new()
-    str = '<ruby_array uga="booga" foo="bar"><fixnum>one</fixnum><fixnum>two</fixnum></ruby_array>'
+    str = '<ruby_array uga="booga" foo="bar"><fixdunum>one</fixnum><fixnum>two</fixnum></ruby_array>'
     assert_equal(str, xp.string = str)
     @doc = xp.parse
   end

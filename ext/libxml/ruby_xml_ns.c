@@ -21,15 +21,15 @@ static VALUE rxml_ns_alloc(VALUE klass)
 
 /*
  * call-seq:
- *    initialize(node, "href", "prefix")
+ *    initialize(node, "prefix", "href")
  *
  * Create a new namespace attached to the specified node with the
  * give prefix and namespace.
  *
  *  XML::NS.new(node, "xlink", "http://www.w3.org/1999/xlink")
  */
-static VALUE rxml_ns_initialize(VALUE self, VALUE node, VALUE href,
-    VALUE prefix)
+static VALUE rxml_ns_initialize(VALUE self, VALUE node, VALUE prefix,
+    VALUE href)
 {
   xmlNodePtr xnode;
   xmlChar *xmlPrefix;
