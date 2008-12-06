@@ -213,7 +213,7 @@ static VALUE rxml_xpath_context_register_namespaces(VALUE self, VALUE nslist)
     }
     break;
   case T_HASH:
-    st_foreach(RHASH(nslist)->tbl, iterate_ns_hash, self);
+    st_foreach(RHASH_TBL(nslist), iterate_ns_hash, self);
     break;
   default:
     rb_raise(

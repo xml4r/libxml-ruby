@@ -39,6 +39,11 @@
 #define RSTRING_PTR(s) (RSTRING(s)->ptr)
 #endif
 
+/* Needed prior to Ruby 1.9.1 */
+#ifndef RHASH_TBL
+  RHASH_TBL (RHASH(nslist)->tbl)
+#endif
+
 // not in Ruby 1.9
 #ifndef GetWriteFile
 #define GetWriteFile(fp) rb_io_stdio_file(fp)
