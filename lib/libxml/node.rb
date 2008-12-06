@@ -283,6 +283,22 @@ module LibXML
       alias :children? :first?  
       alias :child :first
       alias :each_child :each
+
+      # Deprecated
+      def dump
+        warn('Node#dump is deprecated.  Use Node#to_s instead.')
+        self.to_s
+      end
+
+      def dump
+        warn('Node#dump is deprecated.  Use Node#to_s instead.')
+        self.to_s
+      end
+
+      def debug_dump
+        warn('Node#debug_dump is deprecated.  Use Node#to_s instead.')
+        self.to_s
+      end
     end
   end
 end

@@ -797,8 +797,7 @@ void Init_libxml_ruby(void)
   rb_define_const(mXML, "XML_NAMESPACE", rb_str_new2(
       (const char*) XML_XML_NAMESPACE));
 
-  rb_define_module_function(mXML, "enabled_automata?", rxml_enabled_automata_q,
-      0);
+  rb_define_module_function(mXML, "enabled_automata?", rxml_enabled_automata_q, 0);
   rb_define_module_function(mXML, "enabled_c14n?", rxml_enabled_c14n_q, 0);
   rb_define_module_function(mXML, "enabled_catalog?", rxml_enabled_catalog_q, 0);
   rb_define_module_function(mXML, "enabled_debug?", rxml_enabled_debug_q, 0);
@@ -807,66 +806,42 @@ void Init_libxml_ruby(void)
   rb_define_module_function(mXML, "enabled_http?", rxml_enabled_http_q, 0);
   rb_define_module_function(mXML, "enabled_html?", rxml_enabled_html_q, 0);
   rb_define_module_function(mXML, "enabled_iconv?", rxml_enabled_iconv_q, 0);
-  rb_define_module_function(mXML, "enabled_memory_debug?",
-      rxml_enabled_memory_debug_location_q, 0);
+  rb_define_module_function(mXML, "enabled_memory_debug?", rxml_enabled_memory_debug_location_q, 0);
   rb_define_module_function(mXML, "enabled_regexp?", rxml_enabled_regexp_q, 0);
   rb_define_module_function(mXML, "enabled_schemas?", rxml_enabled_schemas_q, 0);
   rb_define_module_function(mXML, "enabled_thread?", rxml_enabled_thread_q, 0);
   rb_define_module_function(mXML, "enabled_unicode?", rxml_enabled_unicode_q, 0);
-  rb_define_module_function(mXML, "enabled_xinclude?", rxml_enabled_xinclude_q,
-      0);
+  rb_define_module_function(mXML, "enabled_xinclude?", rxml_enabled_xinclude_q, 0);
   rb_define_module_function(mXML, "enabled_xpath?", rxml_enabled_xpath_q, 0);
-  rb_define_module_function(mXML, "enabled_xpointer?", rxml_enabled_xpointer_q,
-      0);
+  rb_define_module_function(mXML, "enabled_xpointer?", rxml_enabled_xpointer_q, 0);
   rb_define_module_function(mXML, "enabled_zlib?", rxml_enabled_zlib_q, 0);
 
   rb_define_module_function(mXML, "catalog_dump", rxml_catalog_dump, 0);
   rb_define_module_function(mXML, "catalog_remove", rxml_catalog_remove, 1);
-  rb_define_module_function(mXML, "check_lib_versions",
-      rxml_check_lib_versions, 0);
+  rb_define_module_function(mXML, "check_lib_versions", rxml_check_lib_versions, 0);
   rb_define_module_function(mXML, "debug_entities", rxml_debug_entities_get, 0);
   rb_define_module_function(mXML, "debug_entities=", rxml_debug_entities_set, 1);
-  rb_define_module_function(mXML, "default_compression",
-      rxml_default_compression_get, 0);
-  rb_define_module_function(mXML, "default_compression=",
-      rxml_default_compression_set, 1);
-  rb_define_module_function(mXML, "default_keep_blanks",
-      rxml_default_keep_blanks_get, 0);
-  rb_define_module_function(mXML, "default_keep_blanks=",
-      rxml_default_keep_blanks_set, 1);
-  rb_define_module_function(mXML, "default_load_external_dtd",
-      rxml_default_load_external_dtd_get, 0);
-  rb_define_module_function(mXML, "default_load_external_dtd=",
-      rxml_default_load_external_dtd_set, 1);
-  rb_define_module_function(mXML, "default_line_numbers",
-      rxml_default_line_numbers_get, 0);
-  rb_define_module_function(mXML, "default_line_numbers=",
-      rxml_default_line_numbers_set, 1);
-  rb_define_module_function(mXML, "default_pedantic_parser",
-      rxml_default_pedantic_parser_get, 0);
-  rb_define_module_function(mXML, "default_pedantic_parser=",
-      rxml_default_pedantic_parser_set, 1);
-  rb_define_module_function(mXML, "default_substitute_entities",
-      rxml_default_substitute_entities_get, 0);
-  rb_define_module_function(mXML, "default_substitute_entities=",
-      rxml_default_substitute_entities_set, 1);
-  rb_define_module_function(mXML, "default_tree_indent_string",
-      rxml_default_tree_indent_string_get, 0);
-  rb_define_module_function(mXML, "default_tree_indent_string=",
-      rxml_default_tree_indent_string_set, 1);
-  rb_define_module_function(mXML, "default_validity_checking",
-      rxml_default_validity_checking_get, 0);
-  rb_define_module_function(mXML, "default_validity_checking=",
-      rxml_default_validity_checking_set, 1);
-  rb_define_module_function(mXML, "default_warnings",
-      rxml_default_warnings_get, 0);
-  rb_define_module_function(mXML, "default_warnings=",
-      rxml_default_warnings_set, 1);
+  rb_define_module_function(mXML, "default_compression", rxml_default_compression_get, 0);
+  rb_define_module_function(mXML, "default_compression=", rxml_default_compression_set, 1);
+  rb_define_module_function(mXML, "default_keep_blanks", rxml_default_keep_blanks_get, 0);
+  rb_define_module_function(mXML, "default_keep_blanks=", rxml_default_keep_blanks_set, 1);
+  rb_define_module_function(mXML, "default_load_external_dtd", rxml_default_load_external_dtd_get, 0);
+  rb_define_module_function(mXML, "default_load_external_dtd=", rxml_default_load_external_dtd_set, 1);
+  rb_define_module_function(mXML, "default_line_numbers", rxml_default_line_numbers_get, 0);
+  rb_define_module_function(mXML, "default_line_numbers=", rxml_default_line_numbers_set, 1);
+  rb_define_module_function(mXML, "default_pedantic_parser", rxml_default_pedantic_parser_get, 0);
+  rb_define_module_function(mXML, "default_pedantic_parser=", rxml_default_pedantic_parser_set, 1);
+  rb_define_module_function(mXML, "default_substitute_entities", rxml_default_substitute_entities_get, 0);
+  rb_define_module_function(mXML, "default_substitute_entities=", rxml_default_substitute_entities_set, 1);
+  rb_define_module_function(mXML, "default_tree_indent_string", rxml_default_tree_indent_string_get, 0);
+  rb_define_module_function(mXML, "default_tree_indent_string=", rxml_default_tree_indent_string_set, 1);
+  rb_define_module_function(mXML, "default_validity_checking", rxml_default_validity_checking_get, 0);
+  rb_define_module_function(mXML, "default_validity_checking=", rxml_default_validity_checking_set, 1);
+  rb_define_module_function(mXML, "default_warnings", rxml_default_warnings_get, 0);
+  rb_define_module_function(mXML, "default_warnings=", rxml_default_warnings_set, 1);
   rb_define_module_function(mXML, "features", rxml_features, 0);
-  rb_define_module_function(mXML, "indent_tree_output",
-      rxml_indent_tree_output_get, 0);
-  rb_define_module_function(mXML, "indent_tree_output=",
-      rxml_indent_tree_output_set, 1);
+  rb_define_module_function(mXML, "indent_tree_output", rxml_indent_tree_output_get, 0);
+  rb_define_module_function(mXML, "indent_tree_output=", rxml_indent_tree_output_set, 1);
   rb_define_module_function(mXML, "memory_dump", rxml_memory_dump, 0);
   rb_define_module_function(mXML, "memory_used", rxml_memory_used, 0);
 

@@ -496,45 +496,67 @@ static VALUE rxml_node_doc(VALUE self)
 
 /*
  * call-seq:
- *    node.dump -> (true|nil)
+ *    node.to_s(:indent => true, :encoding => 'UTF-8', :level => 0) -> "string"
  *
- * Dump this node to stdout.
- */
-static VALUE rxml_node_dump(VALUE self)
+ * Converts a node, and all of its children, to a string representation.
+ * You may provide an optional hash table to  controls how the string is 
+ * generated.  Valid options are:
+ * 
+ * :indent - Specifies if the string should be indented and is set to true
+ * by default.  Note that indentation is only added if both :indent is
+ * true and XML.indent_tree_output is true.  If :indent is set to false,
+ * then both indentation and line feeds are removed from the result.
+ *
+ * :level  - Specifies the indentation level.  The amount of indentation
+ * is equal to the (level * number_spaces) + number_spaces, where libxml
+ * defaults number_spaces to 2.  Thus a level 0 is 2 spaces, level
+ * 1 is 4 spaces, level 2 is 6 spaces, etc.
+ *
+ * :encoding - Specifies the output encoding of the string.  It
+ * defaults to XML::Input::UTF8. */
+
+static VALUE rxml_node_to_s(int argc, VALUE *argv, VALUE self)
 {
+  VALUE options = Qnil;
   xmlNodePtr xnode;
-  xmlBufferPtr buf;
+  xmlCharEncodingHandlerPtr encodingHandler;
+  xmlOutputBufferPtr output;
+
+  int level = 0;
+  int indent = 1;
+  const char *encoding = "UTF-8";
+
+  rb_scan_args(argc, argv, "01", &options);
+
+  if (!NIL_P(options))
+  {
+    VALUE rencoding = rb_hash_aref(options, ID2SYM(rb_intern("encoding")));
+    VALUE rindent = rb_hash_aref(options, ID2SYM(rb_intern("indent")));
+    VALUE rlevel = rb_hash_aref(options, ID2SYM(rb_intern("level")));
+
+    if (rindent == Qfalse)
+      indent = 0;
+
+    if (rlevel != Qnil)
+      level = NUM2INT(rlevel);
+
+    if (rencoding != Qnil)
+      encoding = RSTRING_PTR(rxml_input_encoding_to_s(cXMLInput, rencoding));
+  }
+
+  encodingHandler = xmlFindCharEncodingHandler(encoding);
+  output = xmlAllocOutputBuffer(encodingHandler);
 
   Data_Get_Struct(self, xmlNode, xnode);
+  xmlNodeDumpOutput(output, xnode->doc, xnode, level, indent, encoding);
+  xmlOutputBufferFlush(output);
 
-  if (xnode->doc == NULL)
-    return (Qnil);
-
-  buf = xmlBufferCreate();
-  xmlNodeDump(buf, xnode->doc, xnode, 0, 1);
-  xmlBufferDump(stdout, buf);
-  xmlBufferFree(buf);
-  return (Qtrue);
+  if (output->conv)
+    return rb_str_new2((const char*) output->conv->content);
+  else
+    return rb_str_new2((const char*) output->buffer->content);
 }
 
-/*
- * call-seq:
- *    node.debug_dump -> (true|nil)
- *
- * Dump this node to stdout, including any debugging
- * information.
- */
-static VALUE rxml_node_debug_dump(VALUE self)
-{
-  xmlNodePtr xnode;
-  Data_Get_Struct(self, xmlNode, xnode);
-
-  if (xnode->doc == NULL)
-    return (Qnil);
-
-  xmlElemDump(stdout, xnode->doc, xnode);
-  return (Qtrue);
-}
 
 /*
  * call-seq:
@@ -579,7 +601,6 @@ static VALUE rxml_node_empty_q(VALUE self)
   return ((xmlIsBlankNode(xnode) == 1) ? Qtrue : Qfalse);
 }
 
-static VALUE rxml_node_to_s(VALUE self);
 
 /*
  * call-seq:
@@ -605,8 +626,8 @@ else
   if (rb_obj_is_kind_of(other, cXMLNode) == Qfalse)
   rb_raise(rb_eTypeError, "Nodes can only be compared against other nodes");
 
-  self_xml = rxml_node_to_s(self);
-  other_xml = rxml_node_to_s(other);
+  self_xml = rxml_node_to_s(0, NULL, self);
+  other_xml = rxml_node_to_s(0, NULL, other);
   return(rb_funcall(self_xml, rb_intern("=="), 1, other_xml));
 }
 }
@@ -1326,28 +1347,6 @@ static VALUE rxml_node_space_preserve_set(VALUE self, VALUE bool)
 
 /*
  * call-seq:
- *    node.to_s -> "string"
- *
- * Coerce this node to a string representation of
- * it's XML.
- */
-static VALUE rxml_node_to_s(VALUE self)
-{
-  xmlNodePtr xnode;
-  xmlBufferPtr buf;
-  VALUE result;
-
-  Data_Get_Struct(self, xmlNode, xnode);
-  buf = xmlBufferCreate();
-  xmlNodeDump(buf, xnode->doc, xnode, 0, 1);
-  result = rb_str_new2((const char*) buf->content);
-
-  xmlBufferFree(buf);
-  return result;
-}
-
-/*
- * call-seq:
  *    node.type -> num
  *
  * Obtain this node's type identifier.
@@ -1437,13 +1436,10 @@ void ruby_init_xml_node(void)
   rb_define_const(cXMLNode, "PI_NODE", INT2FIX(XML_PI_NODE));
   rb_define_const(cXMLNode, "COMMENT_NODE", INT2FIX(XML_COMMENT_NODE));
   rb_define_const(cXMLNode, "DOCUMENT_NODE", INT2FIX(XML_DOCUMENT_NODE));
-  rb_define_const(cXMLNode, "DOCUMENT_TYPE_NODE", INT2FIX(
-      XML_DOCUMENT_TYPE_NODE));
-  rb_define_const(cXMLNode, "DOCUMENT_FRAG_NODE", INT2FIX(
-      XML_DOCUMENT_FRAG_NODE));
+  rb_define_const(cXMLNode, "DOCUMENT_TYPE_NODE", INT2FIX(XML_DOCUMENT_TYPE_NODE));
+  rb_define_const(cXMLNode, "DOCUMENT_FRAG_NODE", INT2FIX(XML_DOCUMENT_FRAG_NODE));
   rb_define_const(cXMLNode, "NOTATION_NODE", INT2FIX(XML_NOTATION_NODE));
-  rb_define_const(cXMLNode, "HTML_DOCUMENT_NODE", INT2FIX(
-      XML_HTML_DOCUMENT_NODE));
+  rb_define_const(cXMLNode, "HTML_DOCUMENT_NODE", INT2FIX(XML_HTML_DOCUMENT_NODE));
   rb_define_const(cXMLNode, "DTD_NODE", INT2FIX(XML_DTD_NODE));
   rb_define_const(cXMLNode, "ELEMENT_DECL", INT2FIX(XML_ELEMENT_DECL));
   rb_define_const(cXMLNode, "ATTRIBUTE_DECL", INT2FIX(XML_ATTRIBUTE_DECL));
@@ -1493,11 +1489,8 @@ void ruby_init_xml_node(void)
   rb_define_method(cXMLNode, "copy", rxml_node_copy, 1);
   rb_define_method(cXMLNode, "content", rxml_node_content_get, 0);
   rb_define_method(cXMLNode, "content=", rxml_node_content_set, 1);
-  rb_define_method(cXMLNode, "content_stripped",
-      rxml_node_content_stripped_get, 0);
+  rb_define_method(cXMLNode, "content_stripped", rxml_node_content_stripped_get, 0);
   rb_define_method(cXMLNode, "doc", rxml_node_doc, 0);
-  rb_define_method(cXMLNode, "dump", rxml_node_dump, 0);
-  rb_define_method(cXMLNode, "debug_dump", rxml_node_debug_dump, 0);
   rb_define_method(cXMLNode, "empty?", rxml_node_empty_q, 0);
   rb_define_method(cXMLNode, "eql?", rxml_node_eql_q, 1);
   rb_define_method(cXMLNode, "lang", rxml_node_lang_get, 0);
@@ -1520,7 +1513,7 @@ void ruby_init_xml_node(void)
   rb_define_method(cXMLNode, "search_href", rxml_node_search_href, 1);
   rb_define_method(cXMLNode, "space_preserve", rxml_node_space_preserve_get, 0);
   rb_define_method(cXMLNode, "space_preserve=", rxml_node_space_preserve_set, 1);
-  rb_define_method(cXMLNode, "to_s", rxml_node_to_s, 0);
+  rb_define_method(cXMLNode, "to_s", rxml_node_to_s, -1);
   rb_define_method(cXMLNode, "xlink?", rxml_node_xlink_q, 0);
   rb_define_method(cXMLNode, "xlink_type", rxml_node_xlink_type, 0);
   rb_define_method(cXMLNode, "xlink_type_name", rxml_node_xlink_type_name, 0);

@@ -32,7 +32,7 @@ static htmlDocPtr rxml_html_parser_read_file(VALUE input)
 {
   VALUE file = rb_ivar_get(input, FILE_ATTR);
   VALUE encoding = rb_ivar_get(input, ENCODING_ATTR);
-  VALUE encoding_str = rxml_input_encoding_to_s(Qnil, encoding);
+  VALUE encoding_str = rxml_input_encoding_to_s(cXMLInput, encoding);
   char *xencoding_str = (encoding_str == Qnil ? NULL : StringValuePtr(
       encoding_str));
   int options = 0;
@@ -46,7 +46,7 @@ static htmlDocPtr rxml_html_parser_read_string(VALUE input)
   VALUE base_url = rb_ivar_get(input, BASE_URL_ATTR);
   char *xbase_url = (base_url == Qnil ? NULL : StringValuePtr(base_url));
   VALUE encoding = rb_ivar_get(input, ENCODING_ATTR);
-  VALUE encoding_str = rxml_input_encoding_to_s(Qnil, encoding);
+  VALUE encoding_str = rxml_input_encoding_to_s(cXMLInput, encoding);
   char *xencoding_str = (encoding_str == Qnil ? NULL : StringValuePtr(
       encoding_str));
   int options = 0;
@@ -61,7 +61,7 @@ static htmlDocPtr rxml_html_parser_read_io(VALUE input)
   VALUE base_url = rb_ivar_get(input, BASE_URL_ATTR);
   char *xbase_url = (base_url == Qnil ? NULL : StringValuePtr(base_url));
   VALUE encoding = rb_ivar_get(input, ENCODING_ATTR);
-  VALUE encoding_str = rxml_input_encoding_to_s(Qnil, encoding);
+  VALUE encoding_str = rxml_input_encoding_to_s(cXMLInput, encoding);
   char *xencoding_str = (encoding_str == Qnil ? NULL : StringValuePtr(
       encoding_str));
   int options = 0;

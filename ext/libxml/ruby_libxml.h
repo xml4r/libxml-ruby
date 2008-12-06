@@ -41,7 +41,7 @@
 
 /* Needed prior to Ruby 1.9.1 */
 #ifndef RHASH_TBL
-  RHASH_TBL (RHASH(nslist)->tbl)
+#define RHASH_TBL(s) (RHASH(s)->tbl)
 #endif
 
 // not in Ruby 1.9

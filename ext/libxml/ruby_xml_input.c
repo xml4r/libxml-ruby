@@ -90,7 +90,7 @@ int rxml_read_callback(void *context, char *buffer, int len)
  * Converts an encoding contstant defined on the XML::Input
  * class to its text representation.
  */
-VALUE rxml_input_encoding_to_s(VALUE self, VALUE encoding)
+VALUE rxml_input_encoding_to_s(VALUE klass, VALUE encoding)
 {
   char* encodingStr = NULL;
 
@@ -168,6 +168,8 @@ VALUE rxml_input_encoding_to_s(VALUE self, VALUE encoding)
   case XML_CHAR_ENCODING_ASCII:
     encodingStr = "ASCII";
     break;
+  default:
+    rb_raise(rb_eArgError, "Unknown encoding.");
   }
 
   return rb_str_new2(encodingStr);
@@ -286,21 +288,20 @@ void ruby_init_xml_input(void)
   READ_METHOD = rb_intern("read");
 
   cXMLInput = rb_define_class_under(mXML, "Input", rb_cObject);
-  rb_define_singleton_method(cXMLInput, "encoding_to_s",
-      rxml_input_encoding_to_s, 1);
+  rb_define_singleton_method(cXMLInput, "encoding_to_s", rxml_input_encoding_to_s, 1);
 
   rb_define_const(cXMLInput, "UNDEFINED", INT2NUM(XPATH_UNDEFINED));
   rb_define_const(cXMLInput, "ERROR", INT2NUM(XML_CHAR_ENCODING_ERROR)); /* No char encoding detected */
   rb_define_const(cXMLInput, "NONE", INT2NUM(XML_CHAR_ENCODING_NONE)); /* No char encoding detected */
-  rb_define_const(cXMLInput, "UTF8", INT2NUM(XML_CHAR_ENCODING_UTF8)); /* UTF-8 */
-  rb_define_const(cXMLInput, "UTF16LE", INT2NUM(XML_CHAR_ENCODING_UTF16LE)); /* UTF-16 little endian */
-  rb_define_const(cXMLInput, "UTF16BE", INT2NUM(XML_CHAR_ENCODING_UTF16BE)); /* UTF-16 big endian */
-  rb_define_const(cXMLInput, "UCS4LE", INT2NUM(XML_CHAR_ENCODING_UCS4LE)); /* UCS-4 little endian */
-  rb_define_const(cXMLInput, "UCS4BE", INT2NUM(XML_CHAR_ENCODING_UCS4BE)); /* UCS-4 big endian */
+  rb_define_const(cXMLInput, "UTF_8", INT2NUM(XML_CHAR_ENCODING_UTF8)); /* UTF-8 */
+  rb_define_const(cXMLInput, "UTF_16LE", INT2NUM(XML_CHAR_ENCODING_UTF16LE)); /* UTF-16 little endian */
+  rb_define_const(cXMLInput, "UTF_16BE", INT2NUM(XML_CHAR_ENCODING_UTF16BE)); /* UTF-16 big endian */
+  rb_define_const(cXMLInput, "UCS_4LE", INT2NUM(XML_CHAR_ENCODING_UCS4LE)); /* UCS-4 little endian */
+  rb_define_const(cXMLInput, "UCS_4BE", INT2NUM(XML_CHAR_ENCODING_UCS4BE)); /* UCS-4 big endian */
   rb_define_const(cXMLInput, "EBCDIC", INT2NUM(XML_CHAR_ENCODING_EBCDIC)); /* EBCDIC uh! */
-  rb_define_const(cXMLInput, "UCS4_2143", INT2NUM(XML_CHAR_ENCODING_UCS4_2143)); /* UCS-4 unusual ordering */
-  rb_define_const(cXMLInput, "UCS4_3412", INT2NUM(XML_CHAR_ENCODING_UCS4_3412)); /* UCS-4 unusual ordering */
-  rb_define_const(cXMLInput, "UCS2", INT2NUM(XML_CHAR_ENCODING_UCS2)); /* UCS-2 */
+  rb_define_const(cXMLInput, "UCS_4_2143", INT2NUM(XML_CHAR_ENCODING_UCS4_2143)); /* UCS-4 unusual ordering */
+  rb_define_const(cXMLInput, "UCS_4_3412", INT2NUM(XML_CHAR_ENCODING_UCS4_3412)); /* UCS-4 unusual ordering */
+  rb_define_const(cXMLInput, "UCS_2", INT2NUM(XML_CHAR_ENCODING_UCS2)); /* UCS-2 */
   rb_define_const(cXMLInput, "ISO_8859_1", INT2NUM(XML_CHAR_ENCODING_8859_1)); /* ISO-8859-1 ISO Latin 1 */
   rb_define_const(cXMLInput, "ISO_8859_2", INT2NUM(XML_CHAR_ENCODING_8859_2)); /* ISO-8859-2 ISO Latin 2 */
   rb_define_const(cXMLInput, "ISO_8859_3", INT2NUM(XML_CHAR_ENCODING_8859_3)); /* ISO-8859-3 */
