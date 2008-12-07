@@ -222,11 +222,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\libxml\ruby_xml_node.c"
+				RelativePath="..\libxml\ruby_xml_namespace.c"
 				>
 			</File>
 			<File
-				RelativePath="..\libxml\ruby_xml_ns.c"
+				RelativePath="..\libxml\ruby_xml_namespaces.c"
+				>
+			</File>
+			<File
+				RelativePath="..\libxml\ruby_xml_node.c"
 				>
 			</File>
 			<File
@@ -324,11 +328,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\libxml\ruby_xml_node.h"
+				RelativePath="..\libxml\ruby_xml_namespace.h"
 				>
 			</File>
 			<File
-				RelativePath="..\libxml\ruby_xml_ns.h"
+				RelativePath="..\libxml\ruby_xml_namespaces.h"
+				>
+			</File>
+			<File
+				RelativePath="..\libxml\ruby_xml_node.h"
 				>
 			</File>
 			<File

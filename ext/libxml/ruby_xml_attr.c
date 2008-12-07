@@ -302,7 +302,7 @@ static VALUE rxml_attr_ns_get(VALUE self)
   if (xattr->ns == NULL)
     return (Qnil);
   else
-    return (rxml_ns_wrap(xattr->ns));
+    return (rxml_namespace_wrap(xattr->ns));
 }
 
 /*

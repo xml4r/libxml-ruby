@@ -2,8 +2,8 @@
 
 /* Please see the LICENSE file for copyright and distribution information */
 
-#ifndef __rxml_ATTR__
-#define __rxml_ATTR__
+#ifndef __RXML_ATTR__
+#define __RXML_ATTR__
 
 extern VALUE cXMLAttr;
 

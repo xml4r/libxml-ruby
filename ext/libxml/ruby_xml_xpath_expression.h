@@ -2,8 +2,8 @@
 
 /* Please see the LICENSE file for copyright and distribution information */
 
-#ifndef __rxml_XPATH_EXPRESSION__
-#define __rxml_XPATH_EXPRESSION__
+#ifndef __RXML_XPATH_EXPRESSION__
+#define __RXML_XPATH_EXPRESSION__
 
 extern VALUE cXMLXPathExpression;
 

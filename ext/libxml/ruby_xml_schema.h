@@ -1,5 +1,5 @@
-#ifndef __rxml_SCHEMA__
-#define __rxml_SCHEMA__
+#ifndef __RXML_SCHEMA__
+#define __RXML_SCHEMA__
 
 #include <libxml/schemasInternals.h>
 #include <libxml/xmlschemas.h>

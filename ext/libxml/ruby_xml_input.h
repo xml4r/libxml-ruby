@@ -2,8 +2,8 @@
 
 /* Please see the LICENSE file for copyright and distribution information */
 
-#ifndef __rxml_INPUT__
-#define __rxml_INPUT__
+#ifndef __RXML_INPUT__
+#define __RXML_INPUT__
 
 extern VALUE cXMLInput;
 

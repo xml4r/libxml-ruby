@@ -2,8 +2,8 @@
 
 /* Please see the LICENSE file for copyright and distribution information */
 
-#ifndef __rxml_ERROR__
-#define __rxml_ERROR__
+#ifndef __RXML_ERROR__
+#define __RXML_ERROR__
 
 extern VALUE eXMLError;
 

@@ -2,8 +2,8 @@
 
 /* Please see the LICENSE file for copyright and distribution information */
 
-#ifndef __rxml_SAX_PARSER__
-#define __rxml_SAX_PARSER__
+#ifndef __RXML_SAX_PARSER__
+#define __RXML_SAX_PARSER__
 
 extern VALUE cXMLSaxParser;
 

@@ -855,7 +855,8 @@ void Init_libxml_ruby(void)
   ruby_init_xml_attributes();
   ruby_init_xml_attr();
   ruby_init_xml_document();
-  ruby_init_xml_ns();
+  ruby_init_xml_namespaces();
+  ruby_init_xml_namespace();
   ruby_init_xml_sax_parser();
   ruby_init_xml_xinclude();
   ruby_init_xml_xpath();

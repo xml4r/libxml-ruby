@@ -1,7 +1,7 @@
 /* $Id $ */
 
-#ifndef __rxml_XPATH_OBJECT__
-#define __rxml_XPATH_OBJECT__
+#ifndef __RXML_XPATH_OBJECT__
+#define __RXML_XPATH_OBJECT__
 
 extern VALUE cXMLXPathObject;
 

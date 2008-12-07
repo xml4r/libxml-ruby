@@ -2,8 +2,8 @@
 
 /* Please see the LICENSE file for copyright and distribution information */
 
-#ifndef __rxml_PARSER_CONTEXT__
-#define __rxml_PARSER_CONTEXT__
+#ifndef __RXML_PARSER_CONTEXT__
+#define __RXML_PARSER_CONTEXT__
 
 extern VALUE cXMLParserContext;
 

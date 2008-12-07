@@ -2,8 +2,8 @@
 
 /* Please see the LICENSE file for copyright and distribution information */
 
-#ifndef __rxml_HTML_PARSER__
-#define __rxml_HTML_PARSER__
+#ifndef __RXML_HTML_PARSER__
+#define __RXML_HTML_PARSER__
 
 extern int rxml_html_parser_count;
 extern VALUE cXMLHTMLParser;

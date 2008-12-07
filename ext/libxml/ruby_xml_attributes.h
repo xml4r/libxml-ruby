@@ -2,8 +2,8 @@
 
 /* Please see the LICENSE file for copyright and distribution information */
 
-#ifndef __rxml_ATTRIBUTES__
-#define __rxml_ATTRIBUTES__
+#ifndef __RXML_ATTRIBUTES__
+#define __RXML_ATTRIBUTES__
 
 extern VALUE cXMLAttributesibutes;
 

@@ -1,5 +1,5 @@
-#ifndef __rxml_DTD__
-#define __rxml_DTD__
+#ifndef __RXML_DTD__
+#define __RXML_DTD__
 
 extern VALUE cXMLDtd;
 

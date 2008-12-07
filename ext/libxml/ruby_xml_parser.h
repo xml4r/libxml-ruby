@@ -2,8 +2,8 @@
 
 /* Please see the LICENSE file for copyright and distribution information */
 
-#ifndef __rxml_PARSER__
-#define __rxml_PARSER__
+#ifndef __RXML_PARSER__
+#define __RXML_PARSER__
 
 #define MAX_LIBXML_FEATURES_LEN 50
 

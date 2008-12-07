@@ -1,20 +1,6 @@
 module LibXML
   module XML
     class Node
-      # Register the prefix (i.e., name) of the default namespace to
-      # make xpath searches easier
-      def register_default_namespace(prefix)
-        ns = self.namespace.find do |ns|
-          ns.prefix.nil?
-        end
-
-        if ns
-          NS.new(self, ns.href, prefix)
-        else
-          raise(ArgumentError, "No default namespace was found")
-        end
-      end
-
       # Determines whether this node has attributes
       def attributes?
         attributes.length > 0
@@ -69,7 +55,17 @@ module LibXML
       def find_first(xpath, nslist = nil)
         find(xpath, nslist).first
       end
-    
+
+      # call-seq:
+      #   node.namespacess -> XML::Namespaces
+      #   
+      # Returns this node's XML::Namespaces object,
+      # which is used to access the namespaces
+      # associated with this node.
+      def namespaces
+        @namespaces ||= XML::Namespaces.new(self)
+      end
+      
       # -------  Traversal  ----------------
       # Iterates over this node's attributes.
       #
@@ -284,7 +280,8 @@ module LibXML
       alias :child :first
       alias :each_child :each
 
-      # Deprecated
+      # --- Deprecated Output ---
+      # :stopdoc:
       def dump
         warn('Node#dump is deprecated.  Use Node#to_s instead.')
         self.to_s
@@ -298,6 +295,47 @@ module LibXML
       def debug_dump
         warn('Node#debug_dump is deprecated.  Use Node#to_s instead.')
         self.to_s
+      end
+
+      # --- Deprecated Namespaces ---
+      def namespace
+        warn('Node#namespace is deprecated.  Use Node#namespaces.namespace instead.')
+        self.namespaces.namespace
+      end
+
+      def namespace=(value)
+        warn('Node#namespace= is deprecated.  Use Node#namespaces.namespace= instead.')
+        self.namespaces.namespace = value
+      end
+
+      def ns
+        warn('Node#ns is deprecated.  Use Node#namespaces.namespace instead.')
+        self.namespaces.namespace
+      end
+
+      def ns?
+        warn('Node#ns? is deprecated.  Use !Node#namespaces.namespace.nil? instead.')
+        !self.namespaces.namespace.nil?
+      end
+
+      def ns_def
+        warn('Node#ns_def is deprecated.  Use Node#namespaces.definitions instead.')
+        self.namespaces.definitions
+      end
+
+      def ns_def?
+        warn('Node#ns_def? is deprecated.  Use !Node#namespaces.definitions.nil? instead.')
+        !self.namespaces.definitions.nil?
+      end
+
+      def search_ns(prefix)
+        warn('Node#search_ns is deprecated.  Use Node#namespaces.find_by_prefix instead.')
+        self.namespaces.find_by_prefix(prefix)
+      end
+
+      def search_href(href)
+        warn('Node#search_href is deprecated.  Use Node#namespaces.find_by_href instead.')
+        self.namespaces.find_by_href(href)
       end
     end
   end

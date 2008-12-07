@@ -2,8 +2,8 @@
 
 /* Please see the LICENSE file for copyright and distribution information */
 
-#ifndef __rxml_XPOINTER__
-#define __rxml_XPOINTER__
+#ifndef __RXML_XPOINTER__
+#define __RXML_XPOINTER__
 
 extern VALUE cXMLXPointer;
 

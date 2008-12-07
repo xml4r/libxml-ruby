@@ -88,7 +88,7 @@ void rxml_node_mark(xmlNodePtr xnode)
   rxml_node_mark_common(xnode);
 }
 
-VALUE rxml_node_wrap(VALUE class, xmlNodePtr xnode)
+VALUE rxml_node_wrap(VALUE klass, xmlNodePtr xnode)
 {
   VALUE obj;
 
@@ -98,7 +98,7 @@ VALUE rxml_node_wrap(VALUE class, xmlNodePtr xnode)
     return (VALUE) xnode->_private;
   }
 
-  obj = Data_Wrap_Struct(class, rxml_node_mark, rxml_node2_free, xnode);
+  obj = Data_Wrap_Struct(klass, rxml_node_mark, rxml_node2_free, xnode);
 
   xnode->_private = (void*) obj;
   return obj;
@@ -496,24 +496,26 @@ static VALUE rxml_node_doc(VALUE self)
 
 /*
  * call-seq:
+ *    node.to_s -> "string"
  *    node.to_s(:indent => true, :encoding => 'UTF-8', :level => 0) -> "string"
  *
  * Converts a node, and all of its children, to a string representation.
- * You may provide an optional hash table to  controls how the string is 
+ * You may provide an optional hash table to control how the string is 
  * generated.  Valid options are:
  * 
- * :indent - Specifies if the string should be indented and is set to true
- * by default.  Note that indentation is only added if both :indent is
+ * :indent - Specifies if the string should be indented.  The default value
+ * is true.  Note that indentation is only added if both :indent is
  * true and XML.indent_tree_output is true.  If :indent is set to false,
  * then both indentation and line feeds are removed from the result.
  *
  * :level  - Specifies the indentation level.  The amount of indentation
  * is equal to the (level * number_spaces) + number_spaces, where libxml
- * defaults number_spaces to 2.  Thus a level 0 is 2 spaces, level
- * 1 is 4 spaces, level 2 is 6 spaces, etc.
+ * defaults the number of spaces to 2.  Thus a level of 0 results in
+ * 2 spaces, level 1 results in 4 spaces, level 2 results in 6 spaces, etc.
  *
  * :encoding - Specifies the output encoding of the string.  It
- * defaults to XML::Input::UTF8. */
+ * defaults to XML::Input::UTF8.  To change it, use one of the
+ * XML::Input encoding constants. */
 
 static VALUE rxml_node_to_s(int argc, VALUE *argv, VALUE self)
 {
@@ -859,134 +861,6 @@ static VALUE rxml_node_name_set(VALUE self, VALUE name)
 
 /*
  * call-seq:
- *    node.namespace -> [namespace, ..., namespace]
- *
- * Obtain an array of +XML::NS+ objects representing
- * this node's xmlns attributes
- */
-static VALUE rxml_node_namespace_get(VALUE self)
-{
-  xmlNodePtr xnode;
-  xmlNsPtr *nsList, *cur;
-  VALUE arr, ns;
-
-  Data_Get_Struct(self, xmlNode, xnode);
-  if (xnode == NULL)
-    return (Qnil);
-
-  nsList = xmlGetNsList(xnode->doc, xnode);
-
-  if (nsList == NULL)
-    return (Qnil);
-
-  arr = rb_ary_new();
-  for (cur = nsList; *cur != NULL; cur++)
-  {
-    ns = rxml_ns_wrap(*cur);
-    if (ns == Qnil)
-      continue;
-    else
-      rb_ary_push(arr, ns);
-  }
-  xmlFree(nsList);
-
-  return (arr);
-}
-
-/*
- * call-seq:
- *    node.namespace_node -> namespace.
- *
- * Obtain this node's namespace node.
- */
-static VALUE rxml_node_namespace_get_node(VALUE self)
-{
-  xmlNodePtr xnode;
-
-  Data_Get_Struct(self, xmlNode, xnode);
-  if (xnode->ns == NULL)
-    return (Qnil);
-  else
-    return rxml_ns_wrap(xnode->ns);
-}
-
-// TODO namespace_set can take varargs (in fact, must if used
-//      with strings), but I cannot see how you can call
-//      that version, apart from with 'send'
-//
-//      Would sure be nice to support foo.namespace['foo'] = 'bar'
-//      but maybe that's not practical...
-
-/*
- * call-seq:
- *    node.namespace = namespace
- *
- * Add the specified XML::NS object to this node's xmlns attributes.
- */
-static VALUE rxml_node_namespace_set(int argc, VALUE *argv, VALUE self)
-{
-  VALUE rns, rprefix;
-  xmlNodePtr xnode;
-  xmlNsPtr xns;
-  char *cp, *href;
-
-  Data_Get_Struct(self, xmlNode, xnode);
-  switch (argc)
-  {
-  case 1:
-    rns = argv[0];
-    if (TYPE(rns) == T_STRING)
-    {
-      cp = strchr(StringValuePtr(rns), (int) ':');
-      if (cp == NULL)
-      {
-        rprefix = rns;
-        href = NULL;
-      }
-      else
-      {
-        rprefix = rb_str_new(StringValuePtr(rns), (int) ((long) cp
-            - (long) StringValuePtr(rns)));
-        href = &cp[1]; /* skip the : */
-      }
-    }
-    else if (rb_obj_is_kind_of(rns, cXMLNS) == Qtrue)
-    {
-      Data_Get_Struct(self, xmlNs, xns);
-      xmlSetNs(xnode, xns);
-      return (rns);
-    }
-    else
-      rb_raise(rb_eTypeError, "must pass a string or an XML::Ns object");
-
-    /* Fall through to next case because when argc == 1, we need to
-     * manually setup the additional args unless the arg passed is of
-     * cXMLNS type */
-  case 2:
-    /* Don't want this code run in the fall through case */
-    if (argc == 2)
-    {
-      rprefix = argv[0];
-      href = StringValuePtr(argv[1]);
-    }
-
-    xns = xmlNewNs(xnode, (xmlChar*) href, (xmlChar*) StringValuePtr(rprefix));
-    if (xns == NULL)
-      rxml_raise(&xmlLastError);
-    else
-      return rxml_ns_wrap(xns);
-    break;
-
-  default:
-    rb_raise(rb_eArgError, "wrong number of arguments (1 or 2)");
-  }
-
-  /* can't get here */
-  return (Qnil);
-}
-
-/*
- * call-seq:
  *    node.next -> XML::Node
  *
  * Obtain the next sibling node, if any.
@@ -1026,53 +900,144 @@ static VALUE rxml_node_next_set(VALUE self, VALUE rnode)
   return (rxml_node_wrap(cXMLNode, ret));
 }
 
+
+
 /*
  * call-seq:
- *    node.ns? -> (true|false)
+ *    node.namespace = namespace
  *
- * Determine whether this node has a namespace.
+ * Sets the current node's namespace.  When converted to a string
+ * representation, the node's name will be a fully qualified name:
+
+ the specified XML::NS object to this node's xmlns attributes.
  */
-static VALUE rxml_node_ns_q(VALUE self)
+static VALUE rxml_node_namespace_set(VALUE self, VALUE ns)
 {
   xmlNodePtr xnode;
+  xmlNsPtr xns;
+
   Data_Get_Struct(self, xmlNode, xnode);
-  if (xnode->ns == NULL)
-    return (Qfalse);
-  else
-    return (Qtrue);
+
+  Check_Type(ns, T_DATA);
+  Data_Get_Struct(self, xmlNs, xns);
+
+  xmlSetNs(xnode, xns);
+  return self;
 }
 
 /*
  * call-seq:
- *    node.ns_def? -> (true|false)
+ *    node.namespace_defs -> [namespace, namespace]
  *
- * Obtain an array of +XML::NS+ objects representing
- * this node's xmlns attributes
+ * Returns an array of XML::NS objects that are defined on
+ * this node.
  */
-static VALUE rxml_node_ns_def_q(VALUE self)
+static VALUE rxml_node_namespace_defs(VALUE self)
 {
   xmlNodePtr xnode;
+  xmlNsPtr xns;
+  VALUE arr, ns;
+
   Data_Get_Struct(self, xmlNode, xnode);
-  if (xnode->nsDef == NULL)
-    return (Qfalse);
-  else
-    return (Qtrue);
+
+  arr = rb_ary_new();
+  xns = xnode->nsDef;
+
+  while (xns)
+  {
+    ns = rxml_namespace_wrap(xns);
+    rb_ary_push(arr, ns);
+    xns = xns->next;
+  }
+
+  return arr;
 }
 
 /*
  * call-seq:
- *    node.ns_def -> namespace
+ *    node.namespaces -> [namespace, ..., namespace]
  *
- * Obtain this node's default namespace.
+ * Returns an array of XML::NS objects that are
+ * in scope for this node.
  */
-static VALUE rxml_node_ns_def_get(VALUE self)
+static VALUE rxml_node_namespaces(VALUE self)
 {
   xmlNodePtr xnode;
+  xmlNsPtr *nsList, *xns;
+  VALUE arr, ns;
+
   Data_Get_Struct(self, xmlNode, xnode);
-  if (xnode->nsDef == NULL)
+  nsList = xmlGetNsList(xnode->doc, xnode);
+
+  if (nsList == NULL)
     return (Qnil);
+
+  arr = rb_ary_new();
+  for (xns = nsList; *xns != NULL; xns++)
+  {
+    ns = rxml_namespace_wrap(*xns);
+    rb_ary_push(arr, ns);
+  }
+  xmlFree(nsList);
+
+  return (arr);
+}
+
+/*
+ * call-seq:
+ *    node.find_namespace_by_href(href) -> namespace
+ *
+ * Searches for a namespace that has the specified href.
+ * The search starts at the current node and works upward
+ * through the node's parents.  If a namespace is found,
+ * then an XML::NS instance is returned, otherwise nil
+ * is returned.
+ */
+static VALUE rxml_node_find_namespace_by_href(VALUE self, VALUE href)
+{
+  xmlNodePtr xnode;
+  xmlNsPtr xns;
+
+  Check_Type(href, T_STRING);
+  Data_Get_Struct(self, xmlNode, xnode);
+
+  xns = xmlSearchNsByHref(xnode->doc, xnode, (xmlChar*) StringValuePtr(href));
+  if (xns)
+    return rxml_namespace_wrap(xns);
   else
-    return (rxml_ns_wrap(xnode->nsDef));
+    return Qnil;
+}
+
+/*
+ * call-seq:
+ *    node.find_namespace_by_prefix(prefix=nil) -> namespace
+ *
+ * Searches for a namespace that has the specified prefix.
+ * The search starts at the current node and works upward
+ * through the node's parents.  If a namespace is found,
+ * then an XML::NS instance is returned, otherwise nil
+ * is returned.
+ */
+static VALUE rxml_node_find_namespace_by_prefix(VALUE self, VALUE prefix)
+{
+  xmlNodePtr xnode;
+  xmlNsPtr xns;
+  xmlChar* xprefix = NULL;
+
+  
+  if (!NIL_P(prefix))
+  {
+    Check_Type(prefix, T_STRING);
+    xprefix = (xmlChar*) StringValuePtr(prefix);
+  }
+
+  Data_Get_Struct(self, xmlNode, xnode);
+  
+  xns = xmlSearchNs(xnode->doc, xnode, xprefix);
+  if (xns)
+    return rxml_namespace_wrap(xns);
+  else
+    return Qnil;
 }
 
 /*
@@ -1249,38 +1214,6 @@ static VALUE rxml_node_remove_ex(VALUE self)
   /* Now return the removed node so the user can
    do something wiht it.*/
   return self;
-}
-
-/*
- * call-seq:
- *    node.search_href -> namespace
- *
- * Search for a namespace by href.
- */
-static VALUE rxml_node_search_href(VALUE self, VALUE href)
-{
-  xmlNodePtr xnode;
-
-  Check_Type(href, T_STRING);
-  Data_Get_Struct(self, xmlNode, xnode);
-  return (rxml_ns_wrap(xmlSearchNsByHref(xnode->doc, xnode,
-      (xmlChar*) StringValuePtr(href))));
-}
-
-/*
- * call-seq:
- *    node.search_ns -> namespace
- *
- * Search for a namespace by namespace.
- */
-static VALUE rxml_node_search_ns(VALUE self, VALUE ns)
-{
-  xmlNodePtr xnode;
-
-  Check_Type(ns, T_STRING);
-  Data_Get_Struct(self, xmlNode, xnode);
-  return (rxml_ns_wrap(xmlSearchNs(xnode->doc, xnode,
-      (xmlChar*) StringValuePtr(ns))));
 }
 
 /*
@@ -1498,25 +1431,20 @@ void ruby_init_xml_node(void)
   rb_define_method(cXMLNode, "line_num", rxml_node_line_num, 0);
   rb_define_method(cXMLNode, "name", rxml_node_name_get, 0);
   rb_define_method(cXMLNode, "name=", rxml_node_name_set, 1);
-  rb_define_method(cXMLNode, "namespace", rxml_node_namespace_get, 0);
-  rb_define_method(cXMLNode, "namespace_node", rxml_node_namespace_get_node, 0);
-  rb_define_method(cXMLNode, "namespace=", rxml_node_namespace_set, -1);
   rb_define_method(cXMLNode, "node_type", rxml_node_type, 0);
-  rb_define_method(cXMLNode, "ns", rxml_node_namespace_get, 0);
-  rb_define_method(cXMLNode, "ns?", rxml_node_ns_q, 0);
-  rb_define_method(cXMLNode, "ns_def?", rxml_node_ns_def_q, 0);
-  rb_define_method(cXMLNode, "ns_def", rxml_node_ns_def_get, 0);
   rb_define_method(cXMLNode, "path", rxml_node_path, 0);
   rb_define_method(cXMLNode, "pointer", rxml_node_pointer, 1);
   rb_define_method(cXMLNode, "remove!", rxml_node_remove_ex, 0);
-  rb_define_method(cXMLNode, "search_ns", rxml_node_search_ns, 1);
-  rb_define_method(cXMLNode, "search_href", rxml_node_search_href, 1);
   rb_define_method(cXMLNode, "space_preserve", rxml_node_space_preserve_get, 0);
   rb_define_method(cXMLNode, "space_preserve=", rxml_node_space_preserve_set, 1);
   rb_define_method(cXMLNode, "to_s", rxml_node_to_s, -1);
   rb_define_method(cXMLNode, "xlink?", rxml_node_xlink_q, 0);
   rb_define_method(cXMLNode, "xlink_type", rxml_node_xlink_type, 0);
   rb_define_method(cXMLNode, "xlink_type_name", rxml_node_xlink_type_name, 0);
+
+  /* Namespace handling */
+  rb_define_method(cXMLNode, "find_namespace_by_href", rxml_node_find_namespace_by_href, 1);
+  rb_define_method(cXMLNode, "find_namespace_by_prefix", rxml_node_find_namespace_by_prefix, 1);
 
   rb_define_alias(cXMLNode, "==", "eql?");
 }

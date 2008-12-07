@@ -43,7 +43,7 @@
  *
  * Alternatively, you can register the default namespace like this:
  *
- *   doc.root.register_default_namespace('atom')
+ *   doc.root.namespaces.default_prefix = 'atom'
  *   node = doc.find('atom:title')
  *
  * === More Complex Namespace Examples

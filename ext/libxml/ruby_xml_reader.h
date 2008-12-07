@@ -1,8 +1,8 @@
 /* Copyright (c) 2006 Apple Computer Inc.
  * Please see the LICENSE file for copyright and distribution information. */
 
-#ifndef __rxml_READER__
-#define __rxml_READER__
+#ifndef __RXML_READER__
+#define __RXML_READER__
 
 extern VALUE cXMLReader;
 

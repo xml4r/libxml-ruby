@@ -2,8 +2,8 @@
 
 /* Please see the LICENSE file for copyright and distribution information */
 
-#ifndef __rxml_DOCUMENT__
-#define __rxml_DOCUMENT__
+#ifndef __RXML_DOCUMENT__
+#define __RXML_DOCUMENT__
 
 extern VALUE cXMLDocument;
 

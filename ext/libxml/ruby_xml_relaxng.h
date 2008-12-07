@@ -1,5 +1,5 @@
-#ifndef __rxml_RELAXNG__
-#define __rxml_RELAXNG__
+#ifndef __RXML_RELAXNG__
+#define __RXML_RELAXNG__
 
 #include <libxml/relaxng.h>
 
