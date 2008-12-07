@@ -152,7 +152,7 @@ class TestNode < Test::Unit::TestCase
     # ö - c3 b6 in hex, \303\266 in octal
     # ü - c3 bc in hex, \303\274 in octal
     assert_equal("<bands genre=\"metal\">\n  <m\303\266tley_cr\303\274e country=\"us\">An American heavy metal band formed in Los Angeles, California in 1981.</m\303\266tley_cr\303\274e>\n  <iron_maiden country=\"uk\">British heavy metal band formed in 1975.</iron_maiden>\n</bands>",
-                 node.to_s(:encoding => XML::Input::UTF8))
+                 node.to_s(:encoding => XML::Input::UTF_8))
 
     # ISO_8859_1:
     # ö - f6 in hex, \366 in octal
@@ -165,6 +165,6 @@ class TestNode < Test::Unit::TestCase
     error = assert_raise(ArgumentError) do
       node.to_s(:encoding => -9999)
     end
-    assert_equal('Unknown encoding constant', error.to_s)
+    assert_equal('Unknown encoding.', error.to_s)
   end
 end

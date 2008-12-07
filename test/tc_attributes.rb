@@ -59,7 +59,7 @@ class AttributesTest < Test::Unit::TestCase
 
     attr = attributes.get_attribute('href')
     assert_instance_of(XML::Attr, attr)
-    assert_instance_of(XML::NS, attr.ns)
+    assert_instance_of(XML::Namespace, attr.ns)
     assert_equal('xlink', attr.ns.prefix)
     assert_equal('http://www.w3.org/1999/xlink', attr.ns.href)
 

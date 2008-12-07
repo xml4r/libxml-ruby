@@ -72,7 +72,7 @@ class TestDocumentWrite < Test::Unit::TestCase
     @doc = XML::Parser.string(xml).parse
     assert_equal(xml, @doc.to_s)
     ns = @doc.root.search_href(uri)
-    assert_instance_of(XML::NS, ns)
+    assert_instance_of(XML::Namespace, ns)
     assert_equal(uri, ns.href)
     assert_equal(prefix, ns.prefix)
   end
@@ -132,7 +132,7 @@ class TestDocumentWrite < Test::Unit::TestCase
 
   def test_encoding_utf
     @doc.root = XML::Node.new('rubynet')
-    @doc.encoding = XML::Input.encoding_to_s(XML::Input::UTF8)
+    @doc.encoding = XML::Input.encoding_to_s(XML::Input::UTF_8)
     assert_instance_of(XML::Node, @doc.root)
     assert_equal("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<rubynet/>\n", @doc.to_s)
   end

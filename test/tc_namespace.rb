@@ -35,9 +35,8 @@ class TestNS < Test::Unit::TestCase
   def test_duplicate_ns
     node = XML::Node.new('foo')
     XML::Namespace.new(node, 'myname', 'http://www.mynamespace.com')
-    error = assert_raises(XML::Error) do
+    assert_raises(XML::Error) do
       XML::Namespace.new(node, 'myname', 'http://www.mynamespace.com')
     end
-    assert_equal(' LibXML::XML::Error at :0.', error.to_s)
   end
 end
