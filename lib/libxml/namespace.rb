@@ -6,7 +6,7 @@ module LibXML
 
       def <=>(other)
         if self.prefix.nil? and other.prefix.nil?
-          0
+          self.href <=> other.href
         elsif self.prefix.nil?
           -1
         elsif other.prefix.nil?
@@ -22,6 +22,14 @@ module LibXML
         while ns
           yield ns
           ns = ns.next
+        end
+      end
+
+      def to_s
+        if self.prefix
+          "#{self.prefix}:#{self.href}"
+        else
+          self.href
         end
       end
     end

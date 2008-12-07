@@ -9,10 +9,44 @@ VALUE cXMLNamespaces;
 
 /* Document-class: LibXML::XML::Namespaces
  *
- * The NS class is used to query information about
- * xml namespaces associated with particular nodes.
- * It can also be used to associate new namespaces
- * with an node. */
+ * The Namespaces class is used to access information about
+ * a node's namespaces.  For each node, libxml maintains:
+ *
+ *   * The node's namespace (which can be none)
+ *   * Which namespaces are defined on the node
+ *   * Which namespaces are in scope for the node
+ *
+ * Let's look at an example:
+ *
+ *   <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+ *                  xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+ *     <soap:Body>
+ *       <order xmlns="http://mynamespace.com"/>
+ *     </soap:Body>
+ *   </soap>
+ *
+ * The Envelope node is in the soap namespace.  Use the #namespace 
+ * method to access a node's namespace, and the #namespace= method 
+ * to change it. 
+ * 
+ * In addition, the Envelope node contains two namespace definitions.
+ * Use the #definitions method to access the namespaces contained
+ * by a node.
+ * 
+ * Last, three namespaces are in context for the order element -
+ * soap, xsd and the default namespace (http://mynamespace.com).
+ * Use the #each method to access the namespaces in context for
+ * a node.
+ *
+ * To add a new namespace to a node, create a new instance
+ * of the XML::Namespace class.
+ *
+ * When using XML::XPath to find nodes, it is necessary to name
+ * the default namespace.  This can be done using the 
+ * #default_prefix= method.
+ *
+ * To find a namespace by its prefix, use the #find_by_prefix
+ * method.  */
 
 static VALUE rxml_namespaces_alloc(VALUE klass)
 {
@@ -21,9 +55,16 @@ static VALUE rxml_namespaces_alloc(VALUE klass)
 
 /*
  * call-seq:
- *    initialize(node) -> XML::Namespaces
+ *    initialize(XML::Node) -> XML::Namespaces
  *
- * Create a new namespaces object.
+ * Creates a new namespaces object.  Generally you
+ * do not call this method directly, but instead
+ * access a namespaces object via XML::Node#namespaces.
+ *
+ * Usage:
+ *
+ *   doc = XML::Document.string('<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"/>')
+ *   namespaces = new XML::Namespaces(doc.root)
  */
 static VALUE rxml_namespaces_initialize(VALUE self, VALUE node)
 {
@@ -40,8 +81,13 @@ static VALUE rxml_namespaces_initialize(VALUE self, VALUE node)
  * call-seq:
  *    namespaces.definitions -> [XML::Namespace, XML::Namespace]
  *
- * Returns an array of namespace objects that are defined
- * on this node.
+ * Returns an array of XML::Namespace objects that are 
+ * defined on this node.
+ *
+ * Usage:
+ *
+ *   doc = XML::Document.string('<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"/>')
+ *   defs = doc.root.namespaces.definitions
  */
 static VALUE rxml_namespaces_definitions(VALUE self)
 {
@@ -69,7 +115,14 @@ static VALUE rxml_namespaces_definitions(VALUE self)
  *    namespaces.each {|XML::Namespace|}
  *
  * Iterates over the namespace objects that are
- * in scope on this node.
+ * in context for this node.
+ *
+ * Usage:
+ *
+ *   doc = XML::Document.string('<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"/>')
+ *   doc.root.namespaces.each do |ns|
+ *     ..
+ *   end
  */
 static VALUE rxml_namespaces_each(VALUE self)
 {
@@ -102,6 +155,13 @@ static VALUE rxml_namespaces_each(VALUE self)
  * through the node's parents.  If a namespace is found,
  * then an XML::Namespace instance is returned, otherwise nil
  * is returned.
+ *
+ * Usage:
+ *
+ *   doc = XML::Document.string('<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"/>')
+ *   ns = doc.root.namespaces.find_by_href('http://schemas.xmlsoap.org/soap/envelope/')
+ *   assert_equal('soap', ns.prefix)
+ *   assert_equal('http://schemas.xmlsoap.org/soap/envelope/', ns.href)
  */
 static VALUE rxml_namespaces_find_by_href(VALUE self, VALUE href)
 {
@@ -127,6 +187,13 @@ static VALUE rxml_namespaces_find_by_href(VALUE self, VALUE href)
  * through the node's parents.  If a namespace is found,
  * then an XML::NS instance is returned, otherwise nil
  * is returned.
+ *
+ * Usage:
+ *
+ *   doc = XML::Document.string('<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"/>')
+ *   ns = doc.root.namespaces.find_by_prefix('soap')
+ *   assert_equal('soap', ns.prefix)
+ *   assert_equal('http://schemas.xmlsoap.org/soap/envelope/', ns.href)
  */
 static VALUE rxml_namespaces_find_by_prefix(VALUE self, VALUE prefix)
 {
@@ -155,19 +222,43 @@ static VALUE rxml_namespaces_find_by_prefix(VALUE self, VALUE prefix)
  *    namespaces.namespace -> XML::Namespace
  *
  * Returns the current node's namespace.
+ *
+ * Usage:
+ *
+ *   doc = XML::Document.string('<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"/>')
+ *   ns = doc.root.namespaces.namespace
+ *   assert_equal('soap', ns.prefix)
+ *   assert_equal('http://schemas.xmlsoap.org/soap/envelope/', ns.href)
  */
 static VALUE rxml_namespaces_namespace_get(VALUE self)
 {
   xmlNodePtr xnode;
   Data_Get_Struct(self, xmlNode, xnode);
-  return rxml_namespace_wrap(xnode->ns);
+
+  if (xnode->ns)
+    return rxml_namespace_wrap(xnode->ns);
+  else
+    return Qnil;
 }
 
 /*
  * call-seq:
  *    namespaces.namespace = XML::Namespace
  *
- * Sets the current node's namespace.
+ * Sets the current node's namespace.  
+ *
+ * Basic usage:
+ *
+ *   # Create a node
+ *   node = XML::Node.new('Envelope')
+ *   
+ *   # Define the soap namespace - this does *not* put the node in the namespace
+ *   ns = XML::Namespace.new(node, 'soap', 'http://schemas.xmlsoap.org/soap/envelope/')
+ *   assert_equal("<Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"/>", node.to_s)
+ *
+ *   # Now put the node in the soap namespace, not how the string representation changes
+ *   node.namespaces.namespace = ns
+ *   assert_equal("<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"/>", node.to_s)
  */
 static VALUE rxml_namespaces_namespace_set(VALUE self, VALUE ns)
 {

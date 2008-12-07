@@ -7,28 +7,39 @@
 
 VALUE cXMLNamespace;
 
-/* Document-class: LibXML::XML::NS
+/* Document-class: LibXML::XML::Namespace
  *
- * The NS class is used to query information about
- * xml namespaces associated with particular nodes.
- * It can also be used to associate new namespaces
- * with an node. */
+ * The Namespace class represents an XML namespace.
+ * To add a namespace to a node, create a new instance
+ * of this class.  Note that this does *not* assingn the
+ * node to the namespace however. To do that see 
+ * the XML::Namespaces#namespace method.
+ *
+ * Usage:
+ *
+ *   node = XML::Node.new('<Envelope>')
+ *   XML::Namespace.new(node, 'soap', 'http://schemas.xmlsoap.org/soap/envelope/')
+ *   assert_equal("<Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"/>", node.to_s)
+ *   assert_nil(node.namespaces.namespace)
+ */
+
+static VALUE rxml_namespace_free(xmlNsPtr xns)
+{
+  xns->_private = NULL;
+}
 
 static VALUE rxml_namespace_alloc(VALUE klass)
 {
-  return Data_Wrap_Struct(klass, NULL, NULL, NULL);
+  return Data_Wrap_Struct(klass, NULL, rxml_namespace_free, NULL);
 }
 
 /*
  * call-seq:
- *    initialize(node, "prefix", "href") -> XML::NS
+ *    initialize(node, "prefix", "href") -> XML::Namespace
  *
- * Create a new namespace and attaches it to the specified node.
- * The namespace is therefore valid for the node and all its
- * children.  You may not create two namespaces with the same
- * prefix on the same node.
- *
- *   ns = XML::NS.new(node, "xlink", "http://www.w3.org/1999/xlink")
+ * Create a new namespace and adds it to the specified node.
+ * Note this does *not* assign the node to the namespace.
+ * To do that see the XML::Namespaces#namespace method.
  */
 static VALUE rxml_namespace_initialize(VALUE self, VALUE node, VALUE prefix,
     VALUE href)
@@ -47,20 +58,34 @@ static VALUE rxml_namespace_initialize(VALUE self, VALUE node, VALUE prefix,
   if (!xns)
     rxml_raise(&xmlLastError);
 
+  xns->_private = (void*)self;
   DATA_PTR(self) = xns;
   return self;
 }
 
 VALUE rxml_namespace_wrap(xmlNsPtr xns)
 {
-  return (Data_Wrap_Struct(cXMLNamespace, NULL, NULL, xns));
+  if (xns->_private)
+  {
+    return (VALUE)xns->_private;
+  }
+  else
+  {
+    VALUE ns = Data_Wrap_Struct(cXMLNamespace, NULL, rxml_namespace_free, xns);
+    xns->_private = (void*)ns;
+    return ns;
+  }
 }
 
 /*
  * call-seq:
  *    ns.href -> "href"
  *
- * Obtain the namespace's href.
+ * Usage:
+ *
+ *   doc = XML::Document.string('<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"/>')
+ *   ns = doc.root.namespaces.find_by_href('http://schemas.xmlsoap.org/soap/envelope/')
+ *   assert_equal('http://schemas.xmlsoap.org/soap/envelope/', ns.href)
  */
 static VALUE rxml_namespace_href_get(VALUE self)
 {
@@ -74,42 +99,15 @@ static VALUE rxml_namespace_href_get(VALUE self)
 
 /*
  * call-seq:
- *    ns.href? -> (true|false)
- *
- * Determine whether this namespace has an href.
- */
-static VALUE rxml_namespace_href_q(VALUE self)
-{
-  xmlNsPtr xns;
-  Data_Get_Struct(self, xmlNs, xns);
-  if (xns == NULL || xns->href == NULL)
-    return (Qfalse);
-  else
-    return (Qtrue);
-}
-
-/*
- * call-seq:
- *    ns.next -> ns
- *
- * Obtain the next namespace.
- */
-static VALUE rxml_namespace_next(VALUE self)
-{
-  xmlNsPtr xns;
-  Data_Get_Struct(self, xmlNs, xns);
-  if (xns == NULL || xns->next == NULL)
-    return (Qnil);
-  else
-    return (rxml_namespace_wrap(xns->next));
-}
-
-/*
- * call-seq:
  *    ns.prefix -> "prefix"
- *    ns.to_s   -> "prefix"
  *
  * Obtain the namespace's prefix.
+ *
+ * Usage:
+ *
+ *   doc = XML::Document.string('<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"/>')
+ *   ns = doc.root.namespaces.find_by_href('http://schemas.xmlsoap.org/soap/envelope/')
+ *   assert_equal('soap', ns.prefix)
  */
 static VALUE rxml_namespace_prefix_get(VALUE self)
 {
@@ -123,18 +121,24 @@ static VALUE rxml_namespace_prefix_get(VALUE self)
 
 /*
  * call-seq:
- *    ns.prefix? -> (true|false)
+ *    ns.next -> XML::Namespace
  *
- * Determine whether this namespace has a prefix.
+ * Obtain the next namespace.
+ *
+ * Usage:
+ *
+ *   doc = XML::Document.string('<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"/>')
+ *   ns = doc.root.namespaces.find_by_href('http://schemas.xmlsoap.org/soap/envelope/')
+ *   assert_nil(ns.next)
  */
-static VALUE rxml_namespace_prefix_q(VALUE self)
+static VALUE rxml_namespace_next(VALUE self)
 {
   xmlNsPtr xns;
   Data_Get_Struct(self, xmlNs, xns);
-  if (xns == NULL || xns->prefix == NULL)
-    return (Qfalse);
+  if (xns == NULL || xns->next == NULL)
+    return (Qnil);
   else
-    return (Qtrue);
+    return (rxml_namespace_wrap(xns->next));
 }
 
 // Rdoc needs to know
@@ -149,9 +153,6 @@ void ruby_init_xml_namespace(void)
   rb_define_alloc_func(cXMLNamespace, rxml_namespace_alloc);
   rb_define_method(cXMLNamespace, "initialize", rxml_namespace_initialize, 3);
   rb_define_method(cXMLNamespace, "href", rxml_namespace_href_get, 0);
-  rb_define_method(cXMLNamespace, "href?", rxml_namespace_href_q, 0);
   rb_define_method(cXMLNamespace, "next", rxml_namespace_next, 0);
   rb_define_method(cXMLNamespace, "prefix", rxml_namespace_prefix_get, 0);
-  rb_define_method(cXMLNamespace, "prefix?", rxml_namespace_prefix_q, 0);
-  rb_define_method(cXMLNamespace, "to_s", rxml_namespace_prefix_get, 0);
 }

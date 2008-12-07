@@ -39,4 +39,21 @@ class TestNS < Test::Unit::TestCase
       XML::Namespace.new(node, 'myname', 'http://www.mynamespace.com')
     end
   end
+
+  def test_eql
+    node = XML::Node.new('Envelope')
+    ns = XML::Namespace.new(node, 'soap', 'http://schemas.xmlsoap.org/soap/envelope/')
+
+    assert(node.namespaces.namespace.eql?(node.namespaces.namespace))
+  end
+
+  def test_equal
+    node1 = XML::Node.new('Envelope')
+    ns1 = XML::Namespace.new(node1, 'soap', 'http://schemas.xmlsoap.org/soap/envelope/')
+
+    node2 = XML::Node.new('Envelope')
+    ns2 = XML::Namespace.new(node2, 'soap', 'http://schemas.xmlsoap.org/soap/envelope/')
+
+    assert(ns1 == ns2)
+  end
 end

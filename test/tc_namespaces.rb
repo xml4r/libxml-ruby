@@ -18,18 +18,37 @@ class TestNamespaces < Test::Unit::TestCase
     assert_equal('http://schemas.xmlsoap.org/soap/envelope/', ns.href)
   end
 
-  def test_namespace_set
-    node = @doc.root
+  def test_set_namespace
+    node = XML::Node.new('Envelope')
+    assert_equal('<Envelope/>', node.to_s)
 
-    ns = node.namespaces.find do |namespace|
-      namespace.prefix == 'xsi'
-    end
+    ns = XML::Namespace.new(node, 'soap', 'http://schemas.xmlsoap.org/soap/envelope/')
+    assert_equal("<Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"/>", node.to_s)
+    assert_nil(node.namespaces.namespace)
 
+    # Now put the node in the soap namespace
     node.namespaces.namespace = ns
-    ns = node.namespaces.namespace
+    assert_not_nil(node.namespaces.namespace)
+    assert_equal("<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"/>", node.to_s)
+  end
 
-    assert_equal('xsi', ns.prefix)
-    assert_equal('http://www.w3.org/2001/XMLSchema-instance', ns.href)
+  def test_define_namespace
+    node = XML::Node.new('Envelope')
+    assert_equal('<Envelope/>', node.to_s)
+
+    XML::Namespace.new(node, 'soap', 'http://schemas.xmlsoap.org/soap/envelope/')
+    assert_equal("<Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"/>", node.to_s)
+    assert_nil(node.namespaces.namespace)
+  end
+
+  def test_define_default_namespace
+    node = XML::Node.new('Envelope')
+    assert_equal('<Envelope/>', node.to_s)
+
+    XML::Namespace.new(node, nil, 'http://schemas.xmlsoap.org/soap/envelope/')
+    assert_equal("<Envelope xmlns=\"http://schemas.xmlsoap.org/soap/envelope/\"/>", node.to_s)
+    # This seems wrong, but appears to be the way libxml works
+    assert_nil(node.namespaces.namespace)
   end
 
   def test_namespaces
