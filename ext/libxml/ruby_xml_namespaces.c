@@ -185,7 +185,7 @@ static VALUE rxml_namespaces_find_by_href(VALUE self, VALUE href)
  * Searches for a namespace that has the specified prefix.
  * The search starts at the current node and works upward
  * through the node's parents.  If a namespace is found,
- * then an XML::NS instance is returned, otherwise nil
+ * then an XML::Namespace instance is returned, otherwise nil
  * is returned.
  *
  * Usage:
