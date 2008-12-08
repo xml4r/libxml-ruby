@@ -266,203 +266,25 @@ static VALUE rxml_document_child_q(VALUE self)
     return (Qtrue);
 }
 
-/*
- * call-seq:
- *    document.dump([stream]) -> true
- *
- * Dump this document's XML to the specified IO stream.
- * If no stream is specified, stdout is used.
- */
-static VALUE rxml_document_dump(int argc, VALUE *argv, VALUE self)
-{
-  OpenFile *fptr;
-  VALUE io;
-  FILE *out;
-  xmlDocPtr xdoc;
-
-  Data_Get_Struct(self, xmlDoc, xdoc);
-  if (xdoc == NULL)
-    return (Qnil);
-
-  switch (argc)
-  {
-  case 0:
-    io = rb_stdout;
-    break;
-  case 1:
-    io = argv[0];
-    if (!rb_obj_is_kind_of(io, rb_cIO))
-      rb_raise(rb_eTypeError, "need an IO object");
-    break;
-  default:
-    rb_raise(rb_eArgError, "wrong number of arguments (0 or 1)");
-  }
-
-  GetOpenFile(io, fptr);
-  rb_io_check_writable(fptr);
-  out = GetWriteFile(fptr);
-  xmlDocDump(out, xdoc);
-  return (Qtrue);
-}
 
 /*
  * call-seq:
- *    document.debug_dump([stream]) -> true
+ *    node.debug -> true|false
  *
- * Debug version of dump.
- */
-static VALUE rxml_document_debug_dump(int argc, VALUE *argv, VALUE self)
+ * Print libxml debugging information to stdout.
+ * Requires that libxml was compiled with debugging enabled.
+*/
+static VALUE rxml_document_debug(VALUE self)
 {
 #ifdef LIBXML_DEBUG_ENABLED
-  OpenFile *fptr;
-  VALUE io;
-  FILE *out;
   xmlDocPtr xdoc;
-
   Data_Get_Struct(self, xmlDoc, xdoc);
-  if (xdoc == NULL)
-  return(Qnil);
-
-  switch (argc)
-  {
-    case 0:
-    io = rb_stderr;
-    break;
-    case 1:
-    io = argv[0];
-    if (!rb_obj_is_kind_of(io, rb_cIO))
-    rb_raise(rb_eTypeError, "need an IO object");
-    break;
-    default:
-    rb_raise(rb_eArgError, "wrong number of arguments (0 or 1)");
-  }
-
-  GetOpenFile(io, fptr);
-  rb_io_check_writable(fptr);
-  out = GetWriteFile(fptr);
-  xmlDebugDumpDocument(out, xdoc);
-  return(Qtrue);
+  xmlDebugDumpDocument(NULL, xdoc);
+  return Qtrue;
 #else
-  rb_warn(
-      "libxml was compiled without debugging support.  Please recompile libxml and ruby-libxml");
-  return (Qfalse);
+  rb_warn("libxml was compiled without debugging support.")
+  return Qfalse;
 #endif
-}
-
-/*
- * call-seq:
- *    document.debug_dump_head([stream]) -> true
- *
- * Debug-dump this document's header to the specified IO stream.
- * If no stream is specified, stdout is used.
- */
-static VALUE rxml_document_debug_dump_head(int argc, VALUE *argv, VALUE self)
-{
-#ifdef LIBXML_DEBUG_ENABLED
-  OpenFile *fptr;
-  VALUE io;
-  FILE *out;
-  xmlDocPtr xdoc;
-
-  Data_Get_Struct(self, xmlDoc, xdoc);
-  if (xdoc == NULL)
-  return(Qnil);
-
-  switch (argc)
-  {
-    case 0:
-    io = rb_stdout;
-    break;
-    case 1:
-    io = argv[0];
-    if (!rb_obj_is_kind_of(io, rb_cIO))
-    rb_raise(rb_eTypeError, "need an IO object");
-    break;
-    default:
-    rb_raise(rb_eArgError, "wrong number of arguments (0 or 1)");
-  }
-
-  GetOpenFile(io, fptr);
-  rb_io_check_writable(fptr);
-  out = GetWriteFile(fptr);
-  xmlDebugDumpDocumentHead(out, xdoc);
-  return(Qtrue);
-#else
-  rb_warn(
-      "libxml was compiled without debugging support.  Please recompile libxml and ruby-libxml");
-  return (Qfalse);
-#endif
-}
-
-/*
- * call-seq:
- *    document.format_dump([stream], [spacing]) -> true
- *
- * Dump this document's formatted XML to the specified IO stream.
- * If no stream is specified, stdout is used. If spacing is
- * specified, it must be a boolean that determines whether
- * spacing is used.
- */
-static VALUE rxml_document_format_dump(int argc, VALUE *argv, VALUE self)
-{
-  OpenFile *fptr;
-  VALUE bool, io;
-  FILE *out;
-  xmlDocPtr xdoc;
-
-  int size, spacing;
-
-  Data_Get_Struct(self, xmlDoc, xdoc);
-  if (xdoc == NULL)
-    return (Qnil);
-
-  switch (argc)
-  {
-  case 0:
-    io = rb_stdout;
-    spacing = 1;
-    break;
-  case 1:
-    io = argv[0];
-    if (!rb_obj_is_kind_of(io, rb_cIO))
-      rb_raise(rb_eTypeError, "need an IO object");
-    spacing = 1;
-    break;
-  case 2:
-    io = argv[0];
-    if (!rb_obj_is_kind_of(io, rb_cIO))
-      rb_raise(rb_eTypeError, "need an IO object");
-    bool = argv[1];
-    if (TYPE(bool) == T_TRUE)
-      spacing = 1;
-    else if (TYPE(bool) == T_FALSE)
-      spacing = 0;
-    else
-      rb_raise(rb_eTypeError,
-          "incorect argument type, second argument must be bool");
-
-    break;
-  default:
-    rb_raise(rb_eArgError, "wrong number of arguments (0 or 1)");
-  }
-
-  GetOpenFile(io, fptr);
-  rb_io_check_writable(fptr);
-  out = GetWriteFile(fptr);
-  size = xmlDocFormatDump(out, xdoc, spacing);
-  return (INT2NUM(size));
-}
-
-/*
- * call-seq:
- *    document.debug_format_dump([stream]) -> true
- *
- * *Deprecated* in favour of format_dump.
- */
-static VALUE rxml_document_debug_format_dump(int argc, VALUE *argv, VALUE self)
-{
-  rb_warn("debug_format_dump has been deprecaited, use format_dump instead");
-  return (rxml_document_format_dump(argc, argv, self));
 }
 
 /*
@@ -688,54 +510,61 @@ static VALUE rxml_document_root_set(VALUE self, VALUE node)
 
 /*
  * call-seq:
- *    document.save(filename, format = false) -> int
+ *    document.save(filename) -> int
+ *    document.save(filename, :indent => true, :encoding => 'UTF-8') -> int
  *
- * Save this document to the file given by filename,
- * optionally formatting the output.
-
- * Parameters:
- *  filename: The filename or URL of the new document
- *  format: Specifies whether formatting spaces should be added.
- *  returns: The number of bytes written or -1 in case of error.
- */
+ * Saves a document to a file.  You may provide an optional hash table
+ * to control how the string is generated.  Valid options are:
+ * 
+ * :indent - Specifies if the string should be indented.  The default value
+ * is true.  Note that indentation is only added if both :indent is
+ * true and XML.indent_tree_output is true.  If :indent is set to false,
+ * then both indentation and line feeds are removed from the result.
+ *
+ * :encoding - Specifies the output encoding of the string.  It
+ * defaults to the original encoding of the document (see
+ * #encoding.  To override the orginal encoding, use one of the
+ * XML::Input encoding constants. */
 static VALUE rxml_document_save(int argc, VALUE *argv, VALUE self)
-{
+{ 
+  VALUE result;
+  VALUE options = Qnil;
+  VALUE filename = Qnil;
   xmlDocPtr xdoc;
+  int indent = 1;
+  const char *xfilename;
+  const char *encoding;
+  xmlChar *buffer; 
+  int length;
 
-  const char *filename;
-  int format = 0;
-  int len;
+  rb_scan_args(argc, argv, "11", &filename, &options);
 
-  if (argc < 1 || argc > 2)
-    rb_raise(rb_eArgError, "wrong number of arguments (need 1 or 2)");
-
-  Check_Type(argv[0], T_STRING);
-  filename = StringValuePtr(argv[0]);
-
-  if (argc == 2)
-  {
-    switch (TYPE(argv[1]))
-    {
-    case T_TRUE:
-      format = 1;
-      break;
-    case T_FALSE:
-      format = 0;
-      break;
-    default:
-      rb_raise(rb_eArgError,
-          "The second parameter (format) must be true or false");
-    }
-  }
+  Check_Type(filename, T_STRING);
+  xfilename = StringValuePtr(filename);
 
   Data_Get_Struct(self, xmlDoc, xdoc);
-  len = xmlSaveFormatFileEnc(filename, xdoc, (const char*) xdoc->encoding,
-      format);
+  encoding = xdoc->encoding;
 
-  if (len == -1)
-    rb_raise(rb_eIOError, "Could not write document");
+  if (!NIL_P(options))
+  {
+    VALUE rencoding, rindent;
+    Check_Type(options, T_HASH);
+    rencoding = rb_hash_aref(options, ID2SYM(rb_intern("encoding")));
+    rindent = rb_hash_aref(options, ID2SYM(rb_intern("indent")));
+
+    if (rindent == Qfalse)
+      indent = 0;
+
+    if (rencoding != Qnil)
+      encoding = RSTRING_PTR(rxml_input_encoding_to_s(cXMLInput, rencoding));
+  }
+
+  length = xmlSaveFormatFileEnc(xfilename, xdoc, encoding, indent);
+
+  if (length == -1)
+    rxml_raise(&xmlLastError);
   else
-    return (INT2NUM(len));
+    return (INT2NUM(length));
 }
 
 /*
@@ -757,71 +586,53 @@ static VALUE rxml_document_standalone_q(VALUE self)
 
 /*
  * call-seq:
- *    document.to_s({format=true,encoding) -> "xml"
+ *    document.to_s -> "string"
+ *    document.to_s(:indent => true, :encoding => 'UTF-8') -> "string"
  *
- * Coerce this document to a string representation
- * of it's XML. The default is to pretty format, but this
- * depends Parser#indent_tree_output==true or
- * Parser#default_keep_blanks==false.
+ * Converts a document, and all of its children, to a string representation.
+ * You may provide an optional hash table to control how the string is 
+ * generated.  Valid options are:
+ * 
+ * :indent - Specifies if the string should be indented.  The default value
+ * is true.  Note that indentation is only added if both :indent is
+ * true and XML.indent_tree_output is true.  If :indent is set to false,
+ * then both indentation and line feeds are removed from the result.
  *
- * The encoding is not applied to the document, but is
- * encoding target of the resulting string.
- */
+ * :encoding - Specifies the output encoding of the string.  It
+ * defaults to XML::Input::UTF8.  To change it, use one of the
+ * XML::Input encoding constants. */
 static VALUE rxml_document_to_s(int argc, VALUE *argv, VALUE self)
-{
+{ 
+  VALUE result;
+  VALUE options = Qnil;
   xmlDocPtr xdoc;
+  int indent = 1;
+  const char *encoding = "UTF-8";
+  xmlChar *buffer; 
+  int length;
 
-  xmlChar *result, *encoding = NULL;
-  int format, len;
-  VALUE rresult;
+  rb_scan_args(argc, argv, "01", &options);
 
-  switch (argc)
+  if (!NIL_P(options))
   {
-  case 0:
-    format = 1;
-    break;
-  case 2:
-    if (TYPE(argv[1]) == T_STRING)
-      encoding = (xmlChar *) StringValuePtr(argv[1]);
-  case 1:
-    if (TYPE(argv[0]) == T_TRUE)
-      format = 1;
-    else if (TYPE(argv[0]) == T_FALSE)
-      format = 0;
-    else
-      rb_raise(rb_eTypeError, "wrong type of argument, must be bool");
-    break;
-  default:
-    rb_raise(rb_eArgError, "wrong number of arguments (0 or 1)");
+    VALUE rencoding, rindent;
+    Check_Type(options, T_HASH);
+    rencoding = rb_hash_aref(options, ID2SYM(rb_intern("encoding")));
+    rindent = rb_hash_aref(options, ID2SYM(rb_intern("indent")));
+
+    if (rindent == Qfalse)
+      indent = 0;
+
+    if (rencoding != Qnil)
+      encoding = RSTRING_PTR(rxml_input_encoding_to_s(cXMLInput, rencoding));
   }
 
   Data_Get_Struct(self, xmlDoc, xdoc);
-  if (xdoc == NULL)
-  {
-    return (Qnil);
-  }
-  else if (encoding != NULL)
-  {
-    if (format)
-    {
-      xmlDocDumpFormatMemoryEnc(xdoc, &result, &len, (const char*) encoding,
-          format);
-    }
-    else
-    {
-      xmlDocDumpMemoryEnc(xdoc, &result, &len, (const char *) encoding);
-    }
-  }
-  else
-  {
-    if (format)
-      xmlDocDumpFormatMemory(xdoc, &result, &len, format);
-    else
-      xmlDocDumpMemory(xdoc, &result, &len);
-  }
-  rresult = rb_str_new((const char*) result, len);
-  xmlFree(result);
-  return rresult;
+  xmlDocDumpFormatMemoryEnc(xdoc, &buffer, &length, encoding, indent);
+
+  result = rb_str_new((const char*) buffer, length);
+  xmlFree(buffer);
+  return result;
 }
 
 /*
@@ -1059,20 +870,12 @@ void ruby_init_xml_document(void)
   rb_define_method(cXMLDocument, "initialize", rxml_document_initialize, -1);
   rb_define_method(cXMLDocument, "child", rxml_document_child_get, 0);
   rb_define_method(cXMLDocument, "child?", rxml_document_child_q, 0);
-  rb_define_method(cXMLDocument, "compression", rxml_document_compression_get,
-      0);
-  rb_define_method(cXMLDocument, "compression=", rxml_document_compression_set,
-      1);
+  rb_define_method(cXMLDocument, "compression", rxml_document_compression_get, 0);
+  rb_define_method(cXMLDocument, "compression=", rxml_document_compression_set, 1);
   rb_define_method(cXMLDocument, "compression?", rxml_document_compression_q, 0);
-  rb_define_method(cXMLDocument, "dump", rxml_document_dump, -1);
-  rb_define_method(cXMLDocument, "debug_dump", rxml_document_debug_dump, -1);
-  rb_define_method(cXMLDocument, "debug_dump_head",
-      rxml_document_debug_dump_head, -1);
-  rb_define_method(cXMLDocument, "debug_format_dump",
-      rxml_document_debug_format_dump, -1);
+  rb_define_method(cXMLDocument, "debug", rxml_document_debug, 0);
   rb_define_method(cXMLDocument, "encoding", rxml_document_encoding_get, 0);
   rb_define_method(cXMLDocument, "encoding=", rxml_document_encoding_set, 1);
-  rb_define_method(cXMLDocument, "format_dump", rxml_document_format_dump, -1);
   rb_define_method(cXMLDocument, "last", rxml_document_last_get, 0);
   rb_define_method(cXMLDocument, "last?", rxml_document_last_q, 0);
   rb_define_method(cXMLDocument, "next", rxml_document_next_get, 0);
@@ -1091,9 +894,7 @@ void ruby_init_xml_document(void)
   rb_define_method(cXMLDocument, "version", rxml_document_version_get, 0);
   rb_define_method(cXMLDocument, "xinclude", rxml_document_xinclude, 0);
   rb_define_method(cXMLDocument, "validate", rxml_document_validate_dtd, 1);
-  rb_define_method(cXMLDocument, "validate_schema",
-      rxml_document_validate_schema, 1);
-  rb_define_method(cXMLDocument, "validate_relaxng",
-      rxml_document_validate_relaxng, 1);
+  rb_define_method(cXMLDocument, "validate_schema", rxml_document_validate_schema, 1);
+  rb_define_method(cXMLDocument, "validate_relaxng", rxml_document_validate_relaxng, 1);
   rb_define_method(cXMLDocument, "reader", rxml_document_reader, 0);
 }

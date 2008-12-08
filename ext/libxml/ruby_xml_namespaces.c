@@ -9,12 +9,12 @@ VALUE cXMLNamespaces;
 
 /* Document-class: LibXML::XML::Namespaces
  *
- * The Namespaces class is used to access information about
+ * The XML::Namespaces class is used to access information about
  * a node's namespaces.  For each node, libxml maintains:
  *
- *   * The node's namespace (which can be none)
- *   * Which namespaces are defined on the node
- *   * Which namespaces are in scope for the node
+ * * The node's namespace (#namespace)
+ * * Which namespaces are defined on the node (#definnitions)
+ * * Which namespaces are in scope for the node (#each)
  *
  * Let's look at an example:
  *
@@ -25,28 +25,18 @@ VALUE cXMLNamespaces;
  *     </soap:Body>
  *   </soap>
  *
- * The Envelope node is in the soap namespace.  Use the #namespace 
- * method to access a node's namespace, and the #namespace= method 
- * to change it. 
+ * The Envelope node is in the soap namespace.  It contains
+ * two namespace definitions, one for soap and one for xsd.
  * 
- * In addition, the Envelope node contains two namespace definitions.
- * Use the #definitions method to access the namespaces contained
- * by a node.
- * 
- * Last, three namespaces are in context for the order element -
- * soap, xsd and the default namespace (http://mynamespace.com).
- * Use the #each method to access the namespaces in context for
- * a node.
+ * The Body node is also in the soap namespace and does not
+ * contain any namespaces.  However, the soap and xsd namespaces
+ * are both in context.
  *
- * To add a new namespace to a node, create a new instance
- * of the XML::Namespace class.
- *
- * When using XML::XPath to find nodes, it is necessary to name
- * the default namespace.  This can be done using the 
- * #default_prefix= method.
- *
- * To find a namespace by its prefix, use the #find_by_prefix
- * method.  */
+ * The order node is in its default namespace and contains
+ * one namespace definition (http://mynamespace.com).  There
+ * are three namespaces in context soap, xsd and the 
+ * default namespace.
+*/
 
 static VALUE rxml_namespaces_alloc(VALUE klass)
 {

@@ -136,12 +136,6 @@ class TestXPath < Test::Unit::TestCase
     end
   end
 
-  # This causes a segmentation fault on Windows for some reason
-#  def test_nodes_debug
-#    nodes = @doc.find('//ns1:IdAndName', 'ns1:http://domain.somewhere.com')
-#    nodes.debug
-#   end
-
   def test_memory
     # This sometimes causes a segmentation fault because
     # an xml document is sometimes freed before the
@@ -168,4 +162,10 @@ class TestXPath < Test::Unit::TestCase
     GC.start
     assert_equal('Envelope', nodes.first.name)
   end
+
+  # --- Debug ---
+  #def test_debug
+  #  nodes = @doc.find('//ns1:IdAndName', 'ns1:http://domain.somewhere.com')
+  #  assert(nodes.debug)
+  #end
 end

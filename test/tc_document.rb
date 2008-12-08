@@ -2,7 +2,7 @@ require "xml"
 require 'test/unit'
 
 
-class TC_XML_Document < Test::Unit::TestCase
+class TestDocument < Test::Unit::TestCase
   def setup
     xp = XML::Parser.new
     assert_instance_of(XML::Parser, xp)
@@ -14,6 +14,10 @@ class TC_XML_Document < Test::Unit::TestCase
 
   def teardown
     @doc = nil
+  end
+
+  def test_klass
+    assert_instance_of(XML::Document, @doc)
   end
 
   def test_context
@@ -54,45 +58,19 @@ class TC_XML_Document < Test::Unit::TestCase
       end
     end
   end
-  
-  def test_save
-    filename = 'test_write' 
-    bytes = @doc.save(filename)
-    assert_equal(110, bytes)
-    contents = File.read(filename)
-    
-    expected =<<-EOS
-<?xml version="1.0"?>
-<ruby_array uga="booga" foo="bar"><fixnum>one</fixnum><fixnum>two</fixnum></ruby_array>
-EOS
-    assert_equal(expected, contents)
-  ensure
-    File.delete(filename)    
+
+  def test_version
+    assert_equal('1.0', @doc.version)
+
+    doc = XML::Document.new('6.9')
+    assert_equal('6.9', doc.version)
   end
-  
-  def test_save_formatted
-    filename = 'test_write' 
-    bytes = @doc.save(filename, true)
-    assert_equal(117, bytes)
-    contents = File.read(filename)
-    
-    expected =<<-EOS
-<?xml version="1.0"?>
-<ruby_array uga="booga" foo="bar">
-  <fixnum>one</fixnum>
-  <fixnum>two</fixnum>
-</ruby_array>
-EOS
-    assert_equal(expected, contents)
-  ensure
-    File.delete(filename)    
+
+  def test_write_root
+    @doc.root = XML::Node.new('rubynet')
+    assert_instance_of(XML::Node, @doc.root)
+    assert_instance_of(XML::Document, @doc.root.doc)
+    assert_equal("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<rubynet/>\n",
+                 @doc.to_s(:indent => false))
   end
-  
-  def test_save_formatted_invalid
-    filename = 'test_write' 
-    
-    assert_raise(ArgumentError) do
-      @doc.save(filename, 1)
-    end
-  end  
 end

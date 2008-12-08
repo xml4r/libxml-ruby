@@ -12,16 +12,19 @@ module LibXML
         copy(false)
       end
       
+      # :call-seq:
+      #   node.dup -> XML::Node
+      #
       # Create a shallow copy of the node.  To create
       # a deep copy call Node#copy(true)
       def dup
         copy(false)
       end
     
-      # Returns a new XML::XPathContext for the current node.
-      #
       # call-seq:
       #   node.context(namespaces=nil) -> XPath::Context
+      #
+      # Returns a new XML::XPathContext for the current node.
       #
       # Namespaces is an optional array of XML::NS objects
       def context(nslist = nil)
@@ -37,21 +40,24 @@ module LibXML
         context
       end
 
+      # call-seq:
+      #   node.find(namespaces=nil) -> XPath::XPathObject
+      #
       # Return nodes matching the specified xpath expression.
       # For more information, please refer to the documentation
       # for XML::Document#find.
-      #
-      # call-seq:
-      #   node.find(namespaces=nil) -> XPath::XPathObject
       #
       # Namespaces is an optional array of XML::NS objects
       def find(xpath, nslist = nil)
         self.context(nslist).find(xpath)
       end
     
+      # call-seq:
+      #   node.find_first(namespaces=nil) -> XML::Node
+      #
       # Return the first node matching the specified xpath expression.
       # For more information, please refer to the documentation
-      # for XML::Node#find.
+      # for the #find method.
       def find_first(xpath, nslist = nil)
         find(xpath, nslist).first
       end
@@ -287,16 +293,6 @@ module LibXML
         self.to_s
       end
 
-      def dump
-        warn('Node#dump is deprecated.  Use Node#to_s instead.')
-        self.to_s
-      end
-
-      def debug_dump
-        warn('Node#debug_dump is deprecated.  Use Node#to_s instead.')
-        self.to_s
-      end
-
       # --- Deprecated Namespaces ---
       def namespace
         warn('Node#namespace is deprecated.  Use Node#namespaces.namespace instead.')
@@ -337,6 +333,7 @@ module LibXML
         warn('Node#search_href is deprecated.  Use Node#namespaces.find_by_href instead.')
         self.namespaces.find_by_href(href)
       end
+      # :startdoc:
     end
   end
 end

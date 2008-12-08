@@ -157,4 +157,11 @@ class TestNamespaces < Test::Unit::TestCase
     assert_equal('soap', namespace.prefix)
     assert_equal('http://schemas.xmlsoap.org/soap/envelope/', namespace.href)
   end
+
+  def test_default_prefix
+    doc = XML::Document.string('<Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/"/>')
+    doc.root.namespaces.default_prefix = 'soap'
+    node = doc.root.find_first('soap:Envelope')
+    assert_not_nil(node)
+  end
 end

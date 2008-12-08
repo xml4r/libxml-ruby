@@ -63,13 +63,37 @@ module LibXML
       def find(xpath, nslist = nil)
         self.context(nslist).find(xpath)
       end
-
     
       # Return the first node matching the specified xpath expression.
       # For more information, please refer to the documentation
       # for XML::Document#find.
       def find_first(xpath, nslist = nil)
         find(xpath, nslist).first
+      end
+      
+      def dump # :nodoc:
+        warn('Document#dump is deprecated.  Use Document#to_s instead.')
+        self.to_s
+      end
+
+      def format_dump # :nodoc:
+        warn('Document#format_dump is deprecated.  Use Document#to_s instead.')
+        self.to_s
+      end
+
+      def debug_dump # :nodoc:
+        warn('Document#debug_dump is deprecated.  Use Document#debug instead.')
+        self.debug
+      end
+
+      def debug_dump_head # :nodoc:
+        warn('Document#debug_dump_head is deprecated.  Use Document#debug instead.')
+        self.debug
+      end
+
+      def debug_format_dump  # :nodoc:
+        warn('Document#debug_format_dump is deprecated.  Use Document#to_s instead.')
+        self.to_s
       end
     end
   end

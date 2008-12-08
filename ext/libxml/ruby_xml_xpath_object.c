@@ -284,15 +284,15 @@ static VALUE rxml_xpath_object_string(VALUE self)
  */
 static VALUE rxml_xpath_object_debug(VALUE self)
 {
+#ifdef LIBXML_DEBUG_ENABLED
   xmlXPathObjectPtr xpop;
-
-#ifndef LIBXML_DEBUG_ENABLED
-  rb_raise(rb_eTypeError, "libxml was not compiled with debug support.");
-#endif
-
   Data_Get_Struct(self, xmlXPathObject, xpop);
   xmlXPathDebugDumpObject(stdout, xpop, 0);
-  return Qnil;
+  return Qtrue;
+#else
+  rb_warn("libxml was compiled without debugging support.")
+  return Qfalse;
+#endif
 }
 
 void ruby_init_xml_xpath_object(void)

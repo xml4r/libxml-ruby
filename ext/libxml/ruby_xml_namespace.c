@@ -11,9 +11,9 @@ VALUE cXMLNamespace;
  *
  * The Namespace class represents an XML namespace.
  * To add a namespace to a node, create a new instance
- * of this class.  Note that this does *not* assingn the
- * node to the namespace however. To do that see 
- * the XML::Namespaces#namespace method.
+ * of this class.  Note that this does *not* assign the
+ * node to the namespace. To do that see the 
+ * XML::Namespaces#namespace method.
  *
  * Usage:
  *

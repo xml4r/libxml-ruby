@@ -1,7 +1,3 @@
-/* $Id$ */
-
-/* Please see the LICENSE file for copyright and distribution information */
-
 #include "ruby_libxml.h"
 #include "ruby_xml_node.h"
 
@@ -343,6 +339,26 @@ static VALUE rxml_node_content_stripped_get(VALUE self)
 
 /*
  * call-seq:
+ *    node.debug -> true|false
+ *
+ * Print libxml debugging information to stdout.
+ * Requires that libxml was compiled with debugging enabled.
+*/
+static VALUE rxml_node_debug(VALUE self)
+{
+#ifdef LIBXML_DEBUG_ENABLED
+  xmlNodePtr xnode;
+  Data_Get_Struct(self, xmlNode, xnode);
+  xmlDebugDumpNode(NULL, xnode, 2);
+  return Qtrue;
+#else
+  rb_warn("libxml was compiled without debugging support.")
+  return Qfalse;
+#endif
+}
+
+/*
+ * call-seq:
  *    node.first -> XML::Node
  *
  * Returns this node's first child node if any.
@@ -532,9 +548,11 @@ static VALUE rxml_node_to_s(int argc, VALUE *argv, VALUE self)
 
   if (!NIL_P(options))
   {
-    VALUE rencoding = rb_hash_aref(options, ID2SYM(rb_intern("encoding")));
-    VALUE rindent = rb_hash_aref(options, ID2SYM(rb_intern("indent")));
-    VALUE rlevel = rb_hash_aref(options, ID2SYM(rb_intern("level")));
+    VALUE rencoding, rindent, rlevel;
+    Check_Type(options, T_HASH);
+    rencoding = rb_hash_aref(options, ID2SYM(rb_intern("encoding")));
+    rindent = rb_hash_aref(options, ID2SYM(rb_intern("indent")));
+    rlevel = rb_hash_aref(options, ID2SYM(rb_intern("level")));
 
     if (rindent == Qfalse)
       indent = 0;
@@ -1222,8 +1240,7 @@ void ruby_init_xml_node(void)
   rb_define_const(cXMLNode, "ELEMENT_NODE", INT2FIX(XML_ELEMENT_NODE));
   rb_define_const(cXMLNode, "ATTRIBUTE_NODE", INT2FIX(XML_ATTRIBUTE_NODE));
   rb_define_const(cXMLNode, "TEXT_NODE", INT2FIX(XML_TEXT_NODE));
-  rb_define_const(cXMLNode, "CDATA_SECTION_NODE", INT2FIX(
-      XML_CDATA_SECTION_NODE));
+  rb_define_const(cXMLNode, "CDATA_SECTION_NODE", INT2FIX(XML_CDATA_SECTION_NODE));
   rb_define_const(cXMLNode, "ENTITY_REF_NODE", INT2FIX(XML_ENTITY_REF_NODE));
   rb_define_const(cXMLNode, "ENTITY_NODE", INT2FIX(XML_ENTITY_NODE));
   rb_define_const(cXMLNode, "PI_NODE", INT2FIX(XML_PI_NODE));
@@ -1283,6 +1300,7 @@ void ruby_init_xml_node(void)
   rb_define_method(cXMLNode, "content", rxml_node_content_get, 0);
   rb_define_method(cXMLNode, "content=", rxml_node_content_set, 1);
   rb_define_method(cXMLNode, "content_stripped", rxml_node_content_stripped_get, 0);
+  rb_define_method(cXMLNode, "debug", rxml_node_debug, 0);
   rb_define_method(cXMLNode, "doc", rxml_node_doc, 0);
   rb_define_method(cXMLNode, "empty?", rxml_node_empty_q, 0);
   rb_define_method(cXMLNode, "eql?", rxml_node_eql_q, 1);
