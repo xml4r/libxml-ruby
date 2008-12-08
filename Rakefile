@@ -12,9 +12,10 @@ require 'date'
 # ------- Default Package ----------
 FILES = FileList[
   'Rakefile',
-  'README',
-  'LICENSE',
   'CHANGES',
+  'LICENSE',
+  'README',
+  'VERSION',
   'setup.rb',
   'doc/**/*',
   'ext/libxml/*',
