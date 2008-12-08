@@ -21,7 +21,7 @@ static ID ERROR_HANDLER_ID;
  *
  * To disable this output you can install the quiet handler:
  *
- *   XML::Error.set_handler(&XML::Error::QUITE_HANDLER)
+ *   XML::Error.set_handler(&XML::Error::QUIET_HANDLER)
  *
  * Install your own handler:
  *
