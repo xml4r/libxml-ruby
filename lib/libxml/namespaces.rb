@@ -2,6 +2,19 @@ module LibXML
   module XML
     class Namespaces
       # call-seq:
+      #   namespace.default -> XML::Namespace
+      #
+      # Returns the default namespace for this node or nil.
+      #
+      # Usage:
+      #   doc = XML::Document.string('<Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/"/>')
+      #   ns = doc.root.namespaces.default_namespace
+      #   assert_equal(ns.href, 'http://schemas.xmlsoap.org/soap/envelope/')
+      def default_namespace
+        find_by_prefix(nil)
+      end
+
+      # call-seq:
       #   namespace.default_prefix = "string"
       #
       # Assigns a name (prefix) to the default namespace.
