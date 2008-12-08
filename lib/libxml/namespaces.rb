@@ -10,7 +10,7 @@ module LibXML
       #   doc = XML::Document.string('<Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/"/>')
       #   ns = doc.root.namespaces.default_namespace
       #   assert_equal(ns.href, 'http://schemas.xmlsoap.org/soap/envelope/')
-      def default_namespace
+      def default
         find_by_prefix(nil)
       end
 

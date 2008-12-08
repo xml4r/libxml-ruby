@@ -172,7 +172,7 @@ static int iterate_ns_hash(st_data_t prefix, st_data_t uri, st_data_t self)
  *
  * Register the specified namespaces in this context.  There are
  * three different forms that libxml accepts.  These include
- * a string, an array of string, or a hash table:
+ * a string, an array of strings, or a hash table:
  *
  *   context.register_namespaces('xi:http://www.w3.org/2001/XInclude')
  *   context.register_namespaces(['xlink:http://www.w3.org/1999/xlink',
