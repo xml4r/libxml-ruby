@@ -1,5 +1,33 @@
 (See log/ChangeLog for more detailed changes derived directly from source control.)
 
+== 0.9.6 / 2008-12-08 Charlie Savage
+
+* Refactored namespace handling.  The existing, and inconsistent,
+  namespace methods defined on XML::Node have been deprecated.  
+  They have been replaced by a the new XML::Namespaces class.
+  Use this class to inspect a node's namespace, its default
+  namespace, its namespace definitions and which namespaces
+  are in scope.  It can be accessed via the the
+  XML::Node#namespaces method.
+
+* Rationalized XML::Document#save, XML::Document#to_s and
+  XML::Node#to_s to take an optional hash table of parameters 
+  that control how output is generated. Supported parameters
+  include setting indentation on or off, the indentation level
+  and the output encoding.  This is an API change and may break
+  existing calls to XML::Document#save.  However, the previous
+  API was broken - setting the encoding resulted in an error so
+  its unlikely anyone is using it.
+
+* Rationalized XML::Document#debug, XML::Node#debug, XML::XPath::XPathObject#Debug.
+
+* Deprecated a number of duplicate dump* and debug_* methods in
+  XML::Document and XML::Node.
+
+* Additional Ruby 1.9.1 compatability fixes.
+
+* Cleaned up header file guards.
+
 == 0.9.5 / 2008-11-29 Charlie Savage
 
 * Ruby 1.9.1 preview release compatability (Felipe Contreras)
@@ -33,7 +61,7 @@
 
 == 0.9.3 / 2008-11-22 Charlie Savage
 
-* Fixed segementation fault caused by documents being freed
+* Fixed segmentation fault caused by documents being freed
   before xpath results that referenced the document (take 2).
 
 * Allowed sax parser to use io stream
@@ -58,7 +86,7 @@
   wrapped by the new XML::Error class and are thrown as exceptions
   when it is appropriate.
 
-* Fixed segementation fault caused by documents being freed
+* Fixed segmentation fault caused by documents being freed
   before xpath results that referenced the document.
 
 * Add Node#register_default_namespace to simplify default namespace handling.

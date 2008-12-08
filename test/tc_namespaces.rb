@@ -160,7 +160,7 @@ class TestNamespaces < Test::Unit::TestCase
 
   def test_default_namespace
     doc = XML::Document.string('<Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/"/>')
-    ns = doc.root.namespaces.default_namespace
+    ns = doc.root.namespaces.default
     assert_equal(ns.href, 'http://schemas.xmlsoap.org/soap/envelope/')
   end
 
