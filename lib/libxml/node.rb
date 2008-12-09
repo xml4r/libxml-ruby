@@ -295,13 +295,18 @@ module LibXML
 
       # --- Deprecated Namespaces ---
       def namespace
-        warn('Node#namespace is deprecated.  Use Node#namespaces.namespace instead.')
-        self.namespaces.namespace
+        warn('Node#namespace is deprecated.  Use Node#namespaces instead.')
+        self.namespaces.entries
       end
 
       def namespace=(value)
         warn('Node#namespace= is deprecated.  Use Node#namespaces.namespace= instead.')
         self.namespaces.namespace = value
+      end
+
+      def namespace_node
+        warn('Node#namespace_node is deprecated.  Use Node#namespaces.namespace instead.')
+        self.namespaces.namespace
       end
 
       def ns
