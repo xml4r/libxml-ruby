@@ -78,7 +78,7 @@ static VALUE rxml_sax_parser_initialize(VALUE self)
 static int rxml_sax_parser_parse_file(VALUE self, VALUE input)
 {
   VALUE file = rb_ivar_get(input, FILE_ATTR);
-  return xmlSAXUserParseFile((xmlSAXHandlerPtr) & rxml_sax_hander_struct,
+  return xmlSAXUserParseFile((xmlSAXHandlerPtr) &rxml_sax_hander_struct,
       (void *) self, StringValuePtr(file));
 }
 

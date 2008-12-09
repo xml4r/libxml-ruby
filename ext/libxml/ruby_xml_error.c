@@ -150,10 +150,8 @@ void ruby_init_xml_error()
 
   /* Error class */
   eXMLError = rb_define_class_under(mXML, "Error", rb_eStandardError);
-  rb_define_singleton_method(eXMLError, "set_handler", rxml_error_set_handler,
-      0);
-  rb_define_singleton_method(eXMLError, "reset_handler",
-      rxml_error_reset_handler, 0);
+  rb_define_singleton_method(eXMLError, "set_handler", rxml_error_set_handler, 0);
+  rb_define_singleton_method(eXMLError, "reset_handler", rxml_error_reset_handler, 0);
 
   /* Ruby callback to receive errors - set it to nil by default. */
   ERROR_HANDLER_ID = rb_intern("@@__error_handler_callback__");

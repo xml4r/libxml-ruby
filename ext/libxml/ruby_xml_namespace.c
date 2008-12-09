@@ -91,10 +91,10 @@ static VALUE rxml_namespace_href_get(VALUE self)
 {
   xmlNsPtr xns;
   Data_Get_Struct(self, xmlNs, xns);
-  if (xns == NULL || xns->href == NULL)
-    return (Qnil);
+  if (xns->href == NULL)
+    return Qnil;
   else
-    return (rb_str_new2((const char*) xns->href));
+    return rb_str_new2((const char*) xns->href);
 }
 
 /*
@@ -113,10 +113,10 @@ static VALUE rxml_namespace_prefix_get(VALUE self)
 {
   xmlNsPtr xns;
   Data_Get_Struct(self, xmlNs, xns);
-  if (xns == NULL || xns->prefix == NULL)
-    return (Qnil);
+  if (xns->prefix == NULL)
+    return Qnil;
   else
-    return (rb_str_new2((const char*) xns->prefix));
+    return rb_str_new2((const char*) xns->prefix);
 }
 
 /*
