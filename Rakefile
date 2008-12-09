@@ -15,7 +15,6 @@ FILES = FileList[
   'CHANGES',
   'LICENSE',
   'README',
-  'VERSION',
   'setup.rb',
   'doc/**/*',
   'ext/libxml/*',
