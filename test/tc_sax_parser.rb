@@ -76,61 +76,61 @@ class TestSaxParser < Test::Unit::TestCase
     assert_equal [17], @xp.callbacks.test[:enddoc]
   end
   
-#  def test_string_no_callbacks
-#    @xp.string = File.read(saxtest_file)
-#    assert_equal true, @xp.parse
-#  end
-#
-#  def test_file_no_callbacks
-#    @xp.file = File.join(saxtest_file)
-#    assert_equal true, @xp.parse
-#  end
-#
-#  def test_string
-#    @xp.callbacks = TestCaseCallbacks.new
-#    @xp.string = File.read(saxtest_file)
-#    @xp.parse
-#    verify
-#  end
-#
-#  def test_file
-#    @xp.callbacks = TestCaseCallbacks.new
-#    @xp.file = saxtest_file
-#    @xp.parse
-#    verify
-#  end
-#
-#  def test_io
-#    File.open(saxtest_file) do |file|
-#      @xp.callbacks = TestCaseCallbacks.new
-#      @xp.io = file
-#      @xp.parse
-#      verify
-#    end
-#  end
-#
-#  def test_string_io
-#    data = File.read(saxtest_file)
-#
-#    @xp.callbacks = TestCaseCallbacks.new
-#    @xp.io = StringIO.new(data)
-#    @xp.parse
-#    verify
-#  end
-#
-#  def test_doctype
-#    @xp.callbacks = DocTypeCallback.new
-#    @xp.string = <<-EOS
-#<?xml version="1.0" encoding="UTF-8"?>
-#<!DOCTYPE Results SYSTEM "results.dtd">
-#<Results>
-#  <a>a1</a>
-#</Results>
-#EOS
-#    doc = @xp.parse
-#    assert_not_nil(doc)
-#  end
-#
+  def test_string_no_callbacks
+    @xp.string = File.read(saxtest_file)
+    assert_equal true, @xp.parse
+  end
+
+  def test_file_no_callbacks
+    @xp.file = File.join(saxtest_file)
+    assert_equal true, @xp.parse
+  end
+
+  def test_string
+    @xp.callbacks = TestCaseCallbacks.new
+    @xp.string = File.read(saxtest_file)
+    @xp.parse
+    verify
+  end
+
+  def test_file
+    @xp.callbacks = TestCaseCallbacks.new
+    @xp.file = saxtest_file
+    @xp.parse
+    verify
+  end
+
+  def test_io
+    File.open(saxtest_file) do |file|
+      @xp.callbacks = TestCaseCallbacks.new
+      @xp.io = file
+      @xp.parse
+      verify
+    end
+  end
+
+  def test_string_io
+    data = File.read(saxtest_file)
+
+    @xp.callbacks = TestCaseCallbacks.new
+    @xp.io = StringIO.new(data)
+    @xp.parse
+    verify
+  end
+
+  def test_doctype
+    @xp.callbacks = DocTypeCallback.new
+    @xp.string = <<-EOS
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE Results SYSTEM "results.dtd">
+<Results>
+  <a>a1</a>
+</Results>
+EOS
+    doc = @xp.parse
+    assert_not_nil(doc)
+  end
+
   def test_parse_error
     @xp.callbacks = TestCaseCallbacks.new
     @xp.string = <<-EOS
