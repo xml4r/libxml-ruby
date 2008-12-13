@@ -109,7 +109,7 @@ static VALUE rxml_xpath_object_tabref(xmlXPathObjectPtr xpop, int apos)
     return rxml_attr_wrap((xmlAttrPtr) xpop->nodesetval->nodeTab[apos]);
     break;
   default:
-    return rxml_node_wrap(cXMLNode, xpop->nodesetval->nodeTab[apos]);
+    return rxml_node_wrap(xpop->nodesetval->nodeTab[apos]);
   }
 }
 

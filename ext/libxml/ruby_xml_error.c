@@ -111,7 +111,7 @@ VALUE rxml_error_wrap(xmlErrorPtr xerror)
   //rb_define_attr(eXMLError, "ctxt", 1, 0);
   if (xerror->node)
   {
-    VALUE node = rxml_node_wrap(cXMLNode, xerror->node);
+    VALUE node = rxml_node_wrap(xerror->node);
     rb_iv_set(result, "@node", node);
   }
   return result;

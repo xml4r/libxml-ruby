@@ -1,3 +1,19 @@
+== 0.9.8 / 2008-12-08 Charlie Savage
+
+* XML::Reader#read api change.  Previously #read returned 1 if a
+  node was read, 0 if a node was not read and -1 for an error.  It now
+  returns true if a node was read, false if node was not read and raises
+  an exception on an error.  This fits more naturally into Ruby, and allows
+  code like this:
+
+  while reader.read
+    # do stuff
+  end
+
+* Added XML::Reader#node method.
+
+* Fixed rdocs.
+
 == 0.9.7 / 2008-12-08 Charlie Savage
 
 * Added SAX2 support.  SAX handlers now define two new callbacks,
@@ -20,6 +36,8 @@
   for more information.
 
 * Fix compilation bugs on Solaris.
+
+* Fix Rdoc compilation bug.
 
 
 == 0.9.6 / 2008-12-08 Charlie Savage

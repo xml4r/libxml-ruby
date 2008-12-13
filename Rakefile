@@ -86,6 +86,7 @@ if RUBY_PLATFORM.match(/win32/)
   # Rake task to build the windows package
   Rake::GemPackageTask.new(win_spec) do |pkg|
     pkg.package_dir = 'admin/pkg'
+    pkg.need_tar = false
   end
 end
 

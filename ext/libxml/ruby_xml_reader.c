@@ -23,19 +23,19 @@ VALUE cXMLReader;
  * Example:
  *
  *  parser = XML::Reader.new("<foo><bar>1</bar><bar>2</bar><bar>3</bar></foo>")
- *  parser.read
- *  assert_equal('foo', parser.name)
- *  assert_equal(nil, parser.value)
+ *  reader.read
+ *  assert_equal('foo', reader.name)
+ *  assert_equal(nil, reader.value)
  *
  *  3.times do |i|
- *    parser.read
- *    assert_equal(XML::Reader::TYPE_ELEMENT, parser.node_type)
- *    assert_equal('bar', parser.name)
- *    parser.read
- *    assert_equal(XML::Reader::TYPE_TEXT, parser.node_type)
- *    assert_equal((i + 1).to_s, parser.value)
- *    parser.read
- *    assert_equal(XML::Reader::TYPE_END_ELEMENT, parser.node_type)
+ *    reader.read
+ *    assert_equal(XML::Reader::TYPE_ELEMENT, reader.node_type)
+ *    assert_equal('bar', reader.name)
+ *    reader.read
+ *    assert_equal(XML::Reader::TYPE_TEXT, reader.node_type)
+ *    assert_equal((i + 1).to_s, reader.value)
+ *    reader.read
+ *    assert_equal(XML::Reader::TYPE_END_ELEMENT, reader.node_type)
  *  end
  *
  * For a more in depth tutorial, albeit in C, see http://xmlsoft.org/xmlreader.html.*/
@@ -167,7 +167,7 @@ static VALUE rxml_reader_new_data(int argc, VALUE *argv, VALUE self)
 
 /*
  * call-seq:
- *    parser.close -> code
+ *    reader.close -> code
  *
  * This method releases any resources allocated by the current instance
  * changes the state to Closed and close any underlying input.
@@ -179,7 +179,7 @@ static VALUE rxml_reader_close(VALUE self)
 
 /*
  * call-seq:
- *   parser.move_to_attribute(val) -> code
+ *   reader.move_to_attribute(val) -> code
  *
  * Move the position of the current instance to the attribute with the
  * specified index (if +val+ is an integer) or name (if +val+ is a string)
@@ -268,6 +268,21 @@ static VALUE rxml_reader_next_sibling(VALUE self)
 
 /*
  * call-seq:
+ *    reader.node -> XML::Node
+ *
+ * Returns the reader's current node.
+ * WARNING - Using this method is dangerous because the
+ * the node may be destroyed on the next #read.
+ */
+static VALUE rxml_reader_node(VALUE self)
+{
+  xmlTextReaderPtr xreader = rxml_text_reader_get(self);
+  xmlNodePtr xnode = xmlTextReaderCurrentNode(xreader);
+  return rxml_node_wrap(xnode);
+}
+
+/*
+ * call-seq:
  *    reader.node_type -> type
  *
  * Get the node type of the current node. Reference:
@@ -302,12 +317,22 @@ static VALUE rxml_reader_normalization(VALUE self)
  * Move the position of the current instance to the next node in the stream,
  * exposing its properties.
  *
- * Return 1 if the node was read successfully, 0 if there is no more nodes to
- * read, or -1 in case of error.
- */
+ * Return true if the node was read successfully or false if there are no more
+ * nodes to read.*/
 static VALUE rxml_reader_read(VALUE self)
 {
-  return INT2FIX(xmlTextReaderRead(rxml_text_reader_get(self)));
+  int result = xmlTextReaderRead(rxml_text_reader_get(self));
+  switch(result)
+  {
+    case -1:
+      rxml_raise(&xmlLastError);
+      return Qnil;
+      break;
+    case 0:
+      return Qfalse;
+    case 1:
+      return Qtrue;
+  }
 }
 
 /*
@@ -668,7 +693,7 @@ static VALUE rxml_reader_expand(VALUE self)
   doc = xmlTextReaderCurrentDoc(reader);
   rxml_document_wrap(doc);
 
-  return rxml_node_wrap(cXMLNode, node);
+  return rxml_node_wrap(node);
 }
 
 #if LIBXML_VERSION >= 20618
@@ -777,123 +802,93 @@ void ruby_init_xml_reader(void)
   rb_define_singleton_method(cXMLReader, "new", rxml_reader_new_data, -1);
   rb_define_alias(CLASS_OF(cXMLReader), "string", "new");
 
+  rb_define_method(cXMLReader, "[]", rxml_reader_attribute, 1);
+  rb_define_method(cXMLReader, "attribute_count", rxml_reader_attr_count, 0);
+  rb_define_method(cXMLReader, "base_uri", rxml_reader_base_uri, 0);
+#if LIBXML_VERSION >= 20618
+  rb_define_method(cXMLReader, "byte_consumed", rxml_reader_byte_consumed, 0);
+#endif
   rb_define_method(cXMLReader, "close", rxml_reader_close, 0);
-
+#if LIBXML_VERSION >= 20617
+  rb_define_method(cXMLReader, "column_number", rxml_reader_column_number, 0);
+#endif
+  rb_define_method(cXMLReader, "depth", rxml_reader_depth, 0);
+  rb_define_method(cXMLReader, "encoding", rxml_reader_encoding, 0);
+  rb_define_method(cXMLReader, "expand", rxml_reader_expand, 0);
+  rb_define_method(cXMLReader, "has_attributes?", rxml_reader_has_attributes, 0);
+  rb_define_method(cXMLReader, "has_value?", rxml_reader_has_value, 0);
+#if LIBXML_VERSION >= 20617
+  rb_define_method(cXMLReader, "line_number", rxml_reader_line_number, 0);
+#endif
+  rb_define_method(cXMLReader, "local_name", rxml_reader_local_name, 0);
+  rb_define_method(cXMLReader, "lookup_namespace",       rxml_reader_lookup_namespace, 1);
   rb_define_method(cXMLReader, "move_to_attribute", rxml_reader_move_to_attr, 1);
-  rb_define_method(cXMLReader, "move_to_first_attribute",
-      rxml_reader_move_to_first_attr, 0);
-  rb_define_method(cXMLReader, "move_to_next_attribute",
-      rxml_reader_move_to_next_attr, 0);
-  rb_define_method(cXMLReader, "move_to_element", rxml_reader_move_to_element,
-      0);
+  rb_define_method(cXMLReader, "move_to_first_attribute",       rxml_reader_move_to_first_attr, 0);
+  rb_define_method(cXMLReader, "move_to_next_attribute",       rxml_reader_move_to_next_attr, 0);
+  rb_define_method(cXMLReader, "move_to_element", rxml_reader_move_to_element,       0);
+  rb_define_method(cXMLReader, "name", rxml_reader_name, 0);
+  rb_define_method(cXMLReader, "namespace_uri", rxml_reader_namespace_uri, 0);
   rb_define_method(cXMLReader, "next", rxml_reader_next, 0);
   rb_define_method(cXMLReader, "next_sibling", rxml_reader_next_sibling, 0);
+  rb_define_method(cXMLReader, "node", rxml_reader_node, 0);
+  rb_define_method(cXMLReader, "node_type", rxml_reader_node_type, 0);
+  rb_define_method(cXMLReader, "normalization", rxml_reader_normalization, 0);
+  rb_define_method(cXMLReader, "prefix", rxml_reader_prefix, 0);
+  rb_define_method(cXMLReader, "quote_char", rxml_reader_quote_char, 0);
   rb_define_method(cXMLReader, "read", rxml_reader_read, 0);
-  rb_define_method(cXMLReader, "read_attribute_value",
-      rxml_reader_read_attr_value, 0);
+  rb_define_method(cXMLReader, "read_attribute_value", rxml_reader_read_attr_value, 0);
   rb_define_method(cXMLReader, "read_inner_xml", rxml_reader_read_inner_xml, 0);
   rb_define_method(cXMLReader, "read_outer_xml", rxml_reader_read_outer_xml, 0);
   rb_define_method(cXMLReader, "read_state", rxml_reader_read_state, 0);
   rb_define_method(cXMLReader, "read_string", rxml_reader_read_string, 0);
-
-  rb_define_method(cXMLReader, "relax_ng_validate",
-      rxml_reader_relax_ng_validate, 1);
+  rb_define_method(cXMLReader, "relax_ng_validate",       rxml_reader_relax_ng_validate, 1);
+  rb_define_method(cXMLReader, "standalone", rxml_reader_standalone, 0);
 #if LIBXML_VERSION >= 20620
   rb_define_method(cXMLReader, "schema_validate", rxml_reader_schema_validate, 1);
 #endif
-
-  rb_define_method(cXMLReader, "node_type", rxml_reader_node_type, 0);
-  rb_define_method(cXMLReader, "normalization", rxml_reader_normalization, 0);
-  rb_define_method(cXMLReader, "attribute_count", rxml_reader_attr_count, 0);
-  rb_define_method(cXMLReader, "name", rxml_reader_name, 0);
-  rb_define_method(cXMLReader, "local_name", rxml_reader_local_name, 0);
-  rb_define_method(cXMLReader, "encoding", rxml_reader_encoding, 0);
-  rb_define_method(cXMLReader, "base_uri", rxml_reader_base_uri, 0);
-  rb_define_method(cXMLReader, "namespace_uri", rxml_reader_namespace_uri, 0);
+  rb_define_method(cXMLReader, "value", rxml_reader_value, 0);
   rb_define_method(cXMLReader, "xml_lang", rxml_reader_xml_lang, 0);
   rb_define_method(cXMLReader, "xml_version", rxml_reader_xml_version, 0);
-  rb_define_method(cXMLReader, "prefix", rxml_reader_prefix, 0);
-  rb_define_method(cXMLReader, "depth", rxml_reader_depth, 0);
-  rb_define_method(cXMLReader, "quote_char", rxml_reader_quote_char, 0);
-  rb_define_method(cXMLReader, "standalone", rxml_reader_standalone, 0);
-
-  rb_define_method(cXMLReader, "has_attributes?", rxml_reader_has_attributes, 0);
-  rb_define_method(cXMLReader, "[]", rxml_reader_attribute, 1);
-  rb_define_method(cXMLReader, "has_value?", rxml_reader_has_value, 0);
-  rb_define_method(cXMLReader, "value", rxml_reader_value, 0);
-
-  rb_define_method(cXMLReader, "lookup_namespace",
-      rxml_reader_lookup_namespace, 1);
-  rb_define_method(cXMLReader, "expand", rxml_reader_expand, 0);
-
-#if LIBXML_VERSION >= 20618
-  rb_define_method(cXMLReader, "byte_consumed", rxml_reader_byte_consumed, 0);
-#endif
-#if LIBXML_VERSION >= 20617
-  rb_define_method(cXMLReader, "column_number", rxml_reader_column_number, 0);
-  rb_define_method(cXMLReader, "line_number", rxml_reader_line_number, 0);
-#endif
   rb_define_method(cXMLReader, "default?", rxml_reader_default, 0);
   rb_define_method(cXMLReader, "empty_element?", rxml_reader_empty_element, 0);
-  rb_define_method(cXMLReader, "namespace_declaration?",
-      rxml_reader_namespace_declaration, 0);
+  rb_define_method(cXMLReader, "namespace_declaration?", rxml_reader_namespace_declaration, 0);
   rb_define_method(cXMLReader, "valid?", rxml_reader_valid, 0);
 
+  /* Constants */
   rb_define_const(cXMLReader, "LOADDTD", INT2FIX(XML_PARSER_LOADDTD));
   rb_define_const(cXMLReader, "DEFAULTATTRS", INT2FIX(XML_PARSER_DEFAULTATTRS));
   rb_define_const(cXMLReader, "VALIDATE", INT2FIX(XML_PARSER_VALIDATE));
-  rb_define_const(cXMLReader, "SUBST_ENTITIES", INT2FIX(
-      XML_PARSER_SUBST_ENTITIES));
+  rb_define_const(cXMLReader, "SUBST_ENTITIES", INT2FIX(XML_PARSER_SUBST_ENTITIES));
 
-  rb_define_const(cXMLReader, "SEVERITY_VALIDITY_WARNING", INT2FIX(
-      XML_PARSER_SEVERITY_VALIDITY_WARNING));
-  rb_define_const(cXMLReader, "SEVERITY_VALIDITY_ERROR", INT2FIX(
-      XML_PARSER_SEVERITY_VALIDITY_ERROR));
-  rb_define_const(cXMLReader, "SEVERITY_WARNING", INT2FIX(
-      XML_PARSER_SEVERITY_WARNING));
-  rb_define_const(cXMLReader, "SEVERITY_ERROR", INT2FIX(
-      XML_PARSER_SEVERITY_ERROR));
+  rb_define_const(cXMLReader, "SEVERITY_VALIDITY_WARNING", INT2FIX(XML_PARSER_SEVERITY_VALIDITY_WARNING));
+  rb_define_const(cXMLReader, "SEVERITY_VALIDITY_ERROR", INT2FIX(XML_PARSER_SEVERITY_VALIDITY_ERROR));
+  rb_define_const(cXMLReader, "SEVERITY_WARNING", INT2FIX(XML_PARSER_SEVERITY_WARNING));
+  rb_define_const(cXMLReader, "SEVERITY_ERROR", INT2FIX(XML_PARSER_SEVERITY_ERROR));
 
   rb_define_const(cXMLReader, "TYPE_NONE", INT2FIX(XML_READER_TYPE_NONE));
   rb_define_const(cXMLReader, "TYPE_ELEMENT", INT2FIX(XML_READER_TYPE_ELEMENT));
-  rb_define_const(cXMLReader, "TYPE_ATTRIBUTE", INT2FIX(
-      XML_READER_TYPE_ATTRIBUTE));
+  rb_define_const(cXMLReader, "TYPE_ATTRIBUTE", INT2FIX(XML_READER_TYPE_ATTRIBUTE));
   rb_define_const(cXMLReader, "TYPE_TEXT", INT2FIX(XML_READER_TYPE_TEXT));
   rb_define_const(cXMLReader, "TYPE_CDATA", INT2FIX(XML_READER_TYPE_CDATA));
-  rb_define_const(cXMLReader, "TYPE_ENTITY_REFERENCE", INT2FIX(
-      XML_READER_TYPE_ENTITY_REFERENCE));
+  rb_define_const(cXMLReader, "TYPE_ENTITY_REFERENCE", INT2FIX(XML_READER_TYPE_ENTITY_REFERENCE));
   rb_define_const(cXMLReader, "TYPE_ENTITY", INT2FIX(XML_READER_TYPE_ENTITY));
-  rb_define_const(cXMLReader, "TYPE_PROCESSING_INSTRUCTION", INT2FIX(
-      XML_READER_TYPE_PROCESSING_INSTRUCTION));
+  rb_define_const(cXMLReader, "TYPE_PROCESSING_INSTRUCTION", INT2FIX(XML_READER_TYPE_PROCESSING_INSTRUCTION));
   rb_define_const(cXMLReader, "TYPE_COMMENT", INT2FIX(XML_READER_TYPE_COMMENT));
-  rb_define_const(cXMLReader, "TYPE_DOCUMENT",
-      INT2FIX(XML_READER_TYPE_DOCUMENT));
-  rb_define_const(cXMLReader, "TYPE_DOCUMENT_TYPE", INT2FIX(
-      XML_READER_TYPE_DOCUMENT_TYPE));
-  rb_define_const(cXMLReader, "TYPE_DOCUMENT_FRAGMENT", INT2FIX(
-      XML_READER_TYPE_DOCUMENT_FRAGMENT));
-  rb_define_const(cXMLReader, "TYPE_NOTATION",
-      INT2FIX(XML_READER_TYPE_NOTATION));
-  rb_define_const(cXMLReader, "TYPE_WHITESPACE", INT2FIX(
-      XML_READER_TYPE_WHITESPACE));
-  rb_define_const(cXMLReader, "TYPE_SIGNIFICANT_WHITESPACE", INT2FIX(
-      XML_READER_TYPE_SIGNIFICANT_WHITESPACE));
-  rb_define_const(cXMLReader, "TYPE_END_ELEMENT", INT2FIX(
-      XML_READER_TYPE_END_ELEMENT));
-  rb_define_const(cXMLReader, "TYPE_END_ENTITY", INT2FIX(
-      XML_READER_TYPE_END_ENTITY));
-  rb_define_const(cXMLReader, "TYPE_XML_DECLARATION", INT2FIX(
-      XML_READER_TYPE_XML_DECLARATION));
+  rb_define_const(cXMLReader, "TYPE_DOCUMENT",       INT2FIX(XML_READER_TYPE_DOCUMENT));
+  rb_define_const(cXMLReader, "TYPE_DOCUMENT_TYPE", INT2FIX(XML_READER_TYPE_DOCUMENT_TYPE));
+  rb_define_const(cXMLReader, "TYPE_DOCUMENT_FRAGMENT", INT2FIX(XML_READER_TYPE_DOCUMENT_FRAGMENT));
+  rb_define_const(cXMLReader, "TYPE_NOTATION",       INT2FIX(XML_READER_TYPE_NOTATION));
+  rb_define_const(cXMLReader, "TYPE_WHITESPACE", INT2FIX(XML_READER_TYPE_WHITESPACE));
+  rb_define_const(cXMLReader, "TYPE_SIGNIFICANT_WHITESPACE", INT2FIX(XML_READER_TYPE_SIGNIFICANT_WHITESPACE));
+  rb_define_const(cXMLReader, "TYPE_END_ELEMENT", INT2FIX(XML_READER_TYPE_END_ELEMENT));
+  rb_define_const(cXMLReader, "TYPE_END_ENTITY", INT2FIX(XML_READER_TYPE_END_ENTITY));
+  rb_define_const(cXMLReader, "TYPE_XML_DECLARATION", INT2FIX(XML_READER_TYPE_XML_DECLARATION));
 
   /* Read states */
-  rb_define_const(cXMLReader, "MODE_INITIAL", INT2FIX(
-      XML_TEXTREADER_MODE_INITIAL));
-  rb_define_const(cXMLReader, "MODE_INTERACTIVE", INT2FIX(
-      XML_TEXTREADER_MODE_INTERACTIVE));
+  rb_define_const(cXMLReader, "MODE_INITIAL", INT2FIX(XML_TEXTREADER_MODE_INITIAL));
+  rb_define_const(cXMLReader, "MODE_INTERACTIVE", INT2FIX(XML_TEXTREADER_MODE_INTERACTIVE));
   rb_define_const(cXMLReader, "MODE_ERROR", INT2FIX(XML_TEXTREADER_MODE_ERROR));
   rb_define_const(cXMLReader, "MODE_EOF", INT2FIX(XML_TEXTREADER_MODE_EOF));
-  rb_define_const(cXMLReader, "MODE_CLOSED",
-      INT2FIX(XML_TEXTREADER_MODE_CLOSED));
-  rb_define_const(cXMLReader, "MODE_READING", INT2FIX(
-      XML_TEXTREADER_MODE_READING));
+  rb_define_const(cXMLReader, "MODE_CLOSED",       INT2FIX(XML_TEXTREADER_MODE_CLOSED));
+  rb_define_const(cXMLReader, "MODE_READING", INT2FIX(XML_TEXTREADER_MODE_READING));
 }

@@ -143,7 +143,7 @@ static VALUE rxml_attr_child_get(VALUE self)
   if (xattr->children == NULL)
     return (Qnil);
   else
-    return (rxml_node_wrap(cXMLNode, (xmlNodePtr) xattr->children));
+    return (rxml_node_wrap((xmlNodePtr) xattr->children));
 }
 
 /*
@@ -210,7 +210,7 @@ static VALUE rxml_attr_last_get(VALUE self)
   if (xattr->last == NULL)
     return (Qnil);
   else
-    return (rxml_node_wrap(cXMLNode, xattr->last));
+    return (rxml_node_wrap(xattr->last));
 }
 
 /*
@@ -335,7 +335,7 @@ static VALUE rxml_attr_parent_get(VALUE self)
   if (xattr->parent == NULL)
     return (Qnil);
   else
-    return (rxml_node_wrap(cXMLNode, xattr->parent));
+    return (rxml_node_wrap(xattr->parent));
 }
 
 /*

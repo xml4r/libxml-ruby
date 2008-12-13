@@ -293,7 +293,7 @@ static VALUE rxml_parser_context_node_get(VALUE self)
   if (ctxt->node == NULL)
     return (Qnil);
   else
-    return (rxml_node_wrap(cXMLNode, ctxt->node));
+    return (rxml_node_wrap(ctxt->node));
 }
 
 /*

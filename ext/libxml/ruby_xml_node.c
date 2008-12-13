@@ -37,7 +37,7 @@ VALUE check_string_or_symbol(VALUE val)
  * go out of scope, then ruby_xfree gets called and _private is set to NULL.
  * If the xmlNode has no parent or document, then call xmlFree.
  */
-void rxml_node2_free(xmlNodePtr xnode)
+void rxml_node_free(xmlNodePtr xnode)
 {
   /* Set _private to NULL so that we won't reuse the
    same, freed, Ruby wrapper object later.*/
@@ -84,25 +84,24 @@ void rxml_node_mark(xmlNodePtr xnode)
   rxml_node_mark_common(xnode);
 }
 
-VALUE rxml_node_wrap(VALUE klass, xmlNodePtr xnode)
+VALUE rxml_node_wrap(xmlNodePtr xnode)
 {
-  VALUE obj;
-
-  // This node is already wrapped
+  /* Is the node already wrapped? */
   if (xnode->_private != NULL)
   {
     return (VALUE) xnode->_private;
   }
-
-  obj = Data_Wrap_Struct(klass, rxml_node_mark, rxml_node2_free, xnode);
-
-  xnode->_private = (void*) obj;
-  return obj;
+  else
+  {
+    VALUE node = Data_Wrap_Struct(cXMLNode, rxml_node_mark, rxml_node_free, xnode);
+    xnode->_private = (void*) node;
+    return node;
+  }
 }
 
 static VALUE rxml_node_alloc(VALUE klass)
 {
-  return Data_Wrap_Struct(klass, rxml_node_mark, rxml_node2_free, NULL);
+  return Data_Wrap_Struct(klass, rxml_node_mark, rxml_node_free, NULL);
 }
 
 /*
@@ -370,7 +369,7 @@ static VALUE rxml_node_first_get(VALUE self)
   Data_Get_Struct(self, xmlNode, xnode);
 
   if (xnode->children)
-    return (rxml_node_wrap(cXMLNode, xnode->children));
+    return (rxml_node_wrap(xnode->children));
   else
     return (Qnil);
 }
@@ -402,11 +401,11 @@ static VALUE rxml_node_child_set_aux(VALUE self, VALUE rnode)
   else if (ret == chld)
   {
     /* child was added whole to parent and we need to return it as a new object */
-    return rxml_node_wrap(cXMLNode, chld);
+    return rxml_node_wrap(chld);
   }
   /* else */
   /* If it was a text node, then ret should be parent->last, so we will just return ret. */
-  return rxml_node_wrap(cXMLNode, ret);
+  return rxml_node_wrap(ret);
 }
 
 /*
@@ -599,7 +598,7 @@ static VALUE rxml_node_each(VALUE self)
 
   while (xchild)
   {
-    rb_yield(rxml_node_wrap(cXMLNode, xchild));
+    rb_yield(rxml_node_wrap(xchild));
     xchild = xchild->next;
   }
   return Qnil;
@@ -710,7 +709,7 @@ static VALUE rxml_node_last_get(VALUE self)
   Data_Get_Struct(self, xmlNode, xnode);
 
   if (xnode->last)
-    return (rxml_node_wrap(cXMLNode, xnode->last));
+    return (rxml_node_wrap(xnode->last));
   else
     return (Qnil);
 }
@@ -890,7 +889,7 @@ static VALUE rxml_node_next_get(VALUE self)
   Data_Get_Struct(self, xmlNode, xnode);
 
   if (xnode->next)
-    return (rxml_node_wrap(cXMLNode, xnode->next));
+    return (rxml_node_wrap(xnode->next));
   else
     return (Qnil);
 }
@@ -915,7 +914,7 @@ static VALUE rxml_node_next_set(VALUE self, VALUE rnode)
   if (ret == NULL)
     rxml_raise(&xmlLastError);
 
-  return (rxml_node_wrap(cXMLNode, ret));
+  return (rxml_node_wrap(ret));
 }
 
 /*
@@ -931,7 +930,7 @@ static VALUE rxml_node_parent_get(VALUE self)
   Data_Get_Struct(self, xmlNode, xnode);
 
   if (xnode->parent)
-    return (rxml_node_wrap(cXMLNode, xnode->parent));
+    return (rxml_node_wrap(xnode->parent));
   else
     return (Qnil);
 }
@@ -1003,7 +1002,7 @@ static VALUE rxml_node_prev_get(VALUE self)
   if (node == NULL)
     return (Qnil);
   else
-    return (rxml_node_wrap(cXMLNode, node));
+    return (rxml_node_wrap(node));
 }
 
 /*
@@ -1026,7 +1025,7 @@ static VALUE rxml_node_prev_set(VALUE self, VALUE rnode)
   if (ret == NULL)
     rxml_raise(&xmlLastError);
 
-  return (rxml_node_wrap(cXMLNode, ret));
+  return (rxml_node_wrap(ret));
 }
 
 /*
@@ -1116,7 +1115,7 @@ static VALUE rxml_node_sibling_set(VALUE self, VALUE rnode)
     rxml_raise(&xmlLastError);
 
   if (ret->_private == NULL)
-    obj = rxml_node_wrap(cXMLNode, ret);
+    obj = rxml_node_wrap(ret);
   else
     obj = (VALUE) ret->_private;
 
@@ -1189,7 +1188,7 @@ static VALUE rxml_node_copy(VALUE self, VALUE deep)
   xcopy = xmlCopyNode(xnode, recursive);
 
   if (xcopy)
-    return rxml_node_wrap(cXMLNode, xcopy);
+    return rxml_node_wrap(xcopy);
   else
     return Qnil;
 }

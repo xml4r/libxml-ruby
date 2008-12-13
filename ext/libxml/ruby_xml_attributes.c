@@ -59,7 +59,7 @@ VALUE rxml_attributes_node_get(VALUE self)
 {
   xmlNodePtr xnode;
   Data_Get_Struct(self, xmlNode, xnode);
-  return (rxml_node_wrap(cXMLNode, xnode));
+  return (rxml_node_wrap(xnode));
 }
 
 /*

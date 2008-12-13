@@ -246,7 +246,7 @@ static VALUE rxml_document_child_get(VALUE self)
   if (xdoc->children == NULL)
     return (Qnil);
 
-  return rxml_node_wrap(cXMLNode, xdoc->children);
+  return rxml_node_wrap(xdoc->children);
 }
 
 /*
@@ -335,7 +335,7 @@ static VALUE rxml_document_last_get(VALUE self)
   if (xdoc->last == NULL)
     return (Qnil);
 
-  return rxml_node_wrap(cXMLNode, xdoc->last);
+  return rxml_node_wrap(xdoc->last);
 }
 
 /*
@@ -371,7 +371,7 @@ static VALUE rxml_document_next_get(VALUE self)
   if (xdoc->next == NULL)
     return (Qnil);
 
-  return rxml_node_wrap(cXMLNode, xdoc->next);
+  return rxml_node_wrap(xdoc->next);
 }
 
 /*
@@ -407,7 +407,7 @@ static VALUE rxml_document_parent_get(VALUE self)
   if (xdoc->parent == NULL)
     return (Qnil);
 
-  return rxml_node_wrap(cXMLNode, xdoc->parent);
+  return rxml_node_wrap(xdoc->parent);
 }
 
 /*
@@ -443,7 +443,7 @@ static VALUE rxml_document_prev_get(VALUE self)
   if (xdoc->prev == NULL)
     return (Qnil);
 
-  return rxml_node_wrap(cXMLNode, xdoc->prev);
+  return rxml_node_wrap(xdoc->prev);
 }
 
 /*
@@ -482,7 +482,7 @@ static VALUE rxml_document_root_get(VALUE self)
   if (root == NULL)
     return (Qnil);
 
-  return rxml_node_wrap(cXMLNode, root);
+  return rxml_node_wrap(root);
 }
 
 /*
@@ -505,7 +505,7 @@ static VALUE rxml_document_root_set(VALUE self, VALUE node)
   if (xroot == NULL)
     return (Qnil);
 
-  return rxml_node_wrap(cXMLNode, xroot);
+  return rxml_node_wrap(xroot);
 }
 
 /*

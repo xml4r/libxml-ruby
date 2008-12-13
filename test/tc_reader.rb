@@ -2,71 +2,94 @@ require 'xml'
 require 'test/unit'
 
 class TestReader < Test::Unit::TestCase
-
-  SIMPLE_XML = File.join(File.dirname(__FILE__), 'model/simple.xml')
+  XML_FILE = File.join(File.dirname(__FILE__), 'model/atom.xml')
 
   def verify_simple(reader)
     node_types = []
-    19.times do
-      assert_equal(1, reader.read)
+    
+    # Read each node
+    26.times do
+      assert(reader.read)
       node_types << reader.node_type
     end
-    assert_equal(0, reader.read)
-    assert_equal(node_types,
-      [XML::Reader::TYPE_ELEMENT,
-       XML::Reader::TYPE_SIGNIFICANT_WHITESPACE,
-       XML::Reader::TYPE_ELEMENT,
-       XML::Reader::TYPE_TEXT,
-       XML::Reader::TYPE_END_ELEMENT,
-       XML::Reader::TYPE_SIGNIFICANT_WHITESPACE,
-       XML::Reader::TYPE_ELEMENT,
-       XML::Reader::TYPE_SIGNIFICANT_WHITESPACE,
-       XML::Reader::TYPE_ELEMENT,
-       XML::Reader::TYPE_TEXT,
-       XML::Reader::TYPE_END_ELEMENT,
-       XML::Reader::TYPE_SIGNIFICANT_WHITESPACE,
-       XML::Reader::TYPE_ELEMENT,
-       XML::Reader::TYPE_TEXT,
-       XML::Reader::TYPE_END_ELEMENT,
-       XML::Reader::TYPE_SIGNIFICANT_WHITESPACE,
-       XML::Reader::TYPE_END_ELEMENT,
-       XML::Reader::TYPE_SIGNIFICANT_WHITESPACE,
-       XML::Reader::TYPE_END_ELEMENT])
+
+    # There are no more nodes
+    assert(!reader.read)
+
+    # Check what was read
+    expected = [XML::Reader::TYPE_PROCESSING_INSTRUCTION,
+                XML::Reader::TYPE_ELEMENT,
+                XML::Reader::TYPE_SIGNIFICANT_WHITESPACE,
+                XML::Reader::TYPE_COMMENT,
+                XML::Reader::TYPE_SIGNIFICANT_WHITESPACE,
+                XML::Reader::TYPE_ELEMENT,
+                XML::Reader::TYPE_SIGNIFICANT_WHITESPACE,
+                XML::Reader::TYPE_ELEMENT,
+                XML::Reader::TYPE_CDATA,
+                XML::Reader::TYPE_END_ELEMENT,
+                XML::Reader::TYPE_SIGNIFICANT_WHITESPACE,
+                XML::Reader::TYPE_ELEMENT,
+                XML::Reader::TYPE_SIGNIFICANT_WHITESPACE,
+                XML::Reader::TYPE_ELEMENT,
+                XML::Reader::TYPE_SIGNIFICANT_WHITESPACE,
+                XML::Reader::TYPE_ELEMENT,
+                XML::Reader::TYPE_TEXT,
+                XML::Reader::TYPE_END_ELEMENT,
+                XML::Reader::TYPE_SIGNIFICANT_WHITESPACE,
+                XML::Reader::TYPE_END_ELEMENT,
+                XML::Reader::TYPE_SIGNIFICANT_WHITESPACE,
+                XML::Reader::TYPE_END_ELEMENT,
+                XML::Reader::TYPE_SIGNIFICANT_WHITESPACE,
+                XML::Reader::TYPE_END_ELEMENT,
+                XML::Reader::TYPE_SIGNIFICANT_WHITESPACE,
+                XML::Reader::TYPE_END_ELEMENT]
+
+    assert_equal(expected, node_types)
   end
 
   def test_file
-    reader = XML::Reader.file(SIMPLE_XML)
+
+    reader = XML::Reader.file(XML_FILE)
     verify_simple(reader)
   end
 
   def test_invalid_file
-    assert_raises(XML::Error) do
+    assert_raise(XML::Error) do
       XML::Reader.file('/does/not/exist')
     end
   end
 
   def test_string
-    reader = XML::Reader.string(File.read(SIMPLE_XML))
+    reader = XML::Reader.string(File.read(XML_FILE))
     verify_simple(reader)
   end
 
   def test_io
-    File.open(SIMPLE_XML, 'rb') do |io|
+    File.open(XML_FILE, 'rb') do |io|
       reader = XML::Reader.io(io)
       verify_simple(reader)
     end
   end
 
   def test_string_io
-    data = File.read(SIMPLE_XML)
+    data = File.read(XML_FILE)
     string_io = StringIO.new(data)
     reader = XML::Reader.io(string_io)
     verify_simple(reader)
   end
 
   def test_new_walker
-    reader = XML::Reader.walker(XML::Document.file(SIMPLE_XML))
+    reader = XML::Reader.walker(XML::Document.file(XML_FILE))
     verify_simple(reader)
+  end
+
+  def test_error
+    reader = XML::Reader.new('<foo blah')
+
+    error = assert_raise(XML::Error) do
+      reader.read
+    end
+    assert_equal("Fatal error: Couldn't find end of Start Tag foo at :1.", error.to_s)
   end
 
   def test_deprecated_error_handler
@@ -76,7 +99,10 @@ class TestReader < Test::Unit::TestCase
       called = true
     end
 
-    reader.read
+    assert_raise(XML::Error) do
+      reader.read
+    end
+
     assert(called)
   end
 
@@ -88,13 +114,16 @@ class TestReader < Test::Unit::TestCase
     end
     reader.reset_error_handler
 
-    reader.read
+    assert_raise(XML::Error) do
+      reader.read
+    end
+    
     assert(!called)
   end
 
   def test_attr
     parser = XML::Reader.new("<foo x='1' y='2'/>")
-    assert_equal(1, parser.read)
+    assert(parser.read)
     assert_equal('foo', parser.name)
     assert_equal('1', parser['x'])
     assert_equal('1', parser[0])
@@ -106,23 +135,23 @@ class TestReader < Test::Unit::TestCase
 
   def test_value
     parser = XML::Reader.new("<foo><bar>1</bar><bar>2</bar><bar>3</bar></foo>")
-    assert_equal(1, parser.read)
+    assert(parser.read)
     assert_equal('foo', parser.name)
     assert_equal(nil, parser.value)
     3.times do |i|
-      assert_equal(1, parser.read)
+      assert(parser.read)
       assert_equal(XML::Reader::TYPE_ELEMENT, parser.node_type)
       assert_equal('bar', parser.name)
-      assert_equal(1, parser.read)
+      assert(parser.read)
       assert_equal(XML::Reader::TYPE_TEXT, parser.node_type)
       assert_equal((i + 1).to_s, parser.value)
-      assert_equal(1, parser.read)
+      assert(parser.read)
       assert_equal(XML::Reader::TYPE_END_ELEMENT, parser.node_type)
     end
   end
 
   def test_expand
-    reader = XML::Reader.file(SIMPLE_XML)
+    reader = XML::Reader.file(XML_FILE)
     reader.read
     node = reader.expand
     doc = node.doc
@@ -137,5 +166,18 @@ class TestReader < Test::Unit::TestCase
     assert_equal(XML::Reader::MODE_INITIAL, reader.read_state)
     reader.read
     assert_equal(XML::Reader::MODE_EOF, reader.read_state)
+  end
+
+  def test_bytes_consumed
+    reader = XML::Reader.file(XML_FILE)
+    reader.read
+    assert_equal(428, reader.byte_consumed)
+  end
+
+  def test_node
+    XML.default_line_numbers = true
+    reader = XML::Reader.file(XML_FILE)
+    reader.read
+    assert_instance_of(XML::Node, reader.node)
   end
 end
