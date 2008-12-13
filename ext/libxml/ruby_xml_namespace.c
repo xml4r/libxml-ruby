@@ -23,7 +23,7 @@ VALUE cXMLNamespace;
  *   assert_nil(node.namespaces.namespace)
  */
 
-static VALUE rxml_namespace_free(xmlNsPtr xns)
+static void rxml_namespace_free(xmlNsPtr xns)
 {
   xns->_private = NULL;
 }

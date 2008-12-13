@@ -196,7 +196,6 @@ static void start_element_ns_callback(void *ctx,
   VALUE handler = (VALUE) ctx;
   VALUE attributes = rb_hash_new();
   VALUE namespaces = rb_hash_new();
-  const char xdelimiters[] = "\0";
 
   if (handler == Qnil)
     return;
@@ -208,9 +207,9 @@ static void start_element_ns_callback(void *ctx,
     for (i = 0;i < nb_attributes * 5; i+=5) 
     {
       VALUE attrName = rb_str_new2(xattributes[i+0]);
-      VALUE attrPrefix = xattributes[i+1] ? rb_str_new2(xattributes[i+1]) : Qnil;
-      VALUE attrURI = xattributes[i+2] ? rb_str_new2(xattributes[i+2]) : Qnil;
       VALUE attrValue = rb_str_new(xattributes[i+3], xattributes[i+4] - xattributes[i+3]);
+      /* VALUE attrPrefix = xattributes[i+1] ? rb_str_new2(xattributes[i+1]) : Qnil;
+         VALUE attrURI = xattributes[i+2] ? rb_str_new2(xattributes[i+2]) : Qnil; */
 
       rb_hash_aset(attributes, attrName, attrValue);
     }
