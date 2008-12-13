@@ -527,14 +527,12 @@ static VALUE rxml_document_root_set(VALUE self, VALUE node)
  * XML::Input encoding constants. */
 static VALUE rxml_document_save(int argc, VALUE *argv, VALUE self)
 { 
-  VALUE result;
   VALUE options = Qnil;
   VALUE filename = Qnil;
   xmlDocPtr xdoc;
   int indent = 1;
   const char *xfilename;
   const char *encoding;
-  xmlChar *buffer; 
   int length;
 
   rb_scan_args(argc, argv, "11", &filename, &options);
@@ -563,8 +561,8 @@ static VALUE rxml_document_save(int argc, VALUE *argv, VALUE self)
 
   if (length == -1)
     rxml_raise(&xmlLastError);
-  else
-    return (INT2NUM(length));
+  
+  return (INT2NUM(length));
 }
 
 /*
