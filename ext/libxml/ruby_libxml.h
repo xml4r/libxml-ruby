@@ -71,6 +71,7 @@
 #include "ruby_xml_namespaces.h"
 #include "ruby_xml_parser.h"
 #include "ruby_xml_parser_context.h"
+#include "ruby_xml_sax2_handler.h"
 #include "ruby_xml_sax_parser.h"
 #include "ruby_xml_xinclude.h"
 #include "ruby_xml_xpath.h"

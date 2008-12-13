@@ -5,7 +5,9 @@
 #include <libxml/xmlerror.h>
 
 VALUE eXMLError;
+static ID CALL_METHOD;
 static ID ERROR_HANDLER_ID;
+static ID ON_ERROR_METHOD;
 
 /*
  * Document-class: LibXML::XML::Error
@@ -78,7 +80,7 @@ static VALUE rxml_error_reset_handler(VALUE self)
   return self;
 }
 
-static VALUE rxml_error_wrap(xmlErrorPtr xerror)
+VALUE rxml_error_wrap(xmlErrorPtr xerror)
 {
   VALUE result = Qnil;
   if (xerror->message)
@@ -120,15 +122,42 @@ static VALUE rxml_error_wrap(xmlErrorPtr xerror)
 /* Hook that receives xml error message */
 static void structuredErrorFunc(void *userData, xmlErrorPtr xerror)
 {
+  VALUE error = rxml_error_wrap(xerror);
+
   /* Wrap error up as Ruby object and send it off to ruby */
   VALUE block = rb_cvar_get(eXMLError, ERROR_HANDLER_ID);
 
+  /* This next bit of code is a total hack to get around a bug
+     in libxml which causes error handlers on sax handlers to
+     be ignored in favor of the global handler.  In addition,
+     the correct context is also not passed in.  So try to 
+     dig it out. */
+  if (!userData && xerror->ctxt)
+  {
+    xmlParserCtxtPtr ctxt = (xmlParserCtxtPtr) xerror->ctxt;
+    if (ctxt != ctxt->userData)
+      userData = ctxt->userData;
+  }
+
+  /* If the target has an on_error method call it.  This
+   gets around a bug in libxml where a sax's structured
+   error handler is overriden by the global error handler. */
+  if (userData)
+  {  
+    VALUE target = (VALUE) userData;
+    if (!NIL_P(target) && rb_respond_to(target, ON_ERROR_METHOD))
+    {
+      rb_funcall(target, ON_ERROR_METHOD, 1, error);
+    }
+  }
+
+  /* Now call global handler */
   if (block != Qnil)
   {
-    VALUE error = rxml_error_wrap(xerror);
-    rb_funcall(block, rb_intern("call"), 1, error);
+    rb_funcall(block, CALL_METHOD, 1, error);
   }
 }
+
 
 // Rdoc needs to know
 #ifdef RDOC_NEVER_DEFINED
@@ -153,6 +182,9 @@ void ruby_init_xml_error()
   rb_define_singleton_method(eXMLError, "set_handler", rxml_error_set_handler, 0);
   rb_define_singleton_method(eXMLError, "reset_handler", rxml_error_reset_handler, 0);
 
+  ON_ERROR_METHOD = rb_intern("on_error");
+  CALL_METHOD = rb_intern("call");
+  
   /* Ruby callback to receive errors - set it to nil by default. */
   ERROR_HANDLER_ID = rb_intern("@@__error_handler_callback__");
   rxml_set_handler(eXMLError, Qnil);

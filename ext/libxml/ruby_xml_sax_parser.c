@@ -36,31 +36,12 @@
  */
 
 VALUE cXMLSaxParser;
-VALUE mXMLSaxParserCallbacks;
 
 static ID INPUT_ATTR;
 static ID CALLBACKS_ATTR;
 
-VALUE cbidOnInternalSubset;
-VALUE cbidOnIsStandalone;
-VALUE cbidOnHasInternalSubset;
-VALUE cbidOnHasExternalSubset;
-VALUE cbidOnStartDocument;
-VALUE cbidOnEndDocument;
-VALUE cbidOnStartElement;
-VALUE cbidOnEndElement;
-VALUE cbidOnReference;
-VALUE cbidOnCharacters;
-VALUE cbidOnProcessingInstruction;
-VALUE cbidOnComment;
-VALUE cbidOnXmlParserWarning;
-VALUE cbidOnXmlParserError;
-VALUE cbidOnXmlParserFatalError;
-VALUE cbidOnCdataBlock;
-VALUE cbidOnExternalSubset;
 
-#include "sax_parser_callbacks.inc"
-
+/* ======  Parser  =========== */
 /*
  * call-seq:
  *    sax_parser.initialize -> sax_parser
@@ -77,26 +58,29 @@ static VALUE rxml_sax_parser_initialize(VALUE self)
 /* Parsing data sources */
 static int rxml_sax_parser_parse_file(VALUE self, VALUE input)
 {
+  VALUE handler = rb_ivar_get(self, CALLBACKS_ATTR);
   VALUE file = rb_ivar_get(input, FILE_ATTR);
-  return xmlSAXUserParseFile((xmlSAXHandlerPtr) &rxml_sax_hander_struct,
-      (void *) self, StringValuePtr(file));
+  return xmlSAXUserParseFile((xmlSAXHandlerPtr) &rxml_sax_handler,
+      (void *) handler, StringValuePtr(file));
 }
 
 static int rxml_sax_parser_parse_string(VALUE self, VALUE input)
 {
+  VALUE handler = rb_ivar_get(self, CALLBACKS_ATTR);
   VALUE str = rb_ivar_get(input, STRING_ATTR);
-  return xmlSAXUserParseMemory((xmlSAXHandlerPtr) & rxml_sax_hander_struct,
-      (void *) self, StringValuePtr(str), RSTRING_LEN(str));
+  return xmlSAXUserParseMemory((xmlSAXHandlerPtr) &rxml_sax_handler,
+      (void *) handler, StringValuePtr(str), RSTRING_LEN(str));
 }
 
 static int rxml_sax_parser_parse_io(VALUE self, VALUE input)
 {
+  VALUE handler = rb_ivar_get(self, CALLBACKS_ATTR);
   VALUE io = rb_ivar_get(input, IO_ATTR);
   VALUE encoding = rb_ivar_get(input, ENCODING_ATTR);
   xmlCharEncoding xmlEncoding = NUM2INT(encoding);
   xmlParserCtxtPtr ctxt =
-      xmlCreateIOParserCtxt((xmlSAXHandlerPtr) & rxml_sax_hander_struct,
-          (void *) self, (xmlInputReadCallback) rxml_read_callback, NULL,
+      xmlCreateIOParserCtxt((xmlSAXHandlerPtr) &rxml_sax_handler,
+          (void *) handler, (xmlInputReadCallback) rxml_read_callback, NULL,
           (void *) io, xmlEncoding);
   return xmlParseDocument(ctxt);
 }
@@ -153,23 +137,4 @@ void ruby_init_xml_sax_parser(void)
   /* Instance Methods */
   rb_define_method(cXMLSaxParser, "initialize", rxml_sax_parser_initialize, 0);
   rb_define_method(cXMLSaxParser, "parse", rxml_sax_parser_parse, 0);
-
-  /* SaxCallbacks */
-  cbidOnInternalSubset = rb_intern("on_internal_subset");
-  cbidOnIsStandalone = rb_intern("on_is_standalone");
-  cbidOnHasInternalSubset = rb_intern("on_has_internal_subset");
-  cbidOnHasExternalSubset = rb_intern("on_has_external_subset");
-  cbidOnStartDocument = rb_intern("on_start_document");
-  cbidOnEndDocument = rb_intern("on_end_document");
-  cbidOnStartElement = rb_intern("on_start_element");
-  cbidOnEndElement = rb_intern("on_end_element");
-  cbidOnReference = rb_intern("on_reference");
-  cbidOnCharacters = rb_intern("on_characters");
-  cbidOnProcessingInstruction = rb_intern("on_processing_instruction");
-  cbidOnComment = rb_intern("on_comment");
-  cbidOnXmlParserWarning = rb_intern("on_parser_warning");
-  cbidOnXmlParserError = rb_intern("on_parser_error");
-  cbidOnXmlParserFatalError = rb_intern("on_parser_fatal_error");
-  cbidOnCdataBlock = rb_intern("on_cdata_block");
-  cbidOnExternalSubset = rb_intern("on_external_subset");
 }

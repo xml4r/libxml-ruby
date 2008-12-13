@@ -1,5 +1,6 @@
 require 'xml'
 require 'test/unit'
+require 'pp'
 
 class DocTypeCallback
   include XML::SaxParser::Callbacks
@@ -10,72 +11,122 @@ end
 class TestCaseCallbacks
   include XML::SaxParser::Callbacks
 
-  attr_accessor :test
+  attr_accessor :result
 
   def initialize
-    @test = Hash.new { |h,k| h[k] = [] }
-    @i = 0
-  end
-
-  def on_start_document
-    @test[:startdoc] << @i+=1
-  end
-
-  def on_start_element(name, attr_hash)
-    @test[:startel] << [@i+=1,name,attr_hash]
-  end
-
-  def on_characters(chars)
-    @test[:chars] << [@i+=1,chars]
-  end
-
-  def on_comment(msg)
-    @test[:comment] << [@i+=1,msg]
-  end
-
-  def on_processing_instruction(target, data)
-    @test[:pinstr] << [@i+=1, target, data]
+    @result = Array.new
   end
 
   def on_cdata_block(cdata)
-    @test[:cdata] << [@i+=1,cdata]
+    @result << "cdata: #{cdata}"
   end
 
-  def on_end_element(name)
-    @test[:endel] << [@i+=1,name]
+  def on_characters(chars)
+    @result << "characters: #{chars}"
+  end
+
+  def on_comment(text)
+    @result << "comment: #{text}"
   end
 
   def on_end_document
-    @test[:enddoc] << @i+=1
+    @result << "end_document"
+  end
+
+  def on_end_element(name)
+    @result << "end_element: #{name}"
+  end
+
+  def on_end_element_ns(name, prefix, uri)
+    @result << "end_element_ns #{name}, prefix: #{prefix}, uri: #{uri}"
+  end
+
+  # Called for parser errors.
+  def on_error(error)
+    @result << "error: #{error}"
+  end
+
+  def on_processing_instruction(target, data)
+    @result << "pi: #{target} #{data}"
+  end
+
+  def on_start_document
+    @result << "startdoc"
+  end
+
+  def on_start_element(name, attributes)
+    attributes ||= Hash.new
+    @result << "start_element: #{name}, attr: #{attributes.inspect}"
+  end
+
+  def on_start_element_ns(name, attributes, prefix, uri, namespaces)
+    attributes ||= Hash.new
+    namespaces ||= Hash.new
+    @result << "start_element_ns: #{name}, attr: #{attributes.inspect}, prefix: #{prefix}, uri: #{uri}, ns: #{namespaces.inspect}"
   end
 end
 
 class TestSaxParser < Test::Unit::TestCase
   def setup
+    XML.default_keep_blanks = true
     @xp = XML::SaxParser.new
   end
 
   def teardown
     @xp = nil
+    XML.default_keep_blanks = true
   end
 
   def saxtest_file
-    File.join(File.dirname(__FILE__), 'model/saxtest.xml')
+    File.join(File.dirname(__FILE__), 'model/atom.xml')
   end
 
   def verify
-    assert_equal [1], @xp.callbacks.test[:startdoc]
-    assert_equal [[2,'test',{'uga'=>'booga','foo'=>'bar'}],[3,'fixnum',{}],[6,'fixnum',{}]],
-                 @xp.callbacks.test[:startel]
-    assert_equal [[4,'one'],[7,'two'],[9,"\n  "],[11,"\n  "],[13,"\n  "],[15,"\n"]],
-                 @xp.callbacks.test[:chars]
-    assert_equal [[10, ' msg ']], @xp.callbacks.test[:comment]
-    assert_equal [[12, 'custom', 'foo="bar"']], @xp.callbacks.test[:pinstr]
-    assert_equal [[14, 'here it goes']], @xp.callbacks.test[:cdata]
-    assert_equal [[5,'fixnum'],[8,'fixnum'],[16,'test']], @xp.callbacks.test[:endel]
-    assert_equal [17], @xp.callbacks.test[:enddoc]
+    result = @xp.callbacks.result
+
+    i = -1
+    assert_equal("startdoc", result[i+=1])
+    assert_equal("pi: xml-stylesheet type=\"text/xsl\" href=\"my_stylesheet.xsl\"", result[i+=1])
+    assert_equal("start_element: feed, attr: {nil=>\"http://www.w3.org/2005/Atom\"}", result[i+=1])
+    assert_equal("start_element_ns: feed, attr: {nil=>\"http://www.w3.org/2005/Atom\"}, prefix: , uri: http://www.w3.org/2005/Atom, ns: {}", result[i+=1])
+    assert_equal("characters: \n  ", result[i+=1])
+    assert_equal("comment:  Not a valid atom entry ", result[i+=1])
+    assert_equal("characters: \n  ", result[i+=1])
+    assert_equal("start_element: entry, attr: {}", result[i+=1])
+    assert_equal("start_element_ns: entry, attr: {}, prefix: , uri: http://www.w3.org/2005/Atom, ns: {}", result[i+=1])
+    assert_equal("characters: \n    ", result[i+=1])
+    assert_equal("start_element: title, attr: {\"type\"=>\"html\"}", result[i+=1])
+    assert_equal("start_element_ns: title, attr: {\"type\"=>\"html\"}, prefix: , uri: http://www.w3.org/2005/Atom, ns: {}", result[i+=1])
+    assert_equal("cdata: <<strong>>", result[i+=1])
+    assert_equal("end_element: title", result[i+=1])
+    assert_equal("end_element_ns title, prefix: , uri: http://www.w3.org/2005/Atom", result[i+=1])
+    assert_equal("characters: \n    ", result[i+=1])
+    assert_equal("start_element: content, attr: {\"type\"=>\"xhtml\"}", result[i+=1])
+    assert_equal("start_element_ns: content, attr: {\"type\"=>\"xhtml\"}, prefix: , uri: http://www.w3.org/2005/Atom, ns: {}", result[i+=1])
+    assert_equal("characters: \n      ", result[i+=1])
+    assert_equal("start_element: xhtml:div, attr: {\"xhtml\"=>\"http://www.w3.org/1999/xhtml\"}", result[i+=1])
+    assert_equal("start_element_ns: div, attr: {\"xhtml\"=>\"http://www.w3.org/1999/xhtml\"}, prefix: xhtml, uri: http://www.w3.org/1999/xhtml, ns: {}", result[i+=1])
+    assert_equal("characters: \n        ", result[i+=1])
+    assert_equal("start_element: xhtml:p, attr: {}", result[i+=1])
+    assert_equal("start_element_ns: p, attr: {}, prefix: xhtml, uri: http://www.w3.org/1999/xhtml, ns: {}", result[i+=1])
+    assert_equal("characters: hi there", result[i+=1])
+    assert_equal("end_element: xhtml:p", result[i+=1])
+    assert_equal("end_element_ns p, prefix: xhtml, uri: http://www.w3.org/1999/xhtml", result[i+=1])
+    assert_equal("characters: \n      ", result[i+=1])
+    assert_equal("end_element: xhtml:div", result[i+=1])
+    assert_equal("end_element_ns div, prefix: xhtml, uri: http://www.w3.org/1999/xhtml", result[i+=1])
+    assert_equal("characters: \n    ", result[i+=1])
+    assert_equal("end_element: content", result[i+=1])
+    assert_equal("end_element_ns content, prefix: , uri: http://www.w3.org/2005/Atom", result[i+=1])
+    assert_equal("characters: \n  ", result[i+=1])
+    assert_equal("end_element: entry", result[i+=1])
+    assert_equal("end_element_ns entry, prefix: , uri: http://www.w3.org/2005/Atom", result[i+=1])
+    assert_equal("characters: \n", result[i+=1])
+    assert_equal("end_element: feed", result[i+=1])
+    assert_equal("end_element_ns feed, prefix: , uri: http://www.w3.org/2005/Atom", result[i+=1])
+    assert_equal("end_document", result[i+=1])
   end
-  
+
   def test_string_no_callbacks
     @xp.string = File.read(saxtest_file)
     assert_equal true, @xp.parse
@@ -131,26 +182,60 @@ EOS
     assert_not_nil(doc)
   end
 
+
+  def test_parse_warning
+    @xp.callbacks = TestCaseCallbacks.new
+    # Two xml PIs is a warning
+    @xp.string = <<-EOS
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-invalid?>
+<Test/>
+EOS
+
+    @xp.parse
+
+    # Check callbacks
+    result = @xp.callbacks.result
+    i = -1
+    assert_equal("startdoc", result[i+=1])
+    assert_equal("error: Warning: xmlParsePITarget: invalid name prefix 'xml' at :2.", result[i+=1])
+    assert_equal("pi: xml-invalid ", result[i+=1])
+    assert_equal("start_element: Test, attr: {}", result[i+=1])
+    assert_equal("start_element_ns: Test, attr: {}, prefix: , uri: , ns: {}", result[i+=1])
+    assert_equal("end_element: Test", result[i+=1])
+    assert_equal("end_element_ns Test, prefix: , uri: ", result[i+=1])
+    assert_equal("end_document", result[i+=1])
+  end
+
   def test_parse_error
     @xp.callbacks = TestCaseCallbacks.new
     @xp.string = <<-EOS
       <Results>
-        <a>a1
-      </Results>
     EOS
 
     error = assert_raise(XML::Error) do
       doc = @xp.parse
     end
 
+    # Check callbacks
+    result = @xp.callbacks.result
+
+    i = -1
+    assert_equal("startdoc", result[i+=1])
+    assert_equal("start_element: Results, attr: {}", result[i+=1])
+    assert_equal("start_element_ns: Results, attr: {}, prefix: , uri: , ns: {}", result[i+=1])
+    assert_equal("characters: \n", result[i+=1])
+    assert_equal("error: Fatal error: Premature end of data in tag Results line 1 at :2.", result[i+=1])
+    assert_equal("end_document", result[i+=1])
+
     assert_not_nil(error)
     assert_kind_of(XML::Error, error)
-    assert_equal("Fatal error: Premature end of data in tag Results line 1 at :4.", error.message)
+    assert_equal("Fatal error: Premature end of data in tag Results line 1 at :2.", error.message)
     assert_equal(XML::Error::PARSER, error.domain)
     assert_equal(XML::Error::TAG_NOT_FINISHED, error.code)
     assert_equal(XML::Error::FATAL, error.level)
     assert_nil(error.file)
-    assert_equal(4, error.line)
+    assert_equal(2, error.line)
     assert_equal('Results', error.str1)
     assert_nil(error.str2)
     assert_nil(error.str3)

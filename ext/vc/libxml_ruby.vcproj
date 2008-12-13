@@ -250,6 +250,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\libxml\ruby_xml_sax2_handler.c"
+				>
+			</File>
+			<File
 				RelativePath="..\libxml\ruby_xml_sax_parser.c"
 				>
 			</File>
@@ -353,6 +357,10 @@
 			</File>
 			<File
 				RelativePath="..\libxml\ruby_xml_relaxng.h"
+				>
+			</File>
+			<File
+				RelativePath="..\libxml\ruby_xml_sax2_handler.h"
 				>
 			</File>
 			<File
