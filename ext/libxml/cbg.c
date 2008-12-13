@@ -1,6 +1,6 @@
+#include "ruby_libxml.h"
 #include <string.h>
 #include <libxml/xmlIO.h>
-#include "ruby.h"
 
 /*
  int         xmlRegisterInputCallbacks       (xmlInputMatchCallback matchFunc,

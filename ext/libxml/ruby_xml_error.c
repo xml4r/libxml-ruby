@@ -1,6 +1,4 @@
 #include "ruby_libxml.h"
-#include "ruby_xml_dtd.h"
-#include "ruby_xml_error.h"
 
 #include <libxml/xmlerror.h>
 
