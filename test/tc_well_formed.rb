@@ -9,4 +9,3 @@ class TestWellFormed < Test::Unit::TestCase
     assert(parser.context.well_formed?)
   end
 end
-
