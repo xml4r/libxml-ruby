@@ -103,8 +103,7 @@ Rake::RDocTask.new("rdoc") do |rdoc|
                           'lib/**/*.rb',
                           'CHANGES',
                           'README',
-                          'LICENSE',
-                          'VERSION')
+                          'LICENSE')
 end
 
 Rake::TestTask.new do |t|
