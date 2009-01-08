@@ -258,10 +258,8 @@ void ruby_init_xml_attributes(void)
   cXMLAttributes = rb_define_class_under(mXML, "Attributes", rb_cObject);
   rb_include_module(cXMLAttributes, rb_mEnumerable);
   rb_define_method(cXMLAttributes, "node", rxml_attributes_node_get, 0);
-  rb_define_method(cXMLAttributes, "get_attribute",
-      rxml_attributes_get_attribute, 1);
-  rb_define_method(cXMLAttributes, "get_attribute_ns",
-      rxml_attributes_get_attribute_ns, 2);
+  rb_define_method(cXMLAttributes, "get_attribute", rxml_attributes_get_attribute, 1);
+  rb_define_method(cXMLAttributes, "get_attribute_ns", rxml_attributes_get_attribute_ns, 2);
   rb_define_method(cXMLAttributes, "[]", rxml_attributes_attribute_get, 1);
   rb_define_method(cXMLAttributes, "[]=", rxml_attributes_attribute_set, 2);
   rb_define_method(cXMLAttributes, "each", rxml_attributes_each, 0);
