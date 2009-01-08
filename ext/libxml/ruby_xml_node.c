@@ -534,6 +534,7 @@ static VALUE rxml_node_doc(VALUE self)
 
 static VALUE rxml_node_to_s(int argc, VALUE *argv, VALUE self)
 {
+  VALUE result = Qnil;
   VALUE options = Qnil;
   xmlNodePtr xnode;
   xmlCharEncodingHandlerPtr encodingHandler;
@@ -571,9 +572,13 @@ static VALUE rxml_node_to_s(int argc, VALUE *argv, VALUE self)
   xmlOutputBufferFlush(output);
 
   if (output->conv)
-    return rb_str_new2((const char*) output->conv->content);
+    result = rb_str_new2((const char*) output->conv->content);
   else
-    return rb_str_new2((const char*) output->buffer->content);
+    result = rb_str_new2((const char*) output->buffer->content);
+
+  xmlOutputBufferClose(output);
+  
+  return result;
 }
 
 
