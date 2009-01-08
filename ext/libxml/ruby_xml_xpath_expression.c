@@ -58,6 +58,12 @@ static VALUE rxml_xpath_expression_initialize(VALUE self, VALUE expression)
   return self;
 }
 
+// Rdoc needs to know 
+#ifdef RDOC_NEVER_DEFINED
+  mLibXML = rb_define_module("LibXML");
+  mXPath = rb_define_module_under(mLibXML, "XPath");
+#endif
+
 void ruby_init_xml_xpath_expression(void)
 {
   cXMLXPathExpression = rb_define_class_under(mXPath, "Expression", rb_cObject);

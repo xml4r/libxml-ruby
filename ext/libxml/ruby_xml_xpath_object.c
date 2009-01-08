@@ -295,6 +295,12 @@ static VALUE rxml_xpath_object_debug(VALUE self)
 #endif
 }
 
+// Rdoc needs to know 
+#ifdef RDOC_NEVER_DEFINED
+  mLibXML = rb_define_module("LibXML");
+  mXPath = rb_define_module_under(mLibXML, "XPath");
+#endif
+
 void ruby_init_xml_xpath_object(void)
 {
   cXMLXPathObject = rb_define_class_under(mXPath, "Object", rb_cObject);
