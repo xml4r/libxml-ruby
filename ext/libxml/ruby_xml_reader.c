@@ -314,11 +314,10 @@ static VALUE rxml_reader_normalization(VALUE self)
  * call-seq:
  *    reader.read -> code
  *
- * Move the position of the current instance to the next node in the stream,
- * exposing its properties.
+ * Causes the reader to move to the next node in the stream, exposing its properties.
  *
- * Return true if the node was read successfully or false if there are no more
- * nodes to read.*/
+ * Returns true if a node was successfully read or false if there are no more
+ * nodes to read.  On errors, an exception is raised.*/
 static VALUE rxml_reader_read(VALUE self)
 {
   int result = xmlTextReaderRead(rxml_text_reader_get(self));
