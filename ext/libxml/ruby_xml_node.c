@@ -132,7 +132,7 @@ static VALUE rxml_node_new_cdata(int argc, VALUE *argv, VALUE klass)
   if (xnode == NULL)
     rxml_raise(&xmlLastError);
 
-  return rxml_node_wrap(klass, xnode);
+  return rxml_node_wrap(xnode);
 }
 
 /*
@@ -163,7 +163,7 @@ static VALUE rxml_node_new_comment(int argc, VALUE *argv, VALUE klass)
   if (xnode == NULL)
     rxml_raise(&xmlLastError);
 
-  return rxml_node_wrap(klass, xnode);
+  return rxml_node_wrap(xnode);
 }
 
 /*
@@ -184,7 +184,7 @@ static VALUE rxml_node_new_text(VALUE klass, VALUE content)
   if (xnode == NULL)
     rxml_raise(&xmlLastError);
 
-  return rxml_node_wrap(klass, xnode);
+  return rxml_node_wrap(xnode);
 }
 
 /*
