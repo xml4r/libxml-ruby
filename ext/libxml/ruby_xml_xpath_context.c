@@ -289,6 +289,7 @@ static VALUE rxml_xpath_context_find(VALUE self, VALUE xpath_expr)
 }
 
 
+#if LIBXML_VERSION >= 20626
 /*
  * call-seq:
  *    context.enable_cache(size = nil)
@@ -336,6 +337,8 @@ rxml_xpath_context_disable_cache(VALUE self) {
 
   return self;
 }
+#endif
+
 
 // Rdoc needs to know 
 #ifdef RDOC_NEVER_DEFINED
@@ -354,6 +357,8 @@ void ruby_init_xml_xpath_context(void)
   rb_define_method(cXMLXPathContext, "register_namespace", rxml_xpath_context_register_namespace, 2);
   rb_define_method(cXMLXPathContext, "node=", rxml_xpath_context_node_set, 1);
   rb_define_method(cXMLXPathContext, "find", rxml_xpath_context_find, 1);
+#if LIBXML_VERSION >= 20626
   rb_define_method(cXMLXPathContext, "enable_cache", rxml_xpath_context_enable_cache, -1);
   rb_define_method(cXMLXPathContext, "disable_cache", rxml_xpath_context_disable_cache, 0);
+#endif
 }
