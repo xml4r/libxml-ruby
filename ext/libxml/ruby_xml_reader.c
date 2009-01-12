@@ -331,6 +331,9 @@ static VALUE rxml_reader_read(VALUE self)
       return Qfalse;
     case 1:
       return Qtrue;
+    default:
+      rb_raise(rb_eRuntimeError,
+               "xmlTextReaderRead did not return -1, 0 or 1.  Return value was: %d", result);
   }
 }
 
