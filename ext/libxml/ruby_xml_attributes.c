@@ -218,7 +218,7 @@ static VALUE rxml_attributes_length(VALUE self)
     length++;
     xattr = xattr->next;
   }
-
+  
   return INT2NUM(length);
 }
 

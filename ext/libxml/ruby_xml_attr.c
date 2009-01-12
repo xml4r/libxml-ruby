@@ -280,13 +280,15 @@ static VALUE rxml_attr_next_q(VALUE self)
 
 /*
  * call-seq:
- *    attr.type_name -> "attribute"
+ *    node.type -> num
  *
- * Obtain this attribute node's type name.
+ * Obtain this node's type identifier.
  */
-static VALUE rxml_attr_node_type_name(VALUE self)
+static VALUE rxml_node_type(VALUE self)
 {
-  return (rb_str_new2("attribute"));
+  xmlAttrPtr xattr;
+  Data_Get_Struct(self, xmlAttr, xattr);
+  return (INT2NUM(xattr->type));
 }
 
 /*
@@ -418,15 +420,18 @@ VALUE rxml_attr_value_get(VALUE self)
   VALUE result = Qnil;
 
   Data_Get_Struct(self, xmlAttr, xattr);
-  if (rxml_attr_parent_q(self) == Qtrue)
+  value = xmlNodeGetContent(xattr);
+
+  if (value != NULL)
+  {
+    result = rb_str_new2((const char*) value);
+    xmlFree(value);
+  }
+  /*if (rxml_attr_parent_q(self) == Qtrue)
   {
     value = xmlGetProp(xattr->parent, xattr->name);
-    if (value != NULL)
-    {
-      result = rb_str_new2((const char*) value);
-      xmlFree(value);
-    }
-  }
+   
+  }*/
   return (result);
 }
 
@@ -472,7 +477,7 @@ void ruby_init_xml_attr(void)
   rb_define_method(cXMLAttr, "name", rxml_attr_name_get, 0);
   rb_define_method(cXMLAttr, "next", rxml_attr_next_get, 0);
   rb_define_method(cXMLAttr, "next?", rxml_attr_next_q, 0);
-  rb_define_method(cXMLAttr, "node_type_name", rxml_attr_node_type_name, 0);
+  rb_define_method(cXMLAttr, "node_type", rxml_node_type, 0);
   rb_define_method(cXMLAttr, "ns", rxml_attr_ns_get, 0);
   rb_define_method(cXMLAttr, "ns?", rxml_attr_ns_q, 0);
   rb_define_method(cXMLAttr, "parent", rxml_attr_parent_get, 0);
