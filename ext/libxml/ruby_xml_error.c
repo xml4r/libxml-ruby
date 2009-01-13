@@ -108,10 +108,16 @@ VALUE rxml_error_wrap(xmlErrorPtr xerror)
   rb_iv_set(result, "@int1", INT2NUM(xerror->int1));
   rb_iv_set(result, "@int2", INT2NUM(xerror->int2));
 
-  //rb_define_attr(eXMLError, "ctxt", 1, 0);
   if (xerror->node)
   {
-    VALUE node = rxml_node_wrap(xerror->node);
+    /* Returning the original node is too dangerous because its 
+       parent document is never returned to Ruby.  So return a 
+       copy of the node, which does not belong to any document,
+       and can free itself when Ruby calls its free method.  Note
+       we just copy the node, and don't bother with the overhead
+       of a recursive query. */
+    xmlNodePtr xNode = xmlCopyNode((const xmlNodePtr)xerror->node, 2);
+    VALUE node = rxml_node_wrap(xNode);
     rb_iv_set(result, "@node", node);
   }
   return result;
