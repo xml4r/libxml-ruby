@@ -1,4 +1,4 @@
-require "xml"
+require 'xml'
 require 'test/unit'
 
 class AttrNodeTest < Test::Unit::TestCase

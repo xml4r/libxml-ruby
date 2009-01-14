@@ -16,18 +16,12 @@ module LibXML
         end 
       end
     
-      # -------  Node Types  ----------------
-
       # Returns this node's type name
       def node_type_name
-        case node_type
-          # Most common choices first
-          when Node::ATTRIBUTE_NODE
-            'attribute'
-          when Node::ATTRIBUTE_DECL
-            'attribute_decl'
-          else
-            raise(UnknownType, "Unknown node type: %n", node.node_type);
+        if node_type == Node::ATTRIBUTE_NODE
+          'attribute'
+        else
+          raise(UnknownType, "Unknown node type: %n", node.node_type);
         end
       end
 
