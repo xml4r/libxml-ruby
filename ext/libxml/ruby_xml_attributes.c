@@ -59,7 +59,7 @@ VALUE rxml_attributes_node_get(VALUE self)
 {
   xmlNodePtr xnode;
   Data_Get_Struct(self, xmlNode, xnode);
-  return (rxml_node_wrap(xnode));
+  return rxml_node_wrap(xnode);
 }
 
 /*
@@ -83,10 +83,12 @@ static VALUE rxml_attributes_get_attribute(VALUE self, VALUE name)
 
   xattr = xmlHasProp(xnode, (xmlChar*) StringValuePtr(name));
 
-  if (xattr)
-    return (rxml_attr_wrap(xattr));
+  if (!xattr)
+    return Qnil;
+  else if (xattr->type == XML_ATTRIBUTE_DECL)
+    return rxml_attr_decl_wrap(xattr);
   else
-    return (Qnil);
+    return rxml_attr_wrap(xattr);
 }
 
 /*
@@ -111,12 +113,14 @@ static VALUE rxml_attributes_get_attribute_ns(VALUE self, VALUE namespace,
   Data_Get_Struct(self, xmlNode, xnode);
 
   xattr = xmlHasNsProp(xnode, (xmlChar*) StringValuePtr(name),
-      (xmlChar*) StringValuePtr(namespace));
+                      (xmlChar*) StringValuePtr(namespace));
 
-  if (xattr)
-    return (rxml_attr_wrap(xattr));
+  if (!xattr)
+    return Qnil;
+  else if (xattr->type == XML_ATTRIBUTE_DECL)
+    return rxml_attr_decl_wrap(xattr);
   else
-    return (Qnil);
+    return rxml_attr_wrap(xattr);
 }
 
 /*
@@ -133,8 +137,9 @@ static VALUE rxml_attributes_get_attribute_ns(VALUE self, VALUE namespace,
 VALUE rxml_attributes_attribute_get(VALUE self, VALUE name)
 {
   VALUE xattr = rxml_attributes_get_attribute(self, name);
+  
   if (NIL_P(xattr))
-    return(Qnil);
+    return Qnil;
   else
     return rxml_attr_value_get(xattr);
 }
@@ -241,10 +246,10 @@ static VALUE rxml_attributes_first(VALUE self)
 
     if (xattr)
     {
-      return (rxml_attr_wrap(xattr));
+      return rxml_attr_wrap(xattr);
     }
   }
-  return (Qnil);
+  return Qnil;
 }
 
 // Rdoc needs to know

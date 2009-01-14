@@ -28,26 +28,16 @@ void rxml_attr_free(xmlAttrPtr xattr)
   if (!xattr)
     return;
 
-  if (xattr != NULL)
-  {
-    xattr->_private = NULL;
-    if (xattr->parent == NULL && xattr->doc == NULL)
-    {
-#ifdef NODE_DEBUG
-      fprintf(stderr,"ruby_xfree rxn=0x%x xn=0x%x o=0x%x\n",(long)rxn,(long)rxn->node,(long)rxn->node->_private);
-#endif
-      xmlFreeProp(xattr);
-    }
+  xattr->_private = NULL;
 
-    xattr = NULL;
+  if (xattr->parent == NULL && xattr->doc == NULL)
+  {
+    xmlFreeProp(xattr);
   }
 }
 
 void rxml_attr_mark(xmlAttrPtr xattr)
 {
-  if (xattr == NULL)
-    return;
-
   if (xattr->_private == NULL)
   {
     rb_warning("XmlAttr is not bound! (%s:%d)", __FILE__, __LINE__);
@@ -60,16 +50,14 @@ void rxml_attr_mark(xmlAttrPtr xattr)
 VALUE rxml_attr_wrap(xmlAttrPtr xattr)
 {
   VALUE result;
-  // This node is already wrapped
+
+  /* Check if the node is already wrapped. */
   if (xattr->_private != NULL)
     return (VALUE) xattr->_private;
 
   result = Data_Wrap_Struct(cXMLAttr, rxml_attr_mark, rxml_attr_free, xattr);
-
   xattr->_private = (void*) result;
-#ifdef NODE_DEBUG
-  fprintf(stderr,"wrap rxn=0x%x xn=0x%x o=0x%x\n",(long)rxn,(long)xnode,(long)obj);
-#endif
+  
   return result;
 }
 
@@ -141,9 +129,9 @@ static VALUE rxml_attr_child_get(VALUE self)
   xmlAttrPtr xattr;
   Data_Get_Struct(self, xmlAttr, xattr);
   if (xattr->children == NULL)
-    return (Qnil);
+    return Qnil;
   else
-    return (rxml_node_wrap((xmlNodePtr) xattr->children));
+    return rxml_node_wrap((xmlNodePtr) xattr->children);
 }
 
 /*
@@ -157,9 +145,9 @@ static VALUE rxml_attr_child_q(VALUE self)
   xmlAttrPtr xattr;
   Data_Get_Struct(self, xmlAttr, xattr);
   if (xattr->children == NULL)
-    return (Qfalse);
+    return Qfalse;
   else
-    return (Qtrue);
+    return Qtrue;
 }
 
 /*
@@ -175,9 +163,9 @@ static VALUE rxml_attr_doc_get(VALUE self)
   xmlAttrPtr xattr;
   Data_Get_Struct(self, xmlAttr, xattr);
   if (xattr->doc == NULL)
-    return (Qnil);
+    return Qnil;
   else
-    return (rxml_document_wrap(xattr->doc));
+    return rxml_document_wrap(xattr->doc);
 }
 
 /*
@@ -192,9 +180,9 @@ static VALUE rxml_attr_doc_q(VALUE self)
   xmlAttrPtr xattr;
   Data_Get_Struct(self, xmlAttr, xattr);
   if (xattr->doc == NULL)
-    return (Qfalse);
+    return Qfalse;
   else
-    return (Qtrue);
+    return Qtrue;
 }
 
 /*
@@ -208,9 +196,9 @@ static VALUE rxml_attr_last_get(VALUE self)
   xmlAttrPtr xattr;
   Data_Get_Struct(self, xmlAttr, xattr);
   if (xattr->last == NULL)
-    return (Qnil);
+    return Qnil;
   else
-    return (rxml_node_wrap(xattr->last));
+    return rxml_node_wrap(xattr->last);
 }
 
 /*
@@ -224,9 +212,9 @@ static VALUE rxml_attr_last_q(VALUE self)
   xmlAttrPtr xattr;
   Data_Get_Struct(self, xmlAttr, xattr);
   if (xattr->last == NULL)
-    return (Qfalse);
+    return Qfalse;
   else
-    return (Qtrue);
+    return Qtrue;
 }
 
 /*
@@ -241,9 +229,9 @@ static VALUE rxml_attr_name_get(VALUE self)
   Data_Get_Struct(self, xmlAttr, xattr);
 
   if (xattr->name == NULL)
-    return (Qnil);
+    return Qnil;
   else
-    return (rb_str_new2((const char*) xattr->name));
+    return rb_str_new2((const char*) xattr->name);
 }
 
 /*
@@ -257,9 +245,9 @@ static VALUE rxml_attr_next_get(VALUE self)
   xmlAttrPtr xattr;
   Data_Get_Struct(self, xmlAttr, xattr);
   if (xattr->next == NULL)
-    return (Qnil);
+    return Qnil;
   else
-    return (rxml_attr_wrap(xattr->next));
+    return rxml_attr_wrap(xattr->next);
 }
 
 /*
@@ -273,22 +261,22 @@ static VALUE rxml_attr_next_q(VALUE self)
   xmlAttrPtr xattr;
   Data_Get_Struct(self, xmlAttr, xattr);
   if (xattr->next == NULL)
-    return (Qfalse);
+    return Qfalse;
   else
-    return (Qtrue);
+    return Qtrue;
 }
 
 /*
  * call-seq:
- *    node.type -> num
+ *    attr.type -> num
  *
  * Obtain this node's type identifier.
  */
-static VALUE rxml_node_type(VALUE self)
+static VALUE rxml_attr_node_type(VALUE self)
 {
   xmlAttrPtr xattr;
   Data_Get_Struct(self, xmlAttr, xattr);
-  return (INT2NUM(xattr->type));
+  return INT2NUM(xattr->type);
 }
 
 /*
@@ -302,9 +290,9 @@ static VALUE rxml_attr_ns_get(VALUE self)
   xmlAttrPtr xattr;
   Data_Get_Struct(self, xmlAttr, xattr);
   if (xattr->ns == NULL)
-    return (Qnil);
+    return Qnil;
   else
-    return (rxml_namespace_wrap(xattr->ns));
+    return rxml_namespace_wrap(xattr->ns);
 }
 
 /*
@@ -319,9 +307,9 @@ static VALUE rxml_attr_ns_q(VALUE self)
   xmlAttrPtr xattr;
   Data_Get_Struct(self, xmlAttr, xattr);
   if (xattr->ns == NULL)
-    return (Qfalse);
+    return Qfalse;
   else
-    return (Qtrue);
+    return Qtrue;
 }
 
 /*
@@ -335,9 +323,9 @@ static VALUE rxml_attr_parent_get(VALUE self)
   xmlAttrPtr xattr;
   Data_Get_Struct(self, xmlAttr, xattr);
   if (xattr->parent == NULL)
-    return (Qnil);
+    return Qnil;
   else
-    return (rxml_node_wrap(xattr->parent));
+    return rxml_node_wrap(xattr->parent);
 }
 
 /*
@@ -351,9 +339,9 @@ static VALUE rxml_attr_parent_q(VALUE self)
   xmlAttrPtr xattr;
   Data_Get_Struct(self, xmlAttr, xattr);
   if (xattr->parent == NULL)
-    return (Qfalse);
+    return Qfalse;
   else
-    return (Qtrue);
+    return Qtrue;
 }
 
 /*
@@ -367,9 +355,9 @@ static VALUE rxml_attr_prev_get(VALUE self)
   xmlAttrPtr xattr;
   Data_Get_Struct(self, xmlAttr, xattr);
   if (xattr->prev == NULL)
-    return (Qnil);
+    return Qnil;
   else
-    return (rxml_attr_wrap(xattr->prev));
+    return rxml_attr_wrap(xattr->prev);
 }
 
 /*
@@ -383,9 +371,9 @@ static VALUE rxml_attr_prev_q(VALUE self)
   xmlAttrPtr xattr;
   Data_Get_Struct(self, xmlAttr, xattr);
   if (xattr->prev == NULL)
-    return (Qfalse);
+    return Qfalse;
   else
-    return (Qtrue);
+    return Qtrue;
 }
 
 /*
@@ -404,7 +392,7 @@ static VALUE rxml_attr_remove_ex(VALUE self)
   else
     xmlUnlinkNode((xmlNodePtr) xattr);
 
-  return (Qnil);
+  return Qnil;;
 }
 
 /*
@@ -427,12 +415,7 @@ VALUE rxml_attr_value_get(VALUE self)
     result = rb_str_new2((const char*) value);
     xmlFree(value);
   }
-  /*if (rxml_attr_parent_q(self) == Qtrue)
-  {
-    value = xmlGetProp(xattr->parent, xattr->name);
-   
-  }*/
-  return (result);
+  return result;
 }
 
 /*
@@ -477,7 +460,7 @@ void ruby_init_xml_attr(void)
   rb_define_method(cXMLAttr, "name", rxml_attr_name_get, 0);
   rb_define_method(cXMLAttr, "next", rxml_attr_next_get, 0);
   rb_define_method(cXMLAttr, "next?", rxml_attr_next_q, 0);
-  rb_define_method(cXMLAttr, "node_type", rxml_node_type, 0);
+  rb_define_method(cXMLAttr, "node_type", rxml_attr_node_type, 0);
   rb_define_method(cXMLAttr, "ns", rxml_attr_ns_get, 0);
   rb_define_method(cXMLAttr, "ns?", rxml_attr_ns_q, 0);
   rb_define_method(cXMLAttr, "parent", rxml_attr_parent_get, 0);
