@@ -64,9 +64,12 @@ VALUE rxml_attributes_node_get(VALUE self)
 
 /*
  * call-seq:
- *    attributes.get_attribute("name") -> XML::Attr
+ *    attributes.get_attribute("name") -> (XML::Attr | XML::AtrrDecl)
  *
- * Returns the specified attribute.
+ * Returns the specified attribute.  If the attribute does not 
+ * exist but the document has an associated DTD that defines
+ * a default value for the attribute, then a XML::AttrDecl is
+ * returned.
  *
  * name: The name of the attribute, not including a namespace.
  *
@@ -93,9 +96,12 @@ static VALUE rxml_attributes_get_attribute(VALUE self, VALUE name)
 
 /*
  * call-seq:
- *    attributes.get_attribute_ns("namespace", "name") -> XML::Attr
+ *    attributes.get_attribute_ns("namespace", "name") -> (XML::Attr | XML::AtrrDecl)
  *
- * Returns the specified attribute.
+ * Returns the specified attribute.  If the attribute does not 
+ * exist but the document has an associated DTD that defines
+ * a default value for the attribute, then a XML::AttrDecl is
+ * returned.
  *
  * namespace: The URI of the attribute's namespace.
  * name: The name of the attribute, not including a namespace.

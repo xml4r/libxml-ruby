@@ -5,6 +5,10 @@
 /*
  * Document-class: LibXML::XML::AttrDecl
  *
+ * At attribute declaration is used in XML::Dtds to define 
+ * what attributes are allowed on an element.  An attribute
+ * declaration defines an attribues name, data type and default
+ *  value (if any).
  */
 
 #include "ruby_libxml.h"
