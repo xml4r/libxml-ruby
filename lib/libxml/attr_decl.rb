@@ -3,7 +3,7 @@
 
 module LibXML
   module XML
-    class Attribute
+    class AttrDecl
       include Enumerable
 
       # Iterates nodes and attributes
