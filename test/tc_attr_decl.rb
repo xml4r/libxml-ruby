@@ -3,8 +3,20 @@ require 'test/unit'
 
 class AttrNodeTest < Test::Unit::TestCase
   def setup
-    file = File.join(File.dirname(__FILE__), 'model/itunes.xml')
-    xp = XML::Parser.file(file)
+#    file = File.join(File.dirname(__FILE__), 'model/itunes.xml')
+ #   xp = XML::Parser.file(file)
+    xp = XML::Parser.string(<<-EOS)
+	<!DOCTYPE test [
+	  <!ELEMENT root (property*)>
+	  <!ELEMENT property EMPTY>
+	  <!ATTLIST property name       NMTOKEN          #REQUIRED>
+	  <!ATTLIST property access     (r | w | rw)    "rw">
+	]>
+	<root>
+	  <property name="readonly" access="r" />
+	  <property name="readwrite" />
+	</root>
+    EOS
     @doc = xp.parse
   end
   
@@ -13,17 +25,34 @@ class AttrNodeTest < Test::Unit::TestCase
   end
 
   def test_attributes
-    # Get a property node without a access attribute
-    elem = @doc.find_first('/dictionary/suite/class/property[@code="pEnc"]')
+    # Get a element with an access attribute
+    elem = @doc.find_first('/root/property[@name="readonly"]')
+    assert_equal(2, elem.attributes.length)
+    assert_not_nil(elem['access'])
 
-    # access should not be in the attributes hash
-    assert_equal(4, elem.attributes.length)
+    # Get a element node without a access attribute
+    elem = @doc.find_first('/root/property[@name="readwrite"]')
+    assert_equal(1, elem.attributes.length)
     assert_nil(elem['access'])
+  end
+
+  def test_attr
+    # Get a property node without a access attribute
+    elem = @doc.find_first('/root/property[@name="readonly"]')
+
+    # Get the attr_decl
+    attr = elem.attributes.get_attribute('access')
+    assert_not_nil(attr)
+    assert_equal(XML::Node::ATTRIBUTE_NODE, attr.node_type)
+    assert_equal('attribute', attr.node_type_name)
+
+    # Get its value
+    assert_equal('r', attr.value)
   end
 
   def test_attr_decl
     # Get a property node without a access attribute
-    elem = @doc.find_first('/dictionary/suite/class/property[@code="pEnc"]')
+    elem = @doc.find_first('/root/property[@name="readwrite"]')
 
     # Get the attr_decl
     attr_decl = elem.attributes.get_attribute('access')
@@ -37,7 +66,7 @@ class AttrNodeTest < Test::Unit::TestCase
 
   def test_type
     # Get a property node without a access attribute
-    elem = @doc.find_first('/dictionary/suite/class/property[@code="pEnc"]')
+    elem = @doc.find_first('/root/property[@name="readwrite"]')
     attr_decl = elem.attributes.get_attribute('access')
 
     assert_not_nil(attr_decl)
@@ -46,14 +75,14 @@ class AttrNodeTest < Test::Unit::TestCase
   end
   
   def test_name
-    elem = @doc.find_first('/dictionary/suite/class/property[@code="pEnc"]')
+    elem = @doc.find_first('/root/property[@name="readwrite"]')
     attr_decl = elem.attributes.get_attribute('access')
 
     assert_equal('access', attr_decl.name)
   end
 
   def test_value
-    elem = @doc.find_first('/dictionary/suite/class/property[@code="pEnc"]')
+    elem = @doc.find_first('/root/property[@name="readwrite"]')
     attr_decl = elem.attributes.get_attribute('access')
 
     assert_equal('rw', attr_decl.value)
