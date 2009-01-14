@@ -40,6 +40,23 @@ static VALUE rxml_dtd_alloc(VALUE klass)
   return Data_Wrap_Struct(klass, NULL, rxml_dtd_free, NULL);
 }
 
+VALUE rxml_dtd_wrap(xmlDtdPtr xdtd)
+{
+  VALUE result;
+
+  // This node is already wrapped
+  if (xdtd->_private != NULL)
+    return (VALUE) xdtd->_private;
+
+  result = Data_Wrap_Struct(cXMLDtd, NULL, NULL, xdtd);
+
+  xdtd->_private = (void*) result;
+
+  return result;
+}
+
+
+
 /*
  * call-seq:
  *    XML::Dtd.new("public system") -> dtd

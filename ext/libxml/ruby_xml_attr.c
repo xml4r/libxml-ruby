@@ -134,21 +134,6 @@ static VALUE rxml_attr_child_get(VALUE self)
     return rxml_node_wrap((xmlNodePtr) xattr->children);
 }
 
-/*
- * call-seq:
- *    attr.child? -> (true|false)
- *
- * Returns whether this attribute has child attributes.
- */
-static VALUE rxml_attr_child_q(VALUE self)
-{
-  xmlAttrPtr xattr;
-  Data_Get_Struct(self, xmlAttr, xattr);
-  if (xattr->children == NULL)
-    return Qfalse;
-  else
-    return Qtrue;
-}
 
 /*
  * call-seq:
@@ -170,23 +155,6 @@ static VALUE rxml_attr_doc_get(VALUE self)
 
 /*
  * call-seq:
- *    attr.doc? -> (true|false)
- *
- * Determine whether this attribute is associated with an
- * XML::Document.
- */
-static VALUE rxml_attr_doc_q(VALUE self)
-{
-  xmlAttrPtr xattr;
-  Data_Get_Struct(self, xmlAttr, xattr);
-  if (xattr->doc == NULL)
-    return Qfalse;
-  else
-    return Qtrue;
-}
-
-/*
- * call-seq:
  *    attr.last -> node
  *
  * Obtain the last attribute.
@@ -199,22 +167,6 @@ static VALUE rxml_attr_last_get(VALUE self)
     return Qnil;
   else
     return rxml_node_wrap(xattr->last);
-}
-
-/*
- * call-seq:
- *    attr.last? -> (true|false)
- *
- * Determine whether this is the last attribute.
- */
-static VALUE rxml_attr_last_q(VALUE self)
-{
-  xmlAttrPtr xattr;
-  Data_Get_Struct(self, xmlAttr, xattr);
-  if (xattr->last == NULL)
-    return Qfalse;
-  else
-    return Qtrue;
 }
 
 /*
@@ -252,22 +204,6 @@ static VALUE rxml_attr_next_get(VALUE self)
 
 /*
  * call-seq:
- *    attr.next? -> (true|false)
- *
- * Determine whether there is a next attribute.
- */
-static VALUE rxml_attr_next_q(VALUE self)
-{
-  xmlAttrPtr xattr;
-  Data_Get_Struct(self, xmlAttr, xattr);
-  if (xattr->next == NULL)
-    return Qfalse;
-  else
-    return Qtrue;
-}
-
-/*
- * call-seq:
  *    attr.type -> num
  *
  * Obtain this node's type identifier.
@@ -297,23 +233,6 @@ static VALUE rxml_attr_ns_get(VALUE self)
 
 /*
  * call-seq:
- *    attr.ns? -> (true|false)
- *
- * Determine whether this attribute has an associated
- * namespace.
- */
-static VALUE rxml_attr_ns_q(VALUE self)
-{
-  xmlAttrPtr xattr;
-  Data_Get_Struct(self, xmlAttr, xattr);
-  if (xattr->ns == NULL)
-    return Qfalse;
-  else
-    return Qtrue;
-}
-
-/*
- * call-seq:
  *    attr.parent -> node
  *
  * Obtain this attribute node's parent.
@@ -330,22 +249,6 @@ static VALUE rxml_attr_parent_get(VALUE self)
 
 /*
  * call-seq:
- *    attr.parent? -> (true|false)
- *
- * Determine whether this attribute has a parent.
- */
-static VALUE rxml_attr_parent_q(VALUE self)
-{
-  xmlAttrPtr xattr;
-  Data_Get_Struct(self, xmlAttr, xattr);
-  if (xattr->parent == NULL)
-    return Qfalse;
-  else
-    return Qtrue;
-}
-
-/*
- * call-seq:
  *    attr.prev -> node
  *
  * Obtain the previous attribute.
@@ -358,22 +261,6 @@ static VALUE rxml_attr_prev_get(VALUE self)
     return Qnil;
   else
     return rxml_attr_wrap(xattr->prev);
-}
-
-/*
- * call-seq:
- *    attr.prev? -> (true|false)
- *
- * Determine whether there is a previous attribute.
- */
-static VALUE rxml_attr_prev_q(VALUE self)
-{
-  xmlAttrPtr xattr;
-  Data_Get_Struct(self, xmlAttr, xattr);
-  if (xattr->prev == NULL)
-    return Qfalse;
-  else
-    return Qtrue;
 }
 
 /*
@@ -452,21 +339,14 @@ void ruby_init_xml_attr(void)
   rb_define_alloc_func(cXMLAttr, rxml_attr_alloc);
   rb_define_method(cXMLAttr, "initialize", rxml_attr_initialize, -1);
   rb_define_method(cXMLAttr, "child", rxml_attr_child_get, 0);
-  rb_define_method(cXMLAttr, "child?", rxml_attr_child_q, 0);
   rb_define_method(cXMLAttr, "doc", rxml_attr_doc_get, 0);
-  rb_define_method(cXMLAttr, "doc?", rxml_attr_doc_q, 0);
   rb_define_method(cXMLAttr, "last", rxml_attr_last_get, 0);
-  rb_define_method(cXMLAttr, "last?", rxml_attr_last_q, 0);
   rb_define_method(cXMLAttr, "name", rxml_attr_name_get, 0);
   rb_define_method(cXMLAttr, "next", rxml_attr_next_get, 0);
-  rb_define_method(cXMLAttr, "next?", rxml_attr_next_q, 0);
   rb_define_method(cXMLAttr, "node_type", rxml_attr_node_type, 0);
   rb_define_method(cXMLAttr, "ns", rxml_attr_ns_get, 0);
-  rb_define_method(cXMLAttr, "ns?", rxml_attr_ns_q, 0);
   rb_define_method(cXMLAttr, "parent", rxml_attr_parent_get, 0);
-  rb_define_method(cXMLAttr, "parent?", rxml_attr_parent_q, 0);
   rb_define_method(cXMLAttr, "prev", rxml_attr_prev_get, 0);
-  rb_define_method(cXMLAttr, "prev?", rxml_attr_prev_q, 0);
   rb_define_method(cXMLAttr, "remove!", rxml_attr_remove_ex, 0);
   rb_define_method(cXMLAttr, "value", rxml_attr_value_get, 0);
   rb_define_method(cXMLAttr, "value=", rxml_attr_value_set, 1);
