@@ -5,8 +5,7 @@
 #ifndef __RXML_HTML_PARSER__
 #define __RXML_HTML_PARSER__
 
-extern int rxml_html_parser_count;
-extern VALUE cXMLHTMLParser;
+extern VALUE cXMLHtmlParser;
 
 void ruby_init_html_parser(void);
 

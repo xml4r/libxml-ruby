@@ -8,7 +8,6 @@
 #define MAX_LIBXML_FEATURES_LEN 50
 
 extern VALUE cXMLParser;
-extern VALUE mXMLParserOptions;
 
 void ruby_init_parser();
 

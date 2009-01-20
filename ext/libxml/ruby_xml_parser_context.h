@@ -8,6 +8,5 @@
 extern VALUE cXMLParserContext;
 
 void ruby_init_xml_parser_context(void);
-VALUE rxml_parser_context_wrap(xmlParserCtxtPtr ctxt);
 
 #endif

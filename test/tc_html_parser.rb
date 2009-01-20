@@ -2,18 +2,6 @@ require "xml"
 require 'test/unit'
 
 class HtmlParserTest < Test::Unit::TestCase
-  def setup
-    @xp = XML::HTMLParser.new()
-    assert_not_nil(@xp)
-    str = '<html><head><meta name=keywords content=nasty></head><body>Hello<br>World</html>'
-    @xp.string = str
-    assert_equal(str, @xp.string)
-  end
-
-  def teardown()
-    @xp = nil
-  end
-
   def html_file
     File.expand_path(File.join(File.dirname(__FILE__), 'model/ruby-lang.html'))
   end
@@ -22,8 +10,6 @@ class HtmlParserTest < Test::Unit::TestCase
   def test_file
     xp = XML::HTMLParser.file(html_file)
     assert_instance_of(XML::HTMLParser, xp)
-    assert_equal(html_file, xp.file)
-    assert_equal(html_file, xp.input.file)
   end
 
   def test_string
@@ -32,8 +18,6 @@ class HtmlParserTest < Test::Unit::TestCase
 
     assert_instance_of(XML::HTMLParser, xp)
     assert_instance_of(XML::HTMLParser, xp)
-    assert_equal(str, xp.string)
-    assert_equal(str, xp.input.string)
 
     doc = xp.parse
     assert_instance_of(XML::Document, doc)
@@ -43,9 +27,7 @@ class HtmlParserTest < Test::Unit::TestCase
     File.open(html_file) do |io|
       xp = XML::HTMLParser.io(io)
       assert_instance_of(XML::HTMLParser, xp)
-      assert_equal(io, xp.io)
-      assert_equal(io, xp.input.io)
-
+      
       doc = xp.parse
       assert_instance_of(XML::Document, doc)
     end
@@ -56,16 +38,22 @@ class HtmlParserTest < Test::Unit::TestCase
     io = StringIO.new(data)
     xp = XML::HTMLParser.io(io)
     assert_instance_of(XML::HTMLParser, xp)
-    assert_equal(io, xp.io)
-    assert_equal(io, xp.input.io)
 
     doc = xp.parse
     assert_instance_of(XML::Document, doc)
   end
 
-  def test_libxml_html_parser_parse
-    doc = @xp.parse
+  def test_parse
+    html = <<-EOS
+      <html>
+        <head>
+          <meta name=keywords content=nasty>
+        </head>
+        <body>Hello<br>World</html>
+   EOS
 
+    parser = XML::HTMLParser.string(html)
+    doc = parser.parse
     assert_instance_of XML::Document, doc
 
     root = doc.root

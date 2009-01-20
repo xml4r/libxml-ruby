@@ -19,13 +19,13 @@ static void rxml_parser_context_free(xmlParserCtxtPtr ctxt)
   xmlFreeParserCtxt(ctxt);
 }
 
-VALUE rxml_parser_context_wrap(xmlParserCtxtPtr ctxt)
+static VALUE rxml_parser_context_wrap(xmlParserCtxtPtr ctxt)
 {
   return Data_Wrap_Struct(cXMLParserContext, NULL, rxml_parser_context_free, ctxt);
 }
 
 
-VALUE rxml_parser_context_alloc(VALUE klass)
+static VALUE rxml_parser_context_alloc(VALUE klass)
 {
   xmlParserCtxtPtr ctxt = xmlNewParserCtxt();
   return Data_Wrap_Struct(klass, NULL, rxml_parser_context_free, ctxt);

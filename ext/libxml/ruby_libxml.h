@@ -70,7 +70,12 @@
 #include "ruby_xml_namespace.h"
 #include "ruby_xml_namespaces.h"
 #include "ruby_xml_parser.h"
+#include "ruby_xml_parser_options.h"
 #include "ruby_xml_parser_context.h"
+#include "ruby_xml_html_parser.h"
+#include "ruby_xml_html_parser_options.h"
+#include "ruby_xml_html_parser_context.h"
+#include "ruby_xml_reader.h"
 #include "ruby_xml_sax2_handler.h"
 #include "ruby_xml_sax_parser.h"
 #include "ruby_xml_xinclude.h"
@@ -83,8 +88,6 @@
 #include "ruby_xml_dtd.h"
 #include "ruby_xml_schema.h"
 #include "ruby_xml_relaxng.h"
-#include "ruby_xml_html_parser.h"
-#include "ruby_xml_reader.h"
 
 extern VALUE mLibXML;
 extern VALUE mXML;

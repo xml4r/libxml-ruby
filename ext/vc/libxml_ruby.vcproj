@@ -218,6 +218,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\libxml\ruby_xml_html_parser_context.c"
+				>
+			</File>
+			<File
+				RelativePath="..\libxml\ruby_xml_html_parser_options.c"
+				>
+			</File>
+			<File
 				RelativePath="..\libxml\ruby_xml_input.c"
 				>
 			</File>
@@ -243,6 +251,10 @@
 			</File>
 			<File
 				RelativePath="..\libxml\ruby_xml_parser_context.c"
+				>
+			</File>
+			<File
+				RelativePath="..\libxml\ruby_xml_parser_options.c"
 				>
 			</File>
 			<File
@@ -332,6 +344,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\libxml\ruby_xml_html_parser_context.h"
+				>
+			</File>
+			<File
+				RelativePath="..\libxml\ruby_xml_html_parser_options.h"
+				>
+			</File>
+			<File
 				RelativePath="..\libxml\ruby_xml_input.h"
 				>
 			</File>
@@ -357,6 +377,10 @@
 			</File>
 			<File
 				RelativePath="..\libxml\ruby_xml_parser_context.h"
+				>
+			</File>
+			<File
+				RelativePath="..\libxml\ruby_xml_parser_options.h"
 				>
 			</File>
 			<File

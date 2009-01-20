@@ -851,6 +851,7 @@ void Init_libxml_ruby(void)
   ruby_init_state();
   ruby_init_parser();
   ruby_init_xml_parser_context();
+  ruby_init_parser_options();
   ruby_init_xml_node();
   ruby_init_xml_attributes();
   ruby_init_xml_attr();
@@ -866,6 +867,8 @@ void Init_libxml_ruby(void)
   ruby_init_xml_xpath_expression();
   ruby_init_xml_xpointer();
   ruby_init_html_parser();
+  ruby_init_html_parser_options();
+  ruby_init_html_parser_context();
   ruby_init_input_callbacks();
   ruby_init_xml_dtd();
   ruby_init_xml_schema();

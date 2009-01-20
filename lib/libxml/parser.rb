@@ -34,7 +34,6 @@ module LibXML
         context = XML::Parser::Context.file(path)
         context.encoding = options[:encoding] if options[:encoding]
         context.options = options[:options] if options[:options]
-
         self.new(context)
       end
 
@@ -120,14 +119,14 @@ module LibXML
         self.file = value
       end
 
-      def string=(value)
-        warn("XML::Parser#string is deprecated.  Use XML::Parser.string instead")
-        @context = XML::Parser::Context.string(value)
-      end
-
       def io=(value)
         warn("XML::Parser#io is deprecated.  Use XML::Parser.io instead")
         @context = XML::Parser::Context.io(value)
+      end
+
+      def string=(value)
+        warn("XML::Parser#string is deprecated.  Use XML::Parser.string instead")
+        @context = XML::Parser::Context.string(value)
       end
 
       def self.enabled_automata?
