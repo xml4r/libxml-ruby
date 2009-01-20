@@ -44,8 +44,7 @@ class TestParser < Test::Unit::TestCase
       doc = parser.parse
     end
 
-    assert_equal("Fatal error: Extra content at the end of the document at C:/Development/src/libxml-ruby/test/model/bands.xml:3.",
-                 error.to_s)
+    assert(error.to_s.match(/Fatal error: Extra content at the end of the document/))
 
     parser = XML::Parser.file(file, :encoding => XML::Encoding::UTF_8)
     doc = parser.parse
@@ -57,11 +56,11 @@ class TestParser < Test::Unit::TestCase
 
     parser = XML::Parser.file(file)
     doc = parser.parse
-    assert_equal("C:/Development/src/libxml-ruby/test/model/bands.xml", doc.child.base)
+    assert(doc.child.base.match(/test\/model\/bands.xml/))
 
     parser = XML::Parser.file(file, :base_url => "http://libxml.org")
     doc = parser.parse
-    assert_equal("C:/Development/src/libxml-ruby/test/model/bands.xml", doc.child.base)
+    assert(doc.child.base.match(/test\/model\/bands.xml/))
   end
 
   def test_io

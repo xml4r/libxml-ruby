@@ -117,30 +117,16 @@ class TestSaxParser < Test::Unit::TestCase
     assert_equal("end_document", result[i+=1])
   end
 
-  def test_string_no_callbacks
-    xml = File.read(saxtest_file)
-    parser = XML::SaxParser.string(xml)
-    assert_equal true, parser.parse
-  end
-
-  def test_file_no_callbacks
-    parser = XML::SaxParser.file(saxtest_file)
-    assert_equal true, parser.parse
-  end
-
-  def test_string
-    xml = File.read(saxtest_file)
-    parser = XML::SaxParser.string(xml)
-    parser.callbacks = TestCaseCallbacks.new
-    parser.parse
-    verify(parser)
-  end
-
   def test_file
     parser = XML::SaxParser.file(saxtest_file)
     parser.callbacks = TestCaseCallbacks.new
     parser.parse
     verify(parser)
+  end
+
+  def test_file_no_callbacks
+    parser = XML::SaxParser.file(saxtest_file)
+    assert_equal true, parser.parse
   end
 
   def test_io
@@ -150,6 +136,20 @@ class TestSaxParser < Test::Unit::TestCase
       parser.parse
       verify(parser)
     end
+  end
+
+  def test_string_no_callbacks
+    xml = File.read(saxtest_file)
+    parser = XML::SaxParser.string(xml)
+    assert_equal true, parser.parse
+  end
+
+  def test_string
+    xml = File.read(saxtest_file)
+    parser = XML::SaxParser.string(xml)
+    parser.callbacks = TestCaseCallbacks.new
+    parser.parse
+    verify(parser)
   end
 
   def test_string_io
@@ -175,7 +175,6 @@ EOS
     doc = parser.parse
     assert_not_nil(doc)
   end
-
 
   def test_parse_warning
     # Two xml PIs is a warning

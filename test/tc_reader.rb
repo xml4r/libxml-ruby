@@ -170,7 +170,7 @@ class TestReader < Test::Unit::TestCase
   def test_bytes_consumed
     reader = XML::Reader.file(XML_FILE)
     reader.read
-    assert_equal(428, reader.byte_consumed)
+    assert_equal(416, reader.byte_consumed)
   end
 
   def test_node
