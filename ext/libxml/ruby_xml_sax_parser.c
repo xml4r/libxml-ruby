@@ -91,6 +91,7 @@ static VALUE rxml_sax_parser_initialize(int argc, VALUE *argv, VALUE self)
  */
 static VALUE rxml_sax_parser_parse(VALUE self)
 {
+  int status;
   VALUE context = rb_ivar_get(self, CONTEXT_ATTR);
   xmlParserCtxtPtr ctxt;
   Data_Get_Struct(context, xmlParserCtxt, ctxt);
@@ -103,10 +104,18 @@ static VALUE rxml_sax_parser_parse(VALUE self)
     
   ctxt->sax = (xmlSAXHandlerPtr)&rxml_sax_handler;
     
-  if (xmlParseDocument(ctxt) == -1 || !ctxt->wellFormed)
+  status = xmlParseDocument(ctxt);
+
+  /* IMPORTANT - null the handle to our sax handler
+     so libxml doesn't try to free it.*/
+  ctxt->sax = NULL;
+  
+  /* Now check the parsing result*/
+  if (status == -1 || !ctxt->wellFormed)
   {
     if (ctxt->myDoc)
       xmlFreeDoc(ctxt->myDoc);
+
     rxml_raise(&ctxt->lastError);
   }
   return Qtrue;
