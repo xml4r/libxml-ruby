@@ -1,18 +1,42 @@
-== 0.9.8 / 2008-12-08 Charlie Savage
+== 0.9.8 / 2009-1-20 Charlie Savage
 
-* XML::Reader#read api change.  Previously #read returned 1 if a
-  node was read, 0 if a node was not read and -1 for an error.  It now
-  returns true if a node was read, false if node was not read and raises
-  an exception on an error.  This fits more naturally into Ruby, and allows
-  code like this:
+* Refactored XML::Parser, XML::HTMLParser, XML::SaxParser and
+  XML::Reader APIs so that are consistent.  All the parsers
+  now take a context object in their constructors.  For advanced
+  use cases, the context object provides control over the operation
+  of the parser.  These API changes are backwards compatible except
+  for XML::Reader, which now takes an optional hash table as a
+  second parameter in its various constructors versus an optional
+  boolean value.
+
+* Updated all APIs to use the encoding constants defined
+  in XML::Encoding versus string valus.  This API change
+  is not backwards compatible.
+
+* Added support for attribute declarations in DTD's via the new
+  XML::AttrDecl class (Len Lattanzi)
+
+* Updated XML::Reader#read API to return true if a node was read,
+  false if node was not read and raises an exception on an error.
+  Previously #read returned 1 if a node was read, 0 if a node was
+  not read and -1 for an error.  This change is not backwards
+  compatible, but provides a more natural interface for Ruby by
+  allowing code like this:
 
   while reader.read
     # do stuff
   end
 
+* Changed XML::Error exception objects to return copies of nodes that
+  cause parse errors instead of the original node.  This prevents
+  segmentation faults when the error is reraised.
+
 * Added XML::Reader#node method.
 
 * Fixed rdocs.
+
+* Fixed compile errors on OS X which uses an older version of libxml.
+
 
 == 0.9.7 / 2008-12-08 Charlie Savage
 
