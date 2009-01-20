@@ -13,7 +13,7 @@
  *  doc = XML::Document.new()
  *  doc.root = XML::Node.new('root_node')
  *  doc.root << XML::Node.new('elem1')
- *  doc.save('output.xml', format)
+ *  doc.save(filename, :indent => true, :encoding => 'UTF-8')
  *
  * To read a document from a file:
  *
@@ -49,8 +49,7 @@
  *
  *  elem3['attr'] = 'baz'
  *
- *  format = true
- *  doc.save('output.xml', format)
+ *  doc.save(filename, :indent => true, :encoding => 'UTF-8')
  */
 
 #include <stdarg.h>
