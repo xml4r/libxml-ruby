@@ -71,4 +71,16 @@ class TestDocument < Test::Unit::TestCase
     assert_equal("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<rubynet/>\n",
                  @doc.to_s(:indent => false))
   end
+
+  def test_encoding
+    doc = XML::Document.new
+    assert_equal(XML::Encoding::NONE, doc.encoding)
+
+    file = File.expand_path(File.join(File.dirname(__FILE__), 'model/bands.xml'))
+    doc = XML::Document.file(file)
+    assert_equal(XML::Encoding::UTF_8, doc.encoding)
+
+    doc.encoding = XML::Encoding::ISO_8859_1
+    assert_equal(XML::Encoding::ISO_8859_1, doc.encoding)
+  end
 end

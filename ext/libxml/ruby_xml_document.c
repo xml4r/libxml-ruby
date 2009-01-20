@@ -312,10 +312,12 @@ static VALUE rxml_document_encoding_set(VALUE self, VALUE encoding)
   xmlDocPtr xdoc;
   const char* xencoding = xmlGetCharEncodingName((xmlCharEncoding)NUM2INT(encoding));
 
+  Data_Get_Struct(self, xmlDoc, xdoc);
+
   if (xdoc->encoding != NULL)
     xmlFree((xmlChar *) xdoc->encoding);
 
-  xdoc->encoding = xmlStrdup((xmlChar *)StringValuePtr(encoding));
+  xdoc->encoding = xmlStrdup((xmlChar *)xencoding);
   return self;
 }
 
