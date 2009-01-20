@@ -101,7 +101,7 @@ mXML = rb_define_module_under(mLibXML, "XML");
 
 void ruby_init_xml_encoding(void)
 {
-  mXMLEncoding = rb_define_module_under(mXML, "Encoding", rb_cObject);
+  mXMLEncoding = rb_define_module_under(mXML, "Encoding");
   rb_define_module_function(mXMLEncoding, "from_s", rxml_encoding_from_s, 1);
   rb_define_module_function(mXMLEncoding, "to_s", rxml_encoding_to_s, 1);
 
