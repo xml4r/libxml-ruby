@@ -13,8 +13,7 @@ module LibXML
       #
       #  encoding - The document encoding, defaults to nil. Valid values
       #             are the encoding constants defined on XML::Encoding.
-      #  options - Controls the execution of the parser, defaults to 0.
-      #            Valid values are the constants defined on
+      #  options - Parser options.  Valid values are the constants defined on
       #            XML::HtmlParser::Options.  Mutliple options can be combined
       #            by using Bitwise OR (|).
       def self.file(path, options = {})
@@ -38,8 +37,7 @@ module LibXML
       #  base_url - The base url for the parsed document.
       #  encoding - The document encoding, defaults to nil. Valid values
       #             are the encoding constants defined on XML::Encoding.
-      #  options - Controls the execution of the parser, defaults to 0.
-      #            Valid values are the constants defined on
+      #  options - Parser options.  Valid values are the constants defined on
       #            XML::HtmlParser::Options.  Mutliple options can be combined
       #            by using Bitwise OR (|).
       def self.io(io, options = {})
@@ -64,8 +62,7 @@ module LibXML
       #  base_url - The base url for the parsed document.
       #  encoding - The document encoding, defaults to nil. Valid values
       #             are the encoding constants defined on XML::Encoding.
-      #  options - Controls the execution of the parser, defaults to 0.
-      #            Valid values are the constants defined on
+      #  options - Parser options.  Valid values are the constants defined on
       #            XML::HtmlParser::Options.  Mutliple options can be combined
       #            by using Bitwise OR (|).
       def self.string(string, options = {})

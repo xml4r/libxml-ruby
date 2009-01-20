@@ -8,52 +8,35 @@
 /*
  * Document-class: LibXML::XML::Encoding
  *
- * Input is a helper class that defines a libxml data source.
- * Libxml can parse files, strings, io streams and documents
- * accessible via networking protocols such as http.
- * Be default, the ruby-libxml bindings expose parsing
- * files, io streams and strings.
+ * The encoding class defines the encodings that libxml
+ * supports. LibXML converts all data sources to UTF8
+ * internally before processing them.
  *
- * Generally you will not directly work with the input object,
- * but instead will use the various Document and Parser apis.
- * For example:
+ * By default, LibXML determines a data source's encoding 
+ * using the algorithm described on its
+ * website[* http://xmlsoft.org/encoding.html].  
  *
- *   parser = XML::Parser.file('my_file')
- *   parser = XML::Parser.string('<myxml/>')
- *   parser = XML::Parser.io(File.open('my_file'))
- *
- *  XML::HTMLParser, XML::Reader, XML::SaxParser and
- *  XML::Document work in the same way.
- *
- * LibXML converts all data sources to UTF8 internally before
- * processing them.  By default, LibXML will determine a data
- * source's encoding using the algorithm described on its
- * website[* http://xmlsoft.org/encoding.html].
- *
- * However, its some cases it is possible to tell LibXML
- * the data source's encoding via the constants defined in
- * the Encoding module.
+ * However, you may override a data source's encoding 
+ * by using the encoding constants defined in this
+ * module.
  *
  * Example 1:
  *
- *   parser = XML::Parser.new
- *   parser.input.encoding = XML::Encoding::ISO_8859_1
- *   parser.io = File.open('some_file', 'rb')
+ *   io = File.open('some_file', 'rb')
+ *   parser = XML::Parser.io(io, :encoding => XML::Encoding::ISO_8859_1)
  *   doc = parser.parse
  *
  * Example 2:
  *
- *   parser = XML::HTMLParser.new
- *   parser.encoding = XML::Encoding::ISO_8859_1
- *   parser.file = "some_file"
+ *   parser = XML::HTMLParser.file("some_file", :encoding => XML::Encoding::ISO_8859_1)
  *   doc = parser.parse
  *
  * Example 3:
  *
  *   document = XML::Document.new
- *   encoding_string =  XML::Encoding.encoding_to_s(XML::Encoding::ISO_8859_1)
- *   document.encoding = document
- *   doc << XML::Node.new */
+ *   document.encoding = XML::Encoding::ISO_8859_1
+ *   doc << XML::Node.new
+ */
 
 VALUE mXMLEncoding;
 

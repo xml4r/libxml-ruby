@@ -20,11 +20,11 @@
  *
  * Using the parser is simple:
  *
- *   parser = XML::Parser.new
- *   parser.file = 'my_file'
+ *   parser = XML::Parser.file('my_file')
  *   doc = parser.parse
  *
- * You can also parse strings (see XML::Parser.string) and io objects (see
+ * You can also parse documents (see XML::Parser.document), 
+ * strings (see XML::Parser.string) and io objects (see
  * XML::Parser.io).
  */
 

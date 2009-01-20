@@ -10,7 +10,22 @@
  * compatible with the XML::Parser.  In contrast with the XML::Parser,
  * it can parse "real world" HTML, even if it severely broken from a
  * specification point of view.
-*/
+ *
+ * The HTML parser creates an in-memory document object
+ * that consist of any number of XML::Node instances.  This is simple
+ * and powerful model, but has the major limitation that the size of
+ * the document that can be processed is limited by the amount of
+ * memory available.
+ *
+ * Using the html parser is simple:
+ *
+ *   parser = XML::HTMLParser.file('my_file')
+ *   doc = parser.parse
+ *
+ * You can also parse documents (see XML::HTMLParser.document), 
+ * strings (see XML::HTMLParser.string) and io objects (see
+ * XML::HTMLParser.io).
+ */
 
 VALUE cXMLHtmlParser;
 

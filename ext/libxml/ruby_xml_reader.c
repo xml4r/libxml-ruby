@@ -20,7 +20,7 @@
  *
  * Example:
  *
- *  parser = XML::Reader.new("<foo><bar>1</bar><bar>2</bar><bar>3</bar></foo>")
+ *  parser = XML::Reader.string("<foo><bar>1</bar><bar>2</bar><bar>3</bar></foo>")
  *  reader.read
  *  assert_equal('foo', reader.name)
  *  assert_equal(nil, reader.value)
@@ -35,6 +35,10 @@
  *    reader.read
  *    assert_equal(XML::Reader::TYPE_END_ELEMENT, reader.node_type)
  *  end
+ *
+ * You can also parse documents (see XML::Reader.document), 
+ * strings (see XML::Parser.string) and io objects (see
+ * XML::Parser.io).
  *
  * For a more in depth tutorial, albeit in C, see http://xmlsoft.org/xmlreader.html.*/
 

@@ -9,7 +9,7 @@ class TestXPathContext < Test::Unit::TestCase
   NS0_PREFIX = 'ns0'
   NS0_URI = 'http://services.somewhere.com'
   
-  def setup()
+  def setup
     doc = XML::Document.file(File.join(File.dirname(__FILE__), 'model/soap.xml'))
     @context = XML::XPath::Context.new(doc)
   end
@@ -68,5 +68,11 @@ class TestXPathContext < Test::Unit::TestCase
     @context.node = @context.doc.root.child.next
     nodes = @context.find('soap:Body')
     assert_equal(0, nodes.length)
+  end
+
+  def test_cache
+    @context.enable_cache
+    @context.enable_cache(10)
+    @context.disable_cache
   end
 end

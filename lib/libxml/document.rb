@@ -1,20 +1,77 @@
 module LibXML
   module XML
     class Document
-      def self.file(value)
-        Parser.file(value).parse
-      end
-
-      def self.string(value)
-        Parser.string(value).parse
-      end
-
+      # call-seq:
+      #    XML::Document.document(document) -> XML::Document
+      #
+      # Creates a new document based on the specified document.
+      #
+      # Parameters:
+      #
+      #  document - A preparsed document.
       def self.document(value)
         Parser.document(value).parse
       end
 
-      def self.io(value)
-        Parser.io(value).parse
+      # call-seq:
+      #    XML::Document.file(path) -> XML::Document
+      #    XML::Document.file(path, :encoding => XML::Encoding::UTF_8,
+      #                             :options => XML::Parser::Options::NOENT) -> XML::Document
+      #
+      # Creates a new document from the specified file or uri.
+      #
+      # You may provide an optional hash table to control how the
+      # parsing is performed.  Valid options are:
+      #
+      #  encoding - The document encoding, defaults to nil. Valid values
+      #             are the encoding constants defined on XML::Encoding.
+      #  options - Parser options.  Valid values are the constants defined on
+      #            XML::Parser::Options.  Mutliple options can be combined
+      #            by using Bitwise OR (|).
+      def self.file(value, options = {})
+        Parser.file(value, options).parse
+      end
+
+      # call-seq:
+      #    XML::Document.io(io) -> XML::Document
+      #    XML::Document.io(io, :encoding => XML::Encoding::UTF_8,
+      #                         :options => XML::Parser::Options::NOENT
+      #                         :base_url="http://libxml.org") -> XML::Document
+      #
+      # Creates a new document from the specified io object.
+      #
+      # Parameters:
+      #
+      #  io - io object that contains the xml to parser
+      #  base_url - The base url for the parsed document.
+      #  encoding - The document encoding, defaults to nil. Valid values
+      #             are the encoding constants defined on XML::Encoding.
+      #  options - Parser options.  Valid values are the constants defined on
+      #            XML::Parser::Options.  Mutliple options can be combined
+      #            by using Bitwise OR (|).
+      def self.io(value, options = {})
+        Parser.io(value, options).parse
+      end
+
+      # call-seq:
+      #    XML::Document.string(string)
+      #    XML::Document.string(string, :encoding => XML::Encoding::UTF_8,
+      #                               :options => XML::Parser::Options::NOENT
+      #                               :base_url="http://libxml.org") -> XML::Document
+      #
+      # Creates a new document from the specified string.
+      #
+      # You may provide an optional hash table to control how the
+      # parsing is performed.  Valid options are:
+      #
+      #  base_url - The base url for the parsed document.
+      #  encoding - The document encoding, defaults to nil. Valid values
+      #             are the encoding constants defined on XML::Encoding.
+      #  options - Parser options.  Valid values are the constants defined on
+      #            XML::Parser::Options.  Mutliple options can be combined
+      #            by using Bitwise OR (|).
+      def self.string(value, options = {})
+        Parser.string(value, options).parse
       end
 
       # Returns a new XML::XPathContext for the document.
@@ -70,28 +127,30 @@ module LibXML
       def find_first(xpath, nslist = nil)
         find(xpath, nslist).first
       end
-      
-      def dump # :nodoc:
+
+      # :enddoc:
+
+      def dump
         warn('Document#dump is deprecated.  Use Document#to_s instead.')
         self.to_s
       end
 
-      def format_dump # :nodoc:
+      def format_dump
         warn('Document#format_dump is deprecated.  Use Document#to_s instead.')
         self.to_s
       end
 
-      def debug_dump # :nodoc:
+      def debug_dump
         warn('Document#debug_dump is deprecated.  Use Document#debug instead.')
         self.debug
       end
 
-      def debug_dump_head # :nodoc:
+      def debug_dump_head
         warn('Document#debug_dump_head is deprecated.  Use Document#debug instead.')
         self.debug
       end
 
-      def debug_format_dump  # :nodoc:
+      def debug_format_dump
         warn('Document#debug_format_dump is deprecated.  Use Document#to_s instead.')
         self.to_s
       end

@@ -12,7 +12,7 @@
  * in contrast to XML::Parser's tree based API and XML::Reader's stream
  * based API.
  *
- * Note that the XML::SaxParser API is fairly complex, not well standardized,
+ * The XML::SaxParser API is fairly complex, not well standardized,
  * and does not directly support validation making entity, namespace and
  * base processing relatively hard.
  *
@@ -30,9 +30,12 @@
  *     end
  *   end
  *
- *   parser = XML::SaxParser.new
+ *   parser = XML::SaxParser.string(my_string)
  *   parser.callbacks = MyCallbacks.new
  *   parser.parse
+ *
+ * You can also parse strings (see XML::SaxParser.string) and
+ * io objects (see XML::SaxParser.io).
  */
 
 VALUE cXMLSaxParser;
