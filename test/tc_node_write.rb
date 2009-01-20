@@ -66,7 +66,7 @@ class TestNodeWrite < Test::Unit::TestCase
     error = assert_raise(ArgumentError) do
       node.to_s(:encoding => -9999)
     end
-    assert_equal('Unknown encoding.', error.to_s)
+    assert_equal('Unknown encoding value: -9999', error.to_s)
   end
 
   # --- Debug ---

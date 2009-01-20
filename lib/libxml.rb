@@ -14,8 +14,6 @@ require 'libxml_ruby'
 # Load Ruby supporting code.
 require 'libxml/error'
 require 'libxml/parser'
-require 'libxml/parser_options'
-require 'libxml/parser_context'
 require 'libxml/document'
 require 'libxml/namespaces'
 require 'libxml/namespace'

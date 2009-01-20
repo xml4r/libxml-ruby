@@ -542,7 +542,7 @@ static VALUE rxml_node_to_s(int argc, VALUE *argv, VALUE self)
 
   int level = 0;
   int indent = 1;
-  const char *encoding = "UTF-8";
+  const char *xencoding = NULL;
 
   rb_scan_args(argc, argv, "01", &options);
 
@@ -561,14 +561,18 @@ static VALUE rxml_node_to_s(int argc, VALUE *argv, VALUE self)
       level = NUM2INT(rlevel);
 
     if (rencoding != Qnil)
-      encoding = RSTRING_PTR(rxml_input_encoding_to_s(cXMLInput, rencoding));
+    {
+      xencoding = xmlGetCharEncodingName((xmlCharEncoding)NUM2INT(rencoding));
+      if (!xencoding)
+        rb_raise(rb_eArgError, "Unknown encoding value: %d", NUM2INT(rencoding));
+    }
   }
 
-  encodingHandler = xmlFindCharEncodingHandler(encoding);
+  encodingHandler = xmlFindCharEncodingHandler(xencoding);
   output = xmlAllocOutputBuffer(encodingHandler);
 
   Data_Get_Struct(self, xmlNode, xnode);
-  xmlNodeDumpOutput(output, xnode->doc, xnode, level, indent, encoding);
+  xmlNodeDumpOutput(output, xnode->doc, xnode, level, indent, xencoding);
   xmlOutputBufferFlush(output);
 
   if (output->conv)

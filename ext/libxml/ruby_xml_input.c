@@ -58,10 +58,12 @@ VALUE cXMLInput;
  *   doc << XML::Node.new */
 
 ID BASE_URL_ATTR;
+ID DOCUMENT_ATTR;
 ID ENCODING_ATTR;
 ID FILE_ATTR;
-ID STRING_ATTR;
 ID IO_ATTR;
+ID OPTIONS_ATTR;
+ID STRING_ATTR;
 
 static ID READ_METHOD;
 
@@ -85,94 +87,37 @@ int rxml_read_callback(void *context, char *buffer, int len)
 
 /*
  * call-seq:
+ *    Input.s_to_encoding("UTF_8") -> XML::Input::UTF_8
+ *
+ * Converts an encoding string to an encoding constant
+ * defined on the XML::Input class.
+ */
+static VALUE rxml_input_s_to_encoding(VALUE klass, VALUE encoding)
+{
+  xmlCharEncoding xencoding;
+  
+  if (encoding == Qnil)
+    return Qnil;
+
+  xencoding = xmlParseCharEncoding(StringValuePtr(encoding));
+  return NUM2INT(xencoding);
+}
+
+/*
+ * call-seq:
  *    Input.encoding_to_s(Input::ENCODING) -> "encoding"
  *
  * Converts an encoding contstant defined on the XML::Input
  * class to its text representation.
  */
-VALUE rxml_input_encoding_to_s(VALUE klass, VALUE encoding)
+static VALUE rxml_input_encoding_to_s(VALUE klass, VALUE encoding)
 {
-  char* encodingStr = NULL;
+  const char* xecoding = xmlGetCharEncodingName(NUM2INT(encoding));
 
-  switch (NUM2INT(encoding))
-  {
-  case XML_CHAR_ENCODING_ERROR:
-    encodingStr = "Error";
-    break;
-  case XML_CHAR_ENCODING_NONE:
-    encodingStr = "None";
-    break;
-  case XML_CHAR_ENCODING_UTF8:
-    encodingStr = "UTF-8";
-    break;
-  case XML_CHAR_ENCODING_UTF16LE:
-    encodingStr = "UTF-16LE";
-    break;
-  case XML_CHAR_ENCODING_UTF16BE:
-    encodingStr = "UTF-16BE";
-    break;
-  case XML_CHAR_ENCODING_UCS4LE:
-    encodingStr = "UCS-4LE";
-    break;
-  case XML_CHAR_ENCODING_UCS4BE:
-    encodingStr = "UCS-4BE";
-    break;
-  case XML_CHAR_ENCODING_EBCDIC:
-    encodingStr = "EBCDIC";
-    break;
-  case XML_CHAR_ENCODING_UCS4_2143:
-    encodingStr = "UCS-4";
-    break;
-  case XML_CHAR_ENCODING_UCS4_3412:
-    encodingStr = "UCS-4";
-    break;
-  case XML_CHAR_ENCODING_UCS2:
-    encodingStr = "UCS-2";
-    break;
-  case XML_CHAR_ENCODING_8859_1:
-    encodingStr = "ISO-8859-1";
-    break;
-  case XML_CHAR_ENCODING_8859_2:
-    encodingStr = "ISO-8859-2";
-    break;
-  case XML_CHAR_ENCODING_8859_3:
-    encodingStr = "ISO-8859-3";
-    break;
-  case XML_CHAR_ENCODING_8859_4:
-    encodingStr = "ISO-8859-4";
-    break;
-  case XML_CHAR_ENCODING_8859_5:
-    encodingStr = "ISO-8859-5";
-    break;
-  case XML_CHAR_ENCODING_8859_6:
-    encodingStr = "ISO-8859-6";
-    break;
-  case XML_CHAR_ENCODING_8859_7:
-    encodingStr = "ISO-8859-7";
-    break;
-  case XML_CHAR_ENCODING_8859_8:
-    encodingStr = "ISO-8859-8";
-    break;
-  case XML_CHAR_ENCODING_8859_9:
-    encodingStr = "ISO-8859-9";
-    break;
-  case XML_CHAR_ENCODING_2022_JP:
-    encodingStr = "ISO-2022-JP";
-    break;
-  case XML_CHAR_ENCODING_SHIFT_JIS:
-    encodingStr = "Shift_JIS";
-    break;
-  case XML_CHAR_ENCODING_EUC_JP:
-    encodingStr = "EUC-JP";
-    break;
-  case XML_CHAR_ENCODING_ASCII:
-    encodingStr = "ASCII";
-    break;
-  default:
-    rb_raise(rb_eArgError, "Unknown encoding.");
-  }
-
-  return rb_str_new2(encodingStr);
+  if (!xecoding)
+    return Qnil;
+  else
+    return rb_str_new2(xecoding);
 }
 
 /*
@@ -184,15 +129,46 @@ VALUE rxml_input_encoding_to_s(VALUE klass, VALUE encoding)
 static VALUE rxml_input_initialize(VALUE self)
 {
   rb_ivar_set(self, BASE_URL_ATTR, Qnil);
+  rb_ivar_set(self, OPTIONS_ATTR, INT2NUM(0));
   rb_ivar_set(self, ENCODING_ATTR, INT2NUM(XML_CHAR_ENCODING_UTF8));
+
   return self;
 }
 
 /*
  * call-seq:
- *    input.FILE -> "FILE"
+ *    input.document -> XML::Document
  *
- * Obtain the FILE this parser will read from.
+ * Obtain the document this parser will read from.
+ */
+static VALUE rxml_input_document_get(VALUE self)
+{
+  return rb_ivar_get(self, DOCUMENT_ATTR);
+}
+
+/*
+ * call-seq:
+ *    input.document = XML::Document
+ *
+ * Set the file this parser will read from.
+ */
+static VALUE rxml_input_document_set(VALUE self, VALUE document)
+{
+  if (rb_obj_is_kind_of(document, cXMLDocument) == Qfalse)
+    rb_raise(rb_eTypeError, "Must pass an XML::Document object");
+
+  rb_ivar_set(self, DOCUMENT_ATTR, document);
+  rb_ivar_set(self, FILE_ATTR, Qnil);
+  rb_ivar_set(self, IO_ATTR, Qnil);
+  rb_ivar_set(self, STRING_ATTR, Qnil);
+  return self;
+}
+
+/*
+ * call-seq:
+ *    input.file -> "file"
+ *
+ * Obtain the file this parser will read from.
  */
 static VALUE rxml_input_file_get(VALUE self)
 {
@@ -201,14 +177,15 @@ static VALUE rxml_input_file_get(VALUE self)
 
 /*
  * call-seq:
- *    input.FILE = "FILE"
+ *    input.file = "file"
  *
- * Set the FILE this parser will read from.
+ * Set the file this parser will read from.
  */
-static VALUE rxml_input_file_set(VALUE self, VALUE FILE)
+static VALUE rxml_input_file_set(VALUE self, VALUE file)
 {
-  Check_Type(FILE, T_STRING);
-  rb_ivar_set(self, FILE_ATTR, FILE);
+  Check_Type(file, T_STRING);
+  rb_ivar_set(self, DOCUMENT_ATTR, Qnil);
+  rb_ivar_set(self, FILE_ATTR, file);
   rb_ivar_set(self, IO_ATTR, Qnil);
   rb_ivar_set(self, STRING_ATTR, Qnil);
   return self;
@@ -234,6 +211,7 @@ static VALUE rxml_input_string_get(VALUE self)
 static VALUE rxml_input_string_set(VALUE self, VALUE string)
 {
   Check_Type(string, T_STRING);
+  rb_ivar_set(self, DOCUMENT_ATTR, Qnil);
   rb_ivar_set(self, FILE_ATTR, Qnil);
   rb_ivar_set(self, IO_ATTR, Qnil);
   rb_ivar_set(self, STRING_ATTR, string);
@@ -259,9 +237,35 @@ static VALUE rxml_input_io_get(VALUE self)
  */
 static VALUE rxml_input_io_set(VALUE self, VALUE io)
 {
+  rb_ivar_set(self, DOCUMENT_ATTR, Qnil);
   rb_ivar_set(self, FILE_ATTR, Qnil);
   rb_ivar_set(self, IO_ATTR, io);
   rb_ivar_set(self, STRING_ATTR, Qnil);
+  return self;
+}
+
+/*
+ * call-seq:
+ *    input.options -> integer
+ *
+ * Obtain the options for this parser.
+ */
+static VALUE rxml_input_options_get(VALUE self)
+{
+  return rb_ivar_get(self, OPTIONS_ATTR);
+}
+
+/*
+ * call-seq:
+ *    input.options = integer
+ *
+ * Set the options for this parser.
+ *
+ *   input.options = XML::Parser::NOENT | XML::Parser::NOBASEFIX
+ */
+static VALUE rxml_input_options_set(VALUE self, VALUE options)
+{
+  rb_ivar_set(self, OPTIONS_ATTR, options);
   return self;
 }
 
@@ -280,14 +284,17 @@ mXML = rb_define_module_under(mLibXML, "XML");
 void ruby_init_xml_input(void)
 {
   BASE_URL_ATTR = rb_intern("@base_url");
+  DOCUMENT_ATTR = rb_intern("@document");
   ENCODING_ATTR = rb_intern("@encoding");
   FILE_ATTR = rb_intern("@file");
   IO_ATTR = rb_intern("@io");
+  OPTIONS_ATTR = rb_intern("@options");
   STRING_ATTR = rb_intern("@string");
 
   READ_METHOD = rb_intern("read");
 
   cXMLInput = rb_define_class_under(mXML, "Input", rb_cObject);
+  rb_define_singleton_method(cXMLInput, "s_to_encoding", rxml_input_s_to_encoding, 1);
   rb_define_singleton_method(cXMLInput, "encoding_to_s", rxml_input_encoding_to_s, 1);
 
   rb_define_const(cXMLInput, "UNDEFINED", INT2NUM(XPATH_UNDEFINED));
@@ -320,10 +327,14 @@ void ruby_init_xml_input(void)
   rb_define_attr(cXMLInput, "encoding", 1, 1);
 
   rb_define_method(cXMLInput, "initialize", rxml_input_initialize, 0);
+  rb_define_method(cXMLInput, "document", rxml_input_document_get, 0);
+  rb_define_method(cXMLInput, "document=", rxml_input_document_set, 1);
   rb_define_method(cXMLInput, "file", rxml_input_file_get, 0);
   rb_define_method(cXMLInput, "file=", rxml_input_file_set, 1);
   rb_define_method(cXMLInput, "string", rxml_input_string_get, 0);
   rb_define_method(cXMLInput, "string=", rxml_input_string_set, 1);
   rb_define_method(cXMLInput, "io", rxml_input_io_get, 0);
   rb_define_method(cXMLInput, "io=", rxml_input_io_set, 1);
+  rb_define_method(cXMLInput, "options", rxml_input_options_get, 0);
+  rb_define_method(cXMLInput, "options=", rxml_input_options_set, 1);
 }

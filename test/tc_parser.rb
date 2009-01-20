@@ -5,109 +5,164 @@ require 'stringio'
 class TestParser < Test::Unit::TestCase
   def setup
     XML::Error.set_handler(&XML::Error::QUIET_HANDLER)
-    @xp = XML::Parser.new
   end
 
   def teardown
-    @xp = nil
     GC.start
     GC.start
     GC.start
   end
       
   # -----  Sources  ------
+  def test_document
+    file = File.expand_path(File.join(File.dirname(__FILE__), 'model/bands.xml'))
+    parser = XML::Parser.file(file)
+    doc = parser.parse
+
+    parser = XML::Parser.document(doc)
+
+    doc = parser.parse
+
+    assert_instance_of(XML::Document, doc)
+    assert_instance_of(XML::Parser::Context, parser.context)
+  end
+
   def test_file
     file = File.expand_path(File.join(File.dirname(__FILE__), 'model/rubynet.xml'))
 
-    @xp.file = file
-    assert_equal(file, @xp.file)
-    assert_equal(file, @xp.input.file)
-
-    doc = @xp.parse
+    parser = XML::Parser.file(file)
+    doc = parser.parse
     assert_instance_of(XML::Document, doc)
-    assert_instance_of(XML::Parser::Context, @xp.context)
-    GC.start
-    GC.start
-    GC.start
- end
-
-  def test_file_class
-    file = File.expand_path(File.join(File.dirname(__FILE__), 'model/rubynet.xml'))
-
-    xp = XML::Parser.file(file)
-    assert_instance_of(XML::Parser, xp)
-    assert_equal(file, xp.file)
-    assert_equal(file, xp.input.file)
+    assert_instance_of(XML::Parser::Context, parser.context)
   end
 
-  def test_string
-    str = '<ruby_array uga="booga" foo="bar"><fixnum>one</fixnum><fixnum>two</fixnum></ruby_array>'
+  def test_file_encoding
+    file = File.expand_path(File.join(File.dirname(__FILE__), 'model/bands.xml'))
+    parser = XML::Parser.file(file, :encoding => XML::Input::ISO_8859_1)
 
-    @xp.string = str
-    assert_equal(str, @xp.string)
-    assert_equal(str, @xp.input.string)
-
-    doc = @xp.parse
-    assert_instance_of(XML::Document, doc)
-    assert_instance_of(XML::Parser::Context, @xp.context)
-  end
-
-  def test_string_empty
-    assert_raise(XML::Error) do
-      @xp.string = ''
-      @xp.parse
+    error = assert_raise(XML::Error) do
+      doc = parser.parse
     end
 
-    assert_raise(TypeError) do
-      @xp.string = nil
-    end
+    assert_equal("Fatal error: Extra content at the end of the document at C:/Development/src/libxml-ruby/test/model/bands.xml:3.",
+                 error.to_s)
+
+    parser = XML::Parser.file(file, :encoding => XML::Input::UTF_8)
+    doc = parser.parse
+    assert_not_nil(doc)
   end
 
-  def test_string_class
-    str = '<ruby_array uga="booga" foo="bar"><fixnum>one</fixnum><fixnum>two</fixnum></ruby_array>'
+  def test_file_base_url
+    file = File.expand_path(File.join(File.dirname(__FILE__), 'model/bands.xml'))
 
-    xp = XML::Parser.string(str)
-    assert_instance_of(XML::Parser, xp)
-    assert_equal(str, xp.string)
-    assert_equal(str, xp.input.string)
+    parser = XML::Parser.file(file)
+    doc = parser.parse
+    assert_equal("C:/Development/src/libxml-ruby/test/model/bands.xml", doc.child.base)
+
+    parser = XML::Parser.file(file, :base_url => "http://libxml.org")
+    doc = parser.parse
+    assert_equal("C:/Development/src/libxml-ruby/test/model/bands.xml", doc.child.base)
   end
 
   def test_io
     File.open(File.join(File.dirname(__FILE__), 'model/rubynet.xml')) do |io|
-      @xp.io = io
-      assert_equal(io, @xp.io)
-      assert_equal(io, @xp.input.io)
+      parser = XML::Parser.io(io)
+      assert_instance_of(XML::Parser, parser)
 
-      doc = @xp.parse
+      doc = parser.parse
       assert_instance_of(XML::Document, doc)
-      assert_instance_of(XML::Parser::Context, @xp.context)
-    end
-  end
-
-  def test_io_class
-    File.open(File.join(File.dirname(__FILE__), 'model/rubynet.xml')) do |io|
-      xp = XML::Parser.io(io)
-      assert_instance_of(XML::Parser, xp)
-      assert_equal(io, xp.io)
-      assert_equal(io, xp.input.io)
-
-      doc = xp.parse
-      assert_instance_of(XML::Document, doc)
-      assert_instance_of(XML::Parser::Context, xp.context)
+      assert_instance_of(XML::Parser::Context, parser.context)
     end
   end
 
   def test_string_io
     data = File.read(File.join(File.dirname(__FILE__), 'model/rubynet.xml'))
     string_io = StringIO.new(data)
-    @xp.io = string_io
-    assert_equal(string_io, @xp.io)
-    assert_equal(string_io, @xp.input.io)
+    parser = XML::Parser.io(string_io)
 
-    doc = @xp.parse
+    doc = parser.parse
     assert_instance_of(XML::Document, doc)
-    assert_instance_of(XML::Parser::Context, @xp.context)
+    assert_instance_of(XML::Parser::Context, parser.context)
   end
+
+  def test_string
+    str = '<ruby_array uga="booga" foo="bar"><fixnum>one</fixnum><fixnum>two</fixnum></ruby_array>'
+
+    parser = XML::Parser.string(str)
+    assert_instance_of(XML::Parser, parser)
+
+    doc = parser.parse
+    assert_instance_of(XML::Document, doc)
+    assert_instance_of(XML::Parser::Context, parser.context)
+  end
+
+  def test_string_options
+    xml = <<-EOS
+      <!DOCTYPE foo [<!ENTITY foo 'bar'>]>
+      <test>
+        <cdata><![CDATA[something]]></cdata>
+        <entity>&foo;</entity>
+      </test>
+    EOS
+
+    XML::default_substitute_entities = false
+
+    # Parse normally
+    parser = XML::Parser.string(xml)
+    doc = parser.parse
+    assert_nil(doc.child.base)
+
+    # Cdata section should be cdata nodes
+    node = doc.find_first('/test/cdata').child
+    assert_equal(XML::Node::CDATA_SECTION_NODE, node.node_type)
+
+    # Entities should not be subtituted
+    node = doc.find_first('/test/entity')
+    assert_equal('&foo;', node.child.to_s)
+
+    # Parse with options
+    parser = XML::Parser.string(xml, :base_url => 'http://libxml.rubyforge.org',
+                                     :options => XML::Parser::Options::NOCDATA | XML::Parser::Options::NOENT)
+    doc = parser.parse
+    assert_equal(doc.child.base, 'http://libxml.rubyforge.org')
+
+    # Cdata section should be text nodes
+    node = doc.find_first('/test/cdata').child
+    assert_equal(XML::Node::TEXT_NODE, node.node_type)
+
+    # Entities should be subtituted
+    node = doc.find_first('/test/entity')
+    assert_equal('bar', node.child.to_s)
+  end
+
+  def test_string_encoding
+    # ISO_8859_1:
+    # ö - f6 in hex, \366 in octal
+    # ü - fc in hex, \374 in octal
+
+    xml = <<-EOS
+      <bands>
+        <metal>m\366tley_cr\374e</metal>
+      </bands>
+    EOS
+
+    # Parse as UTF_8
+    parser = XML::Parser.string(xml)
+
+    error = assert_raise(XML::Error) do
+      doc = parser.parse
+    end
+
+    assert_equal("Fatal error: Input is not proper UTF-8, indicate encoding !\nBytes: 0xF6 0x74 0x6C 0x65 at :2.",
+                 error.to_s)
+
+    # Parse as ISO_8859_1:
+    parser = XML::Parser.string(xml, :encoding => XML::Input::ISO_8859_1)
+    doc = parser.parse
+    node = doc.find_first('//metal')
+    assert_equal("m\303\266tley_cr\303\274e", node.content)
+  end
+
 
   def test_fd_gc
     # Test opening # of documents up to the file limit for the OS.
@@ -155,9 +210,9 @@ class TestParser < Test::Unit::TestCase
   end
 
   def test_bad_xml
-    @xp.string = '<ruby_array uga="booga" foo="bar"<fixnum>one</fixnum><fixnum>two</fixnum></ruby_array>'
+    parser = XML::Parser.string('<ruby_array uga="booga" foo="bar"<fixnum>one</fixnum><fixnum>two</fixnum></ruby_array>')
     error = assert_raise(XML::Error) do
-      assert_not_nil(@xp.parse)
+      assert_not_nil(parser.parse)
     end
 
     assert_not_nil(error)
@@ -176,12 +231,51 @@ class TestParser < Test::Unit::TestCase
     assert_nil(error.node)
   end
 
-  def test_double_parse
-    parser = XML::Parser.string("<test>something</test>")
+  # Deprecated methods
+  def test_document_deprecated
+    file = File.expand_path(File.join(File.dirname(__FILE__), 'model/bands.xml'))
+    parser = XML::Parser.file(file)
     doc = parser.parse
 
-    assert_raise(RuntimeError) do
-      parser.parse
+    parser = XML::Parser.new
+    parser.document = doc
+    doc = parser.parse
+
+    assert_instance_of(XML::Document, doc)
+    assert_instance_of(XML::Parser::Context, parser.context)
+  end
+
+  def test_file_deprecated
+    file = File.expand_path(File.join(File.dirname(__FILE__), 'model/rubynet.xml'))
+
+    parser = XML::Parser.new
+    parser.file = file
+    doc = parser.parse
+    assert_instance_of(XML::Document, doc)
+    assert_instance_of(XML::Parser::Context, parser.context)
+  end
+
+  def test_io_deprecated
+    File.open(File.join(File.dirname(__FILE__), 'model/rubynet.xml')) do |io|
+      parser = XML::Parser.new
+      assert_instance_of(XML::Parser, parser)
+      parser.io = io
+
+      doc = parser.parse
+      assert_instance_of(XML::Document, doc)
+      assert_instance_of(XML::Parser::Context, parser.context)
     end
+  end
+
+  def test_string_deprecated
+    str = '<ruby_array uga="booga" foo="bar"><fixnum>one</fixnum><fixnum>two</fixnum></ruby_array>'
+
+    parser = XML::Parser.new
+    parser.string = str
+    assert_instance_of(XML::Parser, parser)
+
+    doc = parser.parse
+    assert_instance_of(XML::Document, doc)
+    assert_instance_of(XML::Parser::Context, parser.context)
   end
 end

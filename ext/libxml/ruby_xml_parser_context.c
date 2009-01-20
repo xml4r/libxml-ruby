@@ -16,15 +16,163 @@ VALUE cXMLParserContext;
 
 static void rxml_parser_context_free(xmlParserCtxtPtr ctxt)
 {
-  if (ctxt != NULL)
-    xmlFreeParserCtxt(ctxt);
+  xmlFreeParserCtxt(ctxt);
 }
 
 VALUE rxml_parser_context_wrap(xmlParserCtxtPtr ctxt)
 {
-  return Data_Wrap_Struct(cXMLParserContext, NULL, rxml_parser_context_free,
-      ctxt);
+  return Data_Wrap_Struct(cXMLParserContext, NULL, rxml_parser_context_free, ctxt);
 }
+
+
+VALUE rxml_parser_context_alloc(VALUE klass)
+{
+  xmlParserCtxtPtr ctxt = xmlNewParserCtxt();
+  return Data_Wrap_Struct(klass, NULL, rxml_parser_context_free, ctxt);
+}
+
+/* call-seq:
+ *    XML::Parser::Context.document(document) -> XML::Parser::Context
+ *
+ * Creates a new parser context based on the specified document.
+ *
+ * Parameters:
+ *
+ *  document - An XML::Document instance.
+ */
+static VALUE rxml_parser_context_document(VALUE klass, VALUE document)
+{
+  xmlParserCtxtPtr ctxt;
+  xmlDocPtr xdoc;
+  xmlChar *buffer; 
+  int length;
+
+  if (rb_obj_is_kind_of(document, cXMLDocument) == Qfalse)
+    rb_raise(rb_eTypeError, "Must pass an XML::Document object");
+
+  Data_Get_Struct(document, xmlDoc, xdoc);
+  xmlDocDumpFormatMemoryEnc(xdoc, &buffer, &length, NULL, xdoc->encoding);
+
+  ctxt = xmlCreateDocParserCtxt(buffer);
+  return rxml_parser_context_wrap(ctxt);
+}
+
+/* call-seq:
+ *    XML::Parser::Context.file(file) -> XML::Parser::Context
+ *
+ * Creates a new parser context based on the specified file or uri.
+ *
+ * Parameters:
+ *
+ *  file - A filename or uri.
+*/
+static VALUE rxml_parser_context_file(VALUE klass, VALUE file)
+{
+  xmlParserCtxtPtr ctxt = xmlCreateURLParserCtxt(StringValuePtr(file), 0);
+  return rxml_parser_context_wrap(ctxt);
+}
+
+/* call-seq:
+ *    XML::Parser::Context.string(string) -> XML::Parser::Context
+ *
+ * Creates a new parser context based on the specified string.
+ *
+ * Parameters:
+ *
+ *  string - A string that contains the data to parse.
+*/
+static VALUE rxml_parser_context_string(VALUE klass, VALUE string)
+{
+  xmlParserCtxtPtr ctxt;
+  Check_Type(string, T_STRING);
+
+  if (RSTRING_LEN(string) == 0)
+    rb_raise(rb_eArgError, "Must specify a string with one or more characters");
+
+  ctxt = xmlCreateMemoryParserCtxt(StringValuePtr(string),
+                                   RSTRING_LEN(string));
+
+  if (!ctxt)
+    rxml_raise(&xmlLastError);
+
+  return rxml_parser_context_wrap(ctxt);
+}
+
+/* call-seq:
+ *    XML::Parser::Context.io(io) -> XML::Parser::Context
+ *
+ * Creates a new parser context based on the specified io object.
+ *
+ * Parameters:
+ *
+ *  io - A ruby IO object.
+*/
+static VALUE rxml_parser_context_io(VALUE klass, VALUE io)
+{
+  xmlParserCtxtPtr ctxt;
+  xmlParserInputBufferPtr input;
+  xmlParserInputPtr stream;
+
+  input = xmlParserInputBufferCreateIO((xmlInputReadCallback) rxml_read_callback, NULL,
+                                       (void*)io, XML_CHAR_ENCODING_NONE);
+    
+  ctxt = xmlNewParserCtxt();
+  if (ctxt == NULL)
+  {
+      xmlFreeParserInputBuffer(input);
+      return (NULL);
+  }
+
+  stream = xmlNewIOInputStream(ctxt, input, XML_CHAR_ENCODING_NONE);
+
+  if (stream == NULL)
+  {
+    xmlFreeParserInputBuffer(input);
+    xmlFreeParserCtxt(ctxt);
+    return (NULL);
+  }
+  inputPush(ctxt, stream);
+  return rxml_parser_context_wrap(ctxt);
+}
+
+/*
+ * call-seq:
+ *    context.base_url -> "http:://libxml.org"
+ *
+ * Obtain the base url for this parser context.
+ */
+static VALUE rxml_parser_context_base_url_get(VALUE self)
+{
+  xmlParserCtxtPtr ctxt;
+  Data_Get_Struct(self, xmlParserCtxt, ctxt);
+
+  if (ctxt->input && ctxt->input->filename)
+    return rb_str_new2(ctxt->input->filename);
+  else
+    return Qnil;
+}
+
+/*
+ * call-seq:
+ *    context.base_url = "http:://libxml.org"
+ *
+ * Sets the base url for this parser context.
+ */
+static VALUE rxml_parser_context_base_url_set(VALUE self, VALUE url)
+{
+  xmlParserCtxtPtr ctxt;
+  Data_Get_Struct(self, xmlParserCtxt, ctxt);
+
+  Check_Type(url, T_STRING);
+
+  if (ctxt->input && !ctxt->input->filename)
+  {
+    const xmlChar * xurl = StringValuePtr(url);
+    ctxt->input->filename = (char *) xmlStrdup(xurl);
+  }
+  return self;
+}
+
 
 /*
  * call-seq:
@@ -103,11 +251,36 @@ static VALUE rxml_parser_context_encoding_get(VALUE self)
 {
   xmlParserCtxtPtr ctxt;
   Data_Get_Struct(self, xmlParserCtxt, ctxt);
+  return INT2NUM(xmlParseCharEncoding(ctxt->encoding));
+}
 
-  if (ctxt->encoding == NULL)
-    return (Qnil);
-  else
-    return (rb_str_new2((const char*) ctxt->encoding));
+/*
+ * call-seq:
+ *    context.encoding = XML::Input::UTF_8
+ *
+ * Sets the character encoding for this context.
+ */
+static VALUE rxml_parser_context_encoding_set(VALUE self, VALUE encoding)
+{
+  xmlParserCtxtPtr ctxt;
+  int result;
+  const char* xencoding = xmlGetCharEncodingName((xmlCharEncoding)NUM2INT(encoding));
+  xmlCharEncodingHandlerPtr hdlr = xmlFindCharEncodingHandler(xencoding);
+  
+  if (!hdlr)
+    rb_raise(rb_eRuntimeError, "Unknown encoding: %s", encoding);
+
+  Data_Get_Struct(self, xmlParserCtxt, ctxt);
+  result = xmlSwitchToEncoding(ctxt, hdlr);
+
+  if (result != 0)
+    rxml_raise(&xmlLastError);
+
+  if (ctxt->encoding != NULL)
+    xmlFree((xmlChar *) ctxt->encoding);
+
+  ctxt->encoding = xmlStrdup((const xmlChar *) xencoding);
+  return self;
 }
 
 /*
@@ -322,6 +495,43 @@ static VALUE rxml_parser_context_num_chars_get(VALUE self)
   Data_Get_Struct(self, xmlParserCtxt, ctxt);
 
   return (LONG2NUM(ctxt->nbChars));
+}
+
+
+/*
+ * call-seq:
+ *    context.options > XML::Parser::Options::NOENT
+ *
+ * Returns the parser options for this context.  Multiple
+ * options can be combined by using Bitwise OR (|).
+ */
+static VALUE rxml_parser_context_options_get(VALUE self)
+{
+  xmlParserCtxtPtr ctxt;
+  Data_Get_Struct(self, xmlParserCtxt, ctxt);
+
+  return INT2NUM(ctxt->options);
+}
+
+/*
+ * call-seq:
+ *    context.options = XML::Parser::Options::NOENT |
+                        XML::Parser::Options::NOCDATA
+ *
+ * Provides control over the execution of a parser.  Valid values 
+ * are the constants defined on XML::Parser::Options.  Multiple
+ * options can be combined by using Bitwise OR (|).
+ */
+static VALUE rxml_parser_context_options_set(VALUE self, VALUE options)
+{
+  int result;
+  xmlParserCtxtPtr ctxt;
+  Check_Type(options, T_FIXNUM);
+
+  Data_Get_Struct(self, xmlParserCtxt, ctxt);
+  result = xmlCtxtUseOptions(ctxt, NUM2INT(options));
+
+  return self;
 }
 
 /*
@@ -599,13 +809,21 @@ static VALUE rxml_parser_context_well_formed_q(VALUE self)
 void ruby_init_xml_parser_context(void)
 {
   cXMLParserContext = rb_define_class_under(cXMLParser, "Context", rb_cObject);
-  rb_undef_alloc_func(cXMLParserContext);
+  rb_define_alloc_func(cXMLParserContext, rxml_parser_context_alloc);
 
+  rb_define_singleton_method(cXMLParserContext, "document", rxml_parser_context_document, 1);
+  rb_define_singleton_method(cXMLParserContext, "file", rxml_parser_context_file, 1);
+  rb_define_singleton_method(cXMLParserContext, "io", rxml_parser_context_io, 1);
+  rb_define_singleton_method(cXMLParserContext, "string", rxml_parser_context_string, 1);
+
+  rb_define_method(cXMLParserContext, "base_url", rxml_parser_context_base_url_get, 0);
+  rb_define_method(cXMLParserContext, "base_url=", rxml_parser_context_base_url_set, 1);
   rb_define_method(cXMLParserContext, "data_directory", rxml_parser_context_data_directory_get, 0);
   rb_define_method(cXMLParserContext, "depth", rxml_parser_context_depth_get, 0);
   rb_define_method(cXMLParserContext, "disable_sax?", rxml_parser_context_disable_sax_q, 0);
   rb_define_method(cXMLParserContext, "docbook?", rxml_parser_context_docbook_q, 0);
   rb_define_method(cXMLParserContext, "encoding", rxml_parser_context_encoding_get, 0);
+  rb_define_method(cXMLParserContext, "encoding=", rxml_parser_context_encoding_set, 1);
   rb_define_method(cXMLParserContext, "errno", rxml_parser_context_errno_get, 0);
   rb_define_method(cXMLParserContext, "html?", rxml_parser_context_html_q, 0);
   rb_define_method(cXMLParserContext, "io_max_num_streams", rxml_parser_context_io_max_num_streams_get, 0);
@@ -619,6 +837,8 @@ void ruby_init_xml_parser_context(void)
   rb_define_method(cXMLParserContext, "node_depth", rxml_parser_context_node_depth_get, 0);
   rb_define_method(cXMLParserContext, "node_depth_max", rxml_parser_context_node_depth_max_get, 0);
   rb_define_method(cXMLParserContext, "num_chars", rxml_parser_context_num_chars_get, 0);
+  rb_define_method(cXMLParserContext, "options", rxml_parser_context_options_get, 0);
+  rb_define_method(cXMLParserContext, "options=", rxml_parser_context_options_set, 1);
   rb_define_method(cXMLParserContext, "replace_entities?", rxml_parser_context_replace_entities_q, 0);
   rb_define_method(cXMLParserContext, "replace_entities=", rxml_parser_context_replace_entities_set, 1);
   rb_define_method(cXMLParserContext, "space_depth", rxml_parser_context_space_depth_get, 0);

@@ -3,9 +3,7 @@ require 'test/unit'
 
 class CDataCommentTest < Test::Unit::TestCase
   def setup
-    xp = XML::Parser.new()
-    str = '<root></root>'
-    assert_equal(str, xp.string = str)
+    xp = XML::Parser.string('<root></root>')
     @doc = xp.parse
     assert_instance_of(XML::Document, @doc)
     @root = @doc.root

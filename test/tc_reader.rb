@@ -48,7 +48,6 @@ class TestReader < Test::Unit::TestCase
   end
 
   def test_file
-
     reader = XML::Reader.file(XML_FILE)
     verify_simple(reader)
   end
@@ -78,13 +77,13 @@ class TestReader < Test::Unit::TestCase
     verify_simple(reader)
   end
 
-  def test_new_walker
-    reader = XML::Reader.walker(XML::Document.file(XML_FILE))
+  def test_document
+    reader = XML::Reader.document(XML::Document.file(XML_FILE))
     verify_simple(reader)
   end
 
   def test_error
-    reader = XML::Reader.new('<foo blah')
+    reader = XML::Reader.string('<foo blah')
 
     error = assert_raise(XML::Error) do
       reader.read
@@ -94,7 +93,7 @@ class TestReader < Test::Unit::TestCase
 
   def test_deprecated_error_handler
     called = false
-    reader = XML::Reader.new('<foo blah')
+    reader = XML::Reader.string('<foo blah')
     reader.set_error_handler do |error|
       called = true
     end
@@ -108,7 +107,7 @@ class TestReader < Test::Unit::TestCase
 
   def test_deprecated_reset_error_handler
     called = false
-    reader = XML::Reader.new('<foo blah')
+    reader = XML::Reader.string('<foo blah')
     reader.set_error_handler do |error|
       called = true
     end
@@ -117,12 +116,12 @@ class TestReader < Test::Unit::TestCase
     assert_raise(XML::Error) do
       reader.read
     end
-    
+
     assert(!called)
   end
 
   def test_attr
-    parser = XML::Reader.new("<foo x='1' y='2'/>")
+    parser = XML::Reader.string("<foo x='1' y='2'/>")
     assert(parser.read)
     assert_equal('foo', parser.name)
     assert_equal('1', parser['x'])
@@ -134,7 +133,7 @@ class TestReader < Test::Unit::TestCase
   end
 
   def test_value
-    parser = XML::Reader.new("<foo><bar>1</bar><bar>2</bar><bar>3</bar></foo>")
+    parser = XML::Reader.string("<foo><bar>1</bar><bar>2</bar><bar>3</bar></foo>")
     assert(parser.read)
     assert_equal('foo', parser.name)
     assert_equal(nil, parser.value)
@@ -179,5 +178,10 @@ class TestReader < Test::Unit::TestCase
     reader = XML::Reader.file(XML_FILE)
     reader.read
     assert_instance_of(XML::Node, reader.node)
+  end
+
+  def test_walker
+    reader = XML::Reader.walker(XML::Document.file(XML_FILE))
+    verify_simple(reader)
   end
 end

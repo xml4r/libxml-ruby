@@ -6,7 +6,7 @@
 #include "ruby_libxml.h"
 
 VALUE cXMLParser;
-static ID INPUT_ATTR;
+VALUE mXMLParserOptions;
 static ID CONTEXT_ATTR;
 
 /*
@@ -34,61 +34,30 @@ static ID CONTEXT_ATTR;
 
 /*
  * call-seq:
- *    parser.initialize -> parser
+ *    parser.initialize(context) -> XML::Parser
  *
- * Initiliazes instance of parser.
+ * Creates a new XML::Parser from the specified 
+ * XML::Parser::Context.
  */
-static VALUE rxml_parser_initialize(VALUE self)
+static VALUE rxml_parser_initialize(int argc, VALUE *argv, VALUE self)
 {
-  VALUE input = rb_class_new_instance(0, NULL, cXMLInput);
-  rb_iv_set(self, "@input", input);
-  rb_iv_set(self, "@context", Qnil);
-  return self;
-}
+  VALUE context = Qnil;
 
-static xmlParserCtxtPtr rxml_parser_filename_ctxt(VALUE input)
-{
-  xmlParserCtxtPtr ctxt;
-  int retry_count = 0;
-  VALUE filename = rb_ivar_get(input, FILE_ATTR);
+  rb_scan_args(argc, argv, "01", &context);
 
-  retry: ctxt = xmlCreateFileParserCtxt(StringValuePtr(filename));
-  if (ctxt == NULL)
+  if (context == Qnil)
   {
-    if ((errno == EMFILE || errno == ENFILE) && retry_count == 0)
-    {
-      retry_count++;
-      rb_gc();
-      goto retry;
-    }
-    else
-    {
-      rb_raise(rb_eIOError, StringValuePtr(filename));
-    }
+    rb_warn("Passing no parameters to XML::Parser.new is deprecated.  Pass an instance of XML::Parser::Context instead.");
+    context = rb_class_new_instance(0, Qnil, cXMLParserContext);
   }
 
-  return ctxt;
-}
-
-static xmlParserCtxtPtr rxml_parser_str_ctxt(VALUE input)
-{
-  VALUE str = rb_ivar_get(input, STRING_ATTR);
-  return xmlCreateMemoryParserCtxt(StringValuePtr(str), RSTRING_LEN(str));
-}
-
-static xmlParserCtxtPtr rxml_parser_io_ctxt(VALUE input)
-{
-  VALUE io = rb_ivar_get(input, IO_ATTR);
-  VALUE encoding = rb_ivar_get(input, ENCODING_ATTR);
-  xmlCharEncoding xmlEncoding = NUM2INT(encoding);
-
-  return xmlCreateIOParserCtxt(NULL, NULL,
-      (xmlInputReadCallback) rxml_read_callback, NULL, (void *) io, xmlEncoding);
+  rb_ivar_set(self, CONTEXT_ATTR, context);
+  return self;
 }
 
 /*
  * call-seq:
- *    parser.parse -> document
+ *    parser.parse -> XML::Document
  *
  * Parse the input XML and create an XML::Document with
  * it's content. If an error occurs, XML::Parser::ParseError
@@ -97,33 +66,15 @@ static xmlParserCtxtPtr rxml_parser_io_ctxt(VALUE input)
 static VALUE rxml_parser_parse(VALUE self)
 {
   xmlParserCtxtPtr ctxt;
-  VALUE context;
-  VALUE input = rb_ivar_get(self, INPUT_ATTR);
-
-  context = rb_ivar_get(self, CONTEXT_ATTR);
-  if (context != Qnil)
-    rb_raise(rb_eRuntimeError, "You cannot parse a data source twice");
-
-  if (rb_ivar_get(input, FILE_ATTR) != Qnil)
-    ctxt = rxml_parser_filename_ctxt(input);
-  else if (rb_ivar_get(input, STRING_ATTR) != Qnil)
-    ctxt = rxml_parser_str_ctxt(input);
-  /*else if (rb_ivar_get(input, DOCUMENT_ATTR) != Qnil)
-   ctxt = rxml_parser_parse_document(input);*/
-  else if (rb_ivar_get(input, IO_ATTR) != Qnil)
-    ctxt = rxml_parser_io_ctxt(input);
-  else
-    rb_raise(rb_eArgError, "You must specify a parser data source");
-
-  if (!ctxt)
-    rxml_raise(&xmlLastError);
-
-  context = rxml_parser_context_wrap(ctxt);
-  rb_ivar_set(self, CONTEXT_ATTR, context);
+  xmlDocPtr xdoc;
+  VALUE context = rb_ivar_get(self, CONTEXT_ATTR);
+  
+  Data_Get_Struct(context, xmlParserCtxt, ctxt);
 
   if (xmlParseDocument(ctxt) == -1 || !ctxt->wellFormed)
   {
-    xmlFreeDoc(ctxt->myDoc);
+    if (ctxt->myDoc)
+      xmlFreeDoc(ctxt->myDoc);
     rxml_raise(&ctxt->lastError);
   }
 
@@ -141,12 +92,54 @@ void ruby_init_parser(void)
   cXMLParser = rb_define_class_under(mXML, "Parser", rb_cObject);
 
   /* Atributes */
-  INPUT_ATTR = rb_intern("@input");
   CONTEXT_ATTR = rb_intern("@context");
   rb_define_attr(cXMLParser, "input", 1, 0);
   rb_define_attr(cXMLParser, "context", 1, 0);
 
   /* Instance Methods */
-  rb_define_method(cXMLParser, "initialize", rxml_parser_initialize, 0);
+  rb_define_method(cXMLParser, "initialize", rxml_parser_initialize, -1);
   rb_define_method(cXMLParser, "parse", rxml_parser_parse, 0);
+
+
+  /* Constants */
+  mXMLParserOptions = rb_define_module_under(cXMLParser, "Options");
+
+  /* recover on errors */  
+  rb_define_const(mXMLParserOptions, "RECOVER", INT2NUM(XML_PARSE_RECOVER));
+  /* substitute entities */
+  rb_define_const(mXMLParserOptions, "NOENT", INT2NUM(XML_PARSE_NOENT));
+  /* load the external subset */
+  rb_define_const(mXMLParserOptions, "DTDLOAD", INT2NUM(XML_PARSE_DTDLOAD));
+  /* default DTD attributes */
+  rb_define_const(mXMLParserOptions, "DTDATTR", INT2NUM(XML_PARSE_DTDATTR));
+  /* validate with the DTD */
+  rb_define_const(mXMLParserOptions, "DTDVALID", INT2NUM(XML_PARSE_DTDVALID));
+  /* suppress error reports */
+  rb_define_const(mXMLParserOptions, "NOERROR", INT2NUM(XML_PARSE_NOERROR));
+  /* suppress warning reports */
+  rb_define_const(mXMLParserOptions, "NOWARNING", INT2NUM(XML_PARSE_NOWARNING));
+  /* pedantic error reporting */
+  rb_define_const(mXMLParserOptions, "PEDANTIC", INT2NUM(XML_PARSE_PEDANTIC));
+  /* remove blank nodes */
+  rb_define_const(mXMLParserOptions, "NOBLANKS", INT2NUM(XML_PARSE_NOBLANKS));
+  /* use the SAX1 interface internally */
+  rb_define_const(mXMLParserOptions, "SAX1", INT2NUM(XML_PARSE_SAX1));
+  /* Implement XInclude substitition  */
+  rb_define_const(mXMLParserOptions, "XINCLUDE", INT2NUM(XML_PARSE_XINCLUDE));
+  /* Forbid network access */
+  rb_define_const(mXMLParserOptions, "NONET", INT2NUM(XML_PARSE_NONET));
+  /* Do not reuse the context dictionnary */
+  rb_define_const(mXMLParserOptions, "NODICT", INT2NUM(XML_PARSE_NODICT));
+  /* remove redundant namespaces declarations */
+  rb_define_const(mXMLParserOptions, "NSCLEAN", INT2NUM(XML_PARSE_NSCLEAN));
+  /* merge CDATA as text nodes */
+  rb_define_const(mXMLParserOptions, "NOCDATA", INT2NUM(XML_PARSE_NOCDATA));
+  /* do not generate XINCLUDE START/END nodes */
+  rb_define_const(mXMLParserOptions, "NOXINCNODE", INT2NUM(XML_PARSE_NOXINCNODE));
+  /* compact small text nodes */
+  rb_define_const(mXMLParserOptions, "COMPACT", INT2NUM(XML_PARSE_COMPACT));
+  /* do not fixup XINCLUDE xml:base uris */
+  rb_define_const(mXMLParserOptions, "NOBASEFIX", INT2NUM(XML_PARSE_NOBASEFIX));
+  /* relax any hardcoded limit from the parser */
+  rb_define_const(mXMLParserOptions, "HUGE", INT2NUM(XML_PARSE_HUGE));
 }

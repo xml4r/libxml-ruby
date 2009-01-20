@@ -3,9 +3,7 @@ require "test/unit"
 
 class TC_XML_XPointer < Test::Unit::TestCase
   def setup()
-    xp = XML::Parser.new()
-    str = '<!DOCTYPE ra [<!ELEMENT ra (foo+)><!ATTLIST ra id ID #IMPLIED><!ELEMENT foo (#PCDATA)><!ATTLIST foo id ID #IMPLIED>]><ra id="start"><foo id="one">one</foo><foo id="two">two</foo><foo id="three">three</foo></ra>'
-    assert_equal(str, xp.string = str)
+    xp = XML::Parser.string('<!DOCTYPE ra [<!ELEMENT ra (foo+)><!ATTLIST ra id ID #IMPLIED><!ELEMENT foo (#PCDATA)><!ATTLIST foo id ID #IMPLIED>]><ra id="start"><foo id="one">one</foo><foo id="two">two</foo><foo id="three">three</foo></ra>')
     @doc = xp.parse
     assert_instance_of(XML::Document, @doc)
     @root = @doc.root

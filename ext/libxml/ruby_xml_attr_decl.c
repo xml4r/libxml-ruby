@@ -57,21 +57,6 @@ static VALUE rxml_attr_decl_doc_get(VALUE self)
     return rxml_document_wrap(xattribute->doc);
 }
 
-/*
- * call-seq:
- *    attr_decl.last -> node
- *
- * Obtain the last attribute declaration.
- */
-static VALUE rxml_attr_decl_last_get(VALUE self)
-{
-  xmlAttributePtr xattribute;
-  Data_Get_Struct(self, xmlAttribute, xattribute);
-  if (xattribute->last == NULL)
-    return Qnil;
-  else
-    return rxml_node_wrap(xattribute->last);
-}
 
 /*
  * call-seq:
@@ -164,8 +149,6 @@ static VALUE rxml_attr_decl_prev_get(VALUE self)
 VALUE rxml_attr_decl_value_get(VALUE self)
 {
   xmlAttributePtr xattribute;
-  xmlChar *value;
-  VALUE result = Qnil;
 
   Data_Get_Struct(self, xmlAttribute, xattribute);
 

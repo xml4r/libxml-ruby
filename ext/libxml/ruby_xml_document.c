@@ -532,7 +532,7 @@ static VALUE rxml_document_save(int argc, VALUE *argv, VALUE self)
   xmlDocPtr xdoc;
   int indent = 1;
   const char *xfilename;
-  const char *encoding;
+  const char *xencoding;
   int length;
 
   rb_scan_args(argc, argv, "11", &filename, &options);
@@ -541,7 +541,7 @@ static VALUE rxml_document_save(int argc, VALUE *argv, VALUE self)
   xfilename = StringValuePtr(filename);
 
   Data_Get_Struct(self, xmlDoc, xdoc);
-  encoding = xdoc->encoding;
+  xencoding = xdoc->encoding;
 
   if (!NIL_P(options))
   {
@@ -554,10 +554,14 @@ static VALUE rxml_document_save(int argc, VALUE *argv, VALUE self)
       indent = 0;
 
     if (rencoding != Qnil)
-      encoding = RSTRING_PTR(rxml_input_encoding_to_s(cXMLInput, rencoding));
+    {
+      xencoding = xmlGetCharEncodingName((xmlCharEncoding)NUM2INT(rencoding));
+      if (!xencoding)
+        rb_raise(rb_eArgError, "Unknown encoding value: %d", NUM2INT(rencoding));
+    }
   }
 
-  length = xmlSaveFormatFileEnc(xfilename, xdoc, encoding, indent);
+  length = xmlSaveFormatFileEnc(xfilename, xdoc, xencoding, indent);
 
   if (length == -1)
     rxml_raise(&xmlLastError);
@@ -605,7 +609,7 @@ static VALUE rxml_document_to_s(int argc, VALUE *argv, VALUE self)
   VALUE options = Qnil;
   xmlDocPtr xdoc;
   int indent = 1;
-  const char *encoding = "UTF-8";
+  const char *xencoding = "UTF-8";
   xmlChar *buffer; 
   int length;
 
@@ -622,11 +626,15 @@ static VALUE rxml_document_to_s(int argc, VALUE *argv, VALUE self)
       indent = 0;
 
     if (rencoding != Qnil)
-      encoding = RSTRING_PTR(rxml_input_encoding_to_s(cXMLInput, rencoding));
+    {
+      xencoding = xmlGetCharEncodingName((xmlCharEncoding)NUM2INT(rencoding));
+      if (!xencoding)
+        rb_raise(rb_eArgError, "Unknown encoding value: %d", NUM2INT(rencoding));
+    }
   }
 
   Data_Get_Struct(self, xmlDoc, xdoc);
-  xmlDocDumpFormatMemoryEnc(xdoc, &buffer, &length, encoding, indent);
+  xmlDocDumpFormatMemoryEnc(xdoc, &buffer, &length, xencoding, indent);
 
   result = rb_str_new((const char*) buffer, length);
   xmlFree(buffer);
@@ -842,17 +850,6 @@ static VALUE rxml_document_validate_dtd(VALUE self, VALUE dtd)
   }
 }
 
-/*
- * call-seq:
- *    document.reader -> reader
- *
- * Create a XML::Reader from the document. This is a shortcut to
- * XML::Reader.walker().
- */
-static VALUE rxml_document_reader(VALUE self)
-{
-  return rxml_reader_new_walker(cXMLReader, self);
-}
 
 // Rdoc needs to know
 #ifdef RDOC_NEVER_DEFINED
@@ -894,5 +891,4 @@ void ruby_init_xml_document(void)
   rb_define_method(cXMLDocument, "validate", rxml_document_validate_dtd, 1);
   rb_define_method(cXMLDocument, "validate_schema", rxml_document_validate_schema, 1);
   rb_define_method(cXMLDocument, "validate_relaxng", rxml_document_validate_relaxng, 1);
-  rb_define_method(cXMLDocument, "reader", rxml_document_reader, 0);
 }

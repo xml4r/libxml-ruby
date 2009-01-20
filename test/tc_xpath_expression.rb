@@ -3,9 +3,7 @@ require 'test/unit'
 
 class TestXPathExpression < Test::Unit::TestCase
   def setup
-    xp = XML::Parser.new()
-    str = '<ruby_array uga="booga" foo="bar"><fixnum>one</fixnum><fixnum>two</fixnum></ruby_array>'
-    xp.string = str
+    xp = XML::Parser.string('<ruby_array uga="booga" foo="bar"><fixnum>one</fixnum><fixnum>two</fixnum></ruby_array>')
     @doc = xp.parse
   end
   

@@ -3,8 +3,8 @@ require 'test/unit'
 
 class TestRelaxNG < Test::Unit::TestCase
   def setup
-    xp = XML::Parser.new
-    @doc = XML::Document.file(File.join(File.dirname(__FILE__), 'model/shiporder.xml'))
+    file = File.join(File.dirname(__FILE__), 'model/shiporder.xml')
+    @doc = XML::Document.file(file)
   end
   
   def teardown

@@ -1,33 +1,93 @@
 module LibXML
   module XML
     class Parser
-      def self.filename(value)
-        warn("Parser.filename is deprecated.  Use Parser.file instead")
-        self.file(value)
+      # call-seq:
+      #    XML::Parser.document(document) -> XML::Parser
+      #
+      # Creates a new reader by parsing the specified document.
+      #
+      # Parameters:
+      #
+      #  document - A preparsed document.
+      def self.document(doc)
+        context = XML::Parser::Context.document(doc)
+        self.new(context)
       end
 
-      def self.file(value)
-        parser = self.new
-        parser.input.file = value
-        parser
+      # call-seq:
+      #    XML::Parser.file(path) -> XML::Parser
+      #    XML::Parser.file(path, :encoding => XML::Input::UTF_8,
+      #                           :options => XML::Parser::Options::NOENT) -> XML::Parser
+      #
+      # Creates a new parser by parsing the specified file or uri.
+      #
+      # You may provide an optional hash table to control how the
+      # parsing is performed.  Valid options are:
+      #
+      #  encoding - The document encoding, defaults to nil. Valid values
+      #             are the encoding constants defined on XML::Input.
+      #  options - Controls the execution of the parser, defaults to 0.
+      #            Valid values are the constants defined on
+      #            XML::Parser::Options.  Mutliple options can be combined
+      #            by using Bitwise OR (|).
+      def self.file(path, options = {})
+        context = XML::Parser::Context.file(path)
+        context.encoding = options[:encoding] if options[:encoding]
+        context.options = options[:options] if options[:options]
+
+        self.new(context)
       end
 
-      def self.string(value)
-        parser = self.new
-        parser.input.string = value
-        parser
+      # call-seq:
+      #    XML::Parser.io(io) -> XML::Parser
+      #    XML::Parser.io(io, :encoding => XML::Input::UTF_8,
+      #                       :options => XML::Parser::Options::NOENT
+      #                       :base_url="http://libxml.org") -> XML::Parser
+      #
+      # Creates a new reader by parsing the specified io object.
+      #
+      # Parameters:
+      #
+      #  io - io object that contains the xml to parser
+      #  base_url - The base url for the parsed document.
+      #  encoding - The document encoding, defaults to nil. Valid values
+      #             are the encoding constants defined on XML::Input.
+      #  options - Controls the execution of the parser, defaults to 0.
+      #            Valid values are the constants defined on
+      #            XML::Parser::Options.  Mutliple options can be combined
+      #            by using Bitwise OR (|).
+      def self.io(io, options = {})
+        context = XML::Parser::Context.io(io)
+        context.base_url = options[:base_url] if options[:base_url]
+        context.encoding = options[:encoding] if options[:encoding]
+        context.options = options[:options] if options[:options]
+        self.new(context)
       end
 
-      def self.document(value)
-        parser = self.new
-        parser.input.document = value
-        parser
-      end
-
-      def self.io(value)
-        parser = self.new
-        parser.input.io = value
-        parser
+      # call-seq:
+      #    XML::Parser.string(string)
+      #    XML::Parser.string(string, :encoding => XML::Input::UTF_8,
+      #                               :options => XML::Parser::Options::NOENT
+      #                               :base_url="http://libxml.org") -> XML::Parser
+      #
+      # Creates a new parser by parsing the specified string.
+      #
+      # You may provide an optional hash table to control how the
+      # parsing is performed.  Valid options are:
+      #
+      #  base_url - The base url for the parsed document.
+      #  encoding - The document encoding, defaults to nil. Valid values
+      #             are the encoding constants defined on XML::Input.
+      #  options - Controls the execution of the parser, defaults to 0.
+      #            Valid values are the constants defined on
+      #            XML::Parser::Options.  Mutliple options can be combined
+      #            by using Bitwise OR (|).
+      def self.string(string, options = {})
+        context = XML::Parser::Context.string(string)
+        context.base_url = options[:base_url] if options[:base_url]
+        context.encoding = options[:encoding] if options[:encoding]
+        context.options = options[:options] if options[:options]
+        self.new(context)
       end
 
       def self.register_error_handler(proc)
@@ -39,53 +99,36 @@ module LibXML
         end
       end
 
-      def filename
-        warn("Parser#filename is deprecated.  Use Parser#file instead")
-        self.file
-      end
-
-      def filename=(value)
-        warn("Parser#filename is deprecated.  Use Parser#file instead")
-        self.file = value
-      end
-
-      def file
-        input.file
-      end
-
-      def file=(value)
-        input.file = value
-      end
-
-      def string
-        input.string
-      end
-
-      def string=(value)
-        input.string = value
-      end
-
-      def document
-        input.document
-      end
-
-      def document=(value)
-        input.document = value
-      end
-
-      def io
-        input.io
-      end
-
-      def io=(value)
-        input.io = value
-      end
-
       # :enddoc:
 
       # Bunch of deprecated methods that have moved to the XML module
       VERSION = XML::VERSION
       VERNUM = XML::VERNUM
+
+      def document=(value)
+        warn("XML::Parser#document= is deprecated.  Use XML::Parser.document= instead")
+        @context = XML::Parser::Context.document(value)
+      end
+
+      def file=(value)
+        warn("XML::Parser#file is deprecated.  Use XML::Parser.file instead")
+        @context = XML::Parser::Context.file(value)
+      end
+
+      def filename=(value)
+        warn("XML::Parser#filename is deprecated.  Use XML::Parser.file instead")
+        self.file = value
+      end
+
+      def string=(value)
+        warn("XML::Parser#string is deprecated.  Use XML::Parser.string instead")
+        @context = XML::Parser::Context.string(value)
+      end
+
+      def io=(value)
+        warn("XML::Parser#io is deprecated.  Use XML::Parser.io instead")
+        @context = XML::Parser::Context.io(value)
+      end
 
       def self.enabled_automata?
         warn("XML::Parser.enabled_automata? has been deprecated.  Use XML.enabled_automata? instead")
@@ -305,6 +348,11 @@ module LibXML
       def self.indent_tree_output=(value)
         warn("XML::Parser.indent_tree_output= value has been deprecated.  Use XML.indent_tree_output= value instead")
         XML.indent_tree_output= value
+      end
+
+      def self.filename(value)
+        warn("Parser.filename is deprecated.  Use Parser.file instead")
+        self.file(value)
       end
 
       def self.memory_dump

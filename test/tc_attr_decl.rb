@@ -1,10 +1,8 @@
 require 'xml'
 require 'test/unit'
 
-class AttrNodeTest < Test::Unit::TestCase
+class AttrDeclTest < Test::Unit::TestCase
   def setup
-#    file = File.join(File.dirname(__FILE__), 'model/itunes.xml')
- #   xp = XML::Parser.file(file)
     xp = XML::Parser.string(<<-EOS)
 	<!DOCTYPE test [
 	  <!ELEMENT root (property*)>

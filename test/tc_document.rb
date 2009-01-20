@@ -4,10 +4,8 @@ require 'test/unit'
 
 class TestDocument < Test::Unit::TestCase
   def setup
-    xp = XML::Parser.new
+    xp = XML::Parser.string('<ruby_array uga="booga" foo="bar"><fixnum>one</fixnum><fixnum>two</fixnum></ruby_array>')
     assert_instance_of(XML::Parser, xp)
-    str = '<ruby_array uga="booga" foo="bar"><fixnum>one</fixnum><fixnum>two</fixnum></ruby_array>'
-    assert_equal(str, xp.string = str)
     @doc = xp.parse
     assert_instance_of(XML::Document, @doc)
   end

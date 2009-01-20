@@ -95,6 +95,11 @@ module LibXML
         warn('Document#debug_format_dump is deprecated.  Use Document#to_s instead.')
         self.to_s
       end
+
+      def reader
+        warn('Document#reader is deprecated.  Use XML::Reader.document(self) instead.')
+        XML::Reader.document(self)
+      end
     end
   end
 end  

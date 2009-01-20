@@ -4,9 +4,7 @@ require 'test/unit'
 
 class TC_XML_Node_XLink < Test::Unit::TestCase
   def setup()
-    xp = XML::Parser.new()
-    str = '<ruby_array xmlns:xlink="http://www.w3.org/1999/xlink/namespace/"><fixnum xlink:type="simple">one</fixnum></ruby_array>'
-    assert_equal(str, xp.string = str)
+    xp = XML::Parser.string('<ruby_array xmlns:xlink="http://www.w3.org/1999/xlink/namespace/"><fixnum xlink:type="simple">one</fixnum></ruby_array>')
     doc = xp.parse
     assert_instance_of(XML::Document, doc)
     @root = doc.root

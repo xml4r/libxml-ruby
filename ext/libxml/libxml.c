@@ -527,7 +527,7 @@ static VALUE rxml_default_substitute_entities_get(VALUE class)
  */
 static VALUE rxml_default_substitute_entities_set(VALUE class, VALUE bool)
 {
-  if (TYPE(bool) == T_FALSE)
+  if (bool == Qfalse)
   {
     xmlSubstituteEntitiesDefault(0);
     return (Qfalse);

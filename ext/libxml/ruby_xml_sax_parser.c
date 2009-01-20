@@ -44,7 +44,7 @@ static ID CALLBACKS_ATTR;
 /* ======  Parser  =========== */
 /*
  * call-seq:
- *    sax_parser.initialize -> sax_parser
+ *    sax_parser.initialize -> XML::SaxParser
  *
  * Initiliazes instance of parser.
  */
@@ -60,16 +60,9 @@ static int rxml_sax_parser_parse_file(VALUE self, VALUE input)
 {
   VALUE handler = rb_ivar_get(self, CALLBACKS_ATTR);
   VALUE file = rb_ivar_get(input, FILE_ATTR);
-  return xmlSAXUserParseFile((xmlSAXHandlerPtr) &rxml_sax_handler,
-      (void *) handler, StringValuePtr(file));
-}
 
-static int rxml_sax_parser_parse_string(VALUE self, VALUE input)
-{
-  VALUE handler = rb_ivar_get(self, CALLBACKS_ATTR);
-  VALUE str = rb_ivar_get(input, STRING_ATTR);
-  return xmlSAXUserParseMemory((xmlSAXHandlerPtr) &rxml_sax_handler,
-      (void *) handler, StringValuePtr(str), RSTRING_LEN(str));
+  return xmlSAXUserParseFile((xmlSAXHandlerPtr) &rxml_sax_handler,
+                             (void *) handler, StringValuePtr(file));
 }
 
 static int rxml_sax_parser_parse_io(VALUE self, VALUE input)
@@ -84,6 +77,15 @@ static int rxml_sax_parser_parse_io(VALUE self, VALUE input)
           (void *) io, xmlEncoding);
   return xmlParseDocument(ctxt);
 }
+
+static int rxml_sax_parser_parse_string(VALUE self, VALUE input)
+{
+  VALUE handler = rb_ivar_get(self, CALLBACKS_ATTR);
+  VALUE str = rb_ivar_get(input, STRING_ATTR);
+  return xmlSAXUserParseMemory((xmlSAXHandlerPtr) &rxml_sax_handler,
+      (void *) handler, StringValuePtr(str), RSTRING_LEN(str));
+}
+
 
 /*
  * call-seq:

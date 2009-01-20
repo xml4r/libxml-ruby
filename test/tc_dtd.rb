@@ -58,7 +58,7 @@ class TestDtd < Test::Unit::TestCase
     assert_not_nil(error.node)
     assert_equal('invalid', error.node.name)
   end
-  
+
   def test_external_dtd
     xml = <<-EOS
       <!DOCTYPE test PUBLIC "-//TEST" "test.dtd" []>
@@ -74,13 +74,21 @@ class TestDtd < Test::Unit::TestCase
 
     XML.default_load_external_dtd = false
     doc = XML::Parser.string(xml).parse
-    assert_equal(Array.new, errors)
+    assert_equal(0, errors.length)
 
+    errors = Array.new
     XML.default_load_external_dtd = true
     doc = XML::Parser.string(xml).parse
+    assert_equal(1, errors.length)
     assert_equal("Warning: failed to load external entity \"test.dtd\" at :1.",
-                  errors.map do |error|
-                    error.to_s
-                  end.join(' '))
+                 errors[0].to_s)
+
+    errors = Array.new
+    doc = XML::Parser.string(xml, :options => XML::Parser::Options::DTDLOAD).parse
+    assert_equal(1, errors.length)
+    assert_equal("Warning: failed to load external entity \"test.dtd\" at :1.",
+                 errors[0].to_s)
+  ensure
+    XML::Error.reset_handler
   end
 end

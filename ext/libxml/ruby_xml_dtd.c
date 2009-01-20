@@ -89,7 +89,7 @@ static VALUE rxml_dtd_initialize(int argc, VALUE *argv, VALUE self)
     if (xdtd == NULL)
       rxml_raise(&xmlLastError);
 
-    DATA_PTR( self) = xdtd;
+    DATA_PTR(self) = xdtd;
 
     xmlSetTreeDoc((xmlNodePtr) xdtd, NULL);
     break;
