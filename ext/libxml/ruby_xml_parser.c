@@ -47,7 +47,7 @@ static VALUE rxml_parser_initialize(int argc, VALUE *argv, VALUE self)
   if (context == Qnil)
   {
     rb_warn("Passing no parameters to XML::Parser.new is deprecated.  Pass an instance of XML::Parser::Context instead.");
-    context = rb_class_new_instance(0, Qnil, cXMLParserContext);
+    context = rb_class_new_instance(0, NULL, cXMLParserContext);
   }
 
   rb_ivar_set(self, CONTEXT_ATTR, context);
@@ -65,7 +65,6 @@ static VALUE rxml_parser_initialize(int argc, VALUE *argv, VALUE self)
 static VALUE rxml_parser_parse(VALUE self)
 {
   xmlParserCtxtPtr ctxt;
-  xmlDocPtr xdoc;
   VALUE context = rb_ivar_get(self, CONTEXT_ATTR);
   
   Data_Get_Struct(context, xmlParserCtxt, ctxt);

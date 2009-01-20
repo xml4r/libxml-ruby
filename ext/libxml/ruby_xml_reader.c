@@ -4,9 +4,6 @@
 #include "ruby_libxml.h"
 #include "ruby_xml_reader.h"
 
-VALUE cXMLReader;
-static ID INPUT_ATTR;
-
 /*
  * Document-class: LibXML::XML::Reader
  *
@@ -41,111 +38,15 @@ static ID INPUT_ATTR;
  *
  * For a more in depth tutorial, albeit in C, see http://xmlsoft.org/xmlreader.html.*/
 
+VALUE cXMLReader;
 
-static VALUE rxml_reader_alloc(VALUE klass)
+ID BASE_URL_KEY;
+ID ENCODING_KEY;
+ID OPTIONS_KEY;
+
+static VALUE rxml_reader_wrap(xmlTextReaderPtr reader)
 {
-  return Data_Wrap_Struct(klass, NULL, NULL, NULL);
-}
-
-
-static VALUE rxml_reader_parse(VALUE self);
-
-/*
- * call-seq:
- *    reader.initialize(input) -> XML::Reader
- *
- * Initializes an instance of a reader based on 
- * the provided XML::Input object.
- */
-static VALUE rxml_reader_initialize(VALUE self, VALUE input)
-{
-  if (rb_obj_is_kind_of(input, cXMLInput) == Qfalse)
-    rb_raise(rb_eTypeError, "Must pass an XML::Input object");
-
-  rb_ivar_set(self, INPUT_ATTR, input);
-
-  rxml_reader_parse(self);
-
-  return self;
-}
-
-static xmlTextReaderPtr rxml_reader_document(VALUE input)
-{
-  VALUE document = rb_ivar_get(input, DOCUMENT_ATTR);
-  xmlDocPtr xdoc;
-
-  Data_Get_Struct(document, xmlDoc, xdoc);
-  return xmlReaderWalker(xdoc);
-}
-
-static xmlTextReaderPtr rxml_reader_file(VALUE input)
-{
-  VALUE file = rb_ivar_get(input, FILE_ATTR);
-  VALUE encoding = rb_ivar_get(input, ENCODING_ATTR);
-  VALUE options = rb_ivar_get(input, OPTIONS_ATTR);
-
-  return xmlReaderForFile(StringValueCStr(file),
-                          xmlGetCharEncodingName((xmlCharEncoding)NUM2INT(encoding)),
-                          NUM2INT(options));
-}
-
-static xmlTextReaderPtr rxml_reader_io(VALUE input)
-{
-  VALUE io = rb_ivar_get(input, IO_ATTR);
-  VALUE base_url = rb_ivar_get(input, BASE_URL_ATTR);
-  VALUE encoding = rb_ivar_get(input, ENCODING_ATTR);
-  VALUE options = rb_ivar_get(input, OPTIONS_ATTR);
-  const char* xurl = NIL_P(base_url) ? NULL : StringValueCStr(base_url);
-
-  return xmlReaderForIO((xmlInputReadCallback) rxml_read_callback, NULL,
-                        (void *) io, 
-                        xurl, 
-                        xmlGetCharEncodingName((xmlCharEncoding)NUM2INT(encoding)),
-                        NUM2INT(options));
-}
-
-static xmlTextReaderPtr rxml_reader_string(VALUE input)
-{
-  VALUE string = rb_ivar_get(input, STRING_ATTR);
-  VALUE base_url = rb_ivar_get(input, BASE_URL_ATTR);
-  VALUE encoding = rb_ivar_get(input, ENCODING_ATTR);
-  VALUE options = rb_ivar_get(input, OPTIONS_ATTR);
-  const char* xurl = NIL_P(base_url) ? NULL : StringValueCStr(base_url);
-
-  return xmlReaderForMemory(StringValuePtr(string), RSTRING_LEN(string), 
-                            xurl, 
-                            xmlGetCharEncodingName((xmlCharEncoding)NUM2INT(encoding)),
-                            NUM2INT(options));
-}
-
-
-static VALUE rxml_reader_parse(VALUE self)
-{
-  VALUE input = rb_ivar_get(self, INPUT_ATTR);
-  xmlTextReaderPtr xreader;
-  
-  if (rb_obj_is_kind_of(input, cXMLInput) == Qfalse)
-    rb_raise(rb_eTypeError, "Must pass an XML::Input object");
-
-  rb_ivar_set(self, INPUT_ATTR, input);
-
-  if (rb_ivar_get(input, FILE_ATTR) != Qnil)
-    xreader = rxml_reader_file(input);
-  else if (rb_ivar_get(input, STRING_ATTR) != Qnil)
-    xreader = rxml_reader_string(input);
-  else if (rb_ivar_get(input, DOCUMENT_ATTR) != Qnil)
-    xreader = rxml_reader_document(input);
-  else if (rb_ivar_get(input, IO_ATTR) != Qnil)
-    xreader = rxml_reader_io(input);
-  else
-    rb_raise(rb_eArgError, "You must specify a reader data source");
-
-  if (!xreader)
-    rxml_raise(&xmlLastError);
-
-  DATA_PTR(self) = xreader;
-
-  return self;
+  return Data_Wrap_Struct(cXMLReader, NULL, xmlFreeTextReader, reader);
 }
 
 static xmlTextReaderPtr rxml_text_reader_get(VALUE obj)
@@ -153,6 +54,192 @@ static xmlTextReaderPtr rxml_text_reader_get(VALUE obj)
   xmlTextReaderPtr xreader;
   Data_Get_Struct(obj, xmlTextReader, xreader);
   return xreader;
+}
+
+/*
+ * call-seq:
+ *    XML::Reader.document(doc) -> XML::Reader
+ *
+ * Create an new reader for the specified document.
+ */
+VALUE rxml_reader_document(VALUE klass, VALUE doc)
+{
+  xmlDocPtr xdoc;
+  xmlTextReaderPtr xreader;
+
+  Data_Get_Struct(doc, xmlDoc, xdoc);
+
+  xreader = xmlReaderWalker(xdoc);
+
+  if (xreader == NULL)
+    rxml_raise(&xmlLastError);
+
+  return rxml_reader_wrap(xreader);
+}
+
+/* call-seq:
+ *    XML::Reader.file(path) -> XML::Reader
+ *    XML::Reader.file(path, :encoding => XML::Input::UTF_8,
+ *                           :options => XML::Parser::Options::NOENT) -> XML::Parser
+ *
+ * Creates a new reader by parsing the specified file or uri.
+ *
+ * You may provide an optional hash table to control how the
+ * parsing is performed.  Valid options are:
+ *
+ *  encoding - The document encoding, defaults to nil. Valid values
+ *             are the encoding constants defined on XML::Input.
+ *  options - Controls the execution of the parser, defaults to 0.
+ *            Valid values are the constants defined on
+ *            XML::Parser::Options.  Mutliple options can be combined
+ *            by using Bitwise OR (|). 
+ */
+static VALUE rxml_reader_file(int argc, VALUE *argv, VALUE klass)
+{
+  xmlTextReaderPtr xreader;
+  VALUE path;
+  VALUE options;
+
+  char *xencoding = NULL;
+  int xoptions = 0;
+
+  rb_scan_args(argc, argv, "11", &path, &options);
+  Check_Type(path, T_STRING);
+
+  if (!NIL_P(options))
+  {
+    VALUE encoding = Qnil;
+    VALUE parserOptions = Qnil;
+
+    Check_Type(options, T_HASH);
+
+    encoding = rb_hash_aref(options, BASE_URL_KEY);
+    xencoding = NIL_P(encoding) ? NULL : StringValueCStr(encoding);
+
+    parserOptions = rb_hash_aref(options, OPTIONS_KEY);
+    xoptions = NIL_P(parserOptions) ? 0 : NUM2INT(parserOptions);
+  }
+
+  xreader = xmlReaderForFile(StringValueCStr(path), xencoding, xoptions);
+
+  if (xreader == NULL)
+    rxml_raise(&xmlLastError);
+
+  return rxml_reader_wrap(xreader);
+}
+
+/* call-seq:
+ *    XML::Reader.io(io) -> XML::Reader
+ *    XML::Reader.io(io, :encoding => XML::Input::UTF_8,
+ *                       :options => XML::Parser::Options::NOENT) -> XML::Parser
+ *
+ * Creates a new reader by parsing the specified io object.
+ *
+ * You may provide an optional hash table to control how the
+ * parsing is performed.  Valid options are:
+ *
+ *  base_url - The base url for the parsed document.
+ *  encoding - The document encoding, defaults to nil. Valid values
+ *             are the encoding constants defined on XML::Input.
+ *  options - Controls the execution of the parser, defaults to 0.
+ *            Valid values are the constants defined on
+ *            XML::Parser::Options.  Mutliple options can be combined
+ *            by using Bitwise OR (|). 
+ */
+static VALUE rxml_reader_io(int argc, VALUE *argv, VALUE klass)
+{
+  xmlTextReaderPtr xreader;
+  VALUE io;
+  VALUE options;
+  char *xbaseurl = NULL;
+  char *xencoding = NULL;
+  int xoptions = 0;
+
+  rb_scan_args(argc, argv, "11", &io, &options);
+
+  if (!NIL_P(options))
+  {
+    VALUE baseurl = Qnil;
+    VALUE encoding = Qnil;
+    VALUE parserOptions = Qnil;
+
+    Check_Type(options, T_HASH);
+
+    baseurl = rb_hash_aref(options, BASE_URL_KEY);
+    xbaseurl = NIL_P(baseurl) ? NULL : StringValueCStr(baseurl);
+
+    encoding = rb_hash_aref(options, ENCODING_KEY);
+    xencoding = NIL_P(encoding) ? NULL : StringValueCStr(encoding);
+
+    parserOptions = rb_hash_aref(options, OPTIONS_KEY);
+    xoptions = NIL_P(parserOptions) ? 0 : NUM2INT(parserOptions);
+  }
+  
+  xreader = xmlReaderForIO((xmlInputReadCallback) rxml_read_callback, NULL,
+                           (void *) io, 
+                           xbaseurl, xencoding, xoptions);
+
+  if (xreader == NULL)
+    rxml_raise(&xmlLastError);
+
+  return rxml_reader_wrap(xreader);
+}
+
+/* call-seq:
+ *    XML::Reader.string(io) -> XML::Reader
+ *    XML::Reader.string(io, :encoding => XML::Input::UTF_8,
+ *                           :options => XML::Parser::Options::NOENT) -> XML::Parser
+ *
+ * Creates a new reader by parsing the specified string.
+ *
+ * You may provide an optional hash table to control how the
+ * parsing is performed.  Valid options are:
+ *
+ *  base_url - The base url for the parsed document.
+ *  encoding - The document encoding, defaults to nil. Valid values
+ *             are the encoding constants defined on XML::Input.
+ *  options - Controls the execution of the parser, defaults to 0.
+ *            Valid values are the constants defined on
+ *            XML::Parser::Options.  Mutliple options can be combined
+ *            by using Bitwise OR (|).
+ */
+static VALUE rxml_reader_string(int argc, VALUE *argv, VALUE klass)
+{
+  xmlTextReaderPtr xreader;
+  VALUE string;
+  VALUE options;
+  char *xbaseurl = NULL;
+  char *xencoding = NULL;
+  int xoptions = 0;
+
+  rb_scan_args(argc, argv, "11", &string, &options);
+  Check_Type(string, T_STRING);
+
+  if (!NIL_P(options))
+  {
+    VALUE baseurl = Qnil;
+    VALUE encoding = Qnil;
+    VALUE parserOptions = Qnil;
+
+    Check_Type(options, T_HASH);
+
+    baseurl = rb_hash_aref(options, BASE_URL_KEY);
+    xbaseurl = NIL_P(baseurl) ? NULL : StringValueCStr(baseurl);
+
+    encoding = rb_hash_aref(options, ENCODING_KEY);
+    xencoding = NIL_P(encoding) ? NULL : StringValueCStr(encoding);
+
+    parserOptions = rb_hash_aref(options, OPTIONS_KEY);
+    xoptions = NIL_P(parserOptions) ? 0 : NUM2INT(parserOptions);
+  }
+  
+  xreader = xmlReaderForMemory(StringValueCStr(string), RSTRING_LEN(string), 
+                               xbaseurl, xencoding, xoptions);
+
+  if (xreader == NULL)
+    rxml_raise(&xmlLastError);
+
+  return rxml_reader_wrap(xreader);
 }
 
 /*
@@ -485,11 +572,11 @@ static VALUE rxml_reader_encoding(VALUE self)
 
 /*
  * call-seq:
- *    reader.base_url -> URI
+ *    reader.base_uri -> URI
  *
  * Determine the base URI of the node.
  */
-static VALUE rxml_reader_base_url(VALUE self)
+static VALUE rxml_reader_base_uri(VALUE self)
 {
   const xmlChar *result = xmlTextReaderConstBaseUri(rxml_text_reader_get(self));
   return (result == NULL ? Qnil : rb_str_new2((const char*)result));
@@ -785,16 +872,20 @@ mXML = rb_define_module_under(mLibXML, "XML");
 
 void ruby_init_xml_reader(void)
 {
+  BASE_URL_KEY = rb_intern("base_url");
+  ENCODING_KEY = rb_intern("encoding");
+  OPTIONS_KEY = rb_intern("options");
+
   cXMLReader = rb_define_class_under(mXML, "Reader", rb_cObject);
 
-  /* Atributes */
-  INPUT_ATTR = rb_intern("@input");
+  rb_define_singleton_method(cXMLReader, "walker", rxml_reader_document, 1);
+  rb_define_singleton_method(cXMLReader, "file", rxml_reader_file, -1);
+  rb_define_singleton_method(cXMLReader, "io", rxml_reader_io, -1);
+  rb_define_singleton_method(cXMLReader, "string", rxml_reader_string, -1);
 
-  rb_define_alloc_func(cXMLReader, rxml_reader_alloc);
-  rb_define_method(cXMLReader, "initialize", rxml_reader_initialize, 1);
   rb_define_method(cXMLReader, "[]", rxml_reader_attribute, 1);
   rb_define_method(cXMLReader, "attribute_count", rxml_reader_attr_count, 0);
-  rb_define_method(cXMLReader, "base_url", rxml_reader_base_url, 0);
+  rb_define_method(cXMLReader, "base_uri", rxml_reader_base_uri, 0);
 #if LIBXML_VERSION >= 20618
   rb_define_method(cXMLReader, "byte_consumed", rxml_reader_byte_consumed, 0);
 #endif

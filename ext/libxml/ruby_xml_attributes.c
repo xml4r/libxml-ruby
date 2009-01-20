@@ -89,7 +89,7 @@ static VALUE rxml_attributes_get_attribute(VALUE self, VALUE name)
   if (!xattr)
     return Qnil;
   else if (xattr->type == XML_ATTRIBUTE_DECL)
-    return rxml_attr_decl_wrap(xattr);
+    return rxml_attr_decl_wrap((xmlAttributePtr)xattr);
   else
     return rxml_attr_wrap(xattr);
 }
@@ -124,7 +124,7 @@ static VALUE rxml_attributes_get_attribute_ns(VALUE self, VALUE namespace,
   if (!xattr)
     return Qnil;
   else if (xattr->type == XML_ATTRIBUTE_DECL)
-    return rxml_attr_decl_wrap(xattr);
+    return rxml_attr_decl_wrap((xmlAttributePtr)xattr);
   else
     return rxml_attr_wrap(xattr);
 }

@@ -295,7 +295,7 @@ VALUE rxml_attr_value_get(VALUE self)
   VALUE result = Qnil;
 
   Data_Get_Struct(self, xmlAttr, xattr);
-  value = xmlNodeGetContent(xattr);
+  value = xmlNodeGetContent((xmlNodePtr)xattr);
 
   if (value != NULL)
   {

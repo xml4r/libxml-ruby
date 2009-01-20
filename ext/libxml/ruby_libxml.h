@@ -65,6 +65,7 @@
 #include "ruby_xml_state.h"
 #include "ruby_xml_attributes.h"
 #include "ruby_xml_attr.h"
+#include "ruby_xml_attr_decl.h"
 #include "ruby_xml_document.h"
 #include "ruby_xml_node.h"
 #include "ruby_xml_namespace.h"

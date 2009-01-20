@@ -87,19 +87,19 @@ static VALUE rxml_html_parser_context_io(VALUE klass, VALUE io)
                                      (void*)io, XML_CHAR_ENCODING_NONE);
 
   ctxt = htmlNewParserCtxt();
-  if (ctxt == NULL)
+  if (!ctxt)
   {
-      xmlFreeParserInputBuffer(input);
-      return (NULL);
+    xmlFreeParserInputBuffer(input);
+    rxml_raise(&xmlLastError);
   }
 
   stream = xmlNewIOInputStream(ctxt, input, XML_CHAR_ENCODING_NONE);
 
-  if (stream == NULL)
+  if (!stream)
   {
     xmlFreeParserInputBuffer(input);
     xmlFreeParserCtxt(ctxt);
-    return (NULL);
+    rxml_raise(&xmlLastError);
   }
   inputPush(ctxt, stream);
 

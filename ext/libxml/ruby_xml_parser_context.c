@@ -51,7 +51,7 @@ static VALUE rxml_parser_context_document(VALUE klass, VALUE document)
     rb_raise(rb_eTypeError, "Must pass an XML::Document object");
 
   Data_Get_Struct(document, xmlDoc, xdoc);
-  xmlDocDumpFormatMemoryEnc(xdoc, &buffer, &length, NULL, xdoc->encoding);
+  xmlDocDumpFormatMemoryEnc(xdoc, &buffer, &length, xdoc->encoding, 0);
 
   ctxt = xmlCreateDocParserCtxt(buffer);
   return rxml_parser_context_wrap(ctxt);
@@ -117,19 +117,19 @@ static VALUE rxml_parser_context_io(VALUE klass, VALUE io)
                                        (void*)io, XML_CHAR_ENCODING_NONE);
     
   ctxt = xmlNewParserCtxt();
-  if (ctxt == NULL)
+  if (!ctxt)
   {
-      xmlFreeParserInputBuffer(input);
-      return (NULL);
+    xmlFreeParserInputBuffer(input);
+    rxml_raise(&xmlLastError);
   }
 
   stream = xmlNewIOInputStream(ctxt, input, XML_CHAR_ENCODING_NONE);
 
-  if (stream == NULL)
+  if (!stream)
   {
     xmlFreeParserInputBuffer(input);
     xmlFreeParserCtxt(ctxt);
-    return (NULL);
+    rxml_raise(&xmlLastError);
   }
   inputPush(ctxt, stream);
   return rxml_parser_context_wrap(ctxt);
