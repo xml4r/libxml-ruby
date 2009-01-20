@@ -47,6 +47,11 @@ class TestReader < Test::Unit::TestCase
     assert_equal(expected, node_types)
   end
 
+  def test_document
+    reader = XML::Reader.document(XML::Document.file(XML_FILE))
+    verify_simple(reader)
+  end
+
   def test_file
     reader = XML::Reader.file(XML_FILE)
     verify_simple(reader)
@@ -74,11 +79,6 @@ class TestReader < Test::Unit::TestCase
     data = File.read(XML_FILE)
     string_io = StringIO.new(data)
     reader = XML::Reader.io(string_io)
-    verify_simple(reader)
-  end
-
-  def test_document
-    reader = XML::Reader.document(XML::Document.file(XML_FILE))
     verify_simple(reader)
   end
 
@@ -178,10 +178,5 @@ class TestReader < Test::Unit::TestCase
     reader = XML::Reader.file(XML_FILE)
     reader.read
     assert_instance_of(XML::Node, reader.node)
-  end
-
-  def test_walker
-    reader = XML::Reader.walker(XML::Document.file(XML_FILE))
-    verify_simple(reader)
   end
 end

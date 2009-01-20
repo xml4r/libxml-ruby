@@ -4,7 +4,7 @@ module LibXML
       # call-seq:
       #    XML::Parser.document(document) -> XML::Parser
       #
-      # Creates a new reader by parsing the specified document.
+      # Creates a new parser for the specified document.
       #
       # Parameters:
       #

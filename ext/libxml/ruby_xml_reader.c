@@ -878,7 +878,7 @@ void ruby_init_xml_reader(void)
 
   cXMLReader = rb_define_class_under(mXML, "Reader", rb_cObject);
 
-  rb_define_singleton_method(cXMLReader, "walker", rxml_reader_document, 1);
+  rb_define_singleton_method(cXMLReader, "document", rxml_reader_document, 1);
   rb_define_singleton_method(cXMLReader, "file", rxml_reader_file, -1);
   rb_define_singleton_method(cXMLReader, "io", rxml_reader_io, -1);
   rb_define_singleton_method(cXMLReader, "string", rxml_reader_string, -1);
