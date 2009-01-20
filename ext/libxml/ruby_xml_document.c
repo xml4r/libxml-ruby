@@ -289,35 +289,34 @@ static VALUE rxml_document_debug(VALUE self)
 
 /*
  * call-seq:
- *    document.encoding -> "encoding"
+ *    document.encoding -> XML::Encoding::UTF_8
  *
  * Obtain the encoding specified by this document.
  */
 static VALUE rxml_document_encoding_get(VALUE self)
 {
   xmlDocPtr xdoc;
-
   Data_Get_Struct(self, xmlDoc, xdoc);
-  if (xdoc->encoding == NULL)
-    return (Qnil);
-  else
-    return (rb_str_new2((const char*) xdoc->encoding));
+
+  return INT2NUM(xmlParseCharEncoding(xdoc->encoding));
 }
 
 /*
  * call-seq:
- *    document.encoding = "encoding"
+ *    document.encoding = XML::Encoding::UTF_8
  *
  * Set the encoding for this document.
  */
 static VALUE rxml_document_encoding_set(VALUE self, VALUE encoding)
 {
   xmlDocPtr xdoc;
+  const char* xencoding = xmlGetCharEncodingName((xmlCharEncoding)NUM2INT(encoding));
 
-  Check_Type(encoding, T_STRING);
-  Data_Get_Struct(self, xmlDoc, xdoc);
+  if (xdoc->encoding != NULL)
+    xmlFree((xmlChar *) xdoc->encoding);
+
   xdoc->encoding = xmlStrdup((xmlChar *)StringValuePtr(encoding));
-  return (rxml_document_encoding_get(self));
+  return self;
 }
 
 /*

@@ -242,7 +242,7 @@ static VALUE rxml_parser_context_docbook_q(VALUE self)
 
 /*
  * call-seq:
- *    context.encoding -> "encoding"
+ *    context.encoding -> XML::Encoding::UTF_8
  *
  * Obtain the character encoding identifier used in
  * this context.
