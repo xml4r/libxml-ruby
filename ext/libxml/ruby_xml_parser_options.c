@@ -48,12 +48,20 @@ void ruby_init_parser_options(void)
   rb_define_const(mXMLParserOptions, "NSCLEAN", INT2NUM(XML_PARSE_NSCLEAN));
   /* merge CDATA as text nodes */
   rb_define_const(mXMLParserOptions, "NOCDATA", INT2NUM(XML_PARSE_NOCDATA));
+#if LIBXML_VERSION >= 20621
   /* do not generate XINCLUDE START/END nodes */
   rb_define_const(mXMLParserOptions, "NOXINCNODE", INT2NUM(XML_PARSE_NOXINCNODE));
+#endif
+#if LIBXML_VERSION >= 20700
   /* compact small text nodes */
   rb_define_const(mXMLParserOptions, "COMPACT", INT2NUM(XML_PARSE_COMPACT));
+  /* parse using XML-1.0 before update 5 */
+  rb_define_const(mXMLParserOptions, "PARSE_OLD10", INT2NUM(XML_PARSE_OLD10));
   /* do not fixup XINCLUDE xml:base uris */
   rb_define_const(mXMLParserOptions, "NOBASEFIX", INT2NUM(XML_PARSE_NOBASEFIX));
+#endif
+#if LIBXML_VERSION >= 20703
   /* relax any hardcoded limit from the parser */
   rb_define_const(mXMLParserOptions, "HUGE", INT2NUM(XML_PARSE_HUGE));
+#endif
 }

@@ -27,8 +27,10 @@ void ruby_init_html_parser_options(void)
 {
   mXMLHtmlParserOptions = rb_define_module_under(cXMLHtmlParser, "Options");
 
+#if LIBXML_VERSION >= 20621
   /* Relaxed parsing */
   rb_define_const(mXMLHtmlParserOptions, "RECOVER", INT2NUM(HTML_PARSE_RECOVER)); 
+#endif
   /* suppress error reports */
   rb_define_const(mXMLHtmlParserOptions, "NOERROR", INT2NUM(HTML_PARSE_NOERROR)); 
   /* suppress warning reports */
@@ -37,8 +39,10 @@ void ruby_init_html_parser_options(void)
   rb_define_const(mXMLHtmlParserOptions, "PEDANTIC", INT2NUM(HTML_PARSE_PEDANTIC)); 
   /* remove blank nodes */
   rb_define_const(mXMLHtmlParserOptions, "NOBLANKS", INT2NUM(HTML_PARSE_NOBLANKS)); 
+#if LIBXML_VERSION >= 20621
   /* Forbid network access */
   rb_define_const(mXMLHtmlParserOptions, "NONET", INT2NUM(HTML_PARSE_NONET)); 
   /* compact small text nodes */
   rb_define_const(mXMLHtmlParserOptions, "COMPACT", INT2NUM(HTML_PARSE_COMPACT));
+#endif
 }
