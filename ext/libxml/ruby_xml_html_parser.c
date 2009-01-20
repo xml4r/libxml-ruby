@@ -28,15 +28,6 @@
  */
 
 VALUE cXMLHtmlParser;
-
-/* Document-class: LibXML::XML::HTMLParser::Options
- *
- * The HTML parser implements an HTML 4.0 non-verifying parser with an API
- * compatible with the XML::Parser.  In contrast with the XML::Parser,
- * it can parse "real world" HTML, even if it severely broken from a
- * specification point of view.
-*/
-VALUE mXMLHtmlParserOptions;
 static ID CONTEXT_ATTR;
 
 

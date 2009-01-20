@@ -7,10 +7,10 @@
 
 /* Document-class: LibXML::XML::HTMLParserOptions
  *
- * The HTML parser implements an HTML 4.0 non-verifying parser with an API
- * compatible with the XML::Parser.  In contrast with the XML::Parser,
- * it can parse "real world" HTML, even if it severely broken from a
- * specification point of view.
+ * Options that control the operation of the HTMLParser.  The easiest
+ * way to set a parser's options is to use the methods
+ * XML::HTMLParser.file, XML::HTMLParser.io or XML::HTMLParser.string.
+ * For additional control, see XML::HTMLParser::Context#options=.
 */
 
 VALUE mXMLHtmlParserOptions;
