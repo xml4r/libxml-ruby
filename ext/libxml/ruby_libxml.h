@@ -61,7 +61,7 @@
 #endif
 
 #include "ruby_xml_error.h"
-#include "ruby_xml_input.h"
+#include "ruby_xml_encoding.h"
 #include "ruby_xml_state.h"
 #include "ruby_xml_attributes.h"
 #include "ruby_xml_attr.h"
@@ -92,5 +92,7 @@
 
 extern VALUE mLibXML;
 extern VALUE mXML;
+
+int rxml_read_callback(void *context, char *buffer, int len);
 
 #endif

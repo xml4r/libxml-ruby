@@ -36,36 +36,13 @@
  */
 
 VALUE cXMLSaxParser;
-
-static ID INPUT_ATTR;
 static ID CALLBACKS_ATTR;
+static ID CONTEXT_ATTR;
 
 
 /* ======  Parser  =========== */
-/*
- * call-seq:
- *    sax_parser.initialize -> XML::SaxParser
- *
- * Initiliazes instance of parser.
- */
-static VALUE rxml_sax_parser_initialize(VALUE self)
-{
-  VALUE input = rb_class_new_instance(0, NULL, cXMLInput);
-  rb_iv_set(self, "@input", input);
-  return self;
-}
 
-/* Parsing data sources */
-static int rxml_sax_parser_parse_file(VALUE self, VALUE input)
-{
-  VALUE handler = rb_ivar_get(self, CALLBACKS_ATTR);
-  VALUE file = rb_ivar_get(input, FILE_ATTR);
-
-  return xmlSAXUserParseFile((xmlSAXHandlerPtr) &rxml_sax_handler,
-                             (void *) handler, StringValuePtr(file));
-}
-
-static int rxml_sax_parser_parse_io(VALUE self, VALUE input)
+/*static int rxml_sax_parser_parse_io(VALUE self, VALUE input)
 {
   VALUE handler = rb_ivar_get(self, CALLBACKS_ATTR);
   VALUE io = rb_ivar_get(input, IO_ATTR);
@@ -76,16 +53,31 @@ static int rxml_sax_parser_parse_io(VALUE self, VALUE input)
           (void *) handler, (xmlInputReadCallback) rxml_read_callback, NULL,
           (void *) io, xmlEncoding);
   return xmlParseDocument(ctxt);
-}
+}*/
 
-static int rxml_sax_parser_parse_string(VALUE self, VALUE input)
+
+/*
+ * call-seq:
+ *    parser.initialize(context) -> XML::Parser
+ *
+ * Creates a new XML::Parser from the specified 
+ * XML::Parser::Context.
+ */
+static VALUE rxml_sax_parser_initialize(int argc, VALUE *argv, VALUE self)
 {
-  VALUE handler = rb_ivar_get(self, CALLBACKS_ATTR);
-  VALUE str = rb_ivar_get(input, STRING_ATTR);
-  return xmlSAXUserParseMemory((xmlSAXHandlerPtr) &rxml_sax_handler,
-      (void *) handler, StringValuePtr(str), RSTRING_LEN(str));
-}
+  VALUE context = Qnil;
 
+  rb_scan_args(argc, argv, "01", &context);
+
+  if (context == Qnil)
+  {
+    rb_warn("Passing no parameters to XML::SaxParser.new is deprecated.  Pass an instance of XML::Parser::Context instead.");
+    context = rb_class_new_instance(0, NULL, cXMLParserContext);
+  }
+
+  rb_ivar_set(self, CONTEXT_ATTR, context);
+  return self;
+}
 
 /*
  * call-seq:
@@ -96,27 +88,25 @@ static int rxml_sax_parser_parse_string(VALUE self, VALUE input)
  */
 static VALUE rxml_sax_parser_parse(VALUE self)
 {
-  int status;
-  VALUE input = rb_ivar_get(self, INPUT_ATTR);
+  VALUE context = rb_ivar_get(self, CONTEXT_ATTR);
+  xmlParserCtxtPtr ctxt;
+  Data_Get_Struct(context, xmlParserCtxt, ctxt);
 
-  if (rb_ivar_get(input, FILE_ATTR) != Qnil)
-    status = rxml_sax_parser_parse_file(self, input);
-  else if (rb_ivar_get(input, STRING_ATTR) != Qnil)
-    status = rxml_sax_parser_parse_string(self, input);
-  else if (rb_ivar_get(input, IO_ATTR) != Qnil)
-    status = rxml_sax_parser_parse_io(self, input);
-  else
-    rb_raise(rb_eArgError, "You must specify a parser data source");
+  ctxt->sax2 = 1;
+	ctxt->userData = rb_ivar_get(self, CALLBACKS_ATTR);
 
-  if (status)
+  if (ctxt->sax != (xmlSAXHandlerPtr) &xmlDefaultSAXHandler)
+    xmlFree(ctxt->sax);
+    
+  ctxt->sax = (xmlSAXHandlerPtr)&rxml_sax_handler;
+    
+  if (xmlParseDocument(ctxt) == -1 || !ctxt->wellFormed)
   {
-    rxml_raise(&xmlLastError);
-    return Qfalse;
+    if (ctxt->myDoc)
+      xmlFreeDoc(ctxt->myDoc);
+    rxml_raise(&ctxt->lastError);
   }
-  else
-  {
-    return (Qtrue);
-  }
+  return Qtrue;
 }
 
 // Rdoc needs to know
@@ -132,11 +122,10 @@ void ruby_init_xml_sax_parser(void)
 
   /* Atributes */
   CALLBACKS_ATTR = rb_intern("@callbacks");
-  INPUT_ATTR = rb_intern("@input");
+  CONTEXT_ATTR = rb_intern("@context");
   rb_define_attr(cXMLSaxParser, "callbacks", 1, 1);
-  rb_define_attr(cXMLSaxParser, "input", 1, 0);
 
   /* Instance Methods */
-  rb_define_method(cXMLSaxParser, "initialize", rxml_sax_parser_initialize, 0);
+  rb_define_method(cXMLSaxParser, "initialize", rxml_sax_parser_initialize, -1);
   rb_define_method(cXMLSaxParser, "parse", rxml_sax_parser_parse, 0);
 }

@@ -79,7 +79,7 @@ VALUE rxml_reader_document(VALUE klass, VALUE doc)
 
 /* call-seq:
  *    XML::Reader.file(path) -> XML::Reader
- *    XML::Reader.file(path, :encoding => XML::Input::UTF_8,
+ *    XML::Reader.file(path, :encoding => XML::Encoding::UTF_8,
  *                           :options => XML::Parser::Options::NOENT) -> XML::Parser
  *
  * Creates a new reader by parsing the specified file or uri.
@@ -88,7 +88,7 @@ VALUE rxml_reader_document(VALUE klass, VALUE doc)
  * parsing is performed.  Valid options are:
  *
  *  encoding - The document encoding, defaults to nil. Valid values
- *             are the encoding constants defined on XML::Input.
+ *             are the encoding constants defined on XML::Encoding.
  *  options - Controls the execution of the parser, defaults to 0.
  *            Valid values are the constants defined on
  *            XML::Parser::Options.  Mutliple options can be combined
@@ -130,7 +130,7 @@ static VALUE rxml_reader_file(int argc, VALUE *argv, VALUE klass)
 
 /* call-seq:
  *    XML::Reader.io(io) -> XML::Reader
- *    XML::Reader.io(io, :encoding => XML::Input::UTF_8,
+ *    XML::Reader.io(io, :encoding => XML::Encoding::UTF_8,
  *                       :options => XML::Parser::Options::NOENT) -> XML::Parser
  *
  * Creates a new reader by parsing the specified io object.
@@ -140,7 +140,7 @@ static VALUE rxml_reader_file(int argc, VALUE *argv, VALUE klass)
  *
  *  base_url - The base url for the parsed document.
  *  encoding - The document encoding, defaults to nil. Valid values
- *             are the encoding constants defined on XML::Input.
+ *             are the encoding constants defined on XML::Encoding.
  *  options - Controls the execution of the parser, defaults to 0.
  *            Valid values are the constants defined on
  *            XML::Parser::Options.  Mutliple options can be combined
@@ -187,7 +187,7 @@ static VALUE rxml_reader_io(int argc, VALUE *argv, VALUE klass)
 
 /* call-seq:
  *    XML::Reader.string(io) -> XML::Reader
- *    XML::Reader.string(io, :encoding => XML::Input::UTF_8,
+ *    XML::Reader.string(io, :encoding => XML::Encoding::UTF_8,
  *                           :options => XML::Parser::Options::NOENT) -> XML::Parser
  *
  * Creates a new reader by parsing the specified string.
@@ -197,7 +197,7 @@ static VALUE rxml_reader_io(int argc, VALUE *argv, VALUE klass)
  *
  *  base_url - The base url for the parsed document.
  *  encoding - The document encoding, defaults to nil. Valid values
- *             are the encoding constants defined on XML::Input.
+ *             are the encoding constants defined on XML::Encoding.
  *  options - Controls the execution of the parser, defaults to 0.
  *            Valid values are the constants defined on
  *            XML::Parser::Options.  Mutliple options can be combined

@@ -7,6 +7,26 @@
 VALUE mLibXML;
 VALUE mXML;
 
+static ID READ_METHOD;
+
+/* This method is called by libxml when it wants to read
+ more data from a stream. We go with the duck typing
+ solution to support StringIO objects. */
+int rxml_read_callback(void *context, char *buffer, int len)
+{
+  VALUE io = (VALUE) context;
+  VALUE string = rb_funcall(io, READ_METHOD, 1, INT2NUM(len));
+  int size;
+
+  if (string == Qnil)
+    return 0;
+
+  size = RSTRING_LEN(string);
+  memcpy(buffer, StringValuePtr(string), size);
+
+  return size;
+}
+
 /*
  * call-seq:
  * 		XML.catalog_dump -> true
@@ -787,6 +807,8 @@ __declspec(dllexport)
 #endif
 void Init_libxml_ruby(void)
 {
+  READ_METHOD = rb_intern("read");
+
   mLibXML = rb_define_module("LibXML");
   mXML = rb_define_module_under(mLibXML, "XML");
 
@@ -847,7 +869,7 @@ void Init_libxml_ruby(void)
 
   /* Now initialize all the other modules */
   ruby_init_xml_error();
-  ruby_init_xml_input();
+  ruby_init_xml_encoding();
   ruby_init_state();
   ruby_init_parser();
   ruby_init_xml_parser_context();

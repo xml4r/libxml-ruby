@@ -210,6 +210,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\libxml\ruby_xml_encoding.c"
+				>
+			</File>
+			<File
 				RelativePath="..\libxml\ruby_xml_error.c"
 				>
 			</File>
@@ -223,10 +227,6 @@
 			</File>
 			<File
 				RelativePath="..\libxml\ruby_xml_html_parser_options.c"
-				>
-			</File>
-			<File
-				RelativePath="..\libxml\ruby_xml_input.c"
 				>
 			</File>
 			<File
@@ -336,6 +336,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\libxml\ruby_xml_encoding.h"
+				>
+			</File>
+			<File
 				RelativePath="..\libxml\ruby_xml_error.h"
 				>
 			</File>
@@ -349,10 +353,6 @@
 			</File>
 			<File
 				RelativePath="..\libxml\ruby_xml_html_parser_options.h"
-				>
-			</File>
-			<File
-				RelativePath="..\libxml\ruby_xml_input.h"
 				>
 			</File>
 			<File

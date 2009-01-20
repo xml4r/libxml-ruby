@@ -256,7 +256,7 @@ static VALUE rxml_parser_context_encoding_get(VALUE self)
 
 /*
  * call-seq:
- *    context.encoding = XML::Input::UTF_8
+ *    context.encoding = XML::Encoding::UTF_8
  *
  * Sets the character encoding for this context.
  */

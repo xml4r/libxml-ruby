@@ -40,35 +40,6 @@ static VALUE rxml_html_parser_context_file(VALUE klass, VALUE file)
 }
 
 /* call-seq:
- *    XML::HTMLParser::Context.string(string) -> XML::HTMLParser::Context
- *
- * Creates a new parser context based on the specified string.
- *
- * Parameters:
- *
- *  string - A string that contains the data to parse.
-*/
-static VALUE rxml_html_parser_context_string(VALUE klass, VALUE string)
-{
-  xmlParserCtxtPtr ctxt;
-  Check_Type(string, T_STRING);
-
-  if (RSTRING_LEN(string) == 0)
-    rb_raise(rb_eArgError, "Must specify a string with one or more characters");
-
-  ctxt = xmlCreateMemoryParserCtxt(StringValuePtr(string),
-                                   RSTRING_LEN(string));
-  if (!ctxt)
-    rxml_raise(&xmlLastError);
-
-  htmlDefaultSAXHandlerInit();
-  if (ctxt->sax != NULL)
-    memcpy(ctxt->sax, &htmlDefaultSAXHandler, sizeof(xmlSAXHandlerV1));
-  
-  return rxml_html_parser_context_wrap(ctxt);
-}
-
-/* call-seq:
  *    XML::HTMLParser::Context.io(io) -> XML::HTMLParser::Context
  *
  * Creates a new parser context based on the specified io object.
@@ -103,6 +74,35 @@ static VALUE rxml_html_parser_context_io(VALUE klass, VALUE io)
   }
   inputPush(ctxt, stream);
 
+  return rxml_html_parser_context_wrap(ctxt);
+}
+
+/* call-seq:
+ *    XML::HTMLParser::Context.string(string) -> XML::HTMLParser::Context
+ *
+ * Creates a new parser context based on the specified string.
+ *
+ * Parameters:
+ *
+ *  string - A string that contains the data to parse.
+*/
+static VALUE rxml_html_parser_context_string(VALUE klass, VALUE string)
+{
+  xmlParserCtxtPtr ctxt;
+  Check_Type(string, T_STRING);
+
+  if (RSTRING_LEN(string) == 0)
+    rb_raise(rb_eArgError, "Must specify a string with one or more characters");
+
+  ctxt = xmlCreateMemoryParserCtxt(StringValuePtr(string),
+                                   RSTRING_LEN(string));
+  if (!ctxt)
+    rxml_raise(&xmlLastError);
+
+  htmlDefaultSAXHandlerInit();
+  if (ctxt->sax != NULL)
+    memcpy(ctxt->sax, &htmlDefaultSAXHandler, sizeof(xmlSAXHandlerV1));
+  
   return rxml_html_parser_context_wrap(ctxt);
 }
 

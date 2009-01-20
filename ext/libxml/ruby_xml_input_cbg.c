@@ -3,7 +3,7 @@
 #include "ruby_libxml.h"
 #include "ruby_xml_input_cbg.h"
 
-/* Document-class: LibXML::XML::InputCallbacks
+/* Document-class: LibXML::XML::EncodingCallbacks
  *
  * Support for adding custom scheme handlers. */
 

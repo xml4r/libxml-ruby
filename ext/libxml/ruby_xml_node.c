@@ -529,8 +529,8 @@ static VALUE rxml_node_doc(VALUE self)
  * 2 spaces, level 1 results in 4 spaces, level 2 results in 6 spaces, etc.
  *
  * :encoding - Specifies the output encoding of the string.  It
- * defaults to XML::Input::UTF8.  To change it, use one of the
- * XML::Input encoding constants. */
+ * defaults to XML::Encoding::UTF8.  To change it, use one of the
+ * XML::Encoding encoding constants. */
 
 static VALUE rxml_node_to_s(int argc, VALUE *argv, VALUE self)
 {

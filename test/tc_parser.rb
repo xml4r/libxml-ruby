@@ -38,7 +38,7 @@ class TestParser < Test::Unit::TestCase
 
   def test_file_encoding
     file = File.expand_path(File.join(File.dirname(__FILE__), 'model/bands.xml'))
-    parser = XML::Parser.file(file, :encoding => XML::Input::ISO_8859_1)
+    parser = XML::Parser.file(file, :encoding => XML::Encoding::ISO_8859_1)
 
     error = assert_raise(XML::Error) do
       doc = parser.parse
@@ -47,7 +47,7 @@ class TestParser < Test::Unit::TestCase
     assert_equal("Fatal error: Extra content at the end of the document at C:/Development/src/libxml-ruby/test/model/bands.xml:3.",
                  error.to_s)
 
-    parser = XML::Parser.file(file, :encoding => XML::Input::UTF_8)
+    parser = XML::Parser.file(file, :encoding => XML::Encoding::UTF_8)
     doc = parser.parse
     assert_not_nil(doc)
   end
@@ -157,7 +157,7 @@ class TestParser < Test::Unit::TestCase
                  error.to_s)
 
     # Parse as ISO_8859_1:
-    parser = XML::Parser.string(xml, :encoding => XML::Input::ISO_8859_1)
+    parser = XML::Parser.string(xml, :encoding => XML::Encoding::ISO_8859_1)
     doc = parser.parse
     node = doc.find_first('//metal')
     assert_equal("m\303\266tley_cr\303\274e", node.content)

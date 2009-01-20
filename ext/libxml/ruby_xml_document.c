@@ -524,7 +524,7 @@ static VALUE rxml_document_root_set(VALUE self, VALUE node)
  * :encoding - Specifies the output encoding of the string.  It
  * defaults to the original encoding of the document (see
  * #encoding.  To override the orginal encoding, use one of the
- * XML::Input encoding constants. */
+ * XML::Encoding encoding constants. */
 static VALUE rxml_document_save(int argc, VALUE *argv, VALUE self)
 { 
   VALUE options = Qnil;
@@ -601,8 +601,8 @@ static VALUE rxml_document_standalone_q(VALUE self)
  * then both indentation and line feeds are removed from the result.
  *
  * :encoding - Specifies the output encoding of the string.  It
- * defaults to XML::Input::UTF8.  To change it, use one of the
- * XML::Input encoding constants. */
+ * defaults to XML::Encoding::UTF8.  To change it, use one of the
+ * XML::Encoding encoding constants. */
 static VALUE rxml_document_to_s(int argc, VALUE *argv, VALUE self)
 { 
   VALUE result;

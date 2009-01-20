@@ -16,7 +16,7 @@ module LibXML
 
       # call-seq:
       #    XML::Parser.file(path) -> XML::Parser
-      #    XML::Parser.file(path, :encoding => XML::Input::UTF_8,
+      #    XML::Parser.file(path, :encoding => XML::Encoding::UTF_8,
       #                           :options => XML::Parser::Options::NOENT) -> XML::Parser
       #
       # Creates a new parser by parsing the specified file or uri.
@@ -25,7 +25,7 @@ module LibXML
       # parsing is performed.  Valid options are:
       #
       #  encoding - The document encoding, defaults to nil. Valid values
-      #             are the encoding constants defined on XML::Input.
+      #             are the encoding constants defined on XML::Encoding.
       #  options - Controls the execution of the parser, defaults to 0.
       #            Valid values are the constants defined on
       #            XML::Parser::Options.  Mutliple options can be combined
@@ -39,7 +39,7 @@ module LibXML
 
       # call-seq:
       #    XML::Parser.io(io) -> XML::Parser
-      #    XML::Parser.io(io, :encoding => XML::Input::UTF_8,
+      #    XML::Parser.io(io, :encoding => XML::Encoding::UTF_8,
       #                       :options => XML::Parser::Options::NOENT
       #                       :base_url="http://libxml.org") -> XML::Parser
       #
@@ -50,7 +50,7 @@ module LibXML
       #  io - io object that contains the xml to parser
       #  base_url - The base url for the parsed document.
       #  encoding - The document encoding, defaults to nil. Valid values
-      #             are the encoding constants defined on XML::Input.
+      #             are the encoding constants defined on XML::Encoding.
       #  options - Controls the execution of the parser, defaults to 0.
       #            Valid values are the constants defined on
       #            XML::Parser::Options.  Mutliple options can be combined
@@ -65,7 +65,7 @@ module LibXML
 
       # call-seq:
       #    XML::Parser.string(string)
-      #    XML::Parser.string(string, :encoding => XML::Input::UTF_8,
+      #    XML::Parser.string(string, :encoding => XML::Encoding::UTF_8,
       #                               :options => XML::Parser::Options::NOENT
       #                               :base_url="http://libxml.org") -> XML::Parser
       #
@@ -76,7 +76,7 @@ module LibXML
       #
       #  base_url - The base url for the parsed document.
       #  encoding - The document encoding, defaults to nil. Valid values
-      #             are the encoding constants defined on XML::Input.
+      #             are the encoding constants defined on XML::Encoding.
       #  options - Controls the execution of the parser, defaults to 0.
       #            Valid values are the constants defined on
       #            XML::Parser::Options.  Mutliple options can be combined

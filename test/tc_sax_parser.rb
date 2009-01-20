@@ -67,22 +67,12 @@ class TestCaseCallbacks
 end
 
 class TestSaxParser < Test::Unit::TestCase
-  def setup
-    XML.default_keep_blanks = true
-    @xp = XML::SaxParser.new
-  end
-
-  def teardown
-    @xp = nil
-    XML.default_keep_blanks = true
-  end
-
   def saxtest_file
     File.join(File.dirname(__FILE__), 'model/atom.xml')
   end
 
-  def verify
-    result = @xp.callbacks.result
+  def verify(parser)
+    result = parser.callbacks.result
 
     i = -1
     assert_equal("startdoc", result[i+=1])
@@ -128,74 +118,80 @@ class TestSaxParser < Test::Unit::TestCase
   end
 
   def test_string_no_callbacks
-    @xp.string = File.read(saxtest_file)
-    assert_equal true, @xp.parse
+    xml = File.read(saxtest_file)
+    parser = XML::SaxParser.string(xml)
+    assert_equal true, parser.parse
   end
 
   def test_file_no_callbacks
-    @xp.file = File.join(saxtest_file)
-    assert_equal true, @xp.parse
+    parser = XML::SaxParser.file(saxtest_file)
+    assert_equal true, parser.parse
   end
 
   def test_string
-    @xp.callbacks = TestCaseCallbacks.new
-    @xp.string = File.read(saxtest_file)
-    @xp.parse
-    verify
+    xml = File.read(saxtest_file)
+    parser = XML::SaxParser.string(xml)
+    parser.callbacks = TestCaseCallbacks.new
+    parser.parse
+    verify(parser)
   end
 
   def test_file
-    @xp.callbacks = TestCaseCallbacks.new
-    @xp.file = saxtest_file
-    @xp.parse
-    verify
+    parser = XML::SaxParser.file(saxtest_file)
+    parser.callbacks = TestCaseCallbacks.new
+    parser.parse
+    verify(parser)
   end
 
   def test_io
     File.open(saxtest_file) do |file|
-      @xp.callbacks = TestCaseCallbacks.new
-      @xp.io = file
-      @xp.parse
-      verify
+      parser = XML::SaxParser.io(file)
+      parser.callbacks = TestCaseCallbacks.new
+      parser.parse
+      verify(parser)
     end
   end
 
   def test_string_io
-    data = File.read(saxtest_file)
-
-    @xp.callbacks = TestCaseCallbacks.new
-    @xp.io = StringIO.new(data)
-    @xp.parse
-    verify
+    xml = File.read(saxtest_file)
+    io = StringIO.new(xml)
+    parser = XML::SaxParser.io(io)
+    
+    parser.callbacks = TestCaseCallbacks.new
+    parser.parse
+    verify(parser)
   end
 
   def test_doctype
-    @xp.callbacks = DocTypeCallback.new
-    @xp.string = <<-EOS
+    xml = <<-EOS
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE Results SYSTEM "results.dtd">
 <Results>
   <a>a1</a>
 </Results>
 EOS
-    doc = @xp.parse
+    parser = XML::SaxParser.string(xml)
+    parser.callbacks = DocTypeCallback.new
+    doc = parser.parse
     assert_not_nil(doc)
   end
 
 
   def test_parse_warning
-    @xp.callbacks = TestCaseCallbacks.new
     # Two xml PIs is a warning
-    @xp.string = <<-EOS
+    xml = <<-EOS
 <?xml version="1.0" encoding="utf-8"?>
 <?xml-invalid?>
 <Test/>
 EOS
 
-    @xp.parse
+    parser = XML::SaxParser.string(xml)
+    parser.callbacks = TestCaseCallbacks.new
+
+    parser.parse
 
     # Check callbacks
-    result = @xp.callbacks.result
+    result = parser.callbacks.result
     i = -1
     assert_equal("startdoc", result[i+=1])
     assert_equal("error: Warning: xmlParsePITarget: invalid name prefix 'xml' at :2.", result[i+=1])
@@ -208,17 +204,18 @@ EOS
   end
 
   def test_parse_error
-    @xp.callbacks = TestCaseCallbacks.new
-    @xp.string = <<-EOS
+    xml = <<-EOS
       <Results>
     EOS
+    parser = XML::SaxParser.string(xml)
+    parser.callbacks = TestCaseCallbacks.new
 
     error = assert_raise(XML::Error) do
-      doc = @xp.parse
+      doc = parser.parse
     end
 
     # Check callbacks
-    result = @xp.callbacks.result
+    result = parser.callbacks.result
 
     i = -1
     assert_equal("startdoc", result[i+=1])

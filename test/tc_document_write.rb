@@ -44,13 +44,13 @@ class TestDocumentWrite < Test::Unit::TestCase
     # ö - c3 b6 in hex, \303\266 in octal
     # ü - c3 bc in hex, \303\274 in octal
     assert_equal("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<bands genre=\"metal\">\n  <m\303\266tley_cr\303\274e country=\"us\">An American heavy metal band formed in Los Angeles, California in 1981.</m\303\266tley_cr\303\274e>\n  <iron_maiden country=\"uk\">British heavy metal band formed in 1975.</iron_maiden>\n</bands>\n",
-                 @doc.to_s(:encoding => XML::Input::UTF_8))
+                 @doc.to_s(:encoding => XML::Encoding::UTF_8))
 
     # ISO_8859_1:
     # ö - f6 in hex, \366 in octal
     # ü - fc in hex, \374 in octal
     assert_equal("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n<bands genre=\"metal\">\n  <m\366tley_cr\374e country=\"us\">An American heavy metal band formed in Los Angeles, California in 1981.</m\366tley_cr\374e>\n  <iron_maiden country=\"uk\">British heavy metal band formed in 1975.</iron_maiden>\n</bands>\n",
-                 @doc.to_s(:encoding => XML::Input::ISO_8859_1))
+                 @doc.to_s(:encoding => XML::Encoding::ISO_8859_1))
 
 
     # Invalid encoding
@@ -89,7 +89,7 @@ class TestDocumentWrite < Test::Unit::TestCase
 
   def test_save_iso_8859_1
     temp_filename = File.join(Dir.tmpdir, "tc_document_write_test_save_iso_8859_1.xml")
-    bytes = @doc.save(temp_filename, :encoding => XML::Input::ISO_8859_1)
+    bytes = @doc.save(temp_filename, :encoding => XML::Encoding::ISO_8859_1)
     assert_equal(272, bytes)
 
     contents = File.read(temp_filename)
@@ -101,7 +101,7 @@ class TestDocumentWrite < Test::Unit::TestCase
 
   def test_save_iso_8859_1_no_indent
     temp_filename = File.join(Dir.tmpdir, "tc_document_write_test_save_iso_8859_1_no_indent.xml")
-    bytes = @doc.save(temp_filename, :indent => false, :encoding => XML::Input::ISO_8859_1)
+    bytes = @doc.save(temp_filename, :indent => false, :encoding => XML::Encoding::ISO_8859_1)
     assert_equal(265, bytes)
 
     contents = File.read(temp_filename)

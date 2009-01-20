@@ -12,7 +12,7 @@ class TestParserContext < Test::Unit::TestCase
 
     context = XML::Parser::Context.string(xml)
     assert_instance_of(XML::Parser::Context, context)
-    assert_equal(XML::Input::NONE, context.encoding)
+    assert_equal(XML::Encoding::NONE, context.encoding)
     assert_nil(context.base_url)
   end
 
@@ -25,10 +25,10 @@ class TestParserContext < Test::Unit::TestCase
     EOS
 
     context = XML::Parser::Context.string(xml)
-    assert_equal(XML::Input::NONE, context.encoding)
+    assert_equal(XML::Encoding::NONE, context.encoding)
 
-    context.encoding = XML::Input::ISO_8859_1
-    assert_equal(XML::Input::ISO_8859_1, context.encoding)
+    context.encoding = XML::Encoding::ISO_8859_1
+    assert_equal(XML::Encoding::ISO_8859_1, context.encoding)
   end
 
   def test_base_url
@@ -154,7 +154,7 @@ class TestParserContext < Test::Unit::TestCase
     assert_equal(0, context.depth)
     assert_equal(true, context.disable_sax?)
     assert_equal(false, context.docbook?)
-    assert_equal(XML::Input::NONE, context.encoding)
+    assert_equal(XML::Encoding::NONE, context.encoding)
     assert_equal(76, context.errno)
     assert_equal(false, context.html?)
     assert_equal(5, context.io_max_num_streams)
