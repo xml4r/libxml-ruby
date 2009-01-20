@@ -361,6 +361,5 @@ void ruby_init_xml_xpath_context(void)
 #if LIBXML_VERSION >= 20626
   rb_define_method(cXMLXPathContext, "enable_cache", rxml_xpath_context_enable_cache, -1);
   rb_define_method(cXMLXPathContext, "disable_cache", rxml_xpath_context_disable_cache, 0);
-  rb_define_method(cXMLXPathContext, "cache_size", rxml_xpath_context_cache_size, 0);
 #endif
 }
