@@ -6,8 +6,24 @@
 
 VALUE mLibXML;
 VALUE mXML;
-
 static ID READ_METHOD;
+
+/* Global flag that gets set to 1 if the interpreter is exiting */
+int rxml_exiting = 0;
+
+/* To correctly free xpath object we need to know when the Ruby
+   interpreter is exiting.  To to this we register a global flag
+   and end proc. */
+static void rxml_ruby_end_proc(VALUE nil)
+{
+  rxml_exiting = 1;
+}
+
+int rxml_is_exiting()
+{
+  return rxml_exiting;
+}
+
 
 /* This method is called by libxml when it wants to read
  more data from a stream. We go with the duck typing
@@ -899,4 +915,7 @@ void Init_libxml_ruby(void)
 
   rxml_default_substitute_entities_set(mXML, Qtrue);
   rxml_default_load_external_dtd_set(mXML, Qtrue);
+
+  /* Register an end proc */
+  rb_set_end_proc(rxml_ruby_end_proc, Qnil);
 }

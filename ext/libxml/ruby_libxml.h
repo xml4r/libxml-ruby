@@ -94,5 +94,6 @@ extern VALUE mLibXML;
 extern VALUE mXML;
 
 int rxml_read_callback(void *context, char *buffer, int len);
+int rxml_is_exiting();
 
 #endif
