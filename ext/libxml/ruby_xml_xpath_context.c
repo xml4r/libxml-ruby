@@ -285,11 +285,7 @@ static VALUE rxml_xpath_context_find(VALUE self, VALUE xpath_expr)
     rxml_raise(xerror);
   }
 
-  result = rxml_xpath_object_wrap(xobject);
-
-  /* Tie the xpath object to its document object.*/
-  rb_ivar_set(result, DOC_ATTRIBUTE, rb_ivar_get(self, DOC_ATTRIBUTE));
-  return result;
+  return rxml_xpath_object_wrap(xobject);
 }
 
 

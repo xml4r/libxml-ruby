@@ -234,6 +234,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\libxml\ruby_xml_io.c"
+				>
+			</File>
+			<File
 				RelativePath="..\libxml\ruby_xml_namespace.c"
 				>
 			</File>
@@ -357,6 +361,10 @@
 			</File>
 			<File
 				RelativePath="..\libxml\ruby_xml_input_cbg.h"
+				>
+			</File>
+			<File
+				RelativePath="..\libxml\ruby_xml_io.h"
 				>
 			</File>
 			<File

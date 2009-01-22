@@ -162,10 +162,4 @@ class TestXPath < Test::Unit::TestCase
     GC.start
     assert_equal('Envelope', nodes.first.name)
   end
-
-  # --- Debug ---
-  #def test_debug
-  #  nodes = @doc.find('//ns1:IdAndName', 'ns1:http://domain.somewhere.com')
-  #  assert(nodes.debug)
-  #end
 end

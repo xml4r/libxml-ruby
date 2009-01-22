@@ -11,55 +11,20 @@
  */
 VALUE cXMLXPathObject;
 
-
-static void rxml_xpath_object_free(xmlXPathObjectPtr xpop)
+static VALUE rxml_xpath_object_free(rxml_xpath_object* rxpop)
 {
-  /* Now free the xpath result but not underlying nodes
-   since those belong to the document. */
-  xmlXPathFreeNodeSetList(xpop);
+  xfree(rxpop);
 }
 
-VALUE rxml_xpath_object_wrap(xmlXPathObjectPtr xpop)
+static VALUE rxml_xpath_object_mark(rxml_xpath_object* rxpop)
 {
-  VALUE rval;
-
-  if (xpop == NULL)
-    return Qnil;
-
-  switch (xpop->type)
-  {
-  case XPATH_NODESET:
-    rval = Data_Wrap_Struct(cXMLXPathObject, NULL, rxml_xpath_object_free, xpop);
-
-    break;
-  case XPATH_BOOLEAN:
-    if (xpop->boolval != 0)
-      rval = Qtrue;
-    else
-      rval = Qfalse;
-
-    xmlXPathFreeObject(xpop);
-    break;
-  case XPATH_NUMBER:
-    rval = rb_float_new(xpop->floatval);
-
-    xmlXPathFreeObject(xpop);
-    break;
-  case XPATH_STRING:
-    rval = rb_str_new2((const char*)xpop->stringval);
-
-    xmlXPathFreeObject(xpop);
-    break;
-  default:
-    xmlXPathFreeObject(xpop);
-    rval = Qnil;
-  }
-  return rval;
+  rb_gc_mark(rxpop->nodes);
+  rb_gc_mark(rxpop->xpath_string);
+  rb_gc_mark(rxpop->xpath_type);
 }
 
 static VALUE rxml_xpath_object_tabref(xmlXPathObjectPtr xpop, int apos)
 {
-
   if (apos < 0)
     apos = xpop->nodesetval->nodeNr + apos;
 
@@ -79,50 +44,48 @@ static VALUE rxml_xpath_object_tabref(xmlXPathObjectPtr xpop, int apos)
   }
 }
 
-/*
- * call-seq:
- *    xpath_object.to_a -> [node, ..., node]
- *
- * Obtain an array of the nodes in this set.
- */
-static VALUE rxml_xpath_object_to_a(VALUE self)
+static VALUE rxml_xpath_object_nodeset_wrap(xmlXPathObjectPtr xpop)
 {
-  VALUE set_ary, nodeobj;
-  xmlXPathObjectPtr xpop;
   int i;
+  rxml_xpath_object* rxpop = ALLOC(rxml_xpath_object);
+  rxpop->nodes = rb_ary_new();
 
-  Data_Get_Struct(self, xmlXPathObject, xpop);
-
-  set_ary = rb_ary_new();
-  if (!((xpop->nodesetval == NULL) || (xpop->nodesetval->nodeNr == 0)))
+  for (i = 0; i < xpop->nodesetval->nodeNr; i++)
   {
-    for (i = 0; i < xpop->nodesetval->nodeNr; i++)
-    {
-      nodeobj = rxml_xpath_object_tabref(xpop, i);
-      rb_ary_push(set_ary, nodeobj);
-    }
+    VALUE node = rxml_xpath_object_tabref(xpop, i);
+    rb_ary_push(rxpop->nodes, node);
   }
 
-  return (set_ary);
+  rxpop->xpath_string = (xpop->stringval) ? rb_str_new2((const char*) xpop->stringval) : Qnil;
+  rxpop->xpath_type = INT2FIX(xpop->type);
+
+  return Data_Wrap_Struct(cXMLXPathObject, rxml_xpath_object_mark, rxml_xpath_object_free, rxpop);
 }
 
-/*
- * call-seq:
- *    xpath_object.empty? -> (true|false)
- *
- * Determine whether this nodeset is empty (contains no nodes).
- */
-static VALUE rxml_xpath_object_empty_q(VALUE self)
+VALUE rxml_xpath_object_wrap(xmlXPathObjectPtr xpop)
 {
-  xmlXPathObjectPtr xpop;
+  VALUE result = Qnil;
 
-  Data_Get_Struct(self, xmlXPathObject, xpop);
+  switch (xpop->type)
+  {
+  case XPATH_NODESET:
+    result = rxml_xpath_object_nodeset_wrap(xpop);
+    break;
+  case XPATH_BOOLEAN:
+    result = (xpop->boolval != 0) ? Qtrue : Qfalse;
+    break;
+  case XPATH_NUMBER:
+    result = rb_float_new(xpop->floatval);
+    break;
+  case XPATH_STRING:
+    result = rb_str_new2((const char*)xpop->stringval);
+    break;
+  default:
+    rb_raise(rb_eArgError, "Unkown xpath object type: %d", xpop->type);
+  }
 
-  if (xpop->type != XPATH_NODESET)
-    return Qnil;
-
-  return (xpop->nodesetval == NULL || xpop->nodesetval->nodeNr <= 0) ? Qtrue
-      : Qfalse;
+  xmlXPathFreeObject(xpop);
+  return result;
 }
 
 /*
@@ -133,33 +96,15 @@ static VALUE rxml_xpath_object_empty_q(VALUE self)
  */
 static VALUE rxml_xpath_object_each(VALUE self)
 {
-  xmlXPathObjectPtr xpop;
   int i;
-
-  if (rxml_xpath_object_empty_q(self) == Qtrue)
-    return Qnil;
-
-  Data_Get_Struct(self, xmlXPathObject, xpop);
-
-  for (i = 0; i < xpop->nodesetval->nodeNr; i++)
+  rxml_xpath_object* rxpop;
+  Data_Get_Struct(self, rxml_xpath_object, rxpop);
+ 
+  for (i = 0; i < RARRAY_LEN(rxpop->nodes); i++)
   {
-    rb_yield(rxml_xpath_object_tabref(xpop, i));
+    rb_yield(rb_ary_entry(rxpop->nodes, i));
   }
   return (self);
-}
-
-/*
- * call-seq:
- *    xpath_object.first -> node
- *
- * Returns the first node in this node set, or nil if none exist.
- */
-static VALUE rxml_xpath_object_first(VALUE self)
-{
-  if (rxml_xpath_object_empty_q(self) == Qtrue)
-    return Qnil;
-
-  return rxml_xpath_object_tabref((xmlXPathObjectPtr) DATA_PTR(self), 0);
 }
 
 /*
@@ -170,29 +115,21 @@ static VALUE rxml_xpath_object_first(VALUE self)
  */
 static VALUE rxml_xpath_object_aref(VALUE self, VALUE aref)
 {
-  if (rxml_xpath_object_empty_q(self) == Qtrue)
-    return Qnil;
-
-  return rxml_xpath_object_tabref((xmlXPathObjectPtr) DATA_PTR(self), NUM2INT(
-      aref));
+  rxml_xpath_object* rxpop;
+  Data_Get_Struct(self, rxml_xpath_object, rxpop);
+  return rb_ary_entry(rxpop->nodes, NUM2INT(aref));
 }
 
 /*
  * call-seq:
  *    xpath_object.length -> num
- *
  * Obtain the length of the nodesetval node list.
  */
 static VALUE rxml_xpath_object_length(VALUE self)
 {
-  xmlXPathObjectPtr xpop;
-
-  if (rxml_xpath_object_empty_q(self) == Qtrue)
-    return INT2FIX(0);
-
-  Data_Get_Struct(self, xmlXPathObject, xpop);
-
-  return INT2NUM(xpop->nodesetval->nodeNr);
+  rxml_xpath_object* rxpop;
+  Data_Get_Struct(self, rxml_xpath_object, rxpop);
+  return INT2NUM(RARRAY_LEN(rxpop->nodes));
 }
 
 /*
@@ -216,11 +153,9 @@ static VALUE rxml_xpath_object_length(VALUE self)
  */
 static VALUE rxml_xpath_object_get_type(VALUE self)
 {
-  xmlXPathObjectPtr xpop;
-
-  Data_Get_Struct(self, xmlXPathObject, xpop);
-
-  return INT2FIX(xpop->type);
+  rxml_xpath_object* rxpop;
+  Data_Get_Struct(self, rxml_xpath_object, rxpop);
+  return rxpop->xpath_type;
 }
 
 /*
@@ -231,34 +166,9 @@ static VALUE rxml_xpath_object_get_type(VALUE self)
  */
 static VALUE rxml_xpath_object_string(VALUE self)
 {
-  xmlXPathObjectPtr xpop;
-
-  Data_Get_Struct(self, xmlXPathObject, xpop);
-
-  if (xpop->stringval == NULL)
-    return Qnil;
-
-  return rb_str_new2((const char*) xpop->stringval);
-}
-
-/*
- * call-seq:
- *    nodes.debug -> (true|false)
- *
- * Dump libxml debugging information to stdout.
- * Requires Libxml be compiled with debugging enabled.
- */
-static VALUE rxml_xpath_object_debug(VALUE self)
-{
-#ifdef LIBXML_DEBUG_ENABLED
-  xmlXPathObjectPtr xpop;
-  Data_Get_Struct(self, xmlXPathObject, xpop);
-  xmlXPathDebugDumpObject(stdout, xpop, 0);
-  return Qtrue;
-#else
-  rb_warn("libxml was compiled without debugging support.")
-  return Qfalse;
-#endif
+  rxml_xpath_object* rxpop;
+  Data_Get_Struct(self, rxml_xpath_object, rxpop);
+  return rxpop->xpath_string;
 }
 
 // Rdoc needs to know 
@@ -269,17 +179,12 @@ static VALUE rxml_xpath_object_debug(VALUE self)
 
 void ruby_init_xml_xpath_object(void)
 {
-  cXMLXPathObject = rb_define_class_under(mXPath, "Object", rb_cObject);
+  cXMLXPathObject = rb_define_class_under(mXPath, "Object", rb_cArray);
   rb_include_module(cXMLXPathObject, rb_mEnumerable);
   rb_define_attr(cXMLXPathObject, "context", 1, 0);
   rb_define_method(cXMLXPathObject, "each", rxml_xpath_object_each, 0);
   rb_define_method(cXMLXPathObject, "xpath_type", rxml_xpath_object_get_type, 0);
-  rb_define_method(cXMLXPathObject, "empty?", rxml_xpath_object_empty_q, 0);
-  rb_define_method(cXMLXPathObject, "first", rxml_xpath_object_first, 0);
   rb_define_method(cXMLXPathObject, "length", rxml_xpath_object_length, 0);
-  rb_define_method(cXMLXPathObject, "size", rxml_xpath_object_length, 0);
-  rb_define_method(cXMLXPathObject, "to_a", rxml_xpath_object_to_a, 0);
   rb_define_method(cXMLXPathObject, "[]", rxml_xpath_object_aref, 1);
   rb_define_method(cXMLXPathObject, "string", rxml_xpath_object_string, 0);
-  rb_define_method(cXMLXPathObject, "debug", rxml_xpath_object_debug, 0);
 }
