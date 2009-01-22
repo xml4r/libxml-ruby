@@ -59,21 +59,79 @@
 
 VALUE cXMLDocument;
 
-static void LibXML_validity_warning(void * ctxt, const char * msg, va_list ap)
+
+/* We have to make sure that documents are freed after
+   XPathObjects.  The Ruby gc does not guarantee this
+   at shutdown or in normal operation when a document,
+   xpath context and xpath object form a cycle.  So
+   we implement this simple reference counting scheme.
+   It works as you'd expect, except with a simple twist.
+   When the ref count goes to zero, we have to be now 
+   whether the Ruby wrapper object is still alive or not.
+   To do this, check xmlDocPtr->_private.  If it is null
+   the Ruby object has been freed, if it is not, then the
+   Ruby object is still alive. */
+
+static st_table *ref_count_table = 0;
+
+/*void ruby_xml_document_destroy(xmlDocPtr xdoc)
 {
-  if (rb_block_given_p())
+  st_delete(ref_count_table, (st_data_t*)&xdoc, 0);
+  xdoc->_private = NULL;
+  xmlFreeDoc(xdoc);
+}
+
+int ruby_xml_document_incr(xmlDocPtr xdoc)
+{
+  int ref_count;
+
+  if (st_lookup(ref_count_table, (st_data_t)xdoc, (st_data_t*)&ref_count))
   {
-    char buff[1024];
-    snprintf(buff, 1024, msg, ap);
-    rb_yield(rb_ary_new3(2, rb_str_new2(buff), Qfalse));
+    ref_count++;
+    st_insert(ref_count_table, (st_data_t)xdoc, (st_data_t)ref_count);
   }
   else
   {
-    fprintf(stderr, "warning -- found validity error: ");
-    fprintf(stderr, msg, ap);
+    ref_count = 1;
+    st_add_direct(ref_count_table, (st_data_t)xdoc, (st_data_t)ref_count);
   }
+  
+  return ref_count;
 }
 
+int ruby_xml_document_decr(xmlDocPtr xdoc) 
+{
+  int ref_count = 0;
+
+  if (!st_lookup(ref_count_table, (st_data_t)xdoc, (st_data_t*)&ref_count)) 
+    rb_raise(rb_eRuntimeError, "Document does not have a reference count.");
+  else if (ref_count == 0)
+    rb_raise(rb_eRuntimeError, "Document already has no references.");
+  
+  ref_count--;
+
+  if (ref_count == 0 && xdoc->_private == NULL) 
+    ruby_xml_document_destroy(xdoc);
+  else if (ref_count > 0)
+    st_insert(ref_count_table, (st_data_t)xdoc, (st_data_t)ref_count);
+  else 
+    rb_raise(rb_eRuntimeError, "Negative refcount should be impossible.");
+  
+  return ref_count;
+}
+
+void ruby_xml_document_free(xmlDocPtr xdoc)
+{
+  int ref_count = 0;
+
+  if (!st_lookup(ref_count_table, (st_data_t)xdoc, (st_data_t*)&ref_count)) 
+    ruby_xml_document_destroy(xdoc);
+  else if (ref_count == 0)
+    ruby_xml_document_destroy(xdoc);
+  else
+    ruby_xml_document_decr(xdoc);
+}
+*/
 void rxml_document_free(xmlDocPtr xdoc)
 {
   xdoc->_private = NULL;
@@ -102,6 +160,21 @@ VALUE rxml_document_wrap(xmlDocPtr xdoc)
   }
 
   return result;
+}
+
+static void LibXML_validity_warning(void * ctxt, const char * msg, va_list ap)
+{
+  if (rb_block_given_p())
+  {
+    char buff[1024];
+    snprintf(buff, 1024, msg, ap);
+    rb_yield(rb_ary_new3(2, rb_str_new2(buff), Qfalse));
+  }
+  else
+  {
+    fprintf(stderr, "warning -- found validity error: ");
+    fprintf(stderr, msg, ap);
+  }
 }
 
 /*
@@ -859,6 +932,8 @@ mXML = rb_define_module_under(mLibXML, "XML");
 
 void ruby_init_xml_document(void)
 {
+  ref_count_table = st_init_numtable();
+
   cXMLDocument = rb_define_class_under(mXML, "Document", rb_cObject);
   rb_define_alloc_func(cXMLDocument, rxml_document_alloc);
 
