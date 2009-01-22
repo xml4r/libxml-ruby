@@ -11,42 +11,6 @@
  */
 VALUE cXMLXPathObject;
 
-static xmlDocPtr rxml_xpath_object_doc(xmlXPathObjectPtr xpop)
-{
-  xmlDocPtr result = NULL;
-  xmlNodePtr *nodes = NULL;
-
-  if (xpop->type != XPATH_NODESET)
-    return result;
-
-  if (!xpop->nodesetval || !xpop->nodesetval->nodeTab)
-    return result;
-
-  nodes = xpop->nodesetval->nodeTab;
-
-  if (!(*nodes))
-    return result;
-
-  return (*nodes)->doc;
-}
-
-static void rxml_xpath_object_mark(xmlXPathObjectPtr xpop)
-{
-  int i;
-
-  if (xpop->type == XPATH_NODESET && xpop->nodesetval != NULL)
-  {
-    xmlDocPtr xdoc = rxml_xpath_object_doc(xpop);
-    if (xdoc && xdoc->_private)
-      rb_gc_mark((VALUE) xdoc->_private);
-
-    for (i = 0; i < xpop->nodesetval->nodeNr; i++)
-    {
-      if (xpop->nodesetval->nodeTab[i]->_private)
-        rb_gc_mark((VALUE) xpop->nodesetval->nodeTab[i]->_private);
-    }
-  }
-}
 
 static void rxml_xpath_object_free(xmlXPathObjectPtr xpop)
 {
@@ -65,8 +29,7 @@ VALUE rxml_xpath_object_wrap(xmlXPathObjectPtr xpop)
   switch (xpop->type)
   {
   case XPATH_NODESET:
-    rval = Data_Wrap_Struct(cXMLXPathObject, rxml_xpath_object_mark,
-        rxml_xpath_object_free, xpop);
+    rval = Data_Wrap_Struct(cXMLXPathObject, NULL, rxml_xpath_object_free, xpop);
 
     break;
   case XPATH_BOOLEAN:
@@ -107,6 +70,9 @@ static VALUE rxml_xpath_object_tabref(xmlXPathObjectPtr xpop, int apos)
   {
   case XML_ATTRIBUTE_NODE:
     return rxml_attr_wrap((xmlAttrPtr) xpop->nodesetval->nodeTab[apos]);
+    break;
+  case XML_NAMESPACE_DECL:
+    return rxml_namespace_wrap((xmlNsPtr)xpop->nodesetval->nodeTab[apos]);
     break;
   default:
     return rxml_node_wrap(xpop->nodesetval->nodeTab[apos]);

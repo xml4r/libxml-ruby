@@ -23,6 +23,8 @@
 
 VALUE cXMLXPathContext;
 
+static ID DOC_ATTRIBUTE;
+
 static void rxml_xpath_context_free(xmlXPathContextPtr ctxt)
 {
   xmlXPathFreeContext(ctxt);
@@ -68,7 +70,7 @@ static VALUE rxml_xpath_context_initialize(VALUE self, VALUE node)
   DATA_PTR(self) = xmlXPathNewContext(xdoc);
 
   /* Save the doc as an attribute, this will expose it to Ruby's GC. */
-  rb_iv_set(self, "@doc", document);
+  rb_ivar_set(self, DOC_ATTRIBUTE, document);
 
   return self;
 }
@@ -284,7 +286,9 @@ static VALUE rxml_xpath_context_find(VALUE self, VALUE xpath_expr)
   }
 
   result = rxml_xpath_object_wrap(xobject);
-  rb_iv_set(result, "@context", self);
+
+  /* Tie the xpath object to its document object.*/
+  rb_ivar_set(result, DOC_ATTRIBUTE, rb_ivar_get(self, DOC_ATTRIBUTE));
   return result;
 }
 
@@ -349,6 +353,8 @@ rxml_xpath_context_disable_cache(VALUE self)
 
 void ruby_init_xml_xpath_context(void)
 {
+  DOC_ATTRIBUTE = rb_intern("@doc");
+
   cXMLXPathContext = rb_define_class_under(mXPath, "Context", rb_cObject);
   rb_define_alloc_func(cXMLXPathContext, rxml_xpath_context_alloc);
   rb_define_attr(cXMLXPathContext, "doc", 1, 0);
