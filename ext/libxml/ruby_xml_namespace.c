@@ -33,6 +33,24 @@ static VALUE rxml_namespace_alloc(VALUE klass)
   return Data_Wrap_Struct(klass, NULL, rxml_namespace_free, NULL);
 }
 
+VALUE rxml_namespace_wrap(xmlNsPtr xns, RUBY_DATA_FUNC freeFunc)
+{
+  if (xns->_private)
+  {
+    return (VALUE)xns->_private;
+  }
+  else
+  {
+    VALUE ns;
+    if (freeFunc == NULL)
+      freeFunc = rxml_namespace_free;
+
+    ns = Data_Wrap_Struct(cXMLNamespace, NULL, freeFunc, xns);
+    xns->_private = (void*)ns;
+    return ns;
+  }
+}
+
 /*
  * call-seq:
  *    initialize(node, "prefix", "href") -> XML::Namespace
@@ -63,20 +81,6 @@ static VALUE rxml_namespace_initialize(VALUE self, VALUE node, VALUE prefix,
   return self;
 }
 
-VALUE rxml_namespace_wrap(xmlNsPtr xns)
-{
-  if (xns->_private)
-  {
-    return (VALUE)xns->_private;
-  }
-  else
-  {
-    VALUE ns = Data_Wrap_Struct(cXMLNamespace, NULL, rxml_namespace_free, xns);
-    xns->_private = (void*)ns;
-    return ns;
-  }
-}
-
 /*
  * call-seq:
  *    ns.href -> "href"
@@ -95,6 +99,19 @@ static VALUE rxml_namespace_href_get(VALUE self)
     return Qnil;
   else
     return rb_str_new2((const char*) xns->href);
+}
+
+/*
+ * call-seq:
+ *    ns.node_type -> num
+ *
+ * Obtain this namespace's type identifier.
+ */
+static VALUE rxml_namespace_node_type(VALUE self)
+{
+  xmlNsPtr xns;
+  Data_Get_Struct(self, xmlNs, xns);
+  return INT2NUM(xns->type);
 }
 
 /*
@@ -138,7 +155,7 @@ static VALUE rxml_namespace_next(VALUE self)
   if (xns == NULL || xns->next == NULL)
     return (Qnil);
   else
-    return (rxml_namespace_wrap(xns->next));
+    return (rxml_namespace_wrap(xns->next, NULL));
 }
 
 // Rdoc needs to know
@@ -154,5 +171,6 @@ void ruby_init_xml_namespace(void)
   rb_define_method(cXMLNamespace, "initialize", rxml_namespace_initialize, 3);
   rb_define_method(cXMLNamespace, "href", rxml_namespace_href_get, 0);
   rb_define_method(cXMLNamespace, "next", rxml_namespace_next, 0);
+  rb_define_method(cXMLNamespace, "node_type", rxml_namespace_node_type, 0);
   rb_define_method(cXMLNamespace, "prefix", rxml_namespace_prefix_get, 0);
 }

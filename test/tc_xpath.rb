@@ -161,4 +161,32 @@ class TestXPath < Test::Unit::TestCase
     GC.start
     assert_equal('Envelope', nodes.first.name)
   end
+
+  def foo
+    puts nodes.length
+    doc = nil
+    assert_equal(4, nodes.length)
+    GC.start
+    node = nodes.first
+    nodes = nil
+    GC.start
+  end
+
+  def test_xpath_namespace_nodes
+    doc = XML::Document.string('<feed xmlns="http://www.w3.org/2005/Atom" xmlns:xhtml="http://www.w3.org/1999/xhtml"><entry/></feed>')
+    nodes = doc.find('//atom:entry|namespace::*', :atom => "http://www.w3.org/2005/Atom")
+    assert_equal(4, nodes.length)
+
+    node = nodes[0]
+    assert_equal(XML::Node::ELEMENT_NODE, node.node_type)
+
+    node = nodes[1]
+    assert_equal(XML::Node::NAMESPACE_DECL, node.node_type)
+
+    node = nodes[2]
+    assert_equal(XML::Node::NAMESPACE_DECL, node.node_type)
+
+    node = nodes[3]
+    assert_equal(XML::Node::NAMESPACE_DECL, node.node_type)
+  end
 end

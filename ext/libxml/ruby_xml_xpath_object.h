@@ -7,13 +7,13 @@ extern VALUE cXMLXPathObject;
 
 typedef struct rxml_xpath_object
 {
-  VALUE nodes;
-  VALUE xpath_type;
-  VALUE xpath_string;
+  xmlDocPtr xdoc;
+  xmlXPathObjectPtr xpop;
+  VALUE nsnodes;
 } rxml_xpath_object;
 
 
 void ruby_init_xml_xpath_object(void);
-VALUE rxml_xpath_object_wrap(xmlXPathObjectPtr xpop);
+VALUE rxml_xpath_object_wrap(xmlDocPtr xdoc, xmlXPathObjectPtr xpop);
 
 #endif

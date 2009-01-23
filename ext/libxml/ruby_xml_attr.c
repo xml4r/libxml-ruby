@@ -204,7 +204,7 @@ static VALUE rxml_attr_next_get(VALUE self)
 
 /*
  * call-seq:
- *    attr.type -> num
+ *    attr.node_type -> num
  *
  * Obtain this node's type identifier.
  */
@@ -228,7 +228,7 @@ static VALUE rxml_attr_ns_get(VALUE self)
   if (xattr->ns == NULL)
     return Qnil;
   else
-    return rxml_namespace_wrap(xattr->ns);
+    return rxml_namespace_wrap(xattr->ns, NULL);
 }
 
 /*

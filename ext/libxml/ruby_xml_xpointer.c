@@ -40,7 +40,7 @@ static VALUE rxml_xpointer_point(VALUE class, VALUE rnode, VALUE xptr_str)
   if (!xpop)
   rxml_raise(&xmlLastError);
 
-  result = rxml_xpath_object_wrap(xpop);
+  result = rxml_xpath_object_wrap(xnode->doc, xpop);
   rb_iv_set(result, "@context", context);
 
   return(result);
@@ -86,7 +86,7 @@ static VALUE rxml_xpointer_range(VALUE class, VALUE rstart, VALUE rend)
   if (xpath == NULL)
   rb_fatal("You shouldn't be able to have this happen");
 
-  rxxp = rxml_xpath_object_wrap(xpath);
+  rxxp = rxml_xpath_object_wrap(start->doc, xpath);
   return(rxxp);
 #else
   rb_warn("libxml was compiled without XPointer support");

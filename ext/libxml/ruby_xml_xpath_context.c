@@ -247,9 +247,11 @@ static VALUE rxml_xpath_context_node_set(VALUE self, VALUE node)
 
 /*
  * call-seq:
- *    context.find("xpath") -> XML::XPath::Object
+ *    context.find("xpath") -> true|false|number|string|XML::XPath::Object
  *
- * Find nodes matching the specified XPath expression
+ * Executes the provided xpath function.  The result depends on the execution
+ * of the xpath statement.  It may be true, false, a number, a string or 
+ * a node set.
  */
 static VALUE rxml_xpath_context_find(VALUE self, VALUE xpath_expr)
 {
@@ -285,9 +287,29 @@ static VALUE rxml_xpath_context_find(VALUE self, VALUE xpath_expr)
     rxml_raise(xerror);
   }
 
-  return rxml_xpath_object_wrap(xobject);
+  switch (xobject->type)
+  {
+  case XPATH_NODESET:
+    result = rxml_xpath_object_wrap(xctxt->doc, xobject);
+    break;
+  case XPATH_BOOLEAN:
+    result = (xobject->boolval != 0) ? Qtrue : Qfalse;
+    xmlXPathFreeObject(xobject);
+    break;
+  case XPATH_NUMBER:
+    result = rb_float_new(xobject->floatval);
+    xmlXPathFreeObject(xobject);
+    break;
+  case XPATH_STRING:
+    result = rb_str_new2((const char*)xobject->stringval);
+    xmlXPathFreeObject(xobject);
+    break;
+  default:
+    result = Qnil;
+    xmlXPathFreeObject(xobject);
+  }
+  return result;
 }
-
 
 #if LIBXML_VERSION >= 20626
 /*
