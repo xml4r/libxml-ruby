@@ -67,23 +67,25 @@ VALUE rxml_xpath_object_wrap(xmlDocPtr xdoc, xmlXPathObjectPtr xpop)
   rxpop->nsnodes = rb_ary_new();
 
   /* Find all the extra namespace nodes and wrap them. */
-  for (i = 0;i < xpop->nodesetval->nodeNr; i++)
-  {
-    xmlNodePtr xnode = xpop->nodesetval->nodeTab[i];
-    if (xnode!= NULL && xnode->type == XML_NAMESPACE_DECL)
+  if (xpop->nodesetval && xpop->nodesetval->nodeNr) {
+    for (i = 0;i < xpop->nodesetval->nodeNr; i++)
     {
-      VALUE ns = Qnil;
-      xmlNsPtr xns = (xmlNsPtr)xnode;
+      xmlNodePtr xnode = xpop->nodesetval->nodeTab[i];
+      if (xnode!= NULL && xnode->type == XML_NAMESPACE_DECL)
+      {
+        VALUE ns = Qnil;
+        xmlNsPtr xns = (xmlNsPtr)xnode;
 
-      /* Get rid of libxml's -> next hack.  The issue here is
-         the rxml_namespace code assumes that ns->next refers
-         to another namespace. */
-      xns->next = NULL;
+        /* Get rid of libxml's -> next hack.  The issue here is
+           the rxml_namespace code assumes that ns->next refers
+           to another namespace. */
+        xns->next = NULL;
 
-      /* Specify a custom free function here since by default
-         namespace nodes will not be freed */
-      ns = rxml_namespace_wrap((xmlNsPtr)xnode, (RUBY_DATA_FUNC)rxml_namespace_xpath_free);
-      rb_ary_push(rxpop->nsnodes, ns);
+        /* Specify a custom free function here since by default
+           namespace nodes will not be freed */
+        ns = rxml_namespace_wrap((xmlNsPtr)xnode, (RUBY_DATA_FUNC)rxml_namespace_xpath_free);
+        rb_ary_push(rxpop->nsnodes, ns);
+      }
     }
   }
 
