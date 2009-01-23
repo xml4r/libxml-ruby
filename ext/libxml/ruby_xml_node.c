@@ -3,6 +3,9 @@
 
 VALUE cXMLNode;
 
+static VALUE kXMLStringText;
+static VALUE kXMLStringTextNoenc;
+
 /* Document-class: LibXML::XML::Node
  *
  * Nodes are the primary objects that make up an XML document.
@@ -865,6 +868,10 @@ static VALUE rxml_node_name_get(VALUE self)
 
   if (xnode->name == NULL)
     return (Qnil);
+	else if (name == xmlStringText)
+		return (kXMLStringText);
+	else if (name == xmlStringTextNoenc)
+		return (kXMLStringTextNoenc);
   else
     return (rb_str_new2((const char*) name));
 }
@@ -881,7 +888,17 @@ static VALUE rxml_node_name_set(VALUE self, VALUE name)
 
   Check_Type(name, T_STRING);
   Data_Get_Struct(self, xmlNode, xnode);
-  xmlNodeSetName(xnode, (xmlChar*) StringValuePtr(name));
+  const xmlChar *s = StringValuePtr(name);
+
+	if (xnode->type != XML_TEXT_NODE)
+  	xmlNodeSetName(xnode, s);
+	else if (s == xmlStringText)			// compare addresses instead of string contents.
+		xnode->name = xmlStringText;
+	else if (s == xmlStringTextNoenc)	// compare addresses instead of string contents.
+		xnode->name = xmlStringTextNoenc;
+
+	// Note: calling xmlNodeSetName() for a text node is ignored by libXML.
+
   return (Qtrue);
 }
 
@@ -1223,10 +1240,24 @@ mLibXML = rb_define_module("LibXML");
 mXML = rb_define_module_under(mLibXML, "XML");
 #endif
 
+static VALUE rxml_constant_stringref(const xmlChar *ptr) {
+  VALUE str = rb_str_new("", 0);
+  FL_SET(str, ELTS_SHARED | FL_USER3);
+  free (RSTRING(str)->ptr);
+  RSTRING(str)->ptr = (void*) ptr;
+  RSTRING(str)->len = strlen (ptr);
+  RSTRING(str)->aux.capa = 0;
+  OBJ_FREEZE(str);
+  return str;
+}
+
 void ruby_init_xml_node(void)
 {
   xmlRegisterNodeDefault(rxml_node_registerNode);
   xmlDeregisterNodeDefault(rxml_node_deregisterNode);
+
+  kXMLStringText = rxml_constant_stringref(xmlStringText);
+  kXMLStringTextNoenc = rxml_constant_stringref(xmlStringTextNoenc);
 
   cXMLNode = rb_define_class_under(mXML, "Node", rb_cObject);
 
@@ -1271,6 +1302,9 @@ void ruby_init_xml_node(void)
 #else
   rb_define_const(cXMLNode, "DOCB_DOCUMENT_NODE", Qnil);
 #endif
+
+  rb_define_const(cXMLNode, "XML_STRING_TEXT", kXMLStringText);
+  rb_define_const(cXMLNode, "XML_STRING_TEXT_NOENC", kXMLStringTextNoenc);
 
   rb_define_singleton_method(cXMLNode, "new_cdata", rxml_node_new_cdata, -1);
   rb_define_singleton_method(cXMLNode, "new_comment", rxml_node_new_comment, -1);
