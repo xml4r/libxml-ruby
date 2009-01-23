@@ -21,7 +21,7 @@ static void rxml_html_parser_context_free(xmlParserCtxtPtr ctxt)
 
 static VALUE rxml_html_parser_context_wrap(xmlParserCtxtPtr ctxt)
 {
-  return Data_Wrap_Struct(cXMLParserContext, NULL, rxml_html_parser_context_free, ctxt);
+  return Data_Wrap_Struct(cXMLHtmlParserContext, NULL, rxml_html_parser_context_free, ctxt);
 }
 
 /* call-seq:
