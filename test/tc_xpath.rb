@@ -189,4 +189,14 @@ class TestXPath < Test::Unit::TestCase
     node = nodes[3]
     assert_equal(XML::Node::NAMESPACE_DECL, node.node_type)
   end
+
+	# Test to make sure we don't get nil on empty results.
+	# This is also to test that we don't segfault due to our C code getting a NULL pointer
+	# and not handling it properly.
+	def test_xpath_empty_result
+    doc = XML::Document.string('<html><body><p>Welcome to XHTML land!</p></body></html>')
+		nodes = doc.find("//object/param[translate(@name, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'wmode']")
+		assert_not_nil nodes
+	end
+  
 end
