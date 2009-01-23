@@ -1243,7 +1243,7 @@ mXML = rb_define_module_under(mLibXML, "XML");
 static VALUE rxml_constant_stringref(const xmlChar *ptr) {
   VALUE str = rb_str_new("", 0);
   FL_SET(str, ELTS_SHARED | FL_USER3);
-  free (RSTRING(str)->ptr);
+  xfree (RSTRING(str)->ptr);
   RSTRING(str)->ptr = (void*) ptr;
   RSTRING(str)->len = strlen (ptr);
   RSTRING(str)->aux.capa = 0;
