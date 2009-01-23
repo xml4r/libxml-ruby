@@ -1,7 +1,7 @@
 require "xml"
 require 'test/unit'
 
-class HtmlParserTest < Test::Unit::TestCase
+class HTMLParserTest < Test::Unit::TestCase
   def html_file
     File.expand_path(File.join(File.dirname(__FILE__), 'model/ruby-lang.html'))
   end

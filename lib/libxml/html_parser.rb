@@ -2,9 +2,9 @@ module LibXML
   module XML
     class HTMLParser
       # call-seq:
-      #    XML::HtmlParser.file(path) -> XML::HtmlParser
-      #    XML::HtmlParser.file(path, :encoding => XML::Encoding::UTF_8,
-      #                           :options => XML::HtmlParser::Options::NOENT) -> XML::HtmlParser
+      #    XML::HTMLParser.file(path) -> XML::HTMLParser
+      #    XML::HTMLParser.file(path, :encoding => XML::Encoding::UTF_8,
+      #                           :options => XML::HTMLParser::Options::NOENT) -> XML::HTMLParser
       #
       # Creates a new parser by parsing the specified file or uri.
       #
@@ -14,7 +14,7 @@ module LibXML
       #  encoding - The document encoding, defaults to nil. Valid values
       #             are the encoding constants defined on XML::Encoding.
       #  options - Parser options.  Valid values are the constants defined on
-      #            XML::HtmlParser::Options.  Mutliple options can be combined
+      #            XML::HTMLParser::Options.  Mutliple options can be combined
       #            by using Bitwise OR (|).
       def self.file(path, options = {})
         context = XML::HTMLParser::Context.file(path)
@@ -24,10 +24,10 @@ module LibXML
       end
 
       # call-seq:
-      #    XML::HtmlParser.io(io) -> XML::HtmlParser
-      #    XML::HtmlParser.io(io, :encoding => XML::Encoding::UTF_8,
-      #                       :options => XML::HtmlParser::Options::NOENT
-      #                       :base_url="http://libxml.org") -> XML::HtmlParser
+      #    XML::HTMLParser.io(io) -> XML::HTMLParser
+      #    XML::HTMLParser.io(io, :encoding => XML::Encoding::UTF_8,
+      #                       :options => XML::HTMLParser::Options::NOENT
+      #                       :base_url="http://libxml.org") -> XML::HTMLParser
       #
       # Creates a new reader by parsing the specified io object.
       #
@@ -38,7 +38,7 @@ module LibXML
       #  encoding - The document encoding, defaults to nil. Valid values
       #             are the encoding constants defined on XML::Encoding.
       #  options - Parser options.  Valid values are the constants defined on
-      #            XML::HtmlParser::Options.  Mutliple options can be combined
+      #            XML::HTMLParser::Options.  Mutliple options can be combined
       #            by using Bitwise OR (|).
       def self.io(io, options = {})
         context = XML::HTMLParser::Context.io(io)
@@ -49,10 +49,10 @@ module LibXML
       end
 
       # call-seq:
-      #    XML::HtmlParser.string(string)
-      #    XML::HtmlParser.string(string, :encoding => XML::Encoding::UTF_8,
-      #                               :options => XML::HtmlParser::Options::NOENT
-      #                               :base_url="http://libxml.org") -> XML::HtmlParser
+      #    XML::HTMLParser.string(string)
+      #    XML::HTMLParser.string(string, :encoding => XML::Encoding::UTF_8,
+      #                               :options => XML::HTMLParser::Options::NOENT
+      #                               :base_url="http://libxml.org") -> XML::HTMLParser
       #
       # Creates a new parser by parsing the specified string.
       #
@@ -63,7 +63,7 @@ module LibXML
       #  encoding - The document encoding, defaults to nil. Valid values
       #             are the encoding constants defined on XML::Encoding.
       #  options - Parser options.  Valid values are the constants defined on
-      #            XML::HtmlParser::Options.  Mutliple options can be combined
+      #            XML::HTMLParser::Options.  Mutliple options can be combined
       #            by using Bitwise OR (|).
       def self.string(string, options = {})
         context = XML::HTMLParser::Context.string(string)
