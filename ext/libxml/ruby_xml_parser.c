@@ -69,7 +69,7 @@ static VALUE rxml_parser_parse(VALUE self)
   
   Data_Get_Struct(context, xmlParserCtxt, ctxt);
 
-  if (xmlParseDocument(ctxt) == -1 || !ctxt->wellFormed)
+  if ((xmlParseDocument(ctxt) == -1 || !ctxt->wellFormed) && ! ctxt->recovery)
   {
     if (ctxt->myDoc)
       xmlFreeDoc(ctxt->myDoc);

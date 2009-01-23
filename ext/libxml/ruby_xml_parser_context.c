@@ -536,6 +536,48 @@ static VALUE rxml_parser_context_options_set(VALUE self, VALUE options)
 
 /*
  * call-seq:
+ *    context.recovery? -> (true|false)
+ *
+ * Determine whether recovery mode is enabled in this
+ * context.
+ */
+static VALUE rxml_parser_context_recovery_q(VALUE self)
+{
+  xmlParserCtxtPtr ctxt;
+  Data_Get_Struct(self, xmlParserCtxt, ctxt);
+
+  if (ctxt->recovery)
+    return (Qtrue);
+  else
+    return (Qfalse);
+}
+
+/*
+ * call-seq:
+ *    context.recovery = true|false
+ *
+ * Control whether recovery mode is enabled in this
+ * context.
+ */
+static VALUE rxml_parser_context_recovery_set(VALUE self, VALUE bool)
+{
+  xmlParserCtxtPtr ctxt;
+  Data_Get_Struct(self, xmlParserCtxt, ctxt);
+
+  if (TYPE(bool) == T_FALSE)
+  {
+    ctxt->recovery = 0;
+    return (Qfalse);
+  }
+  else
+  {
+    ctxt->recovery = 1;
+    return (Qtrue);
+  }
+}
+
+/*
+ * call-seq:
  *    context.replace_entities? -> (true|false)
  *
  * Determine whether external entity replacement is enabled in this
@@ -572,7 +614,7 @@ static VALUE rxml_parser_context_replace_entities_set(VALUE self, VALUE bool)
   else
   {
     ctxt->replaceEntities = 1;
-    return (Qfalse);
+    return (Qtrue);
   }
 }
 
@@ -839,6 +881,8 @@ void ruby_init_xml_parser_context(void)
   rb_define_method(cXMLParserContext, "num_chars", rxml_parser_context_num_chars_get, 0);
   rb_define_method(cXMLParserContext, "options", rxml_parser_context_options_get, 0);
   rb_define_method(cXMLParserContext, "options=", rxml_parser_context_options_set, 1);
+  rb_define_method(cXMLParserContext, "recovery?", rxml_parser_context_recovery_q, 0);
+  rb_define_method(cXMLParserContext, "recovery=", rxml_parser_context_recovery_set, 1);
   rb_define_method(cXMLParserContext, "replace_entities?", rxml_parser_context_replace_entities_q, 0);
   rb_define_method(cXMLParserContext, "replace_entities=", rxml_parser_context_replace_entities_set, 1);
   rb_define_method(cXMLParserContext, "space_depth", rxml_parser_context_space_depth_get, 0);
