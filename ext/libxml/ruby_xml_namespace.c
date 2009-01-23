@@ -43,7 +43,7 @@ VALUE rxml_namespace_wrap(xmlNsPtr xns, RUBY_DATA_FUNC freeFunc)
   {
     VALUE ns;
     if (freeFunc == NULL)
-      freeFunc = rxml_namespace_free;
+      freeFunc = (RUBY_DATA_FUNC)rxml_namespace_free;
 
     ns = Data_Wrap_Struct(cXMLNamespace, NULL, freeFunc, xns);
     xns->_private = (void*)ns;

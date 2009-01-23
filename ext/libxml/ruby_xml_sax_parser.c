@@ -97,7 +97,7 @@ static VALUE rxml_sax_parser_parse(VALUE self)
   Data_Get_Struct(context, xmlParserCtxt, ctxt);
 
   ctxt->sax2 = 1;
-	ctxt->userData = rb_ivar_get(self, CALLBACKS_ATTR);
+	ctxt->userData = (void*)rb_ivar_get(self, CALLBACKS_ATTR);
 
   if (ctxt->sax != (xmlSAXHandlerPtr) &xmlDefaultSAXHandler)
     xmlFree(ctxt->sax);

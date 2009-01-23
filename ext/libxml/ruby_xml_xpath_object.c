@@ -51,7 +51,7 @@ static void rxml_namespace_xpath_free(xmlNsPtr xns)
   xmlFreeNs(xns);
 }
 
-static VALUE rxml_xpath_object_mark(rxml_xpath_object *rxpop)
+static void rxml_xpath_object_mark(rxml_xpath_object *rxpop)
 {
   rb_gc_mark(rxpop->nsnodes);
   if (rxpop->xdoc->_private)
@@ -82,7 +82,7 @@ VALUE rxml_xpath_object_wrap(xmlDocPtr xdoc, xmlXPathObjectPtr xpop)
 
       /* Specify a custom free function here since by default
          namespace nodes will not be freed */
-      ns = rxml_namespace_wrap((xmlNsPtr)xnode, rxml_namespace_xpath_free);
+      ns = rxml_namespace_wrap((xmlNsPtr)xnode, (RUBY_DATA_FUNC)rxml_namespace_xpath_free);
       rb_ary_push(rxpop->nsnodes, ns);
     }
   }
