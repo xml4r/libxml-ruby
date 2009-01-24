@@ -67,7 +67,8 @@ VALUE rxml_xpath_object_wrap(xmlDocPtr xdoc, xmlXPathObjectPtr xpop)
   rxpop->nsnodes = rb_ary_new();
 
   /* Find all the extra namespace nodes and wrap them. */
-  if (xpop->nodesetval && xpop->nodesetval->nodeNr) {
+  if (xpop->nodesetval && xpop->nodesetval->nodeNr)
+  {
     for (i = 0;i < xpop->nodesetval->nodeNr; i++)
     {
       xmlNodePtr xnode = xpop->nodesetval->nodeTab[i];
