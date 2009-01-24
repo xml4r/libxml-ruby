@@ -885,20 +885,20 @@ static VALUE rxml_node_name_get(VALUE self)
 static VALUE rxml_node_name_set(VALUE self, VALUE name)
 {
   xmlNodePtr xnode;
+  const char *xname;
 
   Check_Type(name, T_STRING);
   Data_Get_Struct(self, xmlNode, xnode);
-  const xmlChar *s = StringValuePtr(name);
+  xname = StringValuePtr(name);
 
 	if (xnode->type != XML_TEXT_NODE)
-  	xmlNodeSetName(xnode, s);
-	else if (s == xmlStringText)			// compare addresses instead of string contents.
+  	xmlNodeSetName(xnode, xname);
+	else if (xname == xmlStringText)			/* compare addresses instead of string contents. */
 		xnode->name = xmlStringText;
-	else if (s == xmlStringTextNoenc)	// compare addresses instead of string contents.
+	else if (xname == xmlStringTextNoenc)	/* compare addresses instead of string contents. */
 		xnode->name = xmlStringTextNoenc;
 
-	// Note: calling xmlNodeSetName() for a text node is ignored by libXML.
-
+	/* Note: calling xmlNodeSetName() for a text node is ignored by libXML. */
   return (Qtrue);
 }
 
@@ -1240,12 +1240,13 @@ mLibXML = rb_define_module("LibXML");
 mXML = rb_define_module_under(mLibXML, "XML");
 #endif
 
-static VALUE rxml_constant_stringref(const xmlChar *ptr) {
+static VALUE rxml_constant_stringref(const xmlChar *ptr)
+{
   VALUE str = rb_str_new("", 0);
   FL_SET(str, ELTS_SHARED | FL_USER3);
-  xfree (RSTRING(str)->ptr);
-  RSTRING(str)->ptr = (void*) ptr;
-  RSTRING(str)->len = strlen (ptr);
+  xfree(RSTRING_PTR(str));
+  RSTRING_PTR(str) = (void*)ptr;
+  RSTRING_LEN(str) = strlen(ptr);
   RSTRING(str)->aux.capa = 0;
   OBJ_FREEZE(str);
   return str;
