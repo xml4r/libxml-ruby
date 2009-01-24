@@ -51,14 +51,14 @@ class TestParser < Test::Unit::TestCase
     assert_not_nil(doc)
   end
 
-  def test_file_base_url
+  def test_file_base_uri
     file = File.expand_path(File.join(File.dirname(__FILE__), 'model/bands.xml'))
 
     parser = XML::Parser.file(file)
     doc = parser.parse
     assert(doc.child.base.match(/test\/model\/bands.xml/))
 
-    parser = XML::Parser.file(file, :base_url => "http://libxml.org")
+    parser = XML::Parser.file(file, :base_uri => "http://libxml.org")
     doc = parser.parse
     assert(doc.child.base.match(/test\/model\/bands.xml/))
   end
@@ -120,7 +120,7 @@ class TestParser < Test::Unit::TestCase
     assert_equal('&foo;', node.child.to_s)
 
     # Parse with options
-    parser = XML::Parser.string(xml, :base_url => 'http://libxml.rubyforge.org',
+    parser = XML::Parser.string(xml, :base_uri => 'http://libxml.rubyforge.org',
                                      :options => XML::Parser::Options::NOCDATA | XML::Parser::Options::NOENT)
     doc = parser.parse
     assert_equal(doc.child.base, 'http://libxml.rubyforge.org')

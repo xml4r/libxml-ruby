@@ -13,7 +13,7 @@ class TestParserContext < Test::Unit::TestCase
     context = XML::Parser::Context.string(xml)
     assert_instance_of(XML::Parser::Context, context)
     assert_equal(XML::Encoding::NONE, context.encoding)
-    assert_nil(context.base_url)
+    assert_nil(context.base_uri)
   end
 
   def test_encoding
@@ -31,7 +31,7 @@ class TestParserContext < Test::Unit::TestCase
     assert_equal(XML::Encoding::ISO_8859_1, context.encoding)
   end
 
-  def test_base_url
+  def test_base_uri
     # UTF8
     xml = <<-EOS
       <bands>
@@ -40,10 +40,10 @@ class TestParserContext < Test::Unit::TestCase
     EOS
 
     context = XML::Parser::Context.string(xml)
-    assert_nil(context.base_url)
+    assert_nil(context.base_uri)
 
-    context.base_url = 'http://libxml.rubyforge.org'
-    assert_equal('http://libxml.rubyforge.org', context.base_url)
+    context.base_uri = 'http://libxml.rubyforge.org'
+    assert_equal('http://libxml.rubyforge.org', context.base_uri)
   end
 
   def test_string_empty

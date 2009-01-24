@@ -137,11 +137,11 @@ static VALUE rxml_parser_context_io(VALUE klass, VALUE io)
 
 /*
  * call-seq:
- *    context.base_url -> "http:://libxml.org"
+ *    context.base_uri -> "http:://libxml.org"
  *
  * Obtain the base url for this parser context.
  */
-static VALUE rxml_parser_context_base_url_get(VALUE self)
+static VALUE rxml_parser_context_base_uri_get(VALUE self)
 {
   xmlParserCtxtPtr ctxt;
   Data_Get_Struct(self, xmlParserCtxt, ctxt);
@@ -154,11 +154,11 @@ static VALUE rxml_parser_context_base_url_get(VALUE self)
 
 /*
  * call-seq:
- *    context.base_url = "http:://libxml.org"
+ *    context.base_uri = "http:://libxml.org"
  *
  * Sets the base url for this parser context.
  */
-static VALUE rxml_parser_context_base_url_set(VALUE self, VALUE url)
+static VALUE rxml_parser_context_base_uri_set(VALUE self, VALUE url)
 {
   xmlParserCtxtPtr ctxt;
   Data_Get_Struct(self, xmlParserCtxt, ctxt);
@@ -858,8 +858,8 @@ void ruby_init_xml_parser_context(void)
   rb_define_singleton_method(cXMLParserContext, "io", rxml_parser_context_io, 1);
   rb_define_singleton_method(cXMLParserContext, "string", rxml_parser_context_string, 1);
 
-  rb_define_method(cXMLParserContext, "base_url", rxml_parser_context_base_url_get, 0);
-  rb_define_method(cXMLParserContext, "base_url=", rxml_parser_context_base_url_set, 1);
+  rb_define_method(cXMLParserContext, "base_uri", rxml_parser_context_base_uri_get, 0);
+  rb_define_method(cXMLParserContext, "base_uri=", rxml_parser_context_base_uri_set, 1);
   rb_define_method(cXMLParserContext, "data_directory", rxml_parser_context_data_directory_get, 0);
   rb_define_method(cXMLParserContext, "depth", rxml_parser_context_depth_get, 0);
   rb_define_method(cXMLParserContext, "disable_sax?", rxml_parser_context_disable_sax_q, 0);

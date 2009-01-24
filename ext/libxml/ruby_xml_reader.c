@@ -44,9 +44,9 @@
 
 VALUE cXMLReader;
 
-ID BASE_URL_KEY;
-ID ENCODING_KEY;
-ID OPTIONS_KEY;
+ID base_uri_SYMBOL;
+ID ENCODING_SYMBOL;
+ID OPTIONS_SYMBOL;
 
 static VALUE rxml_reader_wrap(xmlTextReaderPtr reader)
 {
@@ -117,10 +117,10 @@ static VALUE rxml_reader_file(int argc, VALUE *argv, VALUE klass)
 
     Check_Type(options, T_HASH);
 
-    encoding = rb_hash_aref(options, BASE_URL_KEY);
-    xencoding = NIL_P(encoding) ? NULL : StringValueCStr(encoding);
+    encoding = rb_hash_aref(options, base_uri_SYMBOL);
+    xencoding = NIL_P(encoding) ? NULL : xmlGetCharEncodingName(NUM2INT(encoding));
 
-    parserOptions = rb_hash_aref(options, OPTIONS_KEY);
+    parserOptions = rb_hash_aref(options, OPTIONS_SYMBOL);
     xoptions = NIL_P(parserOptions) ? 0 : NUM2INT(parserOptions);
   }
 
@@ -142,7 +142,7 @@ static VALUE rxml_reader_file(int argc, VALUE *argv, VALUE klass)
  * You may provide an optional hash table to control how the
  * parsing is performed.  Valid options are:
  *
- *  base_url - The base url for the parsed document.
+ *  base_uri - The base url for the parsed document.
  *  encoding - The document encoding, defaults to nil. Valid values
  *             are the encoding constants defined on XML::Encoding.
  *  options - Controls the execution of the parser, defaults to 0.
@@ -169,13 +169,13 @@ static VALUE rxml_reader_io(int argc, VALUE *argv, VALUE klass)
 
     Check_Type(options, T_HASH);
 
-    baseurl = rb_hash_aref(options, BASE_URL_KEY);
+    baseurl = rb_hash_aref(options, base_uri_SYMBOL);
     xbaseurl = NIL_P(baseurl) ? NULL : StringValueCStr(baseurl);
 
-    encoding = rb_hash_aref(options, ENCODING_KEY);
-    xencoding = NIL_P(encoding) ? NULL : StringValueCStr(encoding);
+    encoding = rb_hash_aref(options, ENCODING_SYMBOL);
+    xencoding = NIL_P(encoding) ? NULL : xmlGetCharEncodingName(NUM2INT(encoding));
 
-    parserOptions = rb_hash_aref(options, OPTIONS_KEY);
+    parserOptions = rb_hash_aref(options, OPTIONS_SYMBOL);
     xoptions = NIL_P(parserOptions) ? 0 : NUM2INT(parserOptions);
   }
   
@@ -199,7 +199,7 @@ static VALUE rxml_reader_io(int argc, VALUE *argv, VALUE klass)
  * You may provide an optional hash table to control how the
  * parsing is performed.  Valid options are:
  *
- *  base_url - The base url for the parsed document.
+ *  base_uri - The base url for the parsed document.
  *  encoding - The document encoding, defaults to nil. Valid values
  *             are the encoding constants defined on XML::Encoding.
  *  options - Controls the execution of the parser, defaults to 0.
@@ -227,13 +227,13 @@ static VALUE rxml_reader_string(int argc, VALUE *argv, VALUE klass)
 
     Check_Type(options, T_HASH);
 
-    baseurl = rb_hash_aref(options, BASE_URL_KEY);
+    baseurl = rb_hash_aref(options, base_uri_SYMBOL);
     xbaseurl = NIL_P(baseurl) ? NULL : StringValueCStr(baseurl);
 
-    encoding = rb_hash_aref(options, ENCODING_KEY);
-    xencoding = NIL_P(encoding) ? NULL : StringValueCStr(encoding);
-
-    parserOptions = rb_hash_aref(options, OPTIONS_KEY);
+    encoding = rb_hash_aref(options, ENCODING_SYMBOL);
+    xencoding = NIL_P(encoding) ? NULL : xmlGetCharEncodingName(NUM2INT(encoding));
+      
+    parserOptions = rb_hash_aref(options, OPTIONS_SYMBOL);
     xoptions = NIL_P(parserOptions) ? 0 : NUM2INT(parserOptions);
   }
   
@@ -876,9 +876,9 @@ mXML = rb_define_module_under(mLibXML, "XML");
 
 void ruby_init_xml_reader(void)
 {
-  BASE_URL_KEY = rb_intern("base_url");
-  ENCODING_KEY = rb_intern("encoding");
-  OPTIONS_KEY = rb_intern("options");
+  base_uri_SYMBOL = ID2SYM(rb_intern("base_uri"));
+  ENCODING_SYMBOL = ID2SYM(rb_intern("encoding"));
+  OPTIONS_SYMBOL = ID2SYM(rb_intern("options"));
 
   cXMLReader = rb_define_class_under(mXML, "Reader", rb_cObject);
 

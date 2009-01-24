@@ -179,4 +179,45 @@ class TestReader < Test::Unit::TestCase
     reader.read
     assert_instance_of(XML::Node, reader.node)
   end
+
+  def test_base_uri
+    # UTF8:
+    # ö - c3 b6 in hex, \303\266 in octal
+    # ü - c3 bc in hex, \303\274 in octal
+    xml = "<bands genre=\"metal\">\n  <m\303\266tley_cr\303\274e country=\"us\">An American heavy metal band formed in Los Angeles, California in 1981.</m\303\266tley_cr\303\274e>\n  <iron_maiden country=\"uk\">British heavy metal band formed in 1975.</iron_maiden>\n</bands>"
+    reader = XML::Reader.string(xml, :base_uri => "http://libxml.rubyforge.org")
+
+    reader.read
+    assert_equal(reader.base_uri, "http://libxml.rubyforge.org")
+  end
+
+  def test_encoding
+    # ISO_8859_1:
+    # ö - f6 in hex, \366 in octal
+    # ü - fc in hex, \374 in octal
+    xml = "<bands genre=\"metal\">\n  <m\366tley_cr\374e country=\"us\">An American heavy metal band formed in Los Angeles, California in 1981.</m\366tley_cr\374e>\n  <iron_maiden country=\"uk\">British heavy metal band formed in 1975.</iron_maiden>\n</bands>"
+
+    reader = XML::Reader.string(xml, :encoding => XML::Encoding::ISO_8859_1)
+    reader.read
+
+    # libxml converts all data sources to utf8 internally
+    assert_equal("<bands genre=\"metal\">\n  <m\303\266tley_cr\303\274e country=\"us\">An American heavy metal band formed in Los Angeles, California in 1981.</m\303\266tley_cr\303\274e>\n  <iron_maiden country=\"uk\">British heavy metal band formed in 1975.</iron_maiden>\n</bands>",
+                     reader.read_outer_xml)
+  end
+
+  def test_invalid_encoding
+    # ISO_8859_1:
+    # ö - f6 in hex, \366 in octal
+    # ü - fc in hex, \374 in octal
+    xml = "<bands genre=\"metal\">\n  <m\366tley_cr\374e country=\"us\">An American heavy metal band formed in Los Angeles, California in 1981.</m\366tley_cr\374e>\n  <iron_maiden country=\"uk\">British heavy metal band formed in 1975.</iron_maiden>\n</bands>"
+
+    reader = XML::Reader.string(xml)
+    error = assert_raise(XML::Error) do
+      node = reader.read
+    end
+
+    assert_equal("Fatal error: Input is not proper UTF-8, indicate encoding !\nBytes: 0xF6 0x74 0x6C 0x65 at :2.",
+                 error.to_s)
+
+  end
 end
