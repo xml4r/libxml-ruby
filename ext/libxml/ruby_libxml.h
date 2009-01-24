@@ -7,7 +7,6 @@
 
 #include <ruby.h>
 #include <rubyio.h>
-#include <util.h>
 #include <libxml/parser.h>
 #include <libxml/parserInternals.h>
 #include <libxml/debugXML.h>
