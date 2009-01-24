@@ -36,14 +36,14 @@ module LibXML
       #    XML::Document.io(io) -> XML::Document
       #    XML::Document.io(io, :encoding => XML::Encoding::UTF_8,
       #                         :options => XML::Parser::Options::NOENT
-      #                         :base_url="http://libxml.org") -> XML::Document
+      #                         :base_uri="http://libxml.org") -> XML::Document
       #
       # Creates a new document from the specified io object.
       #
       # Parameters:
       #
       #  io - io object that contains the xml to parser
-      #  base_url - The base url for the parsed document.
+      #  base_uri - The base url for the parsed document.
       #  encoding - The document encoding, defaults to nil. Valid values
       #             are the encoding constants defined on XML::Encoding.
       #  options - Parser options.  Valid values are the constants defined on
@@ -57,14 +57,14 @@ module LibXML
       #    XML::Document.string(string)
       #    XML::Document.string(string, :encoding => XML::Encoding::UTF_8,
       #                               :options => XML::Parser::Options::NOENT
-      #                               :base_url="http://libxml.org") -> XML::Document
+      #                               :base_uri="http://libxml.org") -> XML::Document
       #
       # Creates a new document from the specified string.
       #
       # You may provide an optional hash table to control how the
       # parsing is performed.  Valid options are:
       #
-      #  base_url - The base url for the parsed document.
+      #  base_uri - The base url for the parsed document.
       #  encoding - The document encoding, defaults to nil. Valid values
       #             are the encoding constants defined on XML::Encoding.
       #  options - Parser options.  Valid values are the constants defined on

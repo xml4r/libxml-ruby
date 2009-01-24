@@ -123,7 +123,7 @@ class TestParser < Test::Unit::TestCase
     parser = XML::Parser.string(xml, :base_uri => 'http://libxml.rubyforge.org',
                                      :options => XML::Parser::Options::NOCDATA | XML::Parser::Options::NOENT)
     doc = parser.parse
-    assert_equal(doc.child.base, 'http://libxml.rubyforge.org')
+    assert_equal(doc.child.base_uri, 'http://libxml.rubyforge.org')
 
     # Cdata section should be text nodes
     node = doc.find_first('/test/cdata').child

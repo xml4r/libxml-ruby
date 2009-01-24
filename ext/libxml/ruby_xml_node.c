@@ -224,11 +224,11 @@ static VALUE rxml_node_initialize(int argc, VALUE *argv, VALUE self)
 
 /*
  * call-seq:
- *    node.base -> "uri"
+ *    node.base_uri -> "uri"
  *
  * Obtain this node's base URI.
  */
-static VALUE rxml_node_base_get(VALUE self)
+static VALUE rxml_node_base_uri_get(VALUE self)
 {
   xmlNodePtr xnode;
   xmlChar* base_uri;
@@ -253,11 +253,11 @@ static VALUE rxml_node_base_get(VALUE self)
 
 /*
  * call-seq:
- *    node.base = "uri"
+ *    node.base_uri = "uri"
  *
  * Set this node's base URI.
  */
-static VALUE rxml_node_base_set(VALUE self, VALUE uri)
+static VALUE rxml_node_base_uri_set(VALUE self, VALUE uri)
 {
   xmlNodePtr xnode;
 
@@ -1336,8 +1336,8 @@ void ruby_init_xml_node(void)
 
   /* Rest of the node api */
   rb_define_method(cXMLNode, "attributes", rxml_node_attributes_get, 0);
-  rb_define_method(cXMLNode, "base", rxml_node_base_get, 0);
-  rb_define_method(cXMLNode, "base=", rxml_node_base_set, 1);
+  rb_define_method(cXMLNode, "base_uri", rxml_node_base_uri_get, 0);
+  rb_define_method(cXMLNode, "base_uri=", rxml_node_base_uri_set, 1);
   rb_define_method(cXMLNode, "blank?", rxml_node_empty_q, 0);
   rb_define_method(cXMLNode, "copy", rxml_node_copy, 1);
   rb_define_method(cXMLNode, "content", rxml_node_content_get, 0);

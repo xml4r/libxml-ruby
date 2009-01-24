@@ -117,7 +117,10 @@ class TestParserContext < Test::Unit::TestCase
 
   def test_replace_entities
     context = XML::Parser::Context.new
-    assert(context.replace_entities?)
+    assert(!context.replace_entities?)
+
+#    context.options = 1
+ #   assert(context.replace_entities?)
 
     context.options = 0
     assert(!context.replace_entities?)
@@ -165,7 +168,7 @@ class TestParserContext < Test::Unit::TestCase
     assert_equal(0, context.name_depth)
     assert_equal(10, context.name_depth_max)
     assert_equal(17, context.num_chars)
-    assert_equal(true, context.replace_entities?)
+    assert_equal(false, context.replace_entities?)
     assert_equal(1, context.space_depth)
     assert_equal(10, context.space_depth_max)
     assert_equal(false, context.subset_external?)

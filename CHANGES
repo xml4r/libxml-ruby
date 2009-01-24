@@ -43,6 +43,11 @@
 
 * Fixed rdocs.
 
+* Don't override libxml's default settings for entity substitution and
+  loading external DTDs.  This may break some code - you may need to
+  add in a call to XML.default_substitute_entities = true or
+  XML.default_load_external_dtd = true.
+
 
 == 0.9.7 / 2008-12-08 Charlie Savage
 

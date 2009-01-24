@@ -27,14 +27,14 @@ module LibXML
       #    XML::HTMLParser.io(io) -> XML::HTMLParser
       #    XML::HTMLParser.io(io, :encoding => XML::Encoding::UTF_8,
       #                       :options => XML::HTMLParser::Options::NOENT
-      #                       :base_url="http://libxml.org") -> XML::HTMLParser
+      #                       :base_uri="http://libxml.org") -> XML::HTMLParser
       #
       # Creates a new reader by parsing the specified io object.
       #
       # Parameters:
       #
       #  io - io object that contains the xml to parser
-      #  base_url - The base url for the parsed document.
+      #  base_uri - The base url for the parsed document.
       #  encoding - The document encoding, defaults to nil. Valid values
       #             are the encoding constants defined on XML::Encoding.
       #  options - Parser options.  Valid values are the constants defined on
@@ -42,7 +42,7 @@ module LibXML
       #            by using Bitwise OR (|).
       def self.io(io, options = {})
         context = XML::HTMLParser::Context.io(io)
-        context.base_url = options[:base_url] if options[:base_url]
+        context.base_uri = options[:base_uri] if options[:base_uri]
         context.encoding = options[:encoding] if options[:encoding]
         context.options = options[:options] if options[:options]
         self.new(context)
@@ -52,14 +52,14 @@ module LibXML
       #    XML::HTMLParser.string(string)
       #    XML::HTMLParser.string(string, :encoding => XML::Encoding::UTF_8,
       #                               :options => XML::HTMLParser::Options::NOENT
-      #                               :base_url="http://libxml.org") -> XML::HTMLParser
+      #                               :base_uri="http://libxml.org") -> XML::HTMLParser
       #
       # Creates a new parser by parsing the specified string.
       #
       # You may provide an optional hash table to control how the
       # parsing is performed.  Valid options are:
       #
-      #  base_url - The base url for the parsed document.
+      #  base_uri - The base url for the parsed document.
       #  encoding - The document encoding, defaults to nil. Valid values
       #             are the encoding constants defined on XML::Encoding.
       #  options - Parser options.  Valid values are the constants defined on
@@ -67,7 +67,7 @@ module LibXML
       #            by using Bitwise OR (|).
       def self.string(string, options = {})
         context = XML::HTMLParser::Context.string(string)
-        context.base_url = options[:base_url] if options[:base_url]
+        context.base_uri = options[:base_uri] if options[:base_uri]
         context.encoding = options[:encoding] if options[:encoding]
         context.options = options[:options] if options[:options]
         self.new(context)

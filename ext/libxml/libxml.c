@@ -423,7 +423,7 @@ static VALUE rxml_default_load_external_dtd_get(VALUE class)
  */
 static VALUE rxml_default_load_external_dtd_set(VALUE class, VALUE bool)
 {
-  if (TYPE(bool) == T_FALSE)
+  if (bool == Qfalse)
   {
     xmlLoadExtDtdDefaultValue = 0;
     return (Qfalse);
@@ -875,7 +875,4 @@ void Init_libxml_ruby(void)
   ruby_init_xml_schema();
   ruby_init_xml_relaxng();
   ruby_init_xml_reader();
-
-  rxml_default_substitute_entities_set(mXML, Qtrue);
-  rxml_default_load_external_dtd_set(mXML, Qtrue);
 }

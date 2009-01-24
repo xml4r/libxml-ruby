@@ -329,6 +329,16 @@ module LibXML
         !self.namespaces.definitions.nil?
       end
 
+      def base
+        warn('Node#base is deprecated.  Use Node#base_uri.')
+        self.base_uri
+      end
+
+      def base=(value)
+        warn('Node#base= is deprecated.  Use Node#base_uri=.')
+        self.base_uri = value
+      end
+
       def search_ns(prefix)
         warn('Node#search_ns is deprecated.  Use Node#namespaces.find_by_prefix instead.')
         self.namespaces.find_by_prefix(prefix)
@@ -338,6 +348,7 @@ module LibXML
         warn('Node#search_href is deprecated.  Use Node#namespaces.find_by_href instead.')
         self.namespaces.find_by_href(href)
       end
+
       # :startdoc:
     end
   end

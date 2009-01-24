@@ -107,7 +107,7 @@ class TestNodeEdit < Test::Unit::TestCase
   end
 
   def test_set_base
-    @doc.root.base = 'http://www.rubynet.org/'
+    @doc.root.base_uri = 'http://www.rubynet.org/'
     assert_equal("<test xml:base=\"http://www.rubynet.org/\">\n  <num>one</num>\n  <num>two</num>\n  <num>three</num>\n</test>",
                  @doc.root.to_s)
   end
