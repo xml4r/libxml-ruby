@@ -104,7 +104,7 @@ static VALUE rxml_reader_file(int argc, VALUE *argv, VALUE klass)
   VALUE path;
   VALUE options;
 
-  char *xencoding = NULL;
+  const char *xencoding = NULL;
   int xoptions = 0;
 
   rb_scan_args(argc, argv, "11", &path, &options);
@@ -156,7 +156,7 @@ static VALUE rxml_reader_io(int argc, VALUE *argv, VALUE klass)
   VALUE io;
   VALUE options;
   char *xbaseurl = NULL;
-  char *xencoding = NULL;
+  const char *xencoding = NULL;
   int xoptions = 0;
 
   rb_scan_args(argc, argv, "11", &io, &options);
@@ -213,7 +213,7 @@ static VALUE rxml_reader_string(int argc, VALUE *argv, VALUE klass)
   VALUE string;
   VALUE options;
   char *xbaseurl = NULL;
-  char *xencoding = NULL;
+  const char *xencoding = NULL;
   int xoptions = 0;
 
   rb_scan_args(argc, argv, "11", &string, &options);

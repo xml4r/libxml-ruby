@@ -885,11 +885,11 @@ static VALUE rxml_node_name_get(VALUE self)
 static VALUE rxml_node_name_set(VALUE self, VALUE name)
 {
   xmlNodePtr xnode;
-  const char *xname;
+  const xmlChar *xname;
 
   Check_Type(name, T_STRING);
   Data_Get_Struct(self, xmlNode, xnode);
-  xname = StringValuePtr(name);
+  xname = (const xmlChar*)StringValuePtr(name);
 
 	if (xnode->type != XML_TEXT_NODE)
   	xmlNodeSetName(xnode, xname);
