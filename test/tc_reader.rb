@@ -191,6 +191,34 @@ class TestReader < Test::Unit::TestCase
     assert_equal(reader.base_uri, "http://libxml.rubyforge.org")
   end
 
+  def test_options
+    xml = <<-EOS
+      <!DOCTYPE foo [<!ENTITY foo 'bar'>]>
+      <test>
+        <cdata><![CDATA[something]]></cdata>
+        <entity>&foo;</entity>
+      </test>
+    EOS
+
+    # Parse normally
+    reader = XML::Reader.string(xml)
+    reader.read # foo
+    reader.read # test
+    reader.read # text
+    reader.read # cdata
+    reader.read # cdata-section
+    assert_equal(XML::Node::CDATA_SECTION_NODE, reader.node_type)
+
+    # Convert cdata section to text
+    reader = XML::Reader.string(xml, :options => XML::Parser::Options::NOCDATA)
+    reader.read # foo
+    reader.read # test
+    reader.read # text
+    reader.read # cdata
+    reader.read # cdata-section
+    assert_equal(XML::Node::TEXT_NODE, reader.node_type)
+  end
+
   def test_encoding
     # ISO_8859_1:
     # ö - f6 in hex, \366 in octal
@@ -219,5 +247,23 @@ class TestReader < Test::Unit::TestCase
     assert_equal("Fatal error: Input is not proper UTF-8, indicate encoding !\nBytes: 0xF6 0x74 0x6C 0x65 at :2.",
                  error.to_s)
 
+  end
+
+  def test_file_encoding
+    reader = XML::Reader.file(XML_FILE)
+    reader.read
+    assert_equal(reader.encoding, XML::Encoding::UTF_8)
+  end
+
+  def test_string_encoding
+    # ISO_8859_1:
+    # ö - f6 in hex, \366 in octal
+    # ü - fc in hex, \374 in octal
+    xml = "<bands genre=\"metal\">\n  <m\366tley_cr\374e country=\"us\">An American heavy metal band formed in Los Angeles, California in 1981.</m\366tley_cr\374e>\n  <iron_maiden country=\"uk\">British heavy metal band formed in 1975.</iron_maiden>\n</bands>"
+    reader = XML::Reader.string(xml, :encoding => XML::Encoding::ISO_8859_1)
+    reader.read
+
+    # Encoding is always null for strings, very annoying!
+    assert_equal(reader.encoding, XML::Encoding::NONE)
   end
 end

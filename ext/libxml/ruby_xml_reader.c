@@ -564,14 +564,28 @@ static VALUE rxml_reader_attr_count(VALUE self)
 
 /*
  * call-seq:
- *    reader.encoding -> encoding
+ *    reader.encoding -> XML::Encoding::UTF_8
  *
- * Determine the encoding of the document being read.
+ * Returns the encoding of the document being read.  Note you
+ * first have to read data from the reader for encoding
+ * to return a value
+ *
+ *   reader = XML::Reader.file(XML_FILE)
+ *   assert_nil(reader.encoding)
+ *   reader.read
+ *   assert_equal(XML::Encoding::UTF_8, reader.encoding)
+ *
+ * In addition, libxml always appears to return nil for the encoding
+ * when parsing strings.
  */
 static VALUE rxml_reader_encoding(VALUE self)
 {
-  const xmlChar *result = xmlTextReaderConstEncoding(rxml_text_reader_get(self));
-  return (result == NULL ? Qnil : rb_str_new2((const char*)result));
+  xmlTextReaderPtr xreader = rxml_text_reader_get(self);
+  const xmlChar *xencoding = xmlTextReaderConstEncoding(xreader);
+  if (xencoding)
+    return INT2NUM(xmlParseCharEncoding(xencoding));
+  else
+    return INT2NUM(XML_CHAR_ENCODING_NONE);
 }
 
 /*
