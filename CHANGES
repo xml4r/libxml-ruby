@@ -1,10 +1,10 @@
-== 0.9.8 / 2009-1-20 Charlie Savage
+== 0.9.8 / 2009-1-24 Charlie Savage
 
 * Refactored XML::Parser, XML::HTMLParser, XML::SaxParser and
-  XML::Reader APIs so that are consistent.  All the parsers
-  now take a context object in their constructors.  For advanced
-  use cases, the context object provides control over the operation
-  of the parser.  These API changes are backwards compatible except
+  XML::Reader to have consistent APIs.  All the parsers
+  now take a context object in their constructors, allowing fine
+  grained control over the parsers for advanced use cases.  These
+  API changes are backwards compatible except
   for XML::Reader, which now takes an optional hash table as a
   second parameter in its various constructors versus an optional
   boolean value.
@@ -15,6 +15,10 @@
 
 * Added support for attribute declarations in DTD's via the new
   XML::AttrDecl class (Len Lattanzi)
+
+* Support libxml's content escaping capabilities for text nodes by
+  wrapping libxml's "xmlStringText" and "xmlStringTextNoenc"
+  (Joe Khoobyar).
 
 * Updated XML::Reader#read API to return true if a node was read,
   false if node was not read and raises an exception on an error.
@@ -33,9 +37,11 @@
 
 * Added XML::Reader#node method.
 
-* Fixed rdocs.
-
 * Fixed compile errors on OS X which uses an older version of libxml.
+
+* Fixed memory leak when performing XPath searches.
+
+* Fixed rdocs.
 
 
 == 0.9.7 / 2008-12-08 Charlie Savage
