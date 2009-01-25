@@ -4,11 +4,10 @@
 
 #include "ruby_libxml.h"
 
-
-/* Document-class: LibXML::XML::HTMLParserOptions
+/* Document-class: LibXML::XML::HTMLParser::Options
  *
- * Options that control the operation of the HTMLParser.  The easiest
- * way to set a parser's options is to use the methods
+ * Options to control the operation of the HTMLParser.  The easiest
+ * way to set a parser's options is via the methods
  * XML::HTMLParser.file, XML::HTMLParser.io or XML::HTMLParser.string.
  * For additional control, see XML::HTMLParser::Context#options=.
 */
@@ -27,22 +26,23 @@ void ruby_init_html_parser_options(void)
 {
   mXMLHtmlParserOptions = rb_define_module_under(cXMLHtmlParser, "Options");
 
+
 #if LIBXML_VERSION >= 20621
-  /* Relaxed parsing */
+  /* 1: Relax parsing. */
   rb_define_const(mXMLHtmlParserOptions, "RECOVER", INT2NUM(HTML_PARSE_RECOVER)); 
 #endif
-  /* suppress error reports */
+  /* 32: Suppress error reports. */
   rb_define_const(mXMLHtmlParserOptions, "NOERROR", INT2NUM(HTML_PARSE_NOERROR)); 
-  /* suppress warning reports */
+  /* 64: Suppress warning reports. */
   rb_define_const(mXMLHtmlParserOptions, "NOWARNING", INT2NUM(HTML_PARSE_NOWARNING));
-  /* pedantic error reporting */
+  /* 128: Enable pedantic error reporting. */
   rb_define_const(mXMLHtmlParserOptions, "PEDANTIC", INT2NUM(HTML_PARSE_PEDANTIC)); 
-  /* remove blank nodes */
+  /* 256: Remove blank nodes. */
   rb_define_const(mXMLHtmlParserOptions, "NOBLANKS", INT2NUM(HTML_PARSE_NOBLANKS)); 
 #if LIBXML_VERSION >= 20621
-  /* Forbid network access */
+  /* 2048: Forbid network access. */
   rb_define_const(mXMLHtmlParserOptions, "NONET", INT2NUM(HTML_PARSE_NONET)); 
-  /* compact small text nodes */
+  /* 65536: Compact small text nodes. */
   rb_define_const(mXMLHtmlParserOptions, "COMPACT", INT2NUM(HTML_PARSE_COMPACT));
 #endif
 }

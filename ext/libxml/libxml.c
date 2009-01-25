@@ -1,8 +1,19 @@
 /* $Id$ */
 
-/* Please see the LICENSE file for copyright and distribution information */
-
 #include "ruby_libxml.h"
+
+/* Document-class: LibXML
+ *
+ * The libxml gem provides Ruby language bindings for GNOME's Libxml2
+ * XML toolkit. libxml-ruby is the best XML library for Ruby because:
+ *
+ *  * Speed - Its much faster than REXML and Hpricot
+ *  * Features - It provides an amazing number of featues
+ *  * Conformance - It passes all 1800+ tests from the OASIS XML Tests Suite
+ * 
+ * Refer to the Readme[./index.html] file to get started and the LICENSE file
+ * for copyright and distribution information
+*/
 
 VALUE mLibXML;
 VALUE mXML;
@@ -782,6 +793,12 @@ static VALUE rxml_memory_used(VALUE self)
 #endif
 }
 
+// Rdoc needs to know
+#ifdef RDOC_NEVER_DEFINED
+mLibXML = rb_define_module("LibXML");
+mXML = rb_define_module_under(mLibXML, "XML");
+#endif
+
 #if defined(_WIN32)
 __declspec(dllexport)
 #endif
@@ -794,8 +811,7 @@ void Init_libxml_ruby(void)
   rb_define_const(mXML, "LIBXML_VERSION", rb_str_new2(LIBXML_DOTTED_VERSION));
   rb_define_const(mXML, "VERSION", rb_str_new2(RUBY_LIBXML_VERSION));
   rb_define_const(mXML, "VERNUM", INT2NUM(RUBY_LIBXML_VERNUM));
-  rb_define_const(mXML, "XML_NAMESPACE", rb_str_new2(
-      (const char*) XML_XML_NAMESPACE));
+  rb_define_const(mXML, "XML_NAMESPACE", rb_str_new2((const char*) XML_XML_NAMESPACE));
 
   rb_define_module_function(mXML, "enabled_automata?", rxml_enabled_automata_q, 0);
   rb_define_module_function(mXML, "enabled_c14n?", rxml_enabled_c14n_q, 0);
