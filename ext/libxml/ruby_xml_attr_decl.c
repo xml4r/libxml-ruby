@@ -8,7 +8,7 @@
  * At attribute declaration is used in XML::Dtds to define 
  * what attributes are allowed on an element.  An attribute
  * declaration defines an attribues name, data type and default
- *  value (if any).
+ * value (if any).
  */
 
 #include "ruby_libxml.h"
@@ -158,13 +158,7 @@ VALUE rxml_attr_decl_value_get(VALUE self)
     return Qnil;
 }
 
-// Rdoc needs to know
-#ifdef RDOC_NEVER_DEFINED
-mLibXML = rb_define_module("LibXML");
-mXML = rb_define_module_under(mLibXML, "XML");
-#endif
-
-void ruby_init_xml_attr_decl(void)
+void rxml_init_attr_decl(void)
 {
   cXMLAttrDecl = rb_define_class_under(mXML, "AttrDecl", rb_cObject);
   rb_define_method(cXMLAttrDecl, "doc", rxml_attr_decl_doc_get, 0);

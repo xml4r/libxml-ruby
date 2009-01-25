@@ -8,6 +8,15 @@
  * manipulate it, or create a document from a data source by
  * using an XML::Parser object.
  *
+ * To read a document from a file:
+ *
+ *   doc = XML::Document.file('my_file')
+ *
+ * To use a parser to read a document:
+ *
+ *   parser = XML::Parser.file('my_file')
+ *   doc = parser.parse
+ *
  * To create a document from scratch:
  *
  *  doc = XML::Document.new()
@@ -15,18 +24,7 @@
  *  doc.root << XML::Node.new('elem1')
  *  doc.save(filename, :indent => true, :encoding => 'UTF-8')
  *
- * To read a document from a file:
- *
- *   doc = XML::Document.file('my_file')
- *
- * To use a parser to read a document:
- *
- *   parser = XML::Parser.new
- *   parser.file = 'my_file'
- *   doc = parser.parse
- *
- * To write a file:
- *
+ * To write a document to a file:
  *
  *  doc = XML::Document.new()
  *  doc.root = XML::Node.new('root_node')
@@ -851,14 +849,7 @@ static VALUE rxml_document_validate_dtd(VALUE self, VALUE dtd)
   }
 }
 
-
-// Rdoc needs to know
-#ifdef RDOC_NEVER_DEFINED
-mLibXML = rb_define_module("LibXML");
-mXML = rb_define_module_under(mLibXML, "XML");
-#endif
-
-void ruby_init_xml_document(void)
+void rxml_init_document(void)
 {
   cXMLDocument = rb_define_class_under(mXML, "Document", rb_cObject);
   rb_define_alloc_func(cXMLDocument, rxml_document_alloc);

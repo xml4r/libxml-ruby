@@ -7,6 +7,6 @@
 
 extern VALUE cXMLSaxParser;
 
-void ruby_init_xml_sax_parser(void);
+void rxml_init_sax_parser(void);
 
 #endif

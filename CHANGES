@@ -10,7 +10,7 @@
   boolean value.
 
 * Updated all APIs to use the encoding constants defined
-  in XML::Encoding versus string valus.  This API change
+  in XML::Encoding versus string values.  This API change
   is not backwards compatible.
 
 * Added support for attribute declarations in DTD's via the new

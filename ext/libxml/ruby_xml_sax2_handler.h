@@ -7,6 +7,6 @@
 
 extern xmlSAXHandler rxml_sax_handler;
 
-void ruby_init_xml_sax2_handler(void);
+void rxml_init_sax2_handler(void);
 
 #endif

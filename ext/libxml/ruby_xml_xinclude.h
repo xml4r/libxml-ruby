@@ -8,6 +8,6 @@
 extern VALUE cXMLXInclude;
 extern VALUE eXMLXIncludeError;
 
-void ruby_init_xml_xinclude(void);
+void rxml_init_xinclude(void);
 
 #endif

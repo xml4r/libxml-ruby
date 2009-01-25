@@ -9,6 +9,6 @@
 
 extern VALUE mXMLParserOptions;
 
-void ruby_init_parser_options();
+void rxml_init_parser_options();
 
 #endif

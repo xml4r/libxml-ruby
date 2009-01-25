@@ -59,6 +59,7 @@
 #include <libxml/xpointer.h>
 #endif
 
+#include "ruby_xml.h"
 #include "ruby_xml_io.h"
 #include "ruby_xml_error.h"
 #include "ruby_xml_encoding.h"
@@ -91,6 +92,5 @@
 #include "ruby_xml_relaxng.h"
 
 extern VALUE mLibXML;
-extern VALUE mXML;
 
 #endif

@@ -83,13 +83,7 @@
 
 VALUE mXPath;
 
-// Rdoc needs to know
-#ifdef RDOC_NEVER_DEFINED
-mLibXML = rb_define_module("LibXML");
-mXML = rb_define_module_under(mLibXML, "XML");
-#endif
-
-void ruby_init_xml_xpath(void)
+void rxml_init_xpath(void)
 {
   mXPath = rb_define_module_under(mXML, "XPath");
 
@@ -104,5 +98,5 @@ void ruby_init_xml_xpath(void)
   rb_define_const(mXPath, "USERS", INT2NUM(XPATH_USERS));
   rb_define_const(mXPath, "XSLT_TREE", INT2NUM(XPATH_XSLT_TREE));
 
-  ruby_init_xml_xpath_object();
+  rxml_init_xpath_object();
 }

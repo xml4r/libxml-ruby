@@ -24,13 +24,7 @@ static VALUE rxml_state_alloc(VALUE klass)
   return Data_Wrap_Struct(cXMLState, NULL, rxml_state_free, &dummy);
 }
 
-// Rdoc needs to know
-#ifdef RDOC_NEVER_DEFINED
-mLibXML = rb_define_module("LibXML");
-mXML = rb_define_module_under(mLibXML, "XML");
-#endif
-
-void ruby_init_state(void)
+void rxml_init_state(void)
 {
   VALUE rb_mSingleton;
   cXMLState = rb_define_class_under(mXML, "State", rb_cObject);

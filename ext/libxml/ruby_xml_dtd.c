@@ -121,13 +121,7 @@ static VALUE rxml_dtd_initialize(int argc, VALUE *argv, VALUE self)
   return self;
 }
 
-// Rdoc needs to know
-#ifdef RDOC_NEVER_DEFINED
-mLibXML = rb_define_module("LibXML");
-mXML = rb_define_module_under(mLibXML, "XML");
-#endif
-
-void ruby_init_xml_dtd()
+void rxml_init_dtd()
 {
   cXMLDtd = rb_define_class_under(mXML, "Dtd", rb_cObject);
   rb_define_alloc_func(cXMLDtd, rxml_dtd_alloc);

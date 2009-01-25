@@ -6,7 +6,7 @@
 
 extern VALUE cXMLReader;
 
-void ruby_init_xml_reader(void);
+void rxml_init_reader(void);
 
 /* Exported to be used by XML::Document#reader */
 VALUE rxml_reader_new_walker(VALUE self, VALUE doc);

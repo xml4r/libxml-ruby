@@ -1,4 +1,3 @@
-# This is for backwards compatibility and is DEPRECATED
 module LibXML
   module XML
     class Tree # :nodoc:

@@ -7,7 +7,7 @@
 
 extern VALUE cXMLAttr;
 
-void ruby_init_xml_attr(void);
+void rxml_init_attr(void);
 VALUE rxml_attr_wrap(xmlAttrPtr xattr);
 VALUE rxml_attr_value_get(VALUE self);
 VALUE rxml_attr_value_set(VALUE self, VALUE val);

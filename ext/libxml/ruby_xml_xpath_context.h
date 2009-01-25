@@ -6,6 +6,6 @@
 #define __RXML_XPATH_CONTEXT__
 
 extern VALUE cXMLXPathContext;
-void ruby_init_xml_xpath_context(void);
+void rxml_init_xpath_context(void);
 
 #endif

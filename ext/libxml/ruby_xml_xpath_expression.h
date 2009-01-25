@@ -7,6 +7,6 @@
 
 extern VALUE cXMLXPathExpression;
 
-void ruby_init_xml_xpath_expression(void);
+void rxml_init_xpath_expression(void);
 
 #endif

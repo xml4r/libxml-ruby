@@ -15,14 +15,7 @@
 
 VALUE mXMLParserOptions;
 
-
-// Rdoc needs to know
-#ifdef RDOC_NEVER_DEFINED
-mLibXML = rb_define_module("LibXML");
-mXML = rb_define_module_under(mLibXML, "XML");
-#endif
-
-void ruby_init_parser_options(void)
+void rxml_init_parser_options(void)
 {
   mXMLParserOptions = rb_define_module_under(cXMLParser, "Options");
 

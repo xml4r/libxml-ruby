@@ -5,6 +5,6 @@
 
 extern VALUE cXMLRelaxNG;
 
-void  ruby_init_xml_relaxng(void);
+void  rxml_init_relaxng(void);
 #endif
 

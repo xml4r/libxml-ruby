@@ -1,7 +1,7 @@
 #ifndef _INPUT_CBG_
 #define _INPUT_CBG_
 
-void ruby_init_input_callbacks(void);
+void rxml_init_input_callbacks(void);
 
 typedef struct ic_doc_context {
     char *buffer;

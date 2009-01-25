@@ -7,7 +7,7 @@
 
 extern VALUE cXMLXPointer;
 
-void ruby_init_xml_xpointer(void);
+void rxml_init_xpointer(void);
 VALUE rxml_xpointer_point2(VALUE node, VALUE xptr_str);
 
 #endif

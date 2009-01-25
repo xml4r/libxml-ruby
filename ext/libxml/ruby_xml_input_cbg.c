@@ -3,7 +3,7 @@
 #include "ruby_libxml.h"
 #include "ruby_xml_input_cbg.h"
 
-/* Document-class: LibXML::XML::EncodingCallbacks
+/* Document-class: LibXML::XML::InputCallbacks
  *
  * Support for adding custom scheme handlers. */
 
@@ -176,13 +176,7 @@ static VALUE input_callbacks_remove_scheme(VALUE self, VALUE scheme_name)
   return Qfalse;
 }
 
-// Rdoc needs to know
-#ifdef RDOC_NEVER_DEFINED
-mLibXML = rb_define_module("LibXML");
-mXML = rb_define_module_under(mLibXML, "XML");
-#endif
-
-void ruby_init_input_callbacks(void)
+void rxml_init_input_callbacks(void)
 {
   VALUE cInputCallbacks;
   cInputCallbacks = rb_define_class_under(mXML, "InputCallbacks", rb_cObject);

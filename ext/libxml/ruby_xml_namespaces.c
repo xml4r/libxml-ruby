@@ -277,15 +277,7 @@ static VALUE rxml_namespaces_node_get(VALUE self)
   return rxml_node_wrap(xnode);
 }
 
-
-
-// Rdoc needs to know
-#ifdef RDOC_NEVER_DEFINED
-mLibXML = rb_define_module("LibXML");
-mXML = rb_define_module_under(mLibXML, "XML");
-#endif
-
-void ruby_init_xml_namespaces(void)
+void rxml_init_namespaces(void)
 {
   cXMLNamespaces = rb_define_class_under(mXML, "Namespaces", rb_cObject);
   rb_include_module(cXMLNamespaces, rb_mEnumerable);

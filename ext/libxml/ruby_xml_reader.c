@@ -882,13 +882,7 @@ static VALUE rxml_reader_valid(VALUE self)
   return xmlTextReaderIsValid(rxml_text_reader_get(self)) ? Qtrue : Qfalse;
 }
 
-/* Rdoc needs to know. */
-#ifdef RDOC_NEVER_DEFINED
-mLibXML = rb_define_module("LibXML");
-mXML = rb_define_module_under(mLibXML, "XML");
-#endif
-
-void ruby_init_xml_reader(void)
+void rxml_init_reader(void)
 {
   base_uri_SYMBOL = ID2SYM(rb_intern("base_uri"));
   ENCODING_SYMBOL = ID2SYM(rb_intern("encoding"));

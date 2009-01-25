@@ -9,6 +9,6 @@
 
 extern VALUE cXMLParser;
 
-void ruby_init_parser();
+void rxml_init_parser();
 
 #endif

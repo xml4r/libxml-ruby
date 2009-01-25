@@ -258,13 +258,7 @@ static VALUE rxml_attributes_first(VALUE self)
   return Qnil;
 }
 
-// Rdoc needs to know
-#ifdef RDOC_NEVER_DEFINED
-mLibXML = rb_define_module("LibXML");
-mXML = rb_define_module_under(mLibXML, "XML");
-#endif
-
-void ruby_init_xml_attributes(void)
+void rxml_init_attributes(void)
 {
   cXMLAttributes = rb_define_class_under(mXML, "Attributes", rb_cObject);
   rb_include_module(cXMLAttributes, rb_mEnumerable);

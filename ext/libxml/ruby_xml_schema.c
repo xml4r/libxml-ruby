@@ -32,12 +32,6 @@
 
 VALUE cXMLSchema;
 
-// Rdoc needs to know
-#ifdef RDOC_NEVER_DEFINED
-mLibXML = rb_define_module("LibXML");
-mXML = rb_define_module_under(mLibXML, "XML");
-#endif
-
 static void rxml_schema_free(xmlSchemaPtr xschema)
 {
   xmlSchemaFree(xschema);
@@ -153,7 +147,7 @@ static VALUE rxml_schema_init_from_string(VALUE self, VALUE schema_str)
  } else if (!strcmp(method, "validate_schema_buffer")) {
  */
 
-void ruby_init_xml_schema(void)
+void rxml_init_schema(void)
 {
   cXMLSchema = rb_define_class_under(mXML, "Schema", rb_cObject);
   rb_define_singleton_method(cXMLSchema, "new", rxml_schema_init_from_uri, 1);

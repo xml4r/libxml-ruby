@@ -127,14 +127,7 @@ static VALUE rxml_html_parser_context_options_set(VALUE self, VALUE options)
   return self;
 }
 
-// Rdoc needs to know 
-#ifdef RDOC_NEVER_DEFINED
-  mLibXML = rb_define_module("LibXML");
-  mXML = rb_define_module_under(mLibXML, "XML");
-  cXMLHtmlParser = rb_define_class_under(mXML, "HTMLParser", rb_cObject);
-#endif
-
-void ruby_init_html_parser_context(void)
+void rxml_init_html_parser_context(void)
 {
   cXMLHtmlParserContext = rb_define_class_under(cXMLHtmlParser, "Context", cXMLParserContext);
 

@@ -77,13 +77,7 @@ static VALUE rxml_html_parser_parse(VALUE self)
   return rxml_document_wrap(ctxt->myDoc);
 }
 
-// Rdoc needs to know
-#ifdef RDOC_NEVER_DEFINED
-mLibXML = rb_define_module("LibXML");
-mXML = rb_define_module_under(mLibXML, "XML");
-#endif
-
-void ruby_init_html_parser(void)
+void rxml_init_html_parser(void)
 {
   CONTEXT_ATTR = rb_intern("@context");
 

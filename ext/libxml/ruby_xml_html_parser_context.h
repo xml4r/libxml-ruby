@@ -7,6 +7,6 @@
 
 extern VALUE cXMLHtmlParserContext;
 
-void ruby_init_html_parser_context(void);
+void rxml_init_html_parser_context(void);
 
 #endif

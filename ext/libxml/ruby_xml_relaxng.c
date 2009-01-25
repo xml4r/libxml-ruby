@@ -32,12 +32,6 @@
 
 VALUE cXMLRelaxNG;
 
-// Rdoc needs to know
-#ifdef RDOC_NEVER_DEFINED
-mLibXML = rb_define_module("LibXML");
-mXML = rb_define_module_under(mLibXML, "XML");
-#endif
-
 static void rxml_relaxng_free(xmlRelaxNGPtr xrelaxng)
 {
   xmlRelaxNGFree(xrelaxng);
@@ -105,7 +99,7 @@ static VALUE rxml_relaxng_init_from_string(VALUE self, VALUE relaxng_str)
   return Data_Wrap_Struct(cXMLRelaxNG, NULL, rxml_relaxng_free, xrelaxng);
 }
 
-void ruby_init_xml_relaxng(void)
+void rxml_init_relaxng(void)
 {
   cXMLRelaxNG = rb_define_class_under(mXML, "RelaxNG", rb_cObject);
   rb_define_singleton_method(cXMLRelaxNG, "new", rxml_relaxng_init_from_uri, 1);

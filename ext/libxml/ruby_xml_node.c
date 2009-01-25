@@ -1234,12 +1234,6 @@ void rxml_node_deregisterNode(xmlNodePtr xnode)
   DATA_PTR( node) = NULL;
 }
 
-// Rdoc needs to know
-#ifdef RDOC_NEVER_DEFINED
-mLibXML = rb_define_module("LibXML");
-mXML = rb_define_module_under(mLibXML, "XML");
-#endif
-
 static VALUE rxml_constant_stringref(const xmlChar *ptr)
 {
   VALUE str = rb_str_new("", 0);
@@ -1252,7 +1246,7 @@ static VALUE rxml_constant_stringref(const xmlChar *ptr)
   return str;
 }
 
-void ruby_init_xml_node(void)
+void rxml_init_node(void)
 {
   xmlRegisterNodeDefault(rxml_node_registerNode);
   xmlDeregisterNodeDefault(rxml_node_deregisterNode);

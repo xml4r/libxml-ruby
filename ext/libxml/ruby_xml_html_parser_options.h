@@ -7,6 +7,6 @@
 
 extern VALUE mXMLHtmlParserOptions;
 
-void ruby_init_html_parser_options(void);
+void rxml_init_html_parser_options(void);
 
 #endif

@@ -362,14 +362,7 @@ rxml_xpath_context_disable_cache(VALUE self)
 }
 #endif
 
-
-// Rdoc needs to know 
-#ifdef RDOC_NEVER_DEFINED
-  mLibXML = rb_define_module("LibXML");
-  mXPath = rb_define_module_under(mLibXML, "XPath");
-#endif
-
-void ruby_init_xml_xpath_context(void)
+void rxml_init_xpath_context(void)
 {
   DOC_ATTRIBUTE = rb_intern("@doc");
 

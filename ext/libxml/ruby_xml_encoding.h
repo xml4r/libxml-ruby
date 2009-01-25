@@ -7,6 +7,6 @@
 
 extern VALUE mXMLEncoding;
 
-void ruby_init_xml_encoding();
+void rxml_init_encoding();
 
 #endif

@@ -7,6 +7,6 @@
 
 extern VALUE mXPath;
 
-void ruby_init_xml_xpath(void);
+void rxml_init_xpath(void);
 
 #endif

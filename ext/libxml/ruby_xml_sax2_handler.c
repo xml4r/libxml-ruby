@@ -298,7 +298,7 @@ xmlSAXHandler rxml_sax_handler = {
   (xmlStructuredErrorFunc) structured_error_callback
 };
 
-void ruby_init_xml_sax2_handler(void)
+void rxml_init_sax2_handler(void)
 {
 
   /* SaxCallbacks */

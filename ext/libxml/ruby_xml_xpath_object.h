@@ -13,7 +13,7 @@ typedef struct rxml_xpath_object
 } rxml_xpath_object;
 
 
-void ruby_init_xml_xpath_object(void);
+void rxml_init_xpath_object(void);
 VALUE rxml_xpath_object_wrap(xmlDocPtr xdoc, xmlXPathObjectPtr xpop);
 
 #endif

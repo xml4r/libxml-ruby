@@ -190,6 +190,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\libxml\ruby_xml.c"
+				>
+			</File>
+			<File
 				RelativePath="..\libxml\ruby_xml_attr.c"
 				>
 			</File>
@@ -317,6 +321,10 @@
 			>
 			<File
 				RelativePath="..\libxml\ruby_libxml.h"
+				>
+			</File>
+			<File
+				RelativePath="..\libxml\ruby_xml.h"
 				>
 			</File>
 			<File

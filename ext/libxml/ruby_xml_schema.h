@@ -6,6 +6,6 @@
 
 extern VALUE cXMLSchema;
 
-void  ruby_init_xml_schema(void);
+void  rxml_init_schema(void);
 #endif
 

@@ -7,7 +7,7 @@
 
 extern VALUE cXMLDocument;
 
-void ruby_init_xml_document();
+void rxml_init_document();
 
 
 #if defined(_WIN32)

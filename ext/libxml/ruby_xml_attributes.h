@@ -7,7 +7,7 @@
 
 extern VALUE cXMLAttributesibutes;
 
-void ruby_init_xml_attributes(void);
+void rxml_init_attributes(void);
 VALUE rxml_attributes_new(xmlNodePtr xnode);
 
 VALUE rxml_attributes_attribute_get(VALUE self, VALUE name);
