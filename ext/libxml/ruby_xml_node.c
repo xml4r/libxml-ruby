@@ -1239,9 +1239,15 @@ static VALUE rxml_constant_stringref(const xmlChar *ptr)
   VALUE str = rb_str_new("", 0);
   FL_SET(str, ELTS_SHARED | FL_USER3);
   xfree(RSTRING_PTR(str));
+#if (RUBY_VERSION_MAJOR == 1) && (RUBY_VERSION_MINOR == 8)
   RSTRING_PTR(str) = (void*)ptr;
   RSTRING_LEN(str) = strlen(ptr);
   RSTRING(str)->aux.capa = 0;
+#else
+  RSTRING(str)->as.heap.ptr = (void*)ptr;
+  RSTRING(str)->as.heap.len = strlen(ptr);
+  RSTRING(str)->as.heap.aux.capa = 0;
+#endif
   OBJ_FREEZE(str);
   return str;
 }
