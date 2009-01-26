@@ -1,11 +1,5 @@
 /* $Id$ */
 
-/* Please see the LICENSE file for copyright and distribution information */
-
-#include "ruby_libxml.h"
-#include "ruby_xml_xpath.h"
-#include "ruby_xml_xpath_context.h"
-
 /*
  * Document-class: LibXML::XML::XPath
  *
@@ -78,8 +72,11 @@
  *  # Here is an example showing a complex namespace aware
  *  # xpath expression.
  *  doc.find('/soap:Envelope/soap:Body/ns0:getManufacturerNamesResponse/ns0:IDAndNameList/ns1:IdAndName',
- ['ns0:http://services.somewhere.com', 'ns1:http://domain.somewhere.com'])
- */
+ *  ['ns0:http://services.somewhere.com', 'ns1:http://domain.somewhere.com'])
+*/
+
+
+#include "ruby_libxml.h"
 
 VALUE mXPath;
 
@@ -87,16 +84,24 @@ void rxml_init_xpath(void)
 {
   mXPath = rb_define_module_under(mXML, "XPath");
 
+  /* 0: Undefined value. */
   rb_define_const(mXPath, "UNDEFINED", INT2NUM(XPATH_UNDEFINED));
+  /* 1: A nodeset, will be wrapped by XPath Object. */
   rb_define_const(mXPath, "NODESET", INT2NUM(XPATH_NODESET));
+  /* 2: A boolean value. */
   rb_define_const(mXPath, "BOOLEAN", INT2NUM(XPATH_BOOLEAN));
+  /* 3: A numeric value. */
   rb_define_const(mXPath, "NUMBER", INT2NUM(XPATH_NUMBER));
+  /* 4: A string value. */
   rb_define_const(mXPath, "STRING", INT2NUM(XPATH_STRING));
+  /* 5: An xpointer point */
   rb_define_const(mXPath, "POINT", INT2NUM(XPATH_POINT));
+  /* 6: An xpointer range */
   rb_define_const(mXPath, "RANGE", INT2NUM(XPATH_RANGE));
+  /* 7: An xpointer location set */
   rb_define_const(mXPath, "LOCATIONSET", INT2NUM(XPATH_LOCATIONSET));
+  /* 8: XPath user type */
   rb_define_const(mXPath, "USERS", INT2NUM(XPATH_USERS));
+  /* 9: An XSLT value tree, non modifiable */
   rb_define_const(mXPath, "XSLT_TREE", INT2NUM(XPATH_XSLT_TREE));
-
-  rxml_init_xpath_object();
 }

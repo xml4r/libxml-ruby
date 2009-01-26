@@ -44,6 +44,7 @@ void Init_libxml_ruby(void)
   rxml_init_sax2_handler();
   rxml_init_xinclude();
   rxml_init_xpath();
+  rxml_init_xpath_object();
   rxml_init_xpath_context();
   rxml_init_xpath_expression();
   rxml_init_xpointer();

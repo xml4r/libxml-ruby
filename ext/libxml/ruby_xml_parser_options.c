@@ -5,7 +5,7 @@
 #include <stdarg.h>
 #include "ruby_libxml.h"
 
-/* Document-class: LibXML::XML::ParserOptions
+/* Document-class: LibXML::XML::Parser::Options
  *
  * Options that control the operation of the HTMLParser.  The easiest
  * way to set a parser's options is to use the methods

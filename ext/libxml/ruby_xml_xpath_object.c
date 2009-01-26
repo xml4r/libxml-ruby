@@ -311,7 +311,6 @@ void rxml_init_xpath_object(void)
   rb_define_method(cXMLXPathObject, "empty?", rxml_xpath_object_empty_q, 0);
   rb_define_method(cXMLXPathObject, "first", rxml_xpath_object_first, 0);
   rb_define_method(cXMLXPathObject, "length", rxml_xpath_object_length, 0);
-  rb_define_method(cXMLXPathObject, "size", rxml_xpath_object_length, 0);
   rb_define_method(cXMLXPathObject, "to_a", rxml_xpath_object_to_a, 0);
   rb_define_method(cXMLXPathObject, "[]", rxml_xpath_object_aref, 1);
   rb_define_method(cXMLXPathObject, "string", rxml_xpath_object_string, 0);
