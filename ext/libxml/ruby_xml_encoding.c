@@ -126,7 +126,7 @@ void rxml_init_encoding(void)
   /* 19: ISO-2022-JP. */
   rb_define_const(mXMLEncoding, "ISO_2022_JP", INT2NUM(XML_CHAR_ENCODING_2022_JP));
   /* 20: Shift_JIS. */
-  rb_define_const(mXMLEncoding, "SHIFT_JIS", INT2NUM(XML_CHAR_ENCODING_SHIFT_JIS))
+  rb_define_const(mXMLEncoding, "SHIFT_JIS", INT2NUM(XML_CHAR_ENCODING_SHIFT_JIS));
   /* 21: EUC-JP. */
   rb_define_const(mXMLEncoding, "EUC_JP", INT2NUM(XML_CHAR_ENCODING_EUC_JP));
   /* 22: pure ASCII. */
