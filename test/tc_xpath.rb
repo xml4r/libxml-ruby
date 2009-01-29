@@ -115,6 +115,7 @@ class TestXPath < Test::Unit::TestCase
     # Since we are searching on the node, don't have to register namespace
     nodes = node.find('ns1:name')
     assert_equal(1, nodes.length)
+		assert_equal(nodes.first.object_id, nodes.last.object_id, 'First and last should be the same')
     assert_equal('name', nodes.first.name)
     assert_equal('man1', nodes.first.content)
   end

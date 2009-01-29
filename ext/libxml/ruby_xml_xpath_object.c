@@ -205,6 +205,23 @@ static VALUE rxml_xpath_object_first(VALUE self)
 
 /*
  * call-seq:
+ *    xpath_object.last -> node
+ *
+ * Returns the last node in this node set, or nil if none exist.
+ */
+static VALUE rxml_xpath_object_last(VALUE self)
+{
+  rxml_xpath_object *rxpop;
+
+  if (rxml_xpath_object_empty_q(self) == Qtrue)
+    return Qnil;
+
+  Data_Get_Struct(self, rxml_xpath_object, rxpop);
+  return rxml_xpath_object_tabref(rxpop->xpop, -1);
+}
+
+/*
+ * call-seq:
  * xpath_object[i] -> node
  *
  * array index into set of nodes
@@ -310,6 +327,7 @@ void rxml_init_xpath_object(void)
   rb_define_method(cXMLXPathObject, "xpath_type", rxml_xpath_object_get_type, 0);
   rb_define_method(cXMLXPathObject, "empty?", rxml_xpath_object_empty_q, 0);
   rb_define_method(cXMLXPathObject, "first", rxml_xpath_object_first, 0);
+  rb_define_method(cXMLXPathObject, "last", rxml_xpath_object_last, 0);
   rb_define_method(cXMLXPathObject, "length", rxml_xpath_object_length, 0);
   rb_define_method(cXMLXPathObject, "to_a", rxml_xpath_object_to_a, 0);
   rb_define_method(cXMLXPathObject, "[]", rxml_xpath_object_aref, 1);
