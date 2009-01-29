@@ -31,7 +31,6 @@ def crash(str)
 end
 
 dir_config('iconv')
-dir_config('xml2')
 dir_config('zlib')
 
 have_library('socket','socket')
@@ -74,24 +73,44 @@ to extconf.rb:
 EOL
 end
 
-unless (have_library('xml2', 'xmlParseDoc') or
-        have_library('libxml2', 'xmlParseDoc') or
-        find_library('xml2', 'xmlParseDoc', '/opt/lib', '/usr/local/lib', '/usr/lib')) and 
-       (have_header('libxml/xmlversion.h') or
-        find_header('libxml/xmlversion.h',
-                    "#{CONFIG['prefix']}/include",
-                    "#{CONFIG['prefix']}/include/libxml2",
-                    '/opt/include/libxml2', 
-                    '/usr/local/include/libxml2', 
-                    '/usr/include/libxml2'))
-  crash(<<EOL)
+if xc = with_config('xml2-config') then
+  xc = 'xml2-config' if xc == true
+  cflags = `#{xc} --cflags`.chomp
+  if $? != 0
+		cflags = nil
+	else
+  	libs = `#{xc} --libs`.chomp
+  	if $? != 0
+			libs = nil
+		else
+  		$CFLAGS += ' ' + cflags
+  		$libs = libs + " " + $libs
+		end
+	end
+else
+	dir_config('xml2')
+end
+
+unless (cflags and libs) or
+			 (have_library('xml2', 'xmlParseDoc') or
+				have_library('libxml2', 'xmlParseDoc') or
+				find_library('xml2', 'xmlParseDoc', '/opt/lib', '/usr/local/lib', '/usr/lib')) and 
+			 (have_header('libxml/xmlversion.h') or
+				find_header('libxml/xmlversion.h',
+										"#{CONFIG['prefix']}/include",
+										"#{CONFIG['prefix']}/include/libxml2",
+										'/opt/include/libxml2', 
+										'/usr/local/include/libxml2', 
+										'/usr/include/libxml2'))
+		crash(<<EOL)
 need libxml2.
 
-    Install the library or try one of the following options to extconf.rb:
+		Install the library or try one of the following options to extconf.rb:
 
-      --with-xml2-dir=/path/to/libxml2
-      --with-xml2-lib=/path/to/libxml2/lib
-      --with-xml2-include=/path/to/libxml2/include
+			--with-xml2-config=/path/to/xml2-config
+			--with-xml2-dir=/path/to/libxml2
+			--with-xml2-lib=/path/to/libxml2/lib
+			--with-xml2-include=/path/to/libxml2/include
 EOL
 end
 
