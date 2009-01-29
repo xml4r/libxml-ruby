@@ -105,12 +105,12 @@ unless (cflags and libs) or
 		crash(<<EOL)
 need libxml2.
 
-		Install the library or try one of the following options to extconf.rb:
+    Install the library or try one of the following options to extconf.rb:
 
-			--with-xml2-config=/path/to/xml2-config
-			--with-xml2-dir=/path/to/libxml2
-			--with-xml2-lib=/path/to/libxml2/lib
-			--with-xml2-include=/path/to/libxml2/include
+      --with-xml2-config=/path/to/xml2-config
+      --with-xml2-dir=/path/to/libxml2
+      --with-xml2-lib=/path/to/libxml2/lib
+      --with-xml2-include=/path/to/libxml2/include
 EOL
 end
 
