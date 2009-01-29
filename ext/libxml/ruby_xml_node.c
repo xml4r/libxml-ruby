@@ -1216,7 +1216,7 @@ static VALUE rxml_node_output_escaping_set(VALUE self, VALUE bool)
       xmlNodePtr tmp;
       for (tmp = xnode->children; tmp; tmp = tmp->next)
         if (tmp->type == XML_TEXT_NODE)
-          xnode->name = name;
+          tmp->name = name;
     }
     break;
   default:
