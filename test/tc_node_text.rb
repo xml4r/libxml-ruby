@@ -15,29 +15,6 @@ class TestTextNode < Test::Unit::TestCase
     assert_equal('wrong argument type nil (expected String)', error.to_s)
   end
 
-	# Just a sanity check for output escaping.
-	def test_text_node_name_sanity
-		node = XML::Node.new_text('testdata')
-    assert_equal 'text', node.name
-		assert ! node.output_escaping?
-
-		node.output_escaping = true
-    assert_equal 'textnoenc', node.name
-		assert node.output_escaping?
-
-		node.output_escaping = false
-    assert_equal 'text', node.name
-		assert ! node.output_escaping?
-
-		node.output_escaping = true
-    assert_equal 'textnoenc', node.name
-		assert node.output_escaping?
-
-		node.output_escaping = nil
-    assert_equal 'text', node.name
-		assert ! node.output_escaping?
-  end
-
 	# We use the same facility that libXSLT does here to disable output escaping.
 	# This lets you specify that the node's content should be rendered unaltered
 	# whenever it is being output.  This is useful for things like <script> and
@@ -60,6 +37,29 @@ class TestTextNode < Test::Unit::TestCase
 
 		node.output_escaping = nil
 		assert_equal '&lt;my&gt; "entity"', node.to_s
+  end
+
+	# Just a sanity check for output escaping.
+	def test_output_escaping_sanity
+		node = XML::Node.new_text('testdata')
+    assert_equal 'text', node.name
+		assert ! node.output_escaping?
+
+		node.output_escaping = true
+    assert_equal 'textnoenc', node.name
+		assert node.output_escaping?
+
+		node.output_escaping = false
+    assert_equal 'text', node.name
+		assert ! node.output_escaping?
+
+		node.output_escaping = true
+    assert_equal 'textnoenc', node.name
+		assert node.output_escaping?
+
+		node.output_escaping = nil
+    assert_equal 'text', node.name
+		assert ! node.output_escaping?
   end
 
 end

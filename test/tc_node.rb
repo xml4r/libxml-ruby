@@ -112,4 +112,62 @@ class TestNode < Test::Unit::TestCase
     doc = XML::Parser.string('<person />').parse
     assert_nil(doc.root.base)
   end
+
+	# We use the same facility that libXSLT does here to disable output escaping.
+	# This lets you specify that the node's content should be rendered unaltered
+	# whenever it is being output.  This is useful for things like <script> and
+	# <style> nodes in HTML documents if you don't want to be forced to wrap them
+	# in CDATA nodes.  Or if you are sanitizing existing HTML documents and want
+	# to preserve the content of any of the text nodes.
+	#
+	def test_output_escaping
+		text = '<bad-script>if (a &lt; b || b &gt; c) { return "text"; }<stop/>return "&gt;&gt;&gt;snip&lt;&lt;&lt;";</bad-script>'
+    node = XML::Parser.string(text).parse.root
+		assert_equal text, node.to_s
+
+		text_noenc = '<bad-script>if (a < b || b > c) { return "text"; }<stop/>return ">>>snip<<<";</bad-script>'
+		node.output_escaping = true
+		assert_equal text_noenc, node.to_s
+
+		node.output_escaping = false
+		assert_equal text, node.to_s
+
+		node.output_escaping = true
+		assert_equal text_noenc, node.to_s
+
+		node.output_escaping = nil
+		assert_equal text, node.to_s
+  end
+
+	# Just a sanity check for output escaping.
+	def test_output_escaping_sanity
+		text = '<bad-script>if (a &lt; b || b &gt; c) { return "text"; }<stop/>return "&gt;&gt;&gt;snip&lt;&lt;&lt;";</bad-script>'
+    node = XML::Parser.string(text).parse.root
+		affected = node.find('//text()')
+
+		check_escaping = lambda do |flag|
+			assert_equal('bad-script', node.name)
+			assert_equal(flag, node.output_escaping?)
+			affected.each do |x|
+				assert_equal(flag ? 'textnoenc' : 'text', x.name)
+				assert_equal(flag, x.output_escaping?)
+			end
+		end
+
+		node.output_escaping = true
+		check_escaping[true]
+
+		node.output_escaping = false
+		check_escaping[false]
+
+		node.output_escaping = true
+		check_escaping[true]
+
+		node.output_escaping = nil
+		check_escaping[false]
+
+		affected.first.output_escaping = true
+		affected.last.output_escaping = false
+		assert node.output_escaping?.nil?
+  end
 end
