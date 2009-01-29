@@ -15,21 +15,27 @@ class TestTextNode < Test::Unit::TestCase
     assert_equal('wrong argument type nil (expected String)', error.to_s)
   end
 
-	# Disabling output escaping can't work without this test passing.
+	# Just a sanity check for output escaping.
 	def test_text_node_name_sanity
 		node = XML::Node.new_text('testdata')
-    assert_equal XML::Node::XML_STRING_TEXT.object_id, node.name.object_id
-    node.name = 'ignore-me'
-    assert_equal XML::Node::XML_STRING_TEXT.object_id, node.name.object_id
-    node.name = XML::Node::XML_STRING_TEXT_NOENC
-    assert_equal XML::Node::XML_STRING_TEXT_NOENC.object_id, node.name.object_id
-    node.name = 'ignore-me'
-    assert_equal XML::Node::XML_STRING_TEXT_NOENC.object_id, node.name.object_id
-  end
+    assert_equal 'text', node.name
+		assert ! node.output_escaping?
 
-	def test_text_node_name_singletons_frozen
-    assert XML::Node::XML_STRING_TEXT.frozen?
-    assert XML::Node::XML_STRING_TEXT_NOENC.frozen?
+		node.output_escaping = true
+    assert_equal 'textnoenc', node.name
+		assert node.output_escaping?
+
+		node.output_escaping = false
+    assert_equal 'text', node.name
+		assert ! node.output_escaping?
+
+		node.output_escaping = true
+    assert_equal 'textnoenc', node.name
+		assert node.output_escaping?
+
+		node.output_escaping = nil
+    assert_equal 'text', node.name
+		assert ! node.output_escaping?
   end
 
 	# We use the same facility that libXSLT does here to disable output escaping.
@@ -42,9 +48,17 @@ class TestTextNode < Test::Unit::TestCase
 	def test_output_escaping
     node = XML::Node.new_text('<my> "entity"')
 		assert_equal '&lt;my&gt; "entity"', node.to_s
-    node.name = XML::Node::XML_STRING_TEXT_NOENC
+
+		node.output_escaping = true
 		assert_equal '<my> "entity"', node.to_s
-    node.name = XML::Node::XML_STRING_TEXT
+
+		node.output_escaping = false
+		assert_equal '&lt;my&gt; "entity"', node.to_s
+
+		node.output_escaping = true
+		assert_equal '<my> "entity"', node.to_s
+
+		node.output_escaping = nil
 		assert_equal '&lt;my&gt; "entity"', node.to_s
   end
 

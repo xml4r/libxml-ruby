@@ -3,9 +3,6 @@
 
 VALUE cXMLNode;
 
-static VALUE kXMLStringText;
-static VALUE kXMLStringTextNoenc;
-
 /* Document-class: LibXML::XML::Node
  *
  * Nodes are the primary objects that make up an XML document.
@@ -868,10 +865,6 @@ static VALUE rxml_node_name_get(VALUE self)
 
   if (xnode->name == NULL)
     return (Qnil);
-	else if (name == xmlStringText)
-		return (kXMLStringText);
-	else if (name == xmlStringTextNoenc)
-		return (kXMLStringTextNoenc);
   else
     return (rb_str_new2((const char*) name));
 }
@@ -891,14 +884,9 @@ static VALUE rxml_node_name_set(VALUE self, VALUE name)
   Data_Get_Struct(self, xmlNode, xnode);
   xname = (const xmlChar*)StringValuePtr(name);
 
-	if (xnode->type != XML_TEXT_NODE)
-  	xmlNodeSetName(xnode, xname);
-	else if (xname == xmlStringText)			/* compare addresses instead of string contents. */
-		xnode->name = xmlStringText;
-	else if (xname == xmlStringTextNoenc)	/* compare addresses instead of string contents. */
-		xnode->name = xmlStringTextNoenc;
-
 	/* Note: calling xmlNodeSetName() for a text node is ignored by libXML. */
+  xmlNodeSetName(xnode, xname);
+
   return (Qtrue);
 }
 
@@ -1150,6 +1138,96 @@ static VALUE rxml_node_sibling_set(VALUE self, VALUE rnode)
 
 /*
  * call-seq:
+ *    text_node.output_escaping?      -> (true|false)
+ *    element_node.output_escaping?   -> (true|false|nil)
+ *    attribute_node.output_escaping? -> (true|false|nil)
+ *    other_node.output_escaping?     -> (nil)
+ *
+ * Determine whether this node escapes it's output or not.
+ *
+ * Text nodes return only +true+ or +false+.  Element and attribute nodes
+ * examine their immediate text node children to determine the value.
+ * Any other type of node always returns +nil+.
+ *
+ * If an element or attribute node has at least one immediate child text node 
+ * and all the immediate text node children have the same +output_escaping?+
+ * value, that value is returned.  Otherwise, +nil+ is returned.
+ */
+static VALUE rxml_node_output_escaping_q(VALUE self)
+{
+  xmlNodePtr xnode;
+  Data_Get_Struct(self, xmlNode, xnode);
+
+  switch (xnode->type) {
+  case XML_TEXT_NODE:
+    return xnode->name==xmlStringTextNoenc ? Qtrue : Qfalse;
+  case XML_ELEMENT_NODE:
+  case XML_ATTRIBUTE_NODE:
+    {
+      xmlNodePtr tmp = xnode->children;
+      const xmlChar *match = NULL;
+
+      /* Find the first text node and use it as the reference. */
+      while (tmp && tmp->type != XML_TEXT_NODE)
+        tmp = tmp->next;
+      if (! tmp)
+        return Qnil;
+      match = tmp->name;
+
+      /* Walk the remaining text nodes until we run out or one doesn't match. */
+      while (tmp && (tmp->type != XML_TEXT_NODE || match == tmp->name))
+        tmp = tmp->next;
+
+      /* We're left with either the mismatched node or the aggregate result. */
+      return tmp ? Qnil : (match==xmlStringTextNoenc ? Qtrue : Qfalse);
+    }
+    break;
+  default:
+    return Qnil;
+  }
+}
+
+/*
+ * call-seq:
+ *    text_node.output_escaping = true|false
+ *    element_node.output_escaping = true|false
+ *    attribute_node.output_escaping = true|false
+ *
+ * Controls whether this text node or the immediate text node children of an
+ * element or attribute node escapes their output.  Any other type of node
+ * will simply ignore this operation.
+ *
+ * Text nodes which are added to an element or attribute node will be affected
+ * by any previous setting of this property.
+ */
+static VALUE rxml_node_output_escaping_set(VALUE self, VALUE bool)
+{
+  xmlNodePtr xnode;
+  Data_Get_Struct(self, xmlNode, xnode);
+
+  switch (xnode->type) {
+  case XML_TEXT_NODE:
+    xnode->name = (bool!=Qfalse && bool!=Qnil) ? xmlStringTextNoenc : xmlStringText;
+    break;
+  case XML_ELEMENT_NODE:
+  case XML_ATTRIBUTE_NODE:
+    {
+      const xmlChar *name = (bool!=Qfalse && bool!=Qnil) ? xmlStringTextNoenc : xmlStringText;
+      xmlNodePtr tmp;
+      for (tmp = xnode->children; tmp; tmp = tmp->next)
+        if (tmp->type == XML_TEXT_NODE)
+          xnode->name = name;
+    }
+    break;
+  default:
+    return Qnil;
+  }
+
+  return (bool!=Qfalse && bool!=Qnil) ? Qtrue : Qfalse;
+}
+
+/*
+ * call-seq:
  *    node.space_preserve -> (true|false)
  *
  * Determine whether this node preserves whitespace.
@@ -1234,31 +1312,10 @@ void rxml_node_deregisterNode(xmlNodePtr xnode)
   DATA_PTR( node) = NULL;
 }
 
-static VALUE rxml_constant_stringref(const xmlChar *ptr)
-{
-  VALUE str = rb_str_new("", 0);
-  FL_SET(str, ELTS_SHARED | FL_USER3);
-  xfree(RSTRING_PTR(str));
-#if (RUBY_VERSION_MAJOR == 1) && (RUBY_VERSION_MINOR == 8)
-  RSTRING_PTR(str) = (void*)ptr;
-  RSTRING_LEN(str) = strlen(ptr);
-  RSTRING(str)->aux.capa = 0;
-#else
-  RSTRING(str)->as.heap.ptr = (void*)ptr;
-  RSTRING(str)->as.heap.len = strlen(ptr);
-  RSTRING(str)->as.heap.aux.capa = 0;
-#endif
-  OBJ_FREEZE(str);
-  return str;
-}
-
 void rxml_init_node(void)
 {
   xmlRegisterNodeDefault(rxml_node_registerNode);
   xmlDeregisterNodeDefault(rxml_node_deregisterNode);
-
-  kXMLStringText = rxml_constant_stringref(xmlStringText);
-  kXMLStringTextNoenc = rxml_constant_stringref(xmlStringTextNoenc);
 
   cXMLNode = rb_define_class_under(mXML, "Node", rb_cObject);
 
@@ -1303,9 +1360,6 @@ void rxml_init_node(void)
 #else
   rb_define_const(cXMLNode, "DOCB_DOCUMENT_NODE", Qnil);
 #endif
-
-  rb_define_const(cXMLNode, "XML_STRING_TEXT", kXMLStringText);
-  rb_define_const(cXMLNode, "XML_STRING_TEXT_NOENC", kXMLStringTextNoenc);
 
   rb_define_singleton_method(cXMLNode, "new_cdata", rxml_node_new_cdata, -1);
   rb_define_singleton_method(cXMLNode, "new_comment", rxml_node_new_comment, -1);
@@ -1353,6 +1407,8 @@ void rxml_init_node(void)
   rb_define_method(cXMLNode, "name", rxml_node_name_get, 0);
   rb_define_method(cXMLNode, "name=", rxml_node_name_set, 1);
   rb_define_method(cXMLNode, "node_type", rxml_node_type, 0);
+  rb_define_method(cXMLNode, "output_escaping?", rxml_node_output_escaping_q, 0);
+  rb_define_method(cXMLNode, "output_escaping=", rxml_node_output_escaping_set, 1);
   rb_define_method(cXMLNode, "path", rxml_node_path, 0);
   rb_define_method(cXMLNode, "pointer", rxml_node_pointer, 1);
   rb_define_method(cXMLNode, "remove!", rxml_node_remove_ex, 0);
