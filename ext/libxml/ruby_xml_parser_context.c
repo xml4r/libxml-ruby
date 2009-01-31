@@ -207,6 +207,45 @@ static VALUE rxml_parser_context_depth_get(VALUE self)
 
 /*
  * call-seq:
+ *    context.disable_cdata? -> (true|false)
+ *
+ * Determine whether CDATA nodes will be created in this context.
+ */
+static VALUE rxml_parser_context_disable_cdata_q(VALUE self)
+{
+  xmlParserCtxtPtr ctxt;
+  Data_Get_Struct(self, xmlParserCtxt, ctxt);
+
+  /* LibXML controls this internally with the default SAX handler. */
+  if (ctxt->sax && ctxt->sax->cdataBlock)
+    return (Qfalse);
+  else
+    return (Qtrue);
+}
+
+/*
+ * call-seq:
+ *    context.disable_cdata = (true|false)
+ *
+ * Control whether CDATA nodes will be created in this context.
+ */
+static VALUE rxml_parser_context_disable_cdata_set(VALUE self, VALUE bool)
+{
+  xmlParserCtxtPtr ctxt;
+  Data_Get_Struct(self, xmlParserCtxt, ctxt);
+
+  if (ctxt->sax == NULL)
+    return (Qnil);
+
+  /* LibXML controls this internally with the default SAX handler. */ 
+  if (bool)
+    ctxt->sax->cdataBlock = NULL;
+  else
+    ctxt->sax->cdataBlock = xmlDefaultSAXHandler.cdataBlock;
+}
+
+/*
+ * call-seq:
  *    context.disable_sax? -> (true|false)
  *
  * Determine whether SAX-based processing is disabled
@@ -855,6 +894,8 @@ void rxml_init_parser_context(void)
   rb_define_method(cXMLParserContext, "base_uri=", rxml_parser_context_base_uri_set, 1);
   rb_define_method(cXMLParserContext, "data_directory", rxml_parser_context_data_directory_get, 0);
   rb_define_method(cXMLParserContext, "depth", rxml_parser_context_depth_get, 0);
+  rb_define_method(cXMLParserContext, "disable_cdata?", rxml_parser_context_disable_cdata_q, 0);
+  rb_define_method(cXMLParserContext, "disable_cdata=", rxml_parser_context_disable_cdata_set, 1);
   rb_define_method(cXMLParserContext, "disable_sax?", rxml_parser_context_disable_sax_q, 0);
   rb_define_method(cXMLParserContext, "docbook?", rxml_parser_context_docbook_q, 0);
   rb_define_method(cXMLParserContext, "encoding", rxml_parser_context_encoding_get, 0);

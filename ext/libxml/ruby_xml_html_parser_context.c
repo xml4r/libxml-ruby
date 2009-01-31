@@ -108,6 +108,27 @@ static VALUE rxml_html_parser_context_string(VALUE klass, VALUE string)
 
 /*
  * call-seq:
+ *    context.disable_cdata = (true|false)
+ *
+ * Control whether the CDATA nodes will be created in this context.
+ */
+static VALUE rxml_html_parser_context_disable_cdata_set(VALUE self, VALUE bool)
+{
+  xmlParserCtxtPtr ctxt;
+  Data_Get_Struct(self, xmlParserCtxt, ctxt);
+
+  if (ctxt->sax == NULL)
+    return (Qnil);
+
+  /* LibXML controls this internally with the default SAX handler. */ 
+  if (bool)
+    ctxt->sax->cdataBlock = NULL;
+  else
+    ctxt->sax->cdataBlock = htmlDefaultSAXHandler.cdataBlock;
+}
+
+/*
+ * call-seq:
  *    context.options = XML::Parser::Options::NOENT |
                         XML::Parser::Options::NOCDATA
  *
@@ -134,5 +155,6 @@ void rxml_init_html_parser_context(void)
   rb_define_singleton_method(cXMLHtmlParserContext, "file", rxml_html_parser_context_file, 1);
   rb_define_singleton_method(cXMLHtmlParserContext, "io", rxml_html_parser_context_io, 1);
   rb_define_singleton_method(cXMLHtmlParserContext, "string", rxml_html_parser_context_string, 1);
+  rb_define_method(cXMLHtmlParserContext, "disable_cdata=", rxml_html_parser_context_disable_cdata_set, 1);
   rb_define_method(cXMLHtmlParserContext, "options=", rxml_html_parser_context_options_set, 1);
 }
