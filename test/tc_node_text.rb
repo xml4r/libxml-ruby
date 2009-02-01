@@ -23,43 +23,47 @@ class TestTextNode < Test::Unit::TestCase
 	# to preserve the content of any of the text nodes.
 	#
 	def test_output_escaping
-    node = XML::Node.new_text('<my> "entity"')
-		assert_equal '&lt;my&gt; "entity"', node.to_s
-
-		node.output_escaping = true
-		assert_equal '<my> "entity"', node.to_s
+		textnoenc = 'if (a < b || c > d) return "e";'
+		text = "if (a &lt; b || c &gt; d) return \"e\";"
+ 
+		node = XML::Node.new_text(textnoenc)
+		assert node.output_escaping?
+		assert_equal text, node.to_s
 
 		node.output_escaping = false
-		assert_equal '&lt;my&gt; "entity"', node.to_s
+		assert_equal textnoenc, node.to_s
 
 		node.output_escaping = true
-		assert_equal '<my> "entity"', node.to_s
+		assert_equal text, node.to_s
 
 		node.output_escaping = nil
-		assert_equal '&lt;my&gt; "entity"', node.to_s
+		assert_equal textnoenc, node.to_s
+
+		node.output_escaping = true
+		assert_equal text, node.to_s
   end
 
 	# Just a sanity check for output escaping.
 	def test_output_escaping_sanity
 		node = XML::Node.new_text('testdata')
     assert_equal 'text', node.name
-		assert ! node.output_escaping?
-
-		node.output_escaping = true
-    assert_equal 'textnoenc', node.name
 		assert node.output_escaping?
 
 		node.output_escaping = false
-    assert_equal 'text', node.name
+    assert_equal 'textnoenc', node.name
 		assert ! node.output_escaping?
 
 		node.output_escaping = true
-    assert_equal 'textnoenc', node.name
+    assert_equal 'text', node.name
 		assert node.output_escaping?
 
 		node.output_escaping = nil
-    assert_equal 'text', node.name
+    assert_equal 'textnoenc', node.name
 		assert ! node.output_escaping?
+
+		node.output_escaping = true
+    assert_equal 'text', node.name
+		assert node.output_escaping?
   end
 
 end

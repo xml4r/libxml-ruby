@@ -126,16 +126,16 @@ class TestNode < Test::Unit::TestCase
 		assert_equal text, node.to_s
 
 		text_noenc = '<bad-script>if (a < b || b > c) { return "text"; }<stop/>return ">>>snip<<<";</bad-script>'
-		node.output_escaping = true
+		node.output_escaping = false
 		assert_equal text_noenc, node.to_s
 
-		node.output_escaping = false
+		node.output_escaping = true
 		assert_equal text, node.to_s
 
-		node.output_escaping = true
+		node.output_escaping = nil
 		assert_equal text_noenc, node.to_s
 
-		node.output_escaping = nil
+		node.output_escaping = true
 		assert_equal text, node.to_s
   end
 
@@ -149,13 +149,10 @@ class TestNode < Test::Unit::TestCase
 			assert_equal('bad-script', node.name)
 			assert_equal(flag, node.output_escaping?)
 			affected.each do |x|
-				assert_equal(flag ? 'textnoenc' : 'text', x.name)
+				assert_equal(flag ? 'text' : 'textnoenc', x.name)
 				assert_equal(flag, x.output_escaping?)
 			end
 		end
-
-		node.output_escaping = true
-		check_escaping[true]
 
 		node.output_escaping = false
 		check_escaping[false]
@@ -165,6 +162,9 @@ class TestNode < Test::Unit::TestCase
 
 		node.output_escaping = nil
 		check_escaping[false]
+
+		node.output_escaping = true
+		check_escaping[true]
 
 		affected.first.output_escaping = true
 		affected.last.output_escaping = false

@@ -1160,7 +1160,7 @@ static VALUE rxml_node_output_escaping_q(VALUE self)
 
   switch (xnode->type) {
   case XML_TEXT_NODE:
-    return xnode->name==xmlStringTextNoenc ? Qtrue : Qfalse;
+    return xnode->name==xmlStringTextNoenc ? Qfalse : Qtrue;
   case XML_ELEMENT_NODE:
   case XML_ATTRIBUTE_NODE:
     {
@@ -1179,7 +1179,7 @@ static VALUE rxml_node_output_escaping_q(VALUE self)
         tmp = tmp->next;
 
       /* We're left with either the mismatched node or the aggregate result. */
-      return tmp ? Qnil : (match==xmlStringTextNoenc ? Qtrue : Qfalse);
+      return tmp ? Qnil : (match==xmlStringTextNoenc ? Qfalse : Qtrue);
     }
     break;
   default:
@@ -1207,12 +1207,12 @@ static VALUE rxml_node_output_escaping_set(VALUE self, VALUE bool)
 
   switch (xnode->type) {
   case XML_TEXT_NODE:
-    xnode->name = (bool!=Qfalse && bool!=Qnil) ? xmlStringTextNoenc : xmlStringText;
+    xnode->name = (bool!=Qfalse && bool!=Qnil) ? xmlStringText : xmlStringTextNoenc;
     break;
   case XML_ELEMENT_NODE:
   case XML_ATTRIBUTE_NODE:
     {
-      const xmlChar *name = (bool!=Qfalse && bool!=Qnil) ? xmlStringTextNoenc : xmlStringText;
+      const xmlChar *name = (bool!=Qfalse && bool!=Qnil) ? xmlStringText : xmlStringTextNoenc;
       xmlNodePtr tmp;
       for (tmp = xnode->children; tmp; tmp = tmp->next)
         if (tmp->type == XML_TEXT_NODE)
