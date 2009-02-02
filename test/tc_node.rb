@@ -23,8 +23,16 @@ class TestNode < Test::Unit::TestCase
     assert_instance_of(XML::Document, @doc)
   end
 
+  def test_doc_node_type
+    assert_equal XML::Node::DOCUMENT_NODE, @doc.node_type
+  end
+
   def test_root_class
     assert_instance_of(XML::Node, @doc.root)
+  end
+
+  def test_root_node_type
+    assert_equal XML::Node::ELEMENT_NODE, @doc.root.node_type
   end
 
   def test_node_class

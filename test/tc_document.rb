@@ -83,4 +83,12 @@ class TestDocument < Test::Unit::TestCase
     doc.encoding = XML::Encoding::ISO_8859_1
     assert_equal(XML::Encoding::ISO_8859_1, doc.encoding)
   end
+
+  def test_doc_node_type
+    assert_equal XML::Node::DOCUMENT_NODE, XML::Document.new.node_type
+  end
+
+  def test_doc_node_type_name
+    assert_equal 'document_xml', XML::Document.new.node_type_name
+  end
 end

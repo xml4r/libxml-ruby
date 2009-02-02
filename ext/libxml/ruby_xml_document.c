@@ -393,6 +393,19 @@ static VALUE rxml_document_next_q(VALUE self)
 
 /*
  * call-seq:
+ *    node.type -> num
+ *
+ * Obtain this node's type identifier.
+ */
+static VALUE rxml_document_node_type(VALUE self)
+{
+  xmlNodePtr xnode;
+  Data_Get_Struct(self, xmlNode, xnode);
+  return (INT2NUM(xnode->type));
+}
+
+/*
+ * call-seq:
  *    document.parent -> node
  *
  * Obtain the parent node.
@@ -867,6 +880,7 @@ void rxml_init_document(void)
   rb_define_method(cXMLDocument, "last?", rxml_document_last_q, 0);
   rb_define_method(cXMLDocument, "next", rxml_document_next_get, 0);
   rb_define_method(cXMLDocument, "next?", rxml_document_next_q, 0);
+  rb_define_method(cXMLDocument, "node_type", rxml_document_node_type, 0);
   rb_define_method(cXMLDocument, "order_elements!", rxml_document_order_elements, 0);
   rb_define_method(cXMLDocument, "parent", rxml_document_parent_get, 0);
   rb_define_method(cXMLDocument, "parent?", rxml_document_parent_q, 0);

@@ -114,9 +114,7 @@ module LibXML
       #  nodes.each do |node|
       #    ... do stuff ...
       #  end
-      #
-      #  nodes = nil
-      #  GC.start
+      # #  nodes = nil #  GC.start
       def find(xpath, nslist = nil)
         self.context(nslist).find(xpath)
       end
@@ -127,8 +125,36 @@ module LibXML
       def find_first(xpath, nslist = nil)
         find(xpath, nslist).first
       end
-
+      
+      # Returns this node's type name    
+      def node_type_name
+        case node_type
+          when XML::Node::DOCUMENT_NODE
+            'document_xml'
+          when XML::Node::DOCB_DOCUMENT_NODE
+            'document_docbook'
+          when XML::Node::HTML_DOCUMENT_NODE
+            'document_html'
+          else
+            raise(UnknownType, "Unknown node type: %n", node.node_type);
+				end
+			end
       # :enddoc:
+
+      # Specifies if this is an DOCTYPE node
+      def document?
+        node_type == XML::Node::DOCUMENT_NODE
+      end
+
+      # Specifies if this is an docbook node
+      def docbook_doc?
+        node_type == XML::Node::DOCB_DOCUMENT_NODE
+      end
+
+      # Specifies if this is an html node
+      def html_doc?
+        node_type == XML::Node::HTML_DOCUMENT_NODE
+      end
 
       def dump
         warn('Document#dump is deprecated.  Use Document#to_s instead.')
