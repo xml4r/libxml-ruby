@@ -32,12 +32,32 @@ VALUE cXMLDtd;
 
 void rxml_dtd_free(xmlDtdPtr xdtd)
 {
-  xmlFreeDtd(xdtd);
+  /* Set _private to NULL so that we won't reuse the
+   same, freed, Ruby wrapper object later.*/
+  xdtd->_private = NULL;
+
+  if (xdtd->doc == NULL && xdtd->parent == NULL)
+    xmlFreeDtd(xdtd);
 }
+
+void rxml_dtd_mark(xmlDtdPtr xdtd)
+{
+  if (xdtd == NULL)
+    return;
+
+  if (xdtd->_private == NULL)
+  {
+    rb_warning("XmlNode is not bound! (%s:%d)", __FILE__, __LINE__);
+    return;
+  }
+
+  rxml_node_mark_common((xmlNodePtr) xdtd);
+}
+
 
 static VALUE rxml_dtd_alloc(VALUE klass)
 {
-  return Data_Wrap_Struct(klass, NULL, rxml_dtd_free, NULL);
+  return Data_Wrap_Struct(klass, rxml_dtd_mark, rxml_dtd_free, NULL);
 }
 
 VALUE rxml_dtd_wrap(xmlDtdPtr xdtd)
