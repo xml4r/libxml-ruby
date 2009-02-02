@@ -689,6 +689,24 @@ static VALUE rxml_document_version_get(VALUE self)
 
 /*
  * call-seq:
+ *    document.xhtml? -> (true|false)
+ *
+ * Determine whether this is an XHTML document.
+ */
+static VALUE rxml_document_xhtml_q(VALUE self)
+{
+  xmlDocPtr xdoc;
+	xmlDtdPtr xdtd;
+  Data_Get_Struct(self, xmlDoc, xdoc);
+	xdtd = xmlGetIntSubset(xdoc);
+  if (xdtd != NULL && xmlIsXHTML(xdtd->SystemID, xdtd->ExternalID) > 0)
+    return (Qtrue);
+  else
+    return (Qfalse);
+}
+
+/*
+ * call-seq:
  *    document.xinclude -> num
  *
  * Process xinclude directives in this document.
@@ -893,6 +911,7 @@ void rxml_init_document(void)
   rb_define_method(cXMLDocument, "to_s", rxml_document_to_s, -1);
   rb_define_method(cXMLDocument, "url", rxml_document_url_get, 0);
   rb_define_method(cXMLDocument, "version", rxml_document_version_get, 0);
+  rb_define_method(cXMLDocument, "xhtml?", rxml_document_xhtml_q, 0);
   rb_define_method(cXMLDocument, "xinclude", rxml_document_xinclude, 0);
   rb_define_method(cXMLDocument, "validate", rxml_document_validate_dtd, 1);
   rb_define_method(cXMLDocument, "validate_schema", rxml_document_validate_schema, 1);
