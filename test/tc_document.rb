@@ -91,4 +91,12 @@ class TestDocument < Test::Unit::TestCase
   def test_doc_node_type_name
     assert_equal 'document_xml', XML::Document.new.node_type_name
   end
+
+  def test_xhtml
+		doc = XML::Document.new
+		assert ! doc.xhtml?
+    xhtml_dtd = XML::Dtd.new "-//W3C//DTD XHTML 1.0 Transitional//EN", "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd", nil, doc, true
+		assert doc.xhtml?
+	end
+  
 end
