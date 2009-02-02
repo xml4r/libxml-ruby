@@ -55,12 +55,68 @@ VALUE rxml_dtd_wrap(xmlDtdPtr xdtd)
   return result;
 }
 
+/*
+ * call-seq:
+ *    dtd.external_id -> "string"
+ *
+ * Obtain this dtd's external identifer (for a PUBLIC DTD).
+ */
+static VALUE rxml_dtd_external_id_get(VALUE self)
+{
+  xmlDtdPtr xdtd;
+  Data_Get_Struct(self, xmlDtd, xdtd);
+
+
+  if (xdtd->ExternalID == NULL)
+    return (Qnil);
+  else
+    return (rb_str_new2((const char*) xdtd->ExternalID));
+}
+
+/*
+ * call-seq:
+ *    dtd.name -> "string"
+ *
+ * Obtain this dtd's name.
+ */
+static VALUE rxml_dtd_name_get(VALUE self)
+{
+  xmlDtdPtr xdtd;
+  Data_Get_Struct(self, xmlDtd, xdtd);
+
+
+  if (xdtd->name == NULL)
+    return (Qnil);
+  else
+    return (rb_str_new2((const char*) xdtd->name));
+}
 
 
 /*
  * call-seq:
- *    XML::Dtd.new("public system") -> dtd
+ *    dtd.uri -> "string"
+ *
+ * Obtain this dtd's URI (for a SYSTEM or PUBLIC DTD).
+ */
+static VALUE rxml_dtd_uri_get(VALUE self)
+{
+  xmlDtdPtr xdtd;
+  Data_Get_Struct(self, xmlDtd, xdtd);
+
+
+  if (xdtd->SystemID == NULL)
+    return (Qnil);
+  else
+    return (rb_str_new2((const char*) xdtd->SystemID));
+}
+
+/*
+ * call-seq:
+ *    XML::Dtd.new("DTD string") -> dtd
  *    XML::Dtd.new("public", "system") -> dtd
+ *    XML::Dtd.new("name", "public", "system", document) -> external subset dtd
+ *    XML::Dtd.new("name", "public", "system", document, false) -> internal subset dtd
+ *    XML::Dtd.new("name", "public", "system", document, true) -> internal subset dtd
  *
  * Create a new Dtd from the specified public and system
  * identifiers.
@@ -73,10 +129,54 @@ static VALUE rxml_dtd_initialize(int argc, VALUE *argv, VALUE self)
   xmlChar *new_string;
   xmlDtdPtr xdtd;
 
-  // 1 argument -- string               --> parsujeme jako dtd
-  // 2 argumenty -- public, system      --> bude se hledat
+  // 1 argument -- string                            --> parsujeme jako dtd
+  // 2 arguments -- public, system                   --> bude se hledat
+  // 3 arguments -- public, system, name             --> creates an external subset (any parameter may be nil)
+  // 4 arguments -- public, system, name, doc        --> creates an external subset (any parameter may be nil)
+  // 5 arguments -- public, system, name, doc, true  --> creates an internal subset (all but last parameter may be nil)
   switch (argc)
   {
+  case 3:
+  case 4:
+  case 5: {
+      VALUE name, doc, internal;
+      const xmlChar *xname = NULL, *xpublic = NULL, *xsystem = NULL;
+      xmlDocPtr xdoc = NULL;
+
+      rb_scan_args(argc, argv, "32", &external, &system, &name, &doc, &internal);
+
+      if (external != Qnil) {
+        Check_Type(external, T_STRING);
+        xpublic = (const xmlChar*) StringValuePtr(external);
+      }
+      if (system != Qnil) {
+        Check_Type(system, T_STRING);
+        xsystem = (const xmlChar*) StringValuePtr(system);
+      }
+      if (name != Qnil) {
+        Check_Type(name, T_STRING);
+        xname = (const xmlChar*) StringValuePtr(name);
+      }
+      if (doc != Qnil) {
+        if (rb_obj_is_kind_of(doc, cXMLDocument) == Qfalse)
+          rb_raise(rb_eTypeError, "Must pass an XML::Document object");
+        Data_Get_Struct(doc, xmlDoc, xdoc);
+      }
+
+      if (internal == Qnil || internal == Qfalse)
+        xdtd = xmlNewDtd(xdoc, xname, xpublic, xsystem);
+      else
+        xdtd = xmlCreateIntSubset(xdoc, xname, xpublic, xsystem);
+
+      if (xdtd == NULL)
+        rxml_raise(&xmlLastError);
+
+      DATA_PTR(self) = xdtd;
+
+      xmlSetTreeDoc((xmlNodePtr) xdtd, xdoc);
+    }
+    break;
+
   case 2:
     rb_scan_args(argc, argv, "20", &external, &system);
 
@@ -115,7 +215,7 @@ static VALUE rxml_dtd_initialize(int argc, VALUE *argv, VALUE self)
     break;
 
   default:
-    rb_raise(rb_eArgError, "wrong number of arguments (need 1 or 2)");
+    rb_raise(rb_eArgError, "wrong number of arguments");
   }
 
   return self;
@@ -126,5 +226,10 @@ void rxml_init_dtd()
   cXMLDtd = rb_define_class_under(mXML, "Dtd", rb_cObject);
   rb_define_alloc_func(cXMLDtd, rxml_dtd_alloc);
   rb_define_method(cXMLDtd, "initialize", rxml_dtd_initialize, -1);
+  rb_define_method(cXMLDtd, "external_id", rxml_dtd_external_id_get, 0);
+  rb_define_method(cXMLDtd, "name", rxml_dtd_name_get, 0);
+  rb_define_method(cXMLDtd, "uri", rxml_dtd_uri_get, 0);
+
+  rb_define_alias(cXMLDtd, "system_id", "uri");
 }
 

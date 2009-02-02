@@ -28,6 +28,34 @@ class TestDtd < Test::Unit::TestCase
     EOS
   end
   
+  def test_internal_subset
+    xhtml_dtd = XML::Dtd.new "-//W3C//DTD XHTML 1.0 Transitional//EN", "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd", nil, nil, true
+		assert xhtml_dtd.name.nil?
+		assert_equal "-//W3C//DTD XHTML 1.0 Transitional//EN", xhtml_dtd.external_id
+		assert_equal "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd", xhtml_dtd.uri
+		assert_equal "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd", xhtml_dtd.system_id
+
+    xhtml_dtd = XML::Dtd.new "-//W3C//DTD XHTML 1.0 Transitional//EN", "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd", "xhtml1", nil, true
+		assert_equal "xhtml1", xhtml_dtd.name
+		assert_equal "-//W3C//DTD XHTML 1.0 Transitional//EN", xhtml_dtd.external_id
+		assert_equal "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd", xhtml_dtd.uri
+		assert_equal "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd", xhtml_dtd.system_id
+	end
+  
+  def test_external_subset
+    xhtml_dtd = XML::Dtd.new "-//W3C//DTD XHTML 1.0 Transitional//EN", "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd", nil
+		assert xhtml_dtd.name.nil?
+		assert_equal "-//W3C//DTD XHTML 1.0 Transitional//EN", xhtml_dtd.external_id
+		assert_equal "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd", xhtml_dtd.uri
+		assert_equal "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd", xhtml_dtd.system_id
+
+    xhtml_dtd = XML::Dtd.new "-//W3C//DTD XHTML 1.0 Transitional//EN", "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd", "xhtml1"
+		assert_equal "xhtml1", xhtml_dtd.name
+		assert_equal "-//W3C//DTD XHTML 1.0 Transitional//EN", xhtml_dtd.external_id
+		assert_equal "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd", xhtml_dtd.uri
+		assert_equal "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd", xhtml_dtd.system_id
+	end
+  
   def test_valid
     assert(@doc.validate(dtd))
   end
