@@ -351,7 +351,8 @@ static VALUE rxml_reader_next_sibling(VALUE self)
  * call-seq:
  *    reader.node -> XML::Node
  *
- * Returns the reader's current node.
+ * Returns the reader's current node.  It will return
+ * nil if Reader#read has not yet been called.
  * WARNING - Using this method is dangerous because the
  * the node may be destroyed on the next #read.
  */
@@ -359,7 +360,7 @@ static VALUE rxml_reader_node(VALUE self)
 {
   xmlTextReaderPtr xreader = rxml_text_reader_get(self);
   xmlNodePtr xnode = xmlTextReaderCurrentNode(xreader);
-  return rxml_node_wrap(xnode);
+  return xnode ? rxml_node_wrap(xnode) : Qnil;
 }
 
 /*
