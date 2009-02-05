@@ -600,15 +600,19 @@ static VALUE rxml_node_to_s(int argc, VALUE *argv, VALUE self)
 static VALUE rxml_node_each(VALUE self)
 {
   xmlNodePtr xnode;
-  xmlNodePtr xchild;
+  xmlNodePtr xcurrent;
   Data_Get_Struct(self, xmlNode, xnode);
 
-  xchild = xnode->children;
+  xcurrent = xnode->children;
 
-  while (xchild)
+  while (xcurrent)
   {
-    rb_yield(rxml_node_wrap(xchild));
-    xchild = xchild->next;
+    /* The user could remove this node, so first stache
+       away the next node. */
+    xmlNodePtr xnext = xcurrent->next;
+
+    rb_yield(rxml_node_wrap(xcurrent));
+    xcurrent = xnext;
   }
   return Qnil;
 }

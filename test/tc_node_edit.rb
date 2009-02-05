@@ -58,11 +58,22 @@ class TestNodeEdit < Test::Unit::TestCase
     assert_equal '<test><num>one</num><num>two</num><num>two-and-a-half</num><num>three</num></test>',
       @doc.root.to_s.gsub(/\n\s*/,'')
   end
-  
+
   def test_remove_node
     first_node.remove!
     assert_equal('<test><num>two</num><num>three</num></test>',
                  @doc.root.to_s.gsub(/\n\s*/,''))
+  end
+
+  def test_remove_node_iteration
+    nodes = Array.new
+    @doc.root.each_element do |node|
+      if node.name == 'num'
+        nodes << node
+        node.remove!
+      end
+    end
+    assert_equal(3, nodes.length)
   end
 
   def test_reuse_removed_node
@@ -77,7 +88,7 @@ class TestNodeEdit < Test::Unit::TestCase
                  @doc.root.to_s.gsub(/\n\s*/,''))
   end
 
-  # This test is to verify that an earlier reported bug has been fixed  
+  # This test is to verify that an earlier reported bug has been fixed
   def test_merge
     documents = []
 
@@ -90,16 +101,16 @@ class TestNodeEdit < Test::Unit::TestCase
     documents.inject(master_doc) do |master_doc, child_doc|
       master_body = master_doc.find("//body").first
       child_body = child_doc.find("//body").first
-      
+
       child_element = child_body.detect do |node|
         node.element?
       end
-      
+
       master_body << child_element.copy(true)
       master_doc
     end
   end
-  
+
   def test_append_chain
     node = XML::Node.new('foo') << XML::Node.new('bar') << "bars contents"
     assert_equal('<foo><bar/>bars contents</foo>',
