@@ -222,7 +222,7 @@ static void start_element_ns_callback(void *ctx,
     {
       VALUE nsPrefix = xnamespaces[i+0] ? rb_str_new2(xnamespaces[i+0]) : Qnil;
       VALUE nsURI = xnamespaces[i+1] ? rb_str_new2(xnamespaces[i+1]) : Qnil;
-      rb_hash_aset(attributes, nsPrefix, nsURI);
+      rb_hash_aset(namespaces, nsPrefix, nsURI);
     }
   }
 

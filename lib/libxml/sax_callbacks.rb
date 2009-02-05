@@ -66,19 +66,22 @@ module LibXML
       module VerboseCallbacks
         # Called for a CDATA block event.
         def on_cdata_block(cdata)
-          STDOUT << "on_cdata_block(" << cdata << ")\n"
+          STDOUT << "on_cdata_block" << "\n" <<
+                    "  cdata " << cdata << "\n"
           STDOUT.flush
         end
 
         # Called for a characters event.
         def on_characters(chars)
-          STDOUT << "on_characters(" << chars << ")\n"
+          STDOUT << "on_characters" << "\n" <<
+                    "  chars " << chars << "\n" 
           STDOUT.flush
         end
 
         # Called for a comment event.
-        def on_comment(msg)
-          STDOUT << "on_comment(" << msg << ")\n"
+        def on_comment(comment)
+          STDOUT << "on_comment" << "\n" <<
+                    "  comment: " << comment << "\n"
           STDOUT.flush
         end
 
@@ -90,22 +93,25 @@ module LibXML
 
         # Called for a end element event.
         def on_end_element_ns(name, prefix, uri)
-          STDOUT << "on_end_element(" << name <<
-                                      ", prefix: " << prefix << 
-                                      ", uri: " << uri <<
-                                      ")\n"
+          STDOUT << "on_end_element_ns" << "\n" <<
+                    "  name: " << name << "\n" <<
+                    "  prefix: " << prefix << "\n" <<
+                    "  uri: " << uri << "\n"
           STDOUT.flush
         end
 
         # Called for parser errors.
         def on_error(error)
-          STDOUT << "on_error(" << error << ")\n"
+          STDOUT << "on_error" << "\n"
+                    "  error " << error << "\n"
           STDOUT.flush
         end
 
         # Called for an external subset event.
         def on_external_subset(name, external_id, system_id)
-          STDOUT << "on_external_subset(" << name << ", " << external_id << ", " << system_id << ")\n"
+          STDOUT << "on_external_subset" << "\n"
+                    "  external_id " << external_id << "\n" <<
+                    "  system_id   " << system_id << "\n"
           STDOUT.flush
         end
 
@@ -123,7 +129,9 @@ module LibXML
 
         # Called for an internal subset event.
         def on_internal_subset(name, external_id, system_id)
-          STDOUT << "on_internal_subset(" << name << ", " << external_id << ", " << system_id << ")\n"
+          STDOUT << "on_internal_subset" << "\n"
+                    "  external_id " << external_id << "\n" <<
+                    "  system_id   " << system_id << "\n"
           STDOUT.flush
         end
 
@@ -135,13 +143,16 @@ module LibXML
 
         # Called for an processing instruction event.
         def on_processing_instruction(target, data)
-          STDOUT << "on_characters(" << target << ", " << data << ")\n"
+          STDOUT << "on_characters" << "\n"
+                    "  target: " << target << "\n" <<
+                    "  data:   " << data << "\n"
           STDOUT.flush
         end
 
         # Called for a reference event.
         def on_reference(name)
-          STDOUT << "on_reference(" << name << ")\n"
+          STDOUT << "on_reference:" << "\n" <<
+                    "  name:" << name << "\n"
           STDOUT.flush
         end
 
@@ -153,12 +164,12 @@ module LibXML
 
         # Called for a start element event.
         def on_start_element_ns(name, attributes, prefix, uri, namespaces)
-          STDOUT << "on_start_element_ns(" << name <<
-                                      ", attr " << (attributes || Hash.new).inspect <<
-                                      ", prefix: " << prefix <<
-                                      ", uri: " << uri << ")\n" <<
-                                      ", ns " << (namespaces || Hash.new).inspect <<
-                                      ")\n"
+          STDOUT << "on_start_element_ns" << "\n" <<
+                    "  name: " << name << "\n" <<
+                    "  attr: " << (attributes || Hash.new).inspect << "\n" <<
+                    "  prefix: " << prefix << "\n" <<
+                    "  uri: " << uri << "\n" <<
+                    "  ns_defs: " << (namespaces || Hash.new).inspect << "\n"
           STDOUT.flush
         end
       end

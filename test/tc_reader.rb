@@ -176,6 +176,10 @@ class TestReader < Test::Unit::TestCase
   def test_node
     XML.default_line_numbers = true
     reader = XML::Reader.file(XML_FILE)
+
+    # first try to get a node
+    assert_nil(reader.node)
+    
     reader.read
     assert_instance_of(XML::Node, reader.node)
   end
