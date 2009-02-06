@@ -36,6 +36,9 @@ static VALUE rxml_html_parser_context_wrap(xmlParserCtxtPtr ctxt)
 static VALUE rxml_html_parser_context_file(VALUE klass, VALUE file)
 {
   xmlParserCtxtPtr ctxt = htmlCreateFileParserCtxt(StringValuePtr(file), NULL);
+  if (!ctxt)
+    rxml_raise(&xmlLastError);
+
   return rxml_html_parser_context_wrap(ctxt);
 }
 
@@ -53,6 +56,9 @@ static VALUE rxml_html_parser_context_io(VALUE klass, VALUE io)
   htmlParserCtxtPtr ctxt;
   xmlParserInputBufferPtr input;
   xmlParserInputPtr stream;
+
+  if (NIL_P(io))
+    rb_raise(rb_eTypeError, "Must pass in an IO object");
 
   input = xmlParserInputBufferCreateIO((xmlInputReadCallback) rxml_read_callback, NULL,
                                      (void*)io, XML_CHAR_ENCODING_NONE);

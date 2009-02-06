@@ -69,6 +69,9 @@ static VALUE rxml_parser_context_document(VALUE klass, VALUE document)
 static VALUE rxml_parser_context_file(VALUE klass, VALUE file)
 {
   xmlParserCtxtPtr ctxt = xmlCreateURLParserCtxt(StringValuePtr(file), 0);
+  if (!ctxt)
+    rxml_raise(&xmlLastError);
+
   return rxml_parser_context_wrap(ctxt);
 }
 
@@ -112,6 +115,9 @@ static VALUE rxml_parser_context_io(VALUE klass, VALUE io)
   xmlParserCtxtPtr ctxt;
   xmlParserInputBufferPtr input;
   xmlParserInputPtr stream;
+
+  if (NIL_P(io))
+    rb_raise(rb_eTypeError, "Must pass in an IO object");
 
   input = xmlParserInputBufferCreateIO((xmlInputReadCallback) rxml_read_callback, NULL,
                                        (void*)io, XML_CHAR_ENCODING_NONE);

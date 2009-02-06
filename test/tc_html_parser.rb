@@ -12,6 +12,50 @@ class HTMLParserTest < Test::Unit::TestCase
     assert_instance_of(XML::HTMLParser, xp)
   end
 
+  def test_noexistent_file
+    error = assert_raise(XML::Error) do
+      XML::HTMLParser.file('i_dont_exist.xml')
+    end
+
+    assert_equal('Warning: failed to load external entity "i_dont_exist.xml" at :0.', error.to_s)
+  end
+
+  def test_nil_file
+    error = assert_raise(TypeError) do
+      XML::HTMLParser.file(nil)
+    end
+
+    assert_equal("can't convert nil into String", error.to_s)
+  end
+
+  def test_io
+    File.open(html_file) do |io|
+      xp = XML::HTMLParser.io(io)
+      assert_instance_of(XML::HTMLParser, xp)
+
+      doc = xp.parse
+      assert_instance_of(XML::Document, doc)
+    end
+  end
+
+  def test_nil_io
+    error = assert_raise(TypeError) do
+      XML::HTMLParser.io(nil)
+    end
+
+    assert_equal("Must pass in an IO object", error.to_s)
+  end
+
+  def test_string_io
+    data = File.read(html_file)
+    io = StringIO.new(data)
+    xp = XML::HTMLParser.io(io)
+    assert_instance_of(XML::HTMLParser, xp)
+
+    doc = xp.parse
+    assert_instance_of(XML::Document, doc)
+  end
+
   def test_string
     str = '<html><body><p>hi</p></body></html>'
     xp = XML::HTMLParser.string(str)
@@ -23,24 +67,12 @@ class HTMLParserTest < Test::Unit::TestCase
     assert_instance_of(XML::Document, doc)
   end
 
-  def test_io
-    File.open(html_file) do |io|
-      xp = XML::HTMLParser.io(io)
-      assert_instance_of(XML::HTMLParser, xp)
-      
-      doc = xp.parse
-      assert_instance_of(XML::Document, doc)
+  def test_nil_string
+    error = assert_raise(TypeError) do
+      XML::HTMLParser.string(nil)
     end
-  end
 
-  def test_string_io
-    data = File.read(html_file)
-    io = StringIO.new(data)
-    xp = XML::HTMLParser.io(io)
-    assert_instance_of(XML::HTMLParser, xp)
-
-    doc = xp.parse
-    assert_instance_of(XML::Document, doc)
+    assert_equal("wrong argument type nil (expected String)", error.to_s)
   end
 
   def test_parse

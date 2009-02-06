@@ -129,6 +129,22 @@ class TestSaxParser < Test::Unit::TestCase
     assert_equal true, parser.parse
   end
 
+  def test_noexistent_file
+    error = assert_raise(XML::Error) do
+      XML::SaxParser.file('i_dont_exist.xml')
+    end
+
+    assert_equal('Warning: failed to load external entity "i_dont_exist.xml" at :0.', error.to_s)
+  end
+
+  def test_nil_file
+    error = assert_raise(TypeError) do
+      XML::SaxParser.file(nil)
+    end
+
+    assert_equal("can't convert nil into String", error.to_s)
+  end
+
   def test_io
     File.open(saxtest_file) do |file|
       parser = XML::SaxParser.io(file)
@@ -136,6 +152,14 @@ class TestSaxParser < Test::Unit::TestCase
       parser.parse
       verify(parser)
     end
+  end
+
+  def test_nil_io
+    error = assert_raise(TypeError) do
+      XML::HTMLParser.io(nil)
+    end
+
+    assert_equal("Must pass in an IO object", error.to_s)
   end
 
   def test_string_no_callbacks
@@ -160,6 +184,14 @@ class TestSaxParser < Test::Unit::TestCase
     parser.callbacks = TestCaseCallbacks.new
     parser.parse
     verify(parser)
+  end
+
+  def test_nil_string
+    error = assert_raise(TypeError) do
+      XML::SaxParser.string(nil)
+    end
+
+    assert_equal("wrong argument type nil (expected String)", error.to_s)
   end
 
   def test_doctype

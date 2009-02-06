@@ -27,6 +27,14 @@ class TestParser < Test::Unit::TestCase
     assert_instance_of(XML::Parser::Context, parser.context)
   end
 
+  def test_nil_document
+    error = assert_raise(TypeError) do
+      XML::Parser.document(nil)
+    end
+
+    assert_equal("Must pass an XML::Document object", error.to_s)
+  end
+
   def test_file
     file = File.expand_path(File.join(File.dirname(__FILE__), 'model/rubynet.xml'))
 
@@ -34,6 +42,22 @@ class TestParser < Test::Unit::TestCase
     doc = parser.parse
     assert_instance_of(XML::Document, doc)
     assert_instance_of(XML::Parser::Context, parser.context)
+  end
+
+  def test_noexistent_file
+    error = assert_raise(XML::Error) do
+      XML::Parser.file('i_dont_exist.xml')
+    end
+
+    assert_equal('Warning: failed to load external entity "i_dont_exist.xml" at :0.', error.to_s)
+  end
+
+  def test_nil_file
+    error = assert_raise(TypeError) do
+      XML::Parser.file(nil)
+    end
+
+    assert_equal("can't convert nil into String", error.to_s)
   end
 
   def test_file_encoding
@@ -74,6 +98,14 @@ class TestParser < Test::Unit::TestCase
     end
   end
 
+  def test_nil_io
+    error = assert_raise(TypeError) do
+      XML::Parser.io(nil)
+    end
+
+    assert_equal("Must pass in an IO object", error.to_s)
+  end
+
   def test_string_io
     data = File.read(File.join(File.dirname(__FILE__), 'model/rubynet.xml'))
     string_io = StringIO.new(data)
@@ -93,6 +125,14 @@ class TestParser < Test::Unit::TestCase
     doc = parser.parse
     assert_instance_of(XML::Document, doc)
     assert_instance_of(XML::Parser::Context, parser.context)
+  end
+
+  def test_nil_string
+    error = assert_raise(TypeError) do
+      XML::Parser.string(nil)
+    end
+
+    assert_equal("wrong argument type nil (expected String)", error.to_s)
   end
 
   def test_string_options
