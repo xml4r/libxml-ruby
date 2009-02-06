@@ -122,9 +122,12 @@ class AttributesTest < Test::Unit::TestCase
     node = @doc.find_first('/city:CityModel/city:cityMember')
     assert_equal(5, node.attributes.length)
 
-    node.attributes.entries.each do |attr|
+    attrs = Array.new
+    node.attributes.each do |attr|
+      attrs << attr
       attr.remove!
     end
+    assert_equal(5, attrs.length)
     assert_equal(0, node.attributes.length)
   end
 end

@@ -199,9 +199,13 @@ static VALUE rxml_attributes_each(VALUE self)
 
   while (xattr)
   {
+    /* Get the next attribute while we still can - the user
+       may remove the yielded attribute. */
+    xmlAttrPtr next = xattr->next;
+
     VALUE attr = rxml_attr_wrap(xattr);
     rb_yield(attr);
-    xattr = xattr->next;
+    xattr = next;
   }
 
   return self;
