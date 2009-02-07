@@ -1,6 +1,19 @@
 #include "ruby_libxml.h"
 
+char *ruby_strdup(const char*);
+
 VALUE mLibXML;
+
+static void rxml_init_memory(void)
+{
+  xmlGcMemSetup(
+      ruby_xfree,
+      ruby_xmalloc,
+      ruby_xmalloc,
+      ruby_xrealloc,
+      ruby_strdup
+  );
+}
 
 #if defined(_WIN32)
 __declspec(dllexport)
@@ -25,6 +38,7 @@ void Init_libxml_ruby(void)
  */
   mLibXML = rb_define_module("LibXML");
 
+  rxml_init_memory();
   rxml_init_xml();
   rxml_init_io();
   rxml_init_error();
