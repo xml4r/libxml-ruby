@@ -226,11 +226,23 @@ static VALUE rxml_enabled_schemas_q(VALUE class)
  * call-seq:
  * 		XML.enabled_thread? -> (true|false)
  *
- * Determine whether libxml thread-safe semantics support
- * is enabled (I think?).
+ * Determine whether thread-safe semantics support for libxml is enabled and
+ * is used by this ruby extension.  Threading support in libxml uses pthread
+ * on Unix-like systems and Win32 threads on Windows.
  */
 static VALUE rxml_enabled_thread_q(VALUE class)
 {
+  /* This won't be defined unless this code is compiled with _REENTRANT or __MT__
+   * defined or the compiler is in C99 mode.
+   *
+   * Note the relevant portion libxml/xmlversion.h on a thread-enabled build:
+   *
+   *    #if defined(_REENTRANT) || defined(__MT__) || \
+   *        (defined(_POSIX_C_SOURCE) && (_POSIX_C_SOURCE - 0 >= 199506L))
+   *        #define LIBXML_THREAD_ENABLED
+   *    #endif
+   *
+   */
 #ifdef LIBXML_THREAD_ENABLED
   return(Qtrue);
 #else
