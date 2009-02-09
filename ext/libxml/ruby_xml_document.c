@@ -294,9 +294,11 @@ static VALUE rxml_document_debug(VALUE self)
 static VALUE rxml_document_encoding_get(VALUE self)
 {
   xmlDocPtr xdoc;
+  const char *xencoding;
   Data_Get_Struct(self, xmlDoc, xdoc);
 
-  return INT2NUM(xmlParseCharEncoding(xdoc->encoding));
+  xencoding = (const char*)xdoc->encoding;
+  return INT2NUM(xmlParseCharEncoding(xencoding));
 }
 
 /*
