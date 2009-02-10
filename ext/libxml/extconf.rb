@@ -73,7 +73,7 @@ to extconf.rb:
 EOL
 end
 
-if xc = with_config('xml2-config') then
+if RUBY_PLATFORM.match(/darwin/i) or xc = with_config('xml2-config') then
   xc = 'xml2-config' if xc == true
   cflags = `#{xc} --cflags`.chomp
   if $? != 0
