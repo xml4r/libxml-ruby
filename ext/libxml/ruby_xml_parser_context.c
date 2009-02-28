@@ -6,6 +6,7 @@
 #include "ruby_xml_parser_context.h"
 
 VALUE cXMLParserContext;
+ID IO_ATTR;
 
 /*
  * Document-class: LibXML::XML::Parser::Context
@@ -112,6 +113,7 @@ static VALUE rxml_parser_context_string(VALUE klass, VALUE string)
 */
 static VALUE rxml_parser_context_io(VALUE klass, VALUE io)
 {
+  VALUE result;
   xmlParserCtxtPtr ctxt;
   xmlParserInputBufferPtr input;
   xmlParserInputPtr stream;
@@ -138,7 +140,12 @@ static VALUE rxml_parser_context_io(VALUE klass, VALUE io)
     rxml_raise(&xmlLastError);
   }
   inputPush(ctxt, stream);
-  return rxml_parser_context_wrap(ctxt);
+  result = rxml_parser_context_wrap(ctxt);
+
+  /* Attach io object to parser so it won't get freed.*/
+  rb_ivar_set(result, IO_ATTR, io);
+
+  return result;
 }
 
 /*
@@ -888,6 +895,8 @@ static VALUE rxml_parser_context_well_formed_q(VALUE self)
 
 void rxml_init_parser_context(void)
 {
+  IO_ATTR = ID2SYM(rb_intern("@io"));
+
   cXMLParserContext = rb_define_class_under(cXMLParser, "Context", rb_cObject);
   rb_define_alloc_func(cXMLParserContext, rxml_parser_context_alloc);
 

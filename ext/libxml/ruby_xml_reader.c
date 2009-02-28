@@ -44,13 +44,20 @@
 
 VALUE cXMLReader;
 
-ID base_uri_SYMBOL;
+ID BASE_URI_SYMBOL;
 ID ENCODING_SYMBOL;
+ID IO_ATTR;
 ID OPTIONS_SYMBOL;
+
+
+static VALUE rxml_reader_free(xmlTextReaderPtr reader)
+{
+  xmlFreeTextReader(reader);
+}
 
 static VALUE rxml_reader_wrap(xmlTextReaderPtr reader)
 {
-  return Data_Wrap_Struct(cXMLReader, NULL, xmlFreeTextReader, reader);
+  return Data_Wrap_Struct(cXMLReader, NULL, rxml_reader_free, reader);
 }
 
 static xmlTextReaderPtr rxml_text_reader_get(VALUE obj)
@@ -117,7 +124,7 @@ static VALUE rxml_reader_file(int argc, VALUE *argv, VALUE klass)
 
     Check_Type(options, T_HASH);
 
-    encoding = rb_hash_aref(options, base_uri_SYMBOL);
+    encoding = rb_hash_aref(options, BASE_URI_SYMBOL);
     xencoding = NIL_P(encoding) ? NULL : xmlGetCharEncodingName(NUM2INT(encoding));
 
     parserOptions = rb_hash_aref(options, OPTIONS_SYMBOL);
@@ -153,6 +160,7 @@ static VALUE rxml_reader_file(int argc, VALUE *argv, VALUE klass)
 static VALUE rxml_reader_io(int argc, VALUE *argv, VALUE klass)
 {
   xmlTextReaderPtr xreader;
+  VALUE result;
   VALUE io;
   VALUE options;
   char *xbaseurl = NULL;
@@ -169,7 +177,7 @@ static VALUE rxml_reader_io(int argc, VALUE *argv, VALUE klass)
 
     Check_Type(options, T_HASH);
 
-    baseurl = rb_hash_aref(options, base_uri_SYMBOL);
+    baseurl = rb_hash_aref(options, BASE_URI_SYMBOL);
     xbaseurl = NIL_P(baseurl) ? NULL : StringValueCStr(baseurl);
 
     encoding = rb_hash_aref(options, ENCODING_SYMBOL);
@@ -186,7 +194,12 @@ static VALUE rxml_reader_io(int argc, VALUE *argv, VALUE klass)
   if (xreader == NULL)
     rxml_raise(&xmlLastError);
 
-  return rxml_reader_wrap(xreader);
+  result = rxml_reader_wrap(xreader);
+
+  /* Attach io object to parser so it won't get freed.*/
+  rb_ivar_set(result, IO_ATTR, io);
+
+  return result;
 }
 
 /* call-seq:
@@ -227,7 +240,7 @@ static VALUE rxml_reader_string(int argc, VALUE *argv, VALUE klass)
 
     Check_Type(options, T_HASH);
 
-    baseurl = rb_hash_aref(options, base_uri_SYMBOL);
+    baseurl = rb_hash_aref(options, BASE_URI_SYMBOL);
     xbaseurl = NIL_P(baseurl) ? NULL : StringValueCStr(baseurl);
 
     encoding = rb_hash_aref(options, ENCODING_SYMBOL);
@@ -885,8 +898,9 @@ static VALUE rxml_reader_valid(VALUE self)
 
 void rxml_init_reader(void)
 {
-  base_uri_SYMBOL = ID2SYM(rb_intern("base_uri"));
+  BASE_URI_SYMBOL = ID2SYM(rb_intern("base_uri"));
   ENCODING_SYMBOL = ID2SYM(rb_intern("encoding"));
+  IO_ATTR = ID2SYM(rb_intern("@io"));
   OPTIONS_SYMBOL = ID2SYM(rb_intern("options"));
 
   cXMLReader = rb_define_class_under(mXML, "Reader", rb_cObject);

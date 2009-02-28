@@ -13,6 +13,7 @@
  */
 
 VALUE cXMLHtmlParserContext;
+ID IO_ATTR;
 
 static void rxml_html_parser_context_free(xmlParserCtxtPtr ctxt)
 {
@@ -53,6 +54,7 @@ static VALUE rxml_html_parser_context_file(VALUE klass, VALUE file)
 */
 static VALUE rxml_html_parser_context_io(VALUE klass, VALUE io)
 {
+  VALUE result;
   htmlParserCtxtPtr ctxt;
   xmlParserInputBufferPtr input;
   xmlParserInputPtr stream;
@@ -79,8 +81,12 @@ static VALUE rxml_html_parser_context_io(VALUE klass, VALUE io)
     rxml_raise(&xmlLastError);
   }
   inputPush(ctxt, stream);
+  result = rxml_html_parser_context_wrap(ctxt);
 
-  return rxml_html_parser_context_wrap(ctxt);
+  /* Attach io object to parser so it won't get freed.*/
+  rb_ivar_set(result, IO_ATTR, io);
+
+  return result;
 }
 
 /* call-seq:
@@ -156,6 +162,7 @@ static VALUE rxml_html_parser_context_options_set(VALUE self, VALUE options)
 
 void rxml_init_html_parser_context(void)
 {
+  IO_ATTR = ID2SYM(rb_intern("@io"));
   cXMLHtmlParserContext = rb_define_class_under(cXMLHtmlParser, "Context", cXMLParserContext);
 
   rb_define_singleton_method(cXMLHtmlParserContext, "file", rxml_html_parser_context_file, 1);
