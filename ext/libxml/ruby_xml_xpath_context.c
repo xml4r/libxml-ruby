@@ -5,7 +5,12 @@
 #include "ruby_libxml.h"
 #include "ruby_xml_xpath_context.h"
 #include "ruby_xml_xpath_expression.h"
+
+#if RUBY_ST_H
+#include <ruby/st.h>
+#else
 #include <st.h>
+#endif
 
 /*
  * Document-class: LibXML::XML::XPath::Context
