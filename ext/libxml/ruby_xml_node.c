@@ -93,7 +93,8 @@ VALUE rxml_node_wrap(xmlNodePtr xnode)
   }
   else
   {
-    VALUE node = Data_Wrap_Struct(cXMLNode, rxml_node_mark, rxml_node_free, xnode);
+    /* Ruby is not responsible for freeing this node, libxml is. */
+    VALUE node = Data_Wrap_Struct(cXMLNode, rxml_node_mark, NULL, xnode);
     xnode->_private = (void*) node;
     return node;
   }
@@ -101,6 +102,7 @@ VALUE rxml_node_wrap(xmlNodePtr xnode)
 
 static VALUE rxml_node_alloc(VALUE klass)
 {
+  /* Ruby is responsible for freeing this node not libxml. */
   return Data_Wrap_Struct(klass, rxml_node_mark, rxml_node_free, NULL);
 }
 
@@ -378,34 +380,33 @@ static VALUE rxml_node_first_get(VALUE self)
  * underlying for child_set and child_add, difference being
  * former raises on implicit copy, latter does not.
  */
-static VALUE rxml_node_child_set_aux(VALUE self, VALUE rnode)
+static VALUE rxml_node_child_set_aux(VALUE self, VALUE child)
 {
-  xmlNodePtr pnode, chld, ret;
+  VALUE result;
+  xmlNodePtr xnode, xchild, xresult;
 
-  if (rb_obj_is_kind_of(rnode, cXMLNode) == Qfalse)
+  if (rb_obj_is_kind_of(child, cXMLNode) == Qfalse)
     rb_raise(rb_eTypeError, "Must pass an XML::Node object");
 
-  Data_Get_Struct(self, xmlNode, pnode);
-  Data_Get_Struct(rnode, xmlNode, chld);
+  Data_Get_Struct(self, xmlNode, xnode);
+  Data_Get_Struct(child, xmlNode, xchild);
 
-  if (chld->parent != NULL || chld->doc != NULL)
+  if (xchild->parent != NULL || xchild->doc != NULL)
     rb_raise(
         rb_eRuntimeError,
         "Cannot move a node from one document to another with child= or <<.  First copy the node before moving it.");
 
-  ret = xmlAddChild(pnode, chld);
-  if (ret == NULL)
+  xresult = xmlAddChild(xnode, xchild);
+  if (xresult == NULL)
   {
     rxml_raise(&xmlLastError);
   }
-  else if (ret == chld)
-  {
-    /* child was added whole to parent and we need to return it as a new object */
-    return rxml_node_wrap(chld);
-  }
-  /* else */
-  /* If it was a text node, then ret should be parent->last, so we will just return ret. */
-  return rxml_node_wrap(ret);
+
+  result = rxml_node_wrap(xresult);
+
+  /* Child now has parent document, Ruby is no longer in charge of freeing it. */
+  RDATA(result)->dfree = NULL;
+  return result;
 }
 
 /*
@@ -918,21 +919,24 @@ static VALUE rxml_node_next_get(VALUE self)
  *
  * Insert the specified node as this node's next sibling.
  */
-static VALUE rxml_node_next_set(VALUE self, VALUE rnode)
+static VALUE rxml_node_next_set(VALUE self, VALUE next)
 {
-  xmlNodePtr cnode, pnode, ret;
+  VALUE result;
+  xmlNodePtr xnode, xnext, xresult;
 
-  if (rb_obj_is_kind_of(rnode, cXMLNode) == Qfalse)
+  if (rb_obj_is_kind_of(next, cXMLNode) == Qfalse)
     rb_raise(rb_eTypeError, "Must pass an XML::Node object");
 
-  Data_Get_Struct(self, xmlNode, pnode);
-  Data_Get_Struct(rnode, xmlNode, cnode);
+  Data_Get_Struct(self, xmlNode, xnode);
+  Data_Get_Struct(next, xmlNode, xnext);
 
-  ret = xmlAddNextSibling(pnode, cnode);
-  if (ret == NULL)
+  xresult = xmlAddNextSibling(xnode, xnext);
+  if (xresult == NULL)
     rxml_raise(&xmlLastError);
 
-  return (rxml_node_wrap(ret));
+  result = rxml_node_wrap(xresult);
+  RDATA(result)->dfree = NULL;
+  return result;
 }
 
 /*
@@ -1029,21 +1033,24 @@ static VALUE rxml_node_prev_get(VALUE self)
  *
  * Insert the specified node as this node's previous sibling.
  */
-static VALUE rxml_node_prev_set(VALUE self, VALUE rnode)
+static VALUE rxml_node_prev_set(VALUE self, VALUE prev)
 {
-  xmlNodePtr cnode, pnode, ret;
+  VALUE result;
+  xmlNodePtr xnode, xprev, xresult;
 
-  if (rb_obj_is_kind_of(rnode, cXMLNode) == Qfalse)
+  if (rb_obj_is_kind_of(prev, cXMLNode) == Qfalse)
     rb_raise(rb_eTypeError, "Must pass an XML::Node object");
 
-  Data_Get_Struct(self, xmlNode, pnode);
-  Data_Get_Struct(rnode, xmlNode, cnode);
+  Data_Get_Struct(self, xmlNode, xnode);
+  Data_Get_Struct(prev, xmlNode, xprev);
 
-  ret = xmlAddPrevSibling(pnode, cnode);
-  if (ret == NULL)
+  xresult = xmlAddPrevSibling(xnode, xprev);
+  if (xresult == NULL)
     rxml_raise(&xmlLastError);
 
-  return (rxml_node_wrap(ret));
+  result = rxml_node_wrap(xresult);
+  RDATA(result)->dfree = NULL;
+  return result;
 }
 
 /*
@@ -1100,11 +1107,16 @@ static VALUE rxml_node_remove_ex(VALUE self)
 {
   xmlNodePtr xnode;
   Data_Get_Struct(self, xmlNode, xnode);
+
   /* Unlink the node from its parent. */
   xmlUnlinkNode(xnode);
+
   /* Now set the nodes parent to nil so it can
    be freed if the reference to it goes out of scope*/
   xmlSetTreeDoc(xnode, NULL);
+
+  /* Now add a free method to the node so that Ruby can free it. */
+  RDATA(self)->dfree = rxml_node_free;
 
   /* Now return the removed node so the user can
    do something wiht it.*/
@@ -1117,27 +1129,24 @@ static VALUE rxml_node_remove_ex(VALUE self)
  *
  * Add the specified node as a sibling of this node.
  */
-static VALUE rxml_node_sibling_set(VALUE self, VALUE rnode)
+static VALUE rxml_node_sibling_set(VALUE self, VALUE sibling)
 {
-  xmlNodePtr cnode, pnode, ret;
-  VALUE obj;
+  VALUE result;
+  xmlNodePtr xnode, xsibling, xresult;
 
-  if (rb_obj_is_kind_of(rnode, cXMLNode) == Qfalse)
+  if (rb_obj_is_kind_of(sibling, cXMLNode) == Qfalse)
     rb_raise(rb_eTypeError, "Must pass an XML::Node object");
 
-  Data_Get_Struct(self, xmlNode, pnode);
-  Data_Get_Struct(rnode, xmlNode, cnode);
+  Data_Get_Struct(self, xmlNode, xnode);
+  Data_Get_Struct(sibling, xmlNode, xsibling);
 
-  ret = xmlAddSibling(pnode, cnode);
-  if (ret == NULL)
+  xresult = xmlAddSibling(xnode, xsibling);
+  if (xresult == NULL)
     rxml_raise(&xmlLastError);
 
-  if (ret->_private == NULL)
-    obj = rxml_node_wrap(ret);
-  else
-    obj = (VALUE) ret->_private;
-
-  return obj;
+  result = rxml_node_wrap(xresult);
+  RDATA(result)->dfree = NULL;
+  return result;
 }
 
 /*
