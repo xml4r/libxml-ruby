@@ -51,7 +51,6 @@
  */
 
 #include <stdarg.h>
-#include <st.h>
 #include "ruby_libxml.h"
 #include "ruby_xml_document.h"
 
