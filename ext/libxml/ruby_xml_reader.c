@@ -50,7 +50,7 @@ ID IO_ATTR;
 ID OPTIONS_SYMBOL;
 
 
-static VALUE rxml_reader_free(xmlTextReaderPtr reader)
+static void rxml_reader_free(xmlTextReaderPtr reader)
 {
   xmlFreeTextReader(reader);
 }
