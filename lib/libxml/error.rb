@@ -71,11 +71,15 @@ module LibXML
       end
 
       def to_s
-       msg = super
-       msg = msg ? msg.strip: ''
+        msg = super
+        msg = msg ? msg.strip: ''
 
-       sprintf("%s %s at %s:%d.", self.level_to_s, msg,
-                                  self.file, self.line)
+        if self.line
+          sprintf("%s %s at %s:%d.", self.level_to_s, msg,
+                                     self.file, self.line)
+        else
+          sprintf("%s %s.", self.level_to_s, msg)
+        end
       end
     end
   end
