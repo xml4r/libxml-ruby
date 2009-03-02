@@ -1,4 +1,5 @@
-require "xml"
+require 'xml'
+require 'stringio'
 require 'test/unit'
 
 class HTMLParserTest < Test::Unit::TestCase
@@ -10,6 +11,8 @@ class HTMLParserTest < Test::Unit::TestCase
   def test_file
     xp = XML::HTMLParser.file(html_file)
     assert_instance_of(XML::HTMLParser, xp)
+    doc = xp.parse
+    assert_not_nil(doc)
   end
 
   def test_noexistent_file
@@ -36,6 +39,16 @@ class HTMLParserTest < Test::Unit::TestCase
       doc = xp.parse
       assert_instance_of(XML::Document, doc)
     end
+  end
+
+  def test_io_gc
+    # Test that the reader keeps a reference
+    # to the io object
+    file = File.open(html_file)
+    parser = XML::HTMLParser.io(file)
+    file = nil
+    GC.start
+    assert(parser.parse)
   end
 
   def test_nil_io
