@@ -65,6 +65,15 @@ class TestNodeEdit < Test::Unit::TestCase
                  @doc.root.to_s.gsub(/\n\s*/,''))
   end
 
+  def test_remove_node_gc
+    xp = XML::Parser.string('<test><num>one</num><num>two</num><num>three</num></test>')
+    doc = xp.parse
+    node = doc.root.child.remove!
+    node = nil
+    GC.start
+    assert_not_nil(doc)
+  end
+
   def test_remove_node_iteration
     nodes = Array.new
     @doc.root.each_element do |node|
