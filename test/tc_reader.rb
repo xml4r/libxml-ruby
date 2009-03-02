@@ -75,6 +75,16 @@ class TestReader < Test::Unit::TestCase
     end
   end
 
+  def test_io_gc
+    # Test that the reader keeps a reference
+    # to the io object
+    file = File.open(XML_FILE, 'rb')
+    reader = XML::Reader.io(file)
+    file = nil
+    GC.start
+    assert(reader.read)
+  end
+
   def test_string_io
     data = File.read(XML_FILE)
     string_io = StringIO.new(data)
@@ -179,7 +189,7 @@ class TestReader < Test::Unit::TestCase
 
     # first try to get a node
     assert_nil(reader.node)
-    
+
     reader.read
     assert_instance_of(XML::Node, reader.node)
   end
