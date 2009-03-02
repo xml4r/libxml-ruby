@@ -43,7 +43,7 @@ default_spec = Gem::Specification.new do |spec|
 
   # Determine the current version of the software
   spec.version = 
-    if File.read('ext/libxml/version.h') =~ /\s*RUBY_LIBXML_VERSION\s*['"](\d.+)['"]/
+    if File.read('ext/libxml/ruby_xml_version.h') =~ /\s*RUBY_LIBXML_VERSION\s*['"](\d.+)['"]/
       CURRENT_VERSION = $1
     else
       CURRENT_VERSION = "0.0.0"
