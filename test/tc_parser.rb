@@ -98,6 +98,16 @@ class TestParser < Test::Unit::TestCase
     end
   end
 
+  def test_io_gc
+    # Test that the reader keeps a reference
+    # to the io object
+    file = File.open(File.join(File.dirname(__FILE__), 'model/rubynet.xml'))
+    parser = XML::Parser.io(file)
+    file = nil
+    GC.start
+    assert(parser.parse)
+  end
+
   def test_nil_io
     error = assert_raise(TypeError) do
       XML::Parser.io(nil)
