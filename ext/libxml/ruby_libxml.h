@@ -3,10 +3,7 @@
 #ifndef __RUBY_LIBXML_H__
 #define __RUBY_LIBXML_H__
 
-#include "version.h"
-
 #include <ruby.h>
-#include <rubyio.h>
 #include <libxml/parser.h>
 #include <libxml/parserInternals.h>
 #include <libxml/debugXML.h>
@@ -59,6 +56,7 @@
 #include <libxml/xpointer.h>
 #endif
 
+#include "ruby_xml_version.h"
 #include "ruby_xml.h"
 #include "ruby_xml_io.h"
 #include "ruby_xml_error.h"
