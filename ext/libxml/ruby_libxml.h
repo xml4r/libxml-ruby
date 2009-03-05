@@ -61,7 +61,6 @@
 #include "ruby_xml_io.h"
 #include "ruby_xml_error.h"
 #include "ruby_xml_encoding.h"
-#include "ruby_xml_state.h"
 #include "ruby_xml_attributes.h"
 #include "ruby_xml_attr.h"
 #include "ruby_xml_attr_decl.h"

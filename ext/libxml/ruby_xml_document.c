@@ -63,11 +63,6 @@ void rxml_document_free(xmlDocPtr xdoc)
   xmlFreeDoc(xdoc);
 }
 
-void rxml_document_mark(xmlDocPtr xdoc)
-{
-  rb_gc_mark(LIBXML_STATE);
-}
-
 VALUE rxml_document_wrap(xmlDocPtr xdoc)
 {
   VALUE result;
@@ -79,8 +74,7 @@ VALUE rxml_document_wrap(xmlDocPtr xdoc)
   }
   else
   {
-    result = Data_Wrap_Struct(cXMLDocument, rxml_document_mark,
-        rxml_document_free, xdoc);
+    result = Data_Wrap_Struct(cXMLDocument, NULL, rxml_document_free, xdoc);
     xdoc->_private = (void*) result;
   }
 
@@ -111,7 +105,7 @@ static void LibXML_validity_warning(void * ctxt, const char * msg, va_list ap)
  */
 static VALUE rxml_document_alloc(VALUE klass)
 {
-  return Data_Wrap_Struct(klass, rxml_document_mark, rxml_document_free, NULL);
+  return Data_Wrap_Struct(klass, NULL, rxml_document_free, NULL);
 }
 
 /*
@@ -141,7 +135,7 @@ static VALUE rxml_document_initialize(int argc, VALUE *argv, VALUE self)
   Check_Type(xmlver, T_STRING);
   xdoc = xmlNewDoc((xmlChar*) StringValuePtr(xmlver));
   xdoc->_private = (void*) self;
-  DATA_PTR( self) = xdoc;
+  DATA_PTR(self) = xdoc;
 
   return self;
 }
@@ -514,6 +508,7 @@ static VALUE rxml_document_root_set(VALUE self, VALUE node)
 
   Data_Get_Struct(self, xmlDoc, xdoc);
   Data_Get_Struct(node, xmlNode, xnode);
+
   xroot = xmlDocSetRootElement(xdoc, xnode);
   if (xroot == NULL)
     return (Qnil);
