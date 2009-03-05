@@ -72,7 +72,7 @@ class TestDtd < Test::Unit::TestCase
     # Check the error worked
     assert_not_nil(error)
     assert_kind_of(XML::Error, error)
-    assert_equal("Error: No declaration for element invalid at :0.", error.message)
+    assert_equal("Error: No declaration for element invalid.", error.message)
     assert_equal(XML::Error::VALID, error.domain)
     assert_equal(XML::Error::DTD_UNKNOWN_ELEM, error.code)
     assert_equal(XML::Error::ERROR, error.level)
