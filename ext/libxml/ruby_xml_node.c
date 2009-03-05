@@ -26,23 +26,48 @@ VALUE check_string_or_symbol(VALUE val)
   return rb_obj_as_string(val);
 }
 
-/*
- * memory2 implementation: xmlNode->_private holds a reference
- * to the wrapping ruby object VALUE when there is one.
- * traversal for marking is upward, and top levels are marked
- * through and lower level mark entry.
+/* Memory management:
  *
- * All ruby retrieval for an xml
- * node will result in the same ruby instance. When all handles to them
- * go out of scope, then ruby_xfree gets called and _private is set to NULL.
- * If the xmlNode has no parent or document, then call xmlFree.
+ * The bindings create a one-to-one mapping between libxml nodes
+ * and Ruby nodes.  If a libxml node is wraped, its _private member
+ * is set with a reference to the Ruby object.
+ *
+ * When a libxml document or top level node is freed, it will free
+ * all its children.  Thus Ruby is responsible for:
+ *
+ *  * Using the mark function to keep alive any documents Ruby is
+ *    referencing via the document or child nodes.
+ *  * Using the mark function to keep alive any top level, free
+ *    standing nodes Ruby is referencing via the node or its children.
+ *
+ * Ruby will always set a free function when wrapping a node.  However,
+ * the bindings also register a callback that is invoked by libxml
+ * each time a node is freed.  When the callback is called, the node's
+ * dfree member is set to NULL since Ruby no longer should free the node.
  */
+
+void rxml_node_deregisterNode(xmlNodePtr xnode)
+{
+  /* Has the node been wrapped and exposed to Ruby? */
+  if (xnode->_private)
+  {
+    /* Node was wrapped.  Set the _private member to free and
+      then dislabe the dfree function so that Ruby will not
+      try to free the node a second time. */
+    VALUE node = (VALUE) xnode->_private;
+    RDATA(node)->dfree = NULL;
+    xnode->_private = NULL;
+  }
+}
+
 void rxml_node_free(xmlNodePtr xnode)
 {
-  /* Set _private to NULL so that we won't reuse the
-   same, freed, Ruby wrapper object later.*/
+  /* The Ruby object that wraps the node no longer exists. */
   xnode->_private = NULL;
 
+  /* Only free nodes that are stand-alone, top level nodes.
+     If a node belongs to a document, or a parent node, then
+     the document or parent node will free thsi node. */
   if (xnode->doc == NULL && xnode->parent == NULL)
     xmlFreeNode(xnode);
 }
@@ -93,8 +118,10 @@ VALUE rxml_node_wrap(xmlNodePtr xnode)
   }
   else
   {
-    /* Ruby is not responsible for freeing this node, libxml is. */
-    VALUE node = Data_Wrap_Struct(cXMLNode, rxml_node_mark, NULL, xnode);
+    /* Assume Ruby is responsible for freeing this node.  If libxml frees it
+       instead, the rxml_node_deregisterNode callback is executed, and
+       we set the free function to NULL. */
+    VALUE node = Data_Wrap_Struct(cXMLNode, rxml_node_mark, rxml_node_free, xnode);
     xnode->_private = (void*) node;
     return node;
   }
@@ -382,7 +409,6 @@ static VALUE rxml_node_first_get(VALUE self)
  */
 static VALUE rxml_node_child_set_aux(VALUE self, VALUE child)
 {
-  VALUE result;
   xmlNodePtr xnode, xchild, xresult;
 
   if (rb_obj_is_kind_of(child, cXMLNode) == Qfalse)
@@ -392,21 +418,15 @@ static VALUE rxml_node_child_set_aux(VALUE self, VALUE child)
   Data_Get_Struct(child, xmlNode, xchild);
 
   if (xchild->parent != NULL || xchild->doc != NULL)
-    rb_raise(
-        rb_eRuntimeError,
-        "Cannot move a node from one document to another with child= or <<.  First copy the node before moving it.");
+    rb_raise(rb_eRuntimeError,
+            "Cannot move a node from one document to another with child= or <<.  First copy the node before moving it.");
 
   xresult = xmlAddChild(xnode, xchild);
-  if (xresult == NULL)
-  {
+
+  if (!xresult)
     rxml_raise(&xmlLastError);
-  }
 
-  result = rxml_node_wrap(xresult);
-
-  /* Child now has parent document, Ruby is no longer in charge of freeing it. */
-  RDATA(result)->dfree = NULL;
-  return result;
+  return rxml_node_wrap(xresult);
 }
 
 /*
@@ -921,7 +941,6 @@ static VALUE rxml_node_next_get(VALUE self)
  */
 static VALUE rxml_node_next_set(VALUE self, VALUE next)
 {
-  VALUE result;
   xmlNodePtr xnode, xnext, xresult;
 
   if (rb_obj_is_kind_of(next, cXMLNode) == Qfalse)
@@ -934,9 +953,7 @@ static VALUE rxml_node_next_set(VALUE self, VALUE next)
   if (xresult == NULL)
     rxml_raise(&xmlLastError);
 
-  result = rxml_node_wrap(xresult);
-  RDATA(result)->dfree = NULL;
-  return result;
+  return rxml_node_wrap(xresult);
 }
 
 /*
@@ -1035,7 +1052,6 @@ static VALUE rxml_node_prev_get(VALUE self)
  */
 static VALUE rxml_node_prev_set(VALUE self, VALUE prev)
 {
-  VALUE result;
   xmlNodePtr xnode, xprev, xresult;
 
   if (rb_obj_is_kind_of(prev, cXMLNode) == Qfalse)
@@ -1048,9 +1064,7 @@ static VALUE rxml_node_prev_set(VALUE self, VALUE prev)
   if (xresult == NULL)
     rxml_raise(&xmlLastError);
 
-  result = rxml_node_wrap(xresult);
-  RDATA(result)->dfree = NULL;
-  return result;
+  return rxml_node_wrap(xresult);
 }
 
 /*
@@ -1115,9 +1129,6 @@ static VALUE rxml_node_remove_ex(VALUE self)
    be freed if the reference to it goes out of scope*/
   xmlSetTreeDoc(xnode, NULL);
 
-  /* Now add a free method to the node so that Ruby can free it. */
-  RDATA(self)->dfree = rxml_node_free;
-
   /* Now return the removed node so the user can
    do something wiht it.*/
   return self;
@@ -1131,7 +1142,6 @@ static VALUE rxml_node_remove_ex(VALUE self)
  */
 static VALUE rxml_node_sibling_set(VALUE self, VALUE sibling)
 {
-  VALUE result;
   xmlNodePtr xnode, xsibling, xresult;
 
   if (rb_obj_is_kind_of(sibling, cXMLNode) == Qfalse)
@@ -1144,9 +1154,7 @@ static VALUE rxml_node_sibling_set(VALUE self, VALUE sibling)
   if (xresult == NULL)
     rxml_raise(&xmlLastError);
 
-  result = rxml_node_wrap(xresult);
-  RDATA(result)->dfree = NULL;
-  return result;
+  return rxml_node_wrap(xresult);
 }
 
 /*
@@ -1310,24 +1318,8 @@ static VALUE rxml_node_copy(VALUE self, VALUE deep)
     return Qnil;
 }
 
-void rxml_node_registerNode(xmlNodePtr node)
-{
-  node->_private = NULL;
-}
-
-void rxml_node_deregisterNode(xmlNodePtr xnode)
-{
-  VALUE node;
-
-  if (xnode->_private == NULL)
-    return;
-  node = (VALUE) xnode->_private;
-  DATA_PTR( node) = NULL;
-}
-
 void rxml_init_node(void)
 {
-  xmlRegisterNodeDefault(rxml_node_registerNode);
   xmlDeregisterNodeDefault(rxml_node_deregisterNode);
 
   cXMLNode = rb_define_class_under(mXML, "Node", rb_cObject);
