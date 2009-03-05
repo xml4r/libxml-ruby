@@ -134,7 +134,7 @@ class TestSaxParser < Test::Unit::TestCase
       XML::SaxParser.file('i_dont_exist.xml')
     end
 
-    assert_equal('Warning: failed to load external entity "i_dont_exist.xml" at :0.', error.to_s)
+    assert_equal('Warning: failed to load external entity "i_dont_exist.xml".', error.to_s)
   end
 
   def test_nil_file

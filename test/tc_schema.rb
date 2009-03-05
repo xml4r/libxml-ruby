@@ -34,7 +34,7 @@ class TestSchema < Test::Unit::TestCase
 
     assert_not_nil(error)
     assert_kind_of(XML::Error, error)
-    assert(error.message.match(/Error: Element 'invalid': This element is not expected. Expected is \( item \)\. at/))
+    assert(error.message.match(/Error: Element 'invalid': This element is not expected. Expected is \( item \)/))
     assert_equal(XML::Error::SCHEMASV, error.domain)
     assert_equal(XML::Error::SCHEMAV_ELEMENT_CONTENT, error.code)
     assert_equal(XML::Error::ERROR, error.level)

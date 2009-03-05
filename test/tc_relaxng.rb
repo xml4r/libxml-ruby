@@ -34,7 +34,7 @@ class TestRelaxNG < Test::Unit::TestCase
 
     assert_not_nil(error)
     assert_kind_of(XML::Error, error)
-    assert(error.message.match(/Error: Did not expect element invalid there at/))
+    assert(error.message.match(/Error: Did not expect element invalid there/))
     assert_equal(XML::Error::RELAXNGV, error.domain)
     assert_equal(XML::Error::LT_IN_ATTRIBUTE, error.code)
     assert_equal(XML::Error::ERROR, error.level)
