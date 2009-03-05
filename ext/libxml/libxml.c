@@ -1,17 +1,21 @@
 #include "ruby_libxml.h"
 
-char *ruby_strdup(const char*);
+#if RUBY_INTERN_H
+#include <ruby/util.h>
+#else
+#include <util.h>
+#endif
 
 VALUE mLibXML;
 
 static void rxml_init_memory(void)
 {
   xmlGcMemSetup(
-      ruby_xfree,
-      ruby_xmalloc,
-      ruby_xmalloc,
-      ruby_xrealloc,
-      ruby_strdup
+      (xmlFreeFunc)ruby_xfree,
+      (xmlMallocFunc)ruby_xmalloc,
+      (xmlMallocFunc)ruby_xmalloc,
+      (xmlReallocFunc)ruby_xrealloc,
+      (xmlStrdupFunc)ruby_strdup
   );
 }
 
@@ -43,7 +47,6 @@ void Init_libxml_ruby(void)
   rxml_init_io();
   rxml_init_error();
   rxml_init_encoding();
-  rxml_init_state();
   rxml_init_parser();
   rxml_init_parser_context();
   rxml_init_parser_options();
