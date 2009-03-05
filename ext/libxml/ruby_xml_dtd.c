@@ -191,6 +191,8 @@ static VALUE rxml_dtd_initialize(int argc, VALUE *argv, VALUE self)
       if (xdtd == NULL)
         rxml_raise(&xmlLastError);
 
+      /* Document will free this dtd now. */
+      RDATA(self)->dfree = NULL;
       DATA_PTR(self) = xdtd;
 
       xmlSetTreeDoc((xmlNodePtr) xdtd, xdoc);
@@ -231,7 +233,7 @@ static VALUE rxml_dtd_initialize(int argc, VALUE *argv, VALUE self)
 
     xmlFree(new_string);
 
-    DATA_PTR( self) = xdtd;
+    DATA_PTR(self) = xdtd;
     break;
 
   default:
