@@ -7,5 +7,5 @@
 
 extern VALUE cXMLNamespaces;
 
-void ruby_init_xml_namespaces(void);
+void rxml_init_namespaces(void);
 #endif
