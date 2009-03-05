@@ -1,6 +1,6 @@
 require 'xml'
+require 'stringio'
 require 'test/unit'
-require 'pp'
 
 class DocTypeCallback
   include XML::SaxParser::Callbacks
