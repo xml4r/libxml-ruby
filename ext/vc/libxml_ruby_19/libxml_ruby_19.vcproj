@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="C:\Development\msys\local\include;C:\Development\msys\local\include\libxml2;&quot;C:\Development\ruby-1.9.1-msvc\usr\include\ruby-1.9.1&quot;;&quot;C:\Development\ruby-1.9.1-msvc\usr\include\ruby-1.9.1\i386-mswin32_90&quot;"
+				AdditionalIncludeDirectories="C:\Development\msys\local\include;C:\Development\msys\local\include\libxml2;&quot;C:\Development\ruby-1.9.1\usr\include\ruby-1.9.1&quot;;&quot;C:\Development\ruby-1.9.1\usr\include\ruby-1.9.1\i386-mswin32_90&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;LIBXML_RUBY_19_EXPORTS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -49,6 +49,7 @@
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				DebugInformationFormat="4"
+				DisableSpecificWarnings="4996"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -62,9 +63,9 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="ruby19.lib libxml2.lib"
-				OutputFile="C:\Development\ruby-1.9.1-msvc\usr\lib\ruby\gems\1.9.1\gems\libxml-ruby-0.9.9-x86-mswin32\lib\libxml_ruby.so"
+				OutputFile="C:\Development\ruby-1.9.1\usr\lib\ruby\gems\1.9.1\gems\libxml-ruby-0.9.9-x86-mswin32\lib\libxml_ruby.so"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;C:\Development\ruby-1.9.1-msvc\usr\lib&quot;;C:\Development\msys\local\lib"
+				AdditionalLibraryDirectories="&quot;C:\Development\ruby-1.9.1\usr\lib&quot;;C:\Development\msys\local\lib"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				TargetMachine="1"
@@ -279,10 +280,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\libxml\ruby_xml_state.c"
-				>
-			</File>
-			<File
 				RelativePath="..\..\libxml\ruby_xml_xinclude.c"
 				>
 			</File>
@@ -413,7 +410,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\libxml\ruby_xml_state.h"
+				RelativePath="..\..\libxml\ruby_xml_version.h"
 				>
 			</File>
 			<File
@@ -438,10 +435,6 @@
 			</File>
 			<File
 				RelativePath="..\..\libxml\ruby_xml_xpointer.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libxml\version.h"
 				>
 			</File>
 		</Filter>

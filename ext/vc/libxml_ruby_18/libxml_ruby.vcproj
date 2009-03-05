@@ -48,8 +48,9 @@
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="true"
+				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="4"
+				DisableSpecificWarnings="4996"
 				ShowIncludes="false"
 			/>
 			<Tool
@@ -64,7 +65,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="msvcrt-ruby18.lib libxml2.lib"
-				OutputFile="C:\Development\ruby\lib\ruby\gems\1.8\gems\libxml-ruby-0.9.8-x86-mswin32-60\lib\$(ProjectName).so"
+				OutputFile="C:\Development\ruby\lib\ruby\gems\1.8\gems\libxml-ruby-0.9.9-x86-mswin32\lib\$(ProjectName).so"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="C:\Development\ruby\lib;C:\Development\msys\local\lib"
 				GenerateDebugInformation="true"
@@ -287,10 +288,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\libxml\ruby_xml_state.c"
-				>
-			</File>
-			<File
 				RelativePath="..\..\libxml\ruby_xml_xinclude.c"
 				>
 			</File>
@@ -421,7 +418,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\libxml\ruby_xml_state.h"
+				RelativePath="..\..\libxml\ruby_xml_version.h"
 				>
 			</File>
 			<File
@@ -446,10 +443,6 @@
 			</File>
 			<File
 				RelativePath="..\..\libxml\ruby_xml_xpointer.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libxml\version.h"
 				>
 			</File>
 		</Filter>
