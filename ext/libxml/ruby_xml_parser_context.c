@@ -248,13 +248,15 @@ static VALUE rxml_parser_context_disable_cdata_set(VALUE self, VALUE bool)
   Data_Get_Struct(self, xmlParserCtxt, ctxt);
 
   if (ctxt->sax == NULL)
-    return (Qnil);
+    rb_raise(rb_eRuntimeError, "Sax handler is not yet set");
 
   /* LibXML controls this internally with the default SAX handler. */ 
   if (bool)
     ctxt->sax->cdataBlock = NULL;
   else
     ctxt->sax->cdataBlock = xmlDefaultSAXHandler.cdataBlock;
+
+  return bool;
 }
 
 /*
