@@ -1,4 +1,5 @@
 require 'xml'
+require 'stringio'
 require 'test/unit'
 
 class TestReader < Test::Unit::TestCase
