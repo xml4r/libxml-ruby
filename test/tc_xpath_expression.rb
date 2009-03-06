@@ -11,9 +11,11 @@ class TestXPathExpression < Test::Unit::TestCase
     @doc = nil
   end
 
-  def nodes
+  def test_nodes
     expr = XML::XPath::Expression.compile('/ruby_array/fixnum')
-    @doc.find(expr)
+    set = @doc.find(expr)
+    assert_instance_of(XML::XPath::Object, set)
+    assert_equal(2, set.size)
   end
 
   def test_find_class
