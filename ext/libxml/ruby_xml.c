@@ -1,4 +1,5 @@
 #include "ruby_libxml.h"
+#include "ruby_xml.h"
 
 VALUE mXML;
 
