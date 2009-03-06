@@ -35,6 +35,22 @@ static VALUE rxml_xpath_expression_alloc(VALUE klass)
 }
 
 /* call-seq:
+ *    XPath::Expression.compile(expression) -> XPath::Expression
+ *
+ * Compiles an XPatch expression. This improves performance
+ * when an XPath expression is called multiple times.
+ *
+ *  doc = XML::Document.string('<header><first>hi</first></header>')
+ *  expr = XPath::Expression.new('//first')
+ *  nodes = doc.find(expr)
+ */
+static VALUE rxml_xpath_expression_compile(VALUE klass, VALUE expression)
+{
+  VALUE args[] = {expression};
+  return rb_class_new_instance(1, args, cXMLXPathExpression);
+}
+
+/* call-seq:
  *    XPath::Expression.new(expression) -> XPath::Expression
  *
  * Compiles an XPatch expression. This improves performance
@@ -62,6 +78,6 @@ void rxml_init_xpath_expression(void)
 {
   cXMLXPathExpression = rb_define_class_under(mXPath, "Expression", rb_cObject);
   rb_define_alloc_func(cXMLXPathExpression, rxml_xpath_expression_alloc);
-  rb_define_singleton_method(cXMLXPathExpression, "compile", rb_class_new_instance, 1);
+  rb_define_singleton_method(cXMLXPathExpression, "compile", rxml_xpath_expression_compile, 1);
   rb_define_method(cXMLXPathExpression, "initialize", rxml_xpath_expression_initialize, 1);
 }
