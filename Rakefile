@@ -96,7 +96,7 @@ Rake::RDocTask.new("rdoc") do |rdoc|
   rdoc.rdoc_dir = 'doc/rdoc'
   rdoc.title    = "LibXML"
   # Show source inline with line numbers
-  rdoc.options << "--inline-source" << "--line-numbers"
+  rdoc.options << "--line-numbers"
   # Make the readme file the start page for the generated html
   rdoc.options << '--main' << 'README'
   rdoc.rdoc_files.include('doc/*.rdoc',
