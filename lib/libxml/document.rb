@@ -137,8 +137,8 @@ module LibXML
             'document_html'
           else
             raise(UnknownType, "Unknown node type: %n", node.node_type);
-				end
-			end
+        end
+      end
       # :enddoc:
 
       # Specifies if this is an DOCTYPE node
