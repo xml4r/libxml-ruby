@@ -1,3 +1,43 @@
+== 0.9.9 / 2009-03-05 Charlie Savage
+
+* Ruby 1.9.1 support (Charlie Savage). libxml-ruby now compiles and runs on either
+  1.8.6 and 1.9.1.  With 1.8.6 all tests should pass while on 1.9.1 all but
+  for encoding tests pass.  The port to Ruby 1.9.1 revealed two memory
+  allocation bugs (one with dtds, one with nodes) which are now fixed.
+
+* Better OS X support (Joe Khoobyar).  The default version of libxml2
+  on OS X 10.5 is fairly old, resulting in this link error:
+
+    NSLinkModule() error
+    dyld: Symbol not found: _htmlNewParserCtxt
+
+  This can be fixed by using MacPorts to get a newer version of libxml2.
+  To make use of MacPorts, the build script has been updated to use xml2-config.
+  This can be fine-tuned using the new --with-xml2-config / --without-xml2-config
+  options to extconf.rb (default is  --without-xml2-config to match existing behavior).
+
+* Greatly reduced memory usage (Joe Khoobyar).
+  See http://rubyforge.org/pipermail/libxml-devel/2009-February/001375.html.
+
+* Add Document#xhtml? and document#node_type methods (Joe Khoobyar)
+
+* Add XPath::Object#last (Joe Khoobyar)
+
+* Provide finer control over CDATA nodes on a parser by parser basis  (Joe Khoobyar).
+
+* Bug fix - Namespaces were incorrectly merged with attributes in the new sax2
+  handler (Charlie Savage).
+
+* Bug fix - Support iterating over nodes and attributes even with blocks
+  that call remove! (Charlie Savage)
+
+* Bug fix - If reader.node is NULL, return nil instead of crashing (Charlie Savage)
+
+* Bug fix - Dtd's owned by documents were freed twice in some circumstances (Joe Khoobyar).
+
+* Bug fix - Fix output escaping on attributes nodes (Joe Khoobyar).
+
+
 == 0.9.8 / 2009-1-24 Charlie Savage
 
 * Refactored XML::Parser, XML::HTMLParser, XML::SaxParser and
