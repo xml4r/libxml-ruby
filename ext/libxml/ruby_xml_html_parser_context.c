@@ -13,7 +13,7 @@
  */
 
 VALUE cXMLHtmlParserContext;
-ID IO_ATTR;
+static ID IO_ATTR;
 
 static void rxml_html_parser_context_free(xmlParserCtxtPtr ctxt)
 {

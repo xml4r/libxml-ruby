@@ -6,7 +6,7 @@
 #include "ruby_xml_parser_context.h"
 
 VALUE cXMLParserContext;
-ID IO_ATTR;
+static ID IO_ATTR;
 
 /*
  * Document-class: LibXML::XML::Parser::Context

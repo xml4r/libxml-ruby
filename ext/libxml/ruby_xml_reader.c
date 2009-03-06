@@ -44,10 +44,10 @@
 
 VALUE cXMLReader;
 
-ID BASE_URI_SYMBOL;
-ID ENCODING_SYMBOL;
-ID IO_ATTR;
-ID OPTIONS_SYMBOL;
+static ID BASE_URI_SYMBOL;
+static ID ENCODING_SYMBOL;
+static ID IO_ATTR;
+static ID OPTIONS_SYMBOL;
 
 
 static void rxml_reader_free(xmlTextReaderPtr reader)
