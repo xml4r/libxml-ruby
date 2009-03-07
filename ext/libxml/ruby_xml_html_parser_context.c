@@ -20,7 +20,7 @@ static ID IO_ATTR;
    htmlNewParserCtxt (or htmlInitParserCtxt which it uses) method.  htmlNewParserCtxt
    wasn't added to the libxml2 header files until 2.6.27.  So the next two 
    methods are simply copied from a newer version of libxml2 (2.7.2). */
-/*#if LIBXML_VERSION <= 20627
+#if LIBXML_VERSION <= 20627
 #define XML_CTXT_FINISH_DTD_0 0xabcd1234
 static int htmlInitParserCtxt(htmlParserCtxtPtr ctxt)
 {
@@ -30,12 +30,12 @@ static int htmlInitParserCtxt(htmlParserCtxtPtr ctxt)
   memset(ctxt, 0, sizeof(htmlParserCtxt));
   ctxt->dict = xmlDictCreate();
   if (ctxt->dict == NULL) {
-    htmlErrMemory(NULL, "htmlInitParserCtxt: out of memory\n");
+    rb_raise(rb_eNoMemError, "htmlInitParserCtxt: out of memory\n");
     return(-1);
   }
   sax = (htmlSAXHandler *) xmlMalloc(sizeof(htmlSAXHandler));
   if (sax == NULL) {
-    htmlErrMemory(NULL, "htmlInitParserCtxt: out of memory\n");
+    rb_raise(rb_eNoMemError, "htmlInitParserCtxt: out of memory\n");
     return(-1);
   }
   else
@@ -43,7 +43,7 @@ static int htmlInitParserCtxt(htmlParserCtxtPtr ctxt)
 
   ctxt->inputTab = (htmlParserInputPtr *) xmlMalloc(5 * sizeof(htmlParserInputPtr));
   if (ctxt->inputTab == NULL) {
-    htmlErrMemory(NULL, "htmlInitParserCtxt: out of memory\n");
+    rb_raise(rb_eNoMemError, "htmlInitParserCtxt: out of memory\n");
     ctxt->inputNr = 0;
     ctxt->inputMax = 0;
     ctxt->input = NULL;
@@ -59,7 +59,7 @@ static int htmlInitParserCtxt(htmlParserCtxtPtr ctxt)
 
   ctxt->nodeTab = (htmlNodePtr *) xmlMalloc(10 * sizeof(htmlNodePtr));
   if (ctxt->nodeTab == NULL) {
-    htmlErrMemory(NULL, "htmlInitParserCtxt: out of memory\n");
+    rb_raise(rb_eNoMemError, "htmlInitParserCtxt: out of memory\n");
     ctxt->nodeNr = 0;
     ctxt->nodeMax = 0;
     ctxt->node = NULL;
@@ -74,7 +74,7 @@ static int htmlInitParserCtxt(htmlParserCtxtPtr ctxt)
 
   ctxt->nameTab = (const xmlChar **) xmlMalloc(10 * sizeof(xmlChar *));
   if (ctxt->nameTab == NULL) {
-    htmlErrMemory(NULL, "htmlInitParserCtxt: out of memory\n");
+    rb_raise(rb_eNoMemError, "htmlInitParserCtxt: out of memory\n");
     ctxt->nameNr = 0;
     ctxt->nameMax = 10;
     ctxt->name = NULL;
@@ -114,11 +114,11 @@ static int htmlInitParserCtxt(htmlParserCtxtPtr ctxt)
   return(0);
 }
 
-htmlParserCtxtPtr htmlNewParserCtxt(void)
+static htmlParserCtxtPtr htmlNewParserCtxt(void)
 {
   xmlParserCtxtPtr ctxt = (xmlParserCtxtPtr) xmlMalloc(sizeof(xmlParserCtxt));
   if (ctxt == NULL) {
-    htmlErrMemory(NULL, "NewParserCtxt: out of memory\n");
+    rb_raise(rb_eNoMemError, "NewParserCtxt: out of memory\n");
     return(NULL);
   }
   memset(ctxt, 0, sizeof(xmlParserCtxt));
@@ -129,7 +129,7 @@ htmlParserCtxtPtr htmlNewParserCtxt(void)
   return(ctxt);
 }
 #endif
-*/
+
 static void rxml_html_parser_context_free(htmlParserCtxtPtr ctxt)
 {
   htmlFreeParserCtxt(ctxt);

@@ -1,3 +1,9 @@
+== 1.0.0 / 2009-03-05 Charlie Savage
+
+* OS X (Charlie Savage).  Update bindings to support the default installed
+  version of libxml2 (2.6.16) on OS X 10.5 and the latest version available
+  via MacPorts.
+
 == 0.9.9 / 2009-03-05 Charlie Savage
 
 * Ruby 1.9.1 support (Charlie Savage). libxml-ruby now compiles and runs on either
@@ -37,6 +43,8 @@
 
 * Bug fix - Fix output escaping on attributes nodes (Joe Khoobyar).
 
+* Bug fix - Make sure IO objects are not garbage collected when used
+  as parser sources (Charlie Savage).
 
 == 0.9.8 / 2009-1-24 Charlie Savage
 
