@@ -114,14 +114,6 @@ need libxml2.
 EOL
 end
 
-unless have_func('xmlDocFormatDump')
-  crash('Your version of libxml2 is too old.  Please upgrade.')
-end
-
-unless have_func('docbCreateFileParserCtxt')
-  crash('Need docbCreateFileParserCtxt')
-end
-
 # For FreeBSD add /usr/local/include
 $INCFLAGS << " -I/usr/local/include"
 
