@@ -10,13 +10,14 @@ VALUE mLibXML;
 
 static void rxml_init_memory(void)
 {
+ /* Disable for now - broke attributes. 
   xmlGcMemSetup(
       (xmlFreeFunc)ruby_xfree,
       (xmlMallocFunc)ruby_xmalloc,
       (xmlMallocFunc)ruby_xmalloc,
       (xmlReallocFunc)ruby_xrealloc,
       (xmlStrdupFunc)ruby_strdup
-  );
+  );*/
 }
 
 #if defined(_WIN32)

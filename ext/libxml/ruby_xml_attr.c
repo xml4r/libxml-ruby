@@ -38,6 +38,11 @@ void rxml_attr_free(xmlAttrPtr xattr)
 
 void rxml_attr_mark(xmlAttrPtr xattr)
 {
+  /* This can happen if Ruby does a GC run after creating the
+     new attribute but before initializing it. */
+  if (xattr == NULL)
+    return;
+
   if (xattr->_private == NULL)
   {
     rb_warning("XmlAttr is not bound! (%s:%d)", __FILE__, __LINE__);
