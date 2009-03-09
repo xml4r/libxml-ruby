@@ -1,3 +1,10 @@
+== 1.1.0 / 2009-03-09 Charlie Savage
+
+* Fix bug caused by the mark function being called on partially initialized
+  attributes.
+
+* Revert back to libxml2's internal memory manager.
+
 == 1.0.0 / 2009-03-05 Charlie Savage
 
 * OS X (Charlie Savage).  Update bindings to support the default installed
