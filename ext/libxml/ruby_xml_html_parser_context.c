@@ -20,7 +20,7 @@ static ID IO_ATTR;
    htmlNewParserCtxt (or htmlInitParserCtxt which it uses) method.  htmlNewParserCtxt
    wasn't added to the libxml2 header files until 2.6.27.  So the next two 
    methods are simply copied from a newer version of libxml2 (2.7.2). */
-#if LIBXML_VERSION <= 20627
+#if LIBXML_VERSION < 20627
 #define XML_CTXT_FINISH_DTD_0 0xabcd1234
 static int htmlInitParserCtxt(htmlParserCtxtPtr ctxt)
 {
