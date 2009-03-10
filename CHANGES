@@ -1,3 +1,8 @@
+== 1.1.1 / 2009-03-10 Charlie Savage
+
+* Fix - Only include extra html parser context methods for versions of libxml
+  older than 2.6.27.
+
 == 1.1.0 / 2009-03-09 Charlie Savage
 
 * Fix bug caused by the mark function being called on partially initialized
