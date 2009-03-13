@@ -1,5 +1,7 @@
 == 1.1.2 / 2009-03-12 Charlie Savage
 
+* Added XML::Node#inner_xml helper method.
+
 * Fix segmentation that could occur when calling the mark function on a
   previously freed node.
 

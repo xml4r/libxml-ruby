@@ -69,6 +69,13 @@ class TestNodeWrite < Test::Unit::TestCase
     assert_equal('Unknown encoding value: -9999', error.to_s)
   end
 
+  def test_inner_xml
+    # Default to_s has indentation
+    node = @doc.root
+    assert_equal("<m\303\266tley_cr\303\274e country=\"us\">An American heavy metal band formed in Los Angeles, California in 1981.</m\303\266tley_cr\303\274e><iron_maiden country=\"uk\">British heavy metal band formed in 1975.</iron_maiden>",
+                 node.inner_xml)
+  end
+
   # --- Debug ---
   def test_debug
     assert(@doc.root.debug)

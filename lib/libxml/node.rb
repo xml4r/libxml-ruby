@@ -1,3 +1,5 @@
+require 'stringio'
+
 module LibXML
   module XML
     class Node
@@ -10,6 +12,23 @@ module LibXML
       # a deep copy call Node#copy(true)
       def clone
         copy(false)
+      end
+
+      # call-seq:
+      #    node.inner_xml -> "string"
+      #    node.inner_xml(:indent => true, :encoding => 'UTF-8', :level => 0) -> "string"
+      #
+      # Converts a node's children, to a string representation.  To include
+      # the node, use XML::Node#to_s.  For more information about
+      # the supported options, see XML::Node#to_s.
+      def inner_xml(options = Hash.new)
+        io = StringIO.new
+
+        self.each do |node|
+          io << node.to_s(options)
+        end
+
+        io.string
       end
       
       # :call-seq:

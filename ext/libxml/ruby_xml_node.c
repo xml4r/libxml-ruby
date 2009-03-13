@@ -7,7 +7,7 @@ VALUE cXMLNode;
  *
  * Nodes are the primary objects that make up an XML document.
  * The node class represents most node types that are found in
- * an XML document (but not Attributes, see LibXML::XML::Attribute).
+ * an XML document (but not LibXML::XML::Attributes, see LibXML::XML::Attr).
  * It exposes libxml's full API for creating, querying
  * moving and deleting node objects.  Many of these methods are
  * documented in the DOM Level 3 specification found at:
@@ -537,6 +537,9 @@ static VALUE rxml_node_doc(VALUE self)
  *    node.to_s(:indent => true, :encoding => 'UTF-8', :level => 0) -> "string"
  *
  * Converts a node, and all of its children, to a string representation.
+ * To include only the node's children, use the the XML::Node#inner_xml
+ * method.
+ *
  * You may provide an optional hash table to control how the string is 
  * generated.  Valid options are:
  * 
