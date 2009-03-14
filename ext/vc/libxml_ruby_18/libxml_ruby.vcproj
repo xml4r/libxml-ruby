@@ -184,10 +184,6 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\libxml\cbg.c"
-				>
-			</File>
-			<File
 				RelativePath="..\..\libxml\libxml.c"
 				>
 			</File>
@@ -205,6 +201,10 @@
 			</File>
 			<File
 				RelativePath="..\..\libxml\ruby_xml_attributes.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libxml\ruby_xml_cbg.c"
 				>
 			</File>
 			<File
