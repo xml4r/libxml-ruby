@@ -55,6 +55,12 @@ static VALUE rxml_parser_context_document(VALUE klass, VALUE document)
   xmlDocDumpFormatMemoryEnc(xdoc, &buffer, &length, xdoc->encoding, 0);
 
   ctxt = xmlCreateDocParserCtxt(buffer);
+
+  if (!ctxt)
+    rxml_raise(&xmlLastError);
+
+  /* Setup default options, user can override by calling #options=*/
+  xmlCtxtUseOptions(ctxt, 0);
   return rxml_parser_context_wrap(ctxt);
 }
 
@@ -70,8 +76,12 @@ static VALUE rxml_parser_context_document(VALUE klass, VALUE document)
 static VALUE rxml_parser_context_file(VALUE klass, VALUE file)
 {
   xmlParserCtxtPtr ctxt = xmlCreateURLParserCtxt(StringValuePtr(file), 0);
+
   if (!ctxt)
     rxml_raise(&xmlLastError);
+
+  /* Setup default options, user can override by calling #options=*/
+  xmlCtxtUseOptions(ctxt, 0);
 
   return rxml_parser_context_wrap(ctxt);
 }
@@ -95,9 +105,12 @@ static VALUE rxml_parser_context_string(VALUE klass, VALUE string)
 
   ctxt = xmlCreateMemoryParserCtxt(StringValuePtr(string),
                                    RSTRING_LEN(string));
-
+  
   if (!ctxt)
     rxml_raise(&xmlLastError);
+
+  /* Setup default options, user can override by calling #options=*/
+  xmlCtxtUseOptions(ctxt, 0);
 
   return rxml_parser_context_wrap(ctxt);
 }
@@ -125,11 +138,15 @@ static VALUE rxml_parser_context_io(VALUE klass, VALUE io)
                                        (void*)io, XML_CHAR_ENCODING_NONE);
     
   ctxt = xmlNewParserCtxt();
+
   if (!ctxt)
   {
     xmlFreeParserInputBuffer(input);
     rxml_raise(&xmlLastError);
   }
+
+  /* Setup default options, user can override by calling #options=*/
+  xmlCtxtUseOptions(ctxt, 0);
 
   stream = xmlNewIOInputStream(ctxt, input, XML_CHAR_ENCODING_NONE);
 

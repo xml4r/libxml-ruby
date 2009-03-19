@@ -155,6 +155,9 @@ static VALUE rxml_html_parser_context_file(VALUE klass, VALUE file)
   if (!ctxt)
     rxml_raise(&xmlLastError);
 
+  /* Setup default options, user can override by calling #options=*/
+  htmlCtxtUseOptions(ctxt, 0);
+
   return rxml_html_parser_context_wrap(ctxt);
 }
 
@@ -186,6 +189,9 @@ static VALUE rxml_html_parser_context_io(VALUE klass, VALUE io)
     xmlFreeParserInputBuffer(input);
     rxml_raise(&xmlLastError);
   }
+
+  /* Setup default options, user can override by calling #options=*/
+  htmlCtxtUseOptions(ctxt, 0);
 
   stream = xmlNewIOInputStream(ctxt, input, XML_CHAR_ENCODING_NONE);
 
@@ -225,6 +231,9 @@ static VALUE rxml_html_parser_context_string(VALUE klass, VALUE string)
                                    RSTRING_LEN(string));
   if (!ctxt)
     rxml_raise(&xmlLastError);
+
+  /* Setup default options, user can override by calling #options=*/
+  htmlCtxtUseOptions(ctxt, 0);
 
   htmlDefaultSAXHandlerInit();
   if (ctxt->sax != NULL)
