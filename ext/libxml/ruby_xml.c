@@ -35,7 +35,7 @@ static VALUE rxml_catalog_remove(VALUE self, VALUE cat)
  * Check LIBXML version matches version the bindings
  * were compiled to. Throws an exception if not.
  */
-static VALUE rxml_check_lib_versions(VALUE class)
+static VALUE rxml_check_lib_versions(VALUE klass)
 {
   xmlCheckVersion(LIBXML_VERSION);
   return (Qtrue);
@@ -47,7 +47,7 @@ static VALUE rxml_check_lib_versions(VALUE class)
  *
  * Determine whether libxml regexp automata support is enabled.
  */
-static VALUE rxml_enabled_automata_q(VALUE class)
+static VALUE rxml_enabled_automata_q(VALUE klass)
 {
 #ifdef LIBXML_AUTOMATA_ENABLED
   return(Qtrue);
@@ -63,7 +63,7 @@ static VALUE rxml_enabled_automata_q(VALUE class)
  * Determine whether libxml 'canonical XML' support is enabled.
  * See "Canonical XML" (http://www.w3.org/TR/xml-c14n)
  */
-static VALUE rxml_enabled_c14n_q(VALUE class)
+static VALUE rxml_enabled_c14n_q(VALUE klass)
 {
 #ifdef LIBXML_C14N_ENABLED
   return(Qtrue);
@@ -78,7 +78,7 @@ static VALUE rxml_enabled_c14n_q(VALUE class)
  *
  * Determine whether libxml resource catalog support is enabled.
  */
-static VALUE rxml_enabled_catalog_q(VALUE class)
+static VALUE rxml_enabled_catalog_q(VALUE klass)
 {
 #ifdef LIBXML_CATALOG_ENABLED
   return(Qtrue);
@@ -93,7 +93,7 @@ static VALUE rxml_enabled_catalog_q(VALUE class)
  *
  * Determine whether libxml debugging support is enabled.
  */
-static VALUE rxml_enabled_debug_q(VALUE class)
+static VALUE rxml_enabled_debug_q(VALUE klass)
 {
 #ifdef LIBXML_DEBUG_ENABLED
   return(Qtrue);
@@ -108,7 +108,7 @@ static VALUE rxml_enabled_debug_q(VALUE class)
  *
  * Determine whether libxml docbook support is enabled.
  */
-static VALUE rxml_enabled_docbook_q(VALUE class)
+static VALUE rxml_enabled_docbook_q(VALUE klass)
 {
 #ifdef LIBXML_DOCB_ENABLED
   return(Qtrue);
@@ -123,7 +123,7 @@ static VALUE rxml_enabled_docbook_q(VALUE class)
  *
  * Determine whether libxml ftp client support is enabled.
  */
-static VALUE rxml_enabled_ftp_q(VALUE class)
+static VALUE rxml_enabled_ftp_q(VALUE klass)
 {
 #ifdef LIBXML_FTP_ENABLED
   return(Qtrue);
@@ -138,7 +138,7 @@ static VALUE rxml_enabled_ftp_q(VALUE class)
  *
  * Determine whether libxml http client support is enabled.
  */
-static VALUE rxml_enabled_http_q(VALUE class)
+static VALUE rxml_enabled_http_q(VALUE klass)
 {
 #ifdef LIBXML_HTTP_ENABLED
   return(Qtrue);
@@ -153,7 +153,7 @@ static VALUE rxml_enabled_http_q(VALUE class)
  *
  * Determine whether libxml html support is enabled.
  */
-static VALUE rxml_enabled_html_q(VALUE class)
+static VALUE rxml_enabled_html_q(VALUE klass)
 {
 #ifdef LIBXML_HTML_ENABLED
   return(Qtrue);
@@ -168,7 +168,7 @@ static VALUE rxml_enabled_html_q(VALUE class)
  *
  * Determine whether libxml iconv support is enabled.
  */
-static VALUE rxml_enabled_iconv_q(VALUE class)
+static VALUE rxml_enabled_iconv_q(VALUE klass)
 {
 #ifdef LIBXML_ICONV_ENABLED
   return(Qtrue);
@@ -184,7 +184,7 @@ static VALUE rxml_enabled_iconv_q(VALUE class)
  * Determine whether libxml memory location debugging support
  * is enabled.
  */
-static VALUE rxml_enabled_memory_debug_location_q(VALUE class)
+static VALUE rxml_enabled_memory_debug_location_q(VALUE klass)
 {
 #ifdef DEBUG_MEMORY_LOCATION
   return(Qtrue);
@@ -199,7 +199,7 @@ static VALUE rxml_enabled_memory_debug_location_q(VALUE class)
  *
  * Determine whether libxml regular expression support is enabled.
  */
-static VALUE rxml_enabled_regexp_q(VALUE class)
+static VALUE rxml_enabled_regexp_q(VALUE klass)
 {
 #ifdef LIBXML_REGEXP_ENABLED
   return(Qtrue);
@@ -214,7 +214,7 @@ static VALUE rxml_enabled_regexp_q(VALUE class)
  *
  * Determine whether libxml schema support is enabled.
  */
-static VALUE rxml_enabled_schemas_q(VALUE class)
+static VALUE rxml_enabled_schemas_q(VALUE klass)
 {
 #ifdef LIBXML_SCHEMAS_ENABLED
   return(Qtrue);
@@ -231,7 +231,7 @@ static VALUE rxml_enabled_schemas_q(VALUE class)
  * is used by this ruby extension.  Threading support in libxml uses pthread
  * on Unix-like systems and Win32 threads on Windows.
  */
-static VALUE rxml_enabled_thread_q(VALUE class)
+static VALUE rxml_enabled_thread_q(VALUE klass)
 {
   /* This won't be defined unless this code is compiled with _REENTRANT or __MT__
    * defined or the compiler is in C99 mode.
@@ -257,7 +257,7 @@ static VALUE rxml_enabled_thread_q(VALUE class)
  *
  * Determine whether libxml unicode support is enabled.
  */
-static VALUE rxml_enabled_unicode_q(VALUE class)
+static VALUE rxml_enabled_unicode_q(VALUE klass)
 {
 #ifdef LIBXML_UNICODE_ENABLED
   return(Qtrue);
@@ -272,7 +272,7 @@ static VALUE rxml_enabled_unicode_q(VALUE class)
  *
  * Determine whether libxml xinclude support is enabled.
  */
-static VALUE rxml_enabled_xinclude_q(VALUE class)
+static VALUE rxml_enabled_xinclude_q(VALUE klass)
 {
 #ifdef LIBXML_XINCLUDE_ENABLED
   return(Qtrue);
@@ -287,7 +287,7 @@ static VALUE rxml_enabled_xinclude_q(VALUE class)
  *
  * Determine whether libxml xpath support is enabled.
  */
-static VALUE rxml_enabled_xpath_q(VALUE class)
+static VALUE rxml_enabled_xpath_q(VALUE klass)
 {
 #ifdef LIBXML_XPATH_ENABLED
   return(Qtrue);
@@ -302,7 +302,7 @@ static VALUE rxml_enabled_xpath_q(VALUE class)
  *
  * Determine whether libxml xpointer support is enabled.
  */
-static VALUE rxml_enabled_xpointer_q(VALUE class)
+static VALUE rxml_enabled_xpointer_q(VALUE klass)
 {
 #ifdef LIBXML_XPTR_ENABLED
   return(Qtrue);
@@ -317,7 +317,7 @@ static VALUE rxml_enabled_xpointer_q(VALUE class)
  *
  * Determine whether libxml zlib support is enabled.
  */
-static VALUE rxml_enabled_zlib_q(VALUE class)
+static VALUE rxml_enabled_zlib_q(VALUE klass)
 {
 #ifdef HAVE_ZLIB_H
   return(Qtrue);
@@ -333,7 +333,7 @@ static VALUE rxml_enabled_zlib_q(VALUE class)
  * Determine whether included-entity debugging is enabled.
  * (Requires Libxml to be compiled with debugging support)
  */
-static VALUE rxml_debug_entities_get(VALUE class)
+static VALUE rxml_debug_entities_get(VALUE klass)
 {
 #ifdef LIBXML_DEBUG_ENABLED
   if (xmlParserDebugEntities)
@@ -353,7 +353,7 @@ static VALUE rxml_debug_entities_get(VALUE class)
  * Enable or disable included-entity debugging.
  * (Requires Libxml to be compiled with debugging support)
  */
-static VALUE rxml_debug_entities_set(VALUE class, VALUE bool)
+static VALUE rxml_debug_entities_set(VALUE klass, VALUE bool)
 {
 #ifdef LIBXML_DEBUG_ENABLED
   if (TYPE(bool) == T_FALSE)
@@ -377,7 +377,7 @@ static VALUE rxml_debug_entities_set(VALUE class, VALUE bool)
  *
  * Determine whether parsers retain whitespace by default.
  */
-static VALUE rxml_default_keep_blanks_get(VALUE class)
+static VALUE rxml_default_keep_blanks_get(VALUE klass)
 {
   if (xmlKeepBlanksDefaultValue)
     return (Qtrue);
@@ -391,7 +391,7 @@ static VALUE rxml_default_keep_blanks_get(VALUE class)
  *
  * Controls whether parsers retain whitespace by default.
  */
-static VALUE rxml_default_keep_blanks_set(VALUE class, VALUE bool)
+static VALUE rxml_default_keep_blanks_set(VALUE klass, VALUE bool)
 {
   if (TYPE(bool) == T_FALSE)
   {
@@ -415,7 +415,7 @@ static VALUE rxml_default_keep_blanks_set(VALUE class, VALUE bool)
  *
  * Determine whether parsers load external DTDs by default.
  */
-static VALUE rxml_default_load_external_dtd_get(VALUE class)
+static VALUE rxml_default_load_external_dtd_get(VALUE klass)
 {
   if (xmlLoadExtDtdDefaultValue)
     return (Qtrue);
@@ -429,7 +429,7 @@ static VALUE rxml_default_load_external_dtd_get(VALUE class)
  *
  * Controls whether parsers load external DTDs by default.
  */
-static VALUE rxml_default_load_external_dtd_set(VALUE class, VALUE bool)
+static VALUE rxml_default_load_external_dtd_set(VALUE klass, VALUE bool)
 {
   if (bool == Qfalse)
   {
@@ -449,7 +449,7 @@ static VALUE rxml_default_load_external_dtd_set(VALUE class, VALUE bool)
  *
  * Determine whether parsers retain line-numbers by default.
  */
-static VALUE rxml_default_line_numbers_get(VALUE class)
+static VALUE rxml_default_line_numbers_get(VALUE klass)
 {
   if (xmlLineNumbersDefaultValue)
     return (Qtrue);
@@ -463,7 +463,7 @@ static VALUE rxml_default_line_numbers_get(VALUE class)
  *
  * Controls whether parsers retain line-numbers by default.
  */
-static VALUE rxml_default_line_numbers_set(VALUE class, VALUE bool)
+static VALUE rxml_default_line_numbers_set(VALUE klass, VALUE bool)
 {
   if (TYPE(bool) == T_FALSE)
   {
@@ -477,13 +477,50 @@ static VALUE rxml_default_line_numbers_set(VALUE class, VALUE bool)
   }
 }
 
+int rxml_libxml_default_options()
+{
+  int options = 0;
+
+  if (xmlLoadExtDtdDefaultValue)
+    options |= XML_PARSE_DTDLOAD;
+
+  if (xmlDoValidityCheckingDefaultValue)
+    options |= XML_PARSE_DTDVALID;
+
+  if (!xmlKeepBlanksDefaultValue)
+    options |= XML_PARSE_NOBLANKS;
+
+  if (xmlSubstituteEntitiesDefaultValue)
+    options |= XML_PARSE_NOENT;
+
+  if (!xmlGetWarningsDefaultValue)
+    options |= XML_PARSE_NOWARNING;
+
+  if (xmlPedanticParserDefaultValue)
+    options |= XML_PARSE_PEDANTIC;
+  
+  return options;
+}
+
+/*
+ * call-seq:
+ *    XML.default_options -> int
+ *
+ * Returns an integer that summarize libxml2's default options.
+ */
+static VALUE rxml_default_options_get(VALUE klass)
+{
+  int options = rxml_libxml_default_options();
+  return INT2NUM(options);
+}
+
 /*
  * call-seq:
  *    XML.default_pedantic_parser -> (true|false)
  *
  * Determine whether parsers are pedantic by default.
  */
-static VALUE rxml_default_pedantic_parser_get(VALUE class)
+static VALUE rxml_default_pedantic_parser_get(VALUE klass)
 {
   if (xmlPedanticParserDefaultValue)
     return (Qtrue);
@@ -497,7 +534,7 @@ static VALUE rxml_default_pedantic_parser_get(VALUE class)
  *
  * Controls whether parsers are pedantic by default.
  */
-static VALUE rxml_default_pedantic_parser_set(VALUE class, VALUE bool)
+static VALUE rxml_default_pedantic_parser_set(VALUE klass, VALUE bool)
 {
   if (TYPE(bool) == T_FALSE)
   {
@@ -518,7 +555,7 @@ static VALUE rxml_default_pedantic_parser_set(VALUE class, VALUE bool)
  * Determine whether parsers perform inline entity substitution
  * (for external entities) by default.
  */
-static VALUE rxml_default_substitute_entities_get(VALUE class)
+static VALUE rxml_default_substitute_entities_get(VALUE klass)
 {
   if (xmlSubstituteEntitiesDefaultValue)
     return (Qtrue);
@@ -533,7 +570,7 @@ static VALUE rxml_default_substitute_entities_get(VALUE class)
  * Controls whether parsers perform inline entity substitution
  * (for external entities) by default.
  */
-static VALUE rxml_default_substitute_entities_set(VALUE class, VALUE bool)
+static VALUE rxml_default_substitute_entities_set(VALUE klass, VALUE bool)
 {
   if (bool == Qfalse)
   {
@@ -554,7 +591,7 @@ static VALUE rxml_default_substitute_entities_set(VALUE class, VALUE bool)
  * Obtain the default string used by parsers to indent the XML tree
  * for output.
  */
-static VALUE rxml_default_tree_indent_string_get(VALUE class)
+static VALUE rxml_default_tree_indent_string_get(VALUE klass)
 {
   if (xmlTreeIndentString == NULL)
     return (Qnil);
@@ -569,7 +606,7 @@ static VALUE rxml_default_tree_indent_string_get(VALUE class)
  * Set the default string used by parsers to indent the XML tree
  * for output.
  */
-static VALUE rxml_default_tree_indent_string_set(VALUE class, VALUE string)
+static VALUE rxml_default_tree_indent_string_set(VALUE klass, VALUE string)
 {
   Check_Type(string, T_STRING);
   xmlTreeIndentString = xmlStrdup((xmlChar *)StringValuePtr(string));
@@ -582,7 +619,7 @@ static VALUE rxml_default_tree_indent_string_set(VALUE class, VALUE string)
  *
  * Determine whether parsers perform XML validation by default.
  */
-static VALUE rxml_default_validity_checking_get(VALUE class)
+static VALUE rxml_default_validity_checking_get(VALUE klass)
 {
   if (xmlDoValidityCheckingDefaultValue)
     return (Qtrue);
@@ -596,7 +633,7 @@ static VALUE rxml_default_validity_checking_get(VALUE class)
  *
  * Controls whether parsers perform XML validation by default.
  */
-static VALUE rxml_default_validity_checking_set(VALUE class, VALUE bool)
+static VALUE rxml_default_validity_checking_set(VALUE klass, VALUE bool)
 {
   if (TYPE(bool) == T_FALSE)
   {
@@ -616,7 +653,7 @@ static VALUE rxml_default_validity_checking_set(VALUE class, VALUE bool)
  *
  * Determine whether parsers output warnings by default.
  */
-static VALUE rxml_default_warnings_get(VALUE class)
+static VALUE rxml_default_warnings_get(VALUE klass)
 {
   if (xmlGetWarningsDefaultValue)
     return (Qtrue);
@@ -630,7 +667,7 @@ static VALUE rxml_default_warnings_get(VALUE class)
  *
  * Controls whether parsers output warnings by default.
  */
-static VALUE rxml_default_warnings_set(VALUE class, VALUE bool)
+static VALUE rxml_default_warnings_set(VALUE klass, VALUE bool)
 {
   if (TYPE(bool) == T_FALSE)
   {
@@ -651,7 +688,7 @@ static VALUE rxml_default_warnings_set(VALUE class, VALUE bool)
  * Determine whether parsers use Zlib compression by default
  * (requires libxml to be compiled with Zlib support).
  */
-static VALUE rxml_default_compression_get(VALUE class)
+static VALUE rxml_default_compression_get(VALUE klass)
 {
 #ifdef HAVE_ZLIB_H
   return(INT2FIX(xmlGetCompressMode()));
@@ -668,7 +705,7 @@ static VALUE rxml_default_compression_get(VALUE class)
  * Controls whether parsers use Zlib compression by default
  * (requires libxml to be compiled with Zlib support).
  */
-static VALUE rxml_default_compression_set(VALUE class, VALUE num)
+static VALUE rxml_default_compression_set(VALUE klass, VALUE num)
 {
 #ifdef HAVE_ZLIB_H
   Check_Type(num, T_FIXNUM);
@@ -687,7 +724,7 @@ static VALUE rxml_default_compression_set(VALUE class, VALUE num)
  * Obtains an array of strings representing features supported
  * (and enabled) by the installed libxml.
  */
-static VALUE rxml_features(VALUE class)
+static VALUE rxml_features(VALUE klass)
 {
   VALUE arr, str;
   int i, len = MAX_LIBXML_FEATURES_LEN;
@@ -722,7 +759,7 @@ static VALUE rxml_features(VALUE class)
  * Determines whether XML output will be indented
  * (using the string supplied to +default_indent_tree_string+)
  */
-static VALUE rxml_indent_tree_output_get(VALUE class)
+static VALUE rxml_indent_tree_output_get(VALUE klass)
 {
   if (xmlIndentTreeOutput)
     return (Qtrue);
@@ -737,7 +774,7 @@ static VALUE rxml_indent_tree_output_get(VALUE class)
  * Controls whether XML output will be indented
  * (using the string supplied to +default_indent_tree_string+)
  */
-static VALUE rxml_indent_tree_output_set(VALUE class, VALUE bool)
+static VALUE rxml_indent_tree_output_set(VALUE klass, VALUE bool)
 {
   if (TYPE(bool) == T_TRUE)
   {
@@ -837,6 +874,7 @@ void rxml_init_xml(void)
   rb_define_module_function(mXML, "default_load_external_dtd=", rxml_default_load_external_dtd_set, 1);
   rb_define_module_function(mXML, "default_line_numbers", rxml_default_line_numbers_get, 0);
   rb_define_module_function(mXML, "default_line_numbers=", rxml_default_line_numbers_set, 1);
+  rb_define_module_function(mXML, "default_options", rxml_default_options_get, 0);
   rb_define_module_function(mXML, "default_pedantic_parser", rxml_default_pedantic_parser_get, 0);
   rb_define_module_function(mXML, "default_pedantic_parser=", rxml_default_pedantic_parser_set, 1);
   rb_define_module_function(mXML, "default_substitute_entities", rxml_default_substitute_entities_get, 0);
