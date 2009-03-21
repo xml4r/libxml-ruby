@@ -312,6 +312,17 @@ module LibXML
         self.to_s
       end
 
+      # --- Deprecated DOM Manipulation ---
+      def child_add(node)
+        warn('Node#child_add is deprecated.  Use Node#<< instead.')
+        self << node
+      end
+
+      def child=(node)
+        warn('Node#child= is deprecated.  Use Node#<< instead.')
+        self << node
+      end
+
       # --- Deprecated Namespaces ---
       def namespace
         warn('Node#namespace is deprecated.  Use Node#namespaces instead.')
