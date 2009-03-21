@@ -51,7 +51,7 @@ void rxml_dtd_mark(xmlDtdPtr xdtd)
     return;
   }
 
-  rxml_node_mark_common((xmlNodePtr) xdtd);
+  rxml_node_mark((xmlNodePtr) xdtd);
 }
 
 

@@ -36,7 +36,7 @@ VALUE cXMLAttributes;
 
 void rxml_attributes_mark(xmlNodePtr xnode)
 {
-  rxml_node_mark_common(xnode);
+  rxml_node_mark(xnode);
 }
 
 /*
@@ -80,7 +80,7 @@ static VALUE rxml_attributes_get_attribute(VALUE self, VALUE name)
   xmlNodePtr xnode;
   xmlAttrPtr xattr;
 
-  name = check_string_or_symbol(name);
+  name = rb_obj_as_string(name);
 
   Data_Get_Struct(self, xmlNode, xnode);
 
@@ -114,7 +114,7 @@ static VALUE rxml_attributes_get_attribute_ns(VALUE self, VALUE namespace,
   xmlNodePtr xnode;
   xmlAttrPtr xattr;
 
-  name = check_string_or_symbol(name);
+  name = rb_obj_as_string(name);
 
   Data_Get_Struct(self, xmlNode, xnode);
 

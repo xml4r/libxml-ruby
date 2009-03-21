@@ -23,7 +23,7 @@ void rxml_attr_decl_mark(xmlAttributePtr xattribute)
     return;
   }
 
-  rxml_node_mark_common((xmlNodePtr) xattribute);
+  rxml_node_mark((xmlNodePtr) xattribute);
 }
 
 VALUE rxml_attr_decl_wrap(xmlAttributePtr xattribute)

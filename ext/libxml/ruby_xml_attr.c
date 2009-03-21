@@ -49,7 +49,7 @@ void rxml_attr_mark(xmlAttrPtr xattr)
     return;
   }
 
-  rxml_node_mark_common((xmlNodePtr) xattr);
+  rxml_node_mark((xmlNodePtr) xattr);
 }
 
 VALUE rxml_attr_wrap(xmlAttrPtr xattr)
