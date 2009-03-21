@@ -81,6 +81,7 @@ static VALUE rxml_error_reset_handler(VALUE self)
 VALUE rxml_error_wrap(xmlErrorPtr xerror)
 {
   VALUE result = Qnil;
+
   if (xerror->message)
     result = rb_exc_new2(eXMLError, xerror->message);
   else
@@ -171,6 +172,10 @@ void rxml_raise(xmlErrorPtr xerror)
 
 void rxml_init_error()
 {
+  ON_ERROR_METHOD = rb_intern("on_error");
+  CALL_METHOD = rb_intern("call");
+  ERROR_HANDLER_ID = rb_intern("@@__error_handler_callback__");
+
   /* Intercept libxml error handlers */
   xmlSetStructuredErrorFunc(NULL, structuredErrorFunc);
 
@@ -179,11 +184,7 @@ void rxml_init_error()
   rb_define_singleton_method(eXMLError, "set_handler", rxml_error_set_handler, 0);
   rb_define_singleton_method(eXMLError, "reset_handler", rxml_error_reset_handler, 0);
 
-  ON_ERROR_METHOD = rb_intern("on_error");
-  CALL_METHOD = rb_intern("call");
-  
   /* Ruby callback to receive errors - set it to nil by default. */
-  ERROR_HANDLER_ID = rb_intern("@@__error_handler_callback__");
   rxml_set_handler(eXMLError, Qnil);
 
   /* Error attributes */
