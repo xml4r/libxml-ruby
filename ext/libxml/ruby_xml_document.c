@@ -316,6 +316,29 @@ static VALUE rxml_document_encoding_set(VALUE self, VALUE encoding)
 
 /*
  * call-seq:
+ *    document.import(node) -> XML::Node
+ *
+ * Creates a copy of the node that can be inserted into the
+ * current document.
+ */
+static VALUE rxml_document_import(VALUE self, VALUE node)
+{
+  xmlDocPtr xdoc;
+  xmlNodePtr xnode, xresult;
+
+  Data_Get_Struct(self, xmlDoc, xdoc);
+  Data_Get_Struct(node, xmlNode, xnode);
+
+  xresult = xmlDocCopyNode(xnode, xdoc, 1);
+
+  if (xresult == NULL)
+    rxml_raise(&xmlLastError);
+
+  return rxml_node_wrap(xresult);
+}
+
+/*
+ * call-seq:
  *    document.last -> node
  *
  * Obtain the last node.
@@ -510,8 +533,9 @@ static VALUE rxml_document_root_set(VALUE self, VALUE node)
   Data_Get_Struct(node, xmlNode, xnode);
 
   xroot = xmlDocSetRootElement(xdoc, xnode);
+
   if (xroot == NULL)
-    return (Qnil);
+    rxml_raise(&xmlLastError);
 
   return rxml_node_wrap(xroot);
 }
@@ -890,6 +914,7 @@ void rxml_init_document(void)
   rb_define_method(cXMLDocument, "debug", rxml_document_debug, 0);
   rb_define_method(cXMLDocument, "encoding", rxml_document_encoding_get, 0);
   rb_define_method(cXMLDocument, "encoding=", rxml_document_encoding_set, 1);
+  rb_define_method(cXMLDocument, "import", rxml_document_import, 1);
   rb_define_method(cXMLDocument, "last", rxml_document_last_get, 0);
   rb_define_method(cXMLDocument, "last?", rxml_document_last_q, 0);
   rb_define_method(cXMLDocument, "next", rxml_document_next_get, 0);
