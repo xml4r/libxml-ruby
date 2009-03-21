@@ -155,8 +155,11 @@ static VALUE rxml_html_parser_context_file(VALUE klass, VALUE file)
   if (!ctxt)
     rxml_raise(&xmlLastError);
 
-  /* Setup default options, user can override by calling #options=*/
-  htmlCtxtUseOptions(ctxt, 0);
+  /* This is annoying, but xmlInitParserCtxt (called indirectly above) and 
+     xmlCtxtUseOptionsInternal (called below) initialize slightly different
+     context options, in particular XML_PARSE_NODICT which xmlInitParserCtxt
+     sets to 0 and xmlCtxtUseOptionsInternal sets to 1.  So we have to call both. */
+  htmlCtxtUseOptions(ctxt, rxml_libxml_default_options());
 
   return rxml_html_parser_context_wrap(ctxt);
 }
@@ -190,8 +193,11 @@ static VALUE rxml_html_parser_context_io(VALUE klass, VALUE io)
     rxml_raise(&xmlLastError);
   }
 
-  /* Setup default options, user can override by calling #options=*/
-  htmlCtxtUseOptions(ctxt, 0);
+  /* This is annoying, but xmlInitParserCtxt (called indirectly above) and 
+     xmlCtxtUseOptionsInternal (called below) initialize slightly different
+     context options, in particular XML_PARSE_NODICT which xmlInitParserCtxt
+     sets to 0 and xmlCtxtUseOptionsInternal sets to 1.  So we have to call both. */
+  htmlCtxtUseOptions(ctxt, rxml_libxml_default_options());
 
   stream = xmlNewIOInputStream(ctxt, input, XML_CHAR_ENCODING_NONE);
 
@@ -232,8 +238,11 @@ static VALUE rxml_html_parser_context_string(VALUE klass, VALUE string)
   if (!ctxt)
     rxml_raise(&xmlLastError);
 
-  /* Setup default options, user can override by calling #options=*/
-  htmlCtxtUseOptions(ctxt, 0);
+  /* This is annoying, but xmlInitParserCtxt (called indirectly above) and 
+     xmlCtxtUseOptionsInternal (called below) initialize slightly different
+     context options, in particular XML_PARSE_NODICT which xmlInitParserCtxt
+     sets to 0 and xmlCtxtUseOptionsInternal sets to 1.  So we have to call both. */
+  htmlCtxtUseOptions(ctxt, rxml_libxml_default_options());
 
   htmlDefaultSAXHandlerInit();
   if (ctxt->sax != NULL)
