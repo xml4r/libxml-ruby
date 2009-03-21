@@ -46,9 +46,11 @@ class TestXml < Test::Unit::TestCase
   def test_default_keep_blanks
     XML.default_keep_blanks = false
     assert(!XML.default_keep_blanks)
+    assert_equal(XML::Parser::Options::NOBLANKS, XML.default_options)
 
     XML.default_keep_blanks = true
     assert(XML.default_keep_blanks)
+    assert_equal(0, XML.default_options)
 
     XML.default_keep_blanks = false
     assert(!XML.default_keep_blanks)
@@ -72,9 +74,11 @@ class TestXml < Test::Unit::TestCase
   def test_default_substitute_entities
     XML.default_substitute_entities = false
     assert(!XML.default_substitute_entities)
+    assert_equal(0, XML.default_options)
 
     XML.default_substitute_entities = true
     assert(XML.default_substitute_entities)
+    assert_equal(XML::Parser::Options::NOENT, XML.default_options)
 
     XML.default_substitute_entities = false
     assert(!XML.default_substitute_entities)
@@ -97,9 +101,11 @@ class TestXml < Test::Unit::TestCase
   def test_default_validity_checking
     XML.default_validity_checking = false
     assert(!XML.default_validity_checking)
+    assert_equal(0, XML.default_options)
 
     XML.default_validity_checking = true
     assert(XML.default_validity_checking)
+    assert_equal(XML::Parser::Options::DTDVALID, XML.default_options)
 
     XML.default_validity_checking = false
     assert(!XML.default_validity_checking)
@@ -108,9 +114,11 @@ class TestXml < Test::Unit::TestCase
   def test_default_warnings
     XML.default_warnings = false
     assert(!XML.default_warnings)
+    assert_equal(XML::Parser::Options::NOWARNING, XML.default_options)
 
     XML.default_warnings = true
     assert(XML.default_warnings)
+    assert_equal(0, XML.default_options)
 
     XML.default_warnings = false
     assert(!XML.default_warnings)
@@ -208,5 +216,9 @@ class TestXml < Test::Unit::TestCase
 
   def test_libxml_parser_features
     assert_instance_of(Array, XML.features)
+  end
+
+  def test_default_options
+    assert_equal(0, XML.default_options)
   end
 end

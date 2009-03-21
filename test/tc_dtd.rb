@@ -11,7 +11,7 @@ class TestDtd < Test::Unit::TestCase
     EOS
     @doc = xp.parse
   end
-  
+
   def teardown
     @doc = nil
   end
@@ -41,7 +41,7 @@ class TestDtd < Test::Unit::TestCase
 		assert_equal "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd", xhtml_dtd.uri
 		assert_equal "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd", xhtml_dtd.system_id
 	end
-  
+
   def test_external_subset
     xhtml_dtd = XML::Dtd.new "-//W3C//DTD XHTML 1.0 Transitional//EN", "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd", nil
 		assert xhtml_dtd.name.nil?
@@ -55,7 +55,7 @@ class TestDtd < Test::Unit::TestCase
 		assert_equal "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd", xhtml_dtd.uri
 		assert_equal "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd", xhtml_dtd.system_id
 	end
-  
+
   def test_valid
     assert(@doc.validate(dtd))
   end
@@ -104,7 +104,7 @@ class TestDtd < Test::Unit::TestCase
     doc = XML::Parser.string(xml).parse
     assert_equal(0, errors.length)
 
-    errors = Array.new
+    errors.clear
     XML.default_load_external_dtd = true
     doc = XML::Parser.string(xml).parse
     assert_equal(1, errors.length)
@@ -117,6 +117,7 @@ class TestDtd < Test::Unit::TestCase
     assert_equal("Warning: failed to load external entity \"test.dtd\" at :1.",
                  errors[0].to_s)
   ensure
+    XML.default_load_external_dtd = false
     XML::Error.reset_handler
   end
 end
