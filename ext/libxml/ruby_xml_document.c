@@ -533,11 +533,7 @@ static VALUE rxml_document_root_set(VALUE self, VALUE node)
   Data_Get_Struct(node, xmlNode, xnode);
 
   xroot = xmlDocSetRootElement(xdoc, xnode);
-
-  if (xroot == NULL)
-    rxml_raise(&xmlLastError);
-
-  return rxml_node_wrap(xroot);
+  return node;
 }
 
 /*
