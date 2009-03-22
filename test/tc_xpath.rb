@@ -163,16 +163,6 @@ class TestXPath < Test::Unit::TestCase
     assert_equal('Envelope', nodes.first.name)
   end
 
-  def foo
-    puts nodes.length
-    doc = nil
-    assert_equal(4, nodes.length)
-    GC.start
-    node = nodes.first
-    nodes = nil
-    GC.start
-  end
-
   def test_xpath_namespace_nodes
     doc = XML::Document.string('<feed xmlns="http://www.w3.org/2005/Atom" xmlns:xhtml="http://www.w3.org/1999/xhtml"><entry/></feed>')
     nodes = doc.find('//atom:entry|namespace::*', :atom => "http://www.w3.org/2005/Atom")
