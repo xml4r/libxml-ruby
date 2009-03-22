@@ -10,19 +10,19 @@ class TestNodeEdit < Test::Unit::TestCase
   def teardown
     @doc = nil
   end
-  
+
   def first_node
     @doc.root.child
   end
-  
+
   def second_node
     first_node.next
   end
-  
+
   def third_node
     second_node.next
   end
- 
+
   def test_add_next_01
     first_node.next = XML::Node.new('num', 'one-and-a-half')
     assert_equal('<test><num>one</num><num>one-and-a-half</num><num>two</num><num>three</num></test>',
@@ -96,6 +96,30 @@ class TestNodeEdit < Test::Unit::TestCase
     assert_equal('<test><num>two</num><num>three</num><num>one</num></test>',
                  @doc.root.to_s.gsub(/\n\s*/,''))
   end
+
+  def test_append_existing_node
+    doc = XML::Parser.string('<top>a<bottom>b<one>first</one><two>second</two>c</bottom>d</top>').parse
+    node1 = doc.find_first('//two')
+
+    doc.root << node1
+    assert_equal('<top>a<bottom>b<one>first</one>c</bottom>d<two>second</two></top>',
+                 doc.root.to_s)
+  end
+
+  def test_wrong_doc
+    doc1 = XML::Parser.string('<nums><one></one></nums>').parse
+    doc2 = XML::Parser.string('<nums><two></two></nums>').parse
+
+    node = doc1.root.child
+
+    error = assert_raise(XML::Error) do
+      doc2.root << node
+    end
+
+    assert_equal(' Nodes belong to different documents.  You must first import the by calling XML::Document.import.',
+                 error.to_s)
+  end
+
 
   # This test is to verify that an earlier reported bug has been fixed
   def test_merge
