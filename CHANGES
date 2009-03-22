@@ -1,8 +1,22 @@
 == 1.1.3 / 2009-03-18 Charlie Savage
 
-* Improve performance by 10 to 20% by setting up default values for
-  parser contexts.  In particular, this sets XML::Parser::Options::NODICT
-  to false, resulting in the speed increase.
+* Improve performance 10 to 20% by turning on libxml2's dictionary
+  feature that allows parsers to reuse previously parsed strings.
+
+* Fix XML::Node#remove! to work correctly with libxml's dictionary feature.
+
+* Correctly set up parser context options.
+
+* Simplify DOM modification code (Node#next=, Node#prev=, Node#sibling=) and
+  update documenation.
+
+* Deprecated Node#add_child and Node#child=, use Node#<< instead
+
+* Fix documentation for Node#<<
+
+* Added Document#import to enable moving nodes from one document
+  to another document.
+
 
 == 1.1.2 / 2009-03-12 Charlie Savage
 
