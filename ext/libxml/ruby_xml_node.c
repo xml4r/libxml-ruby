@@ -116,7 +116,6 @@ static VALUE rxml_node_alloc(VALUE klass)
  */
 static VALUE rxml_node_new_cdata(int argc, VALUE *argv, VALUE klass)
 {
-  VALUE result = Qnil;
   VALUE content = Qnil;
   xmlNodePtr xnode;
 
@@ -149,7 +148,6 @@ static VALUE rxml_node_new_cdata(int argc, VALUE *argv, VALUE klass)
  */
 static VALUE rxml_node_new_comment(int argc, VALUE *argv, VALUE klass)
 {
-  VALUE result = Qnil;
   VALUE content = Qnil;
   xmlNodePtr xnode;
 
@@ -180,7 +178,6 @@ static VALUE rxml_node_new_comment(int argc, VALUE *argv, VALUE klass)
  */
 static VALUE rxml_node_new_text(VALUE klass, VALUE content)
 {
-  VALUE result = Qnil;
   xmlNodePtr xnode;
   Check_Type(content, T_STRING);
   content = rb_obj_as_string(content);
@@ -244,8 +241,7 @@ static VALUE rxml_node_modify_dom(VALUE self, VALUE target,
   Data_Get_Struct(target, xmlNode, xtarget);
 
   if (xtarget->doc != NULL && xtarget->doc != xnode->doc)
-    rb_raise(eXMLError, 
-    "Nodes belong to different documents.  You must first import the by calling XML::Document.import");
+    rb_raise(eXMLError, "Nodes belong to different documents.  You must first import the by calling XML::Document.import");
 
   /* This target node could be freed here. */  
   xresult = xmlFunc(xnode, xtarget);
@@ -445,6 +441,9 @@ static VALUE rxml_node_content_add(VALUE self, VALUE obj)
    */
   if (rb_obj_is_kind_of(obj, cXMLNode))
   { 
+    xmlNodePtr xtarget;
+    Data_Get_Struct(obj, xmlNode, xtarget);
+    xmlUnlinkNode(xtarget);
     rxml_node_modify_dom(self, obj, xmlAddChild);
   }
   else
