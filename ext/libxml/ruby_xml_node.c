@@ -417,7 +417,7 @@ static VALUE rxml_node_first_get(VALUE self)
 
 /*
  * call-seq:
- *   curr_node << "<p>A paragraph</p>" 
+ *   curr_node << "Some text" 
  *   curr_node << node
  *
  * Add  the specified text or XML::Node as a new child node to the 

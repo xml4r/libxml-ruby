@@ -63,7 +63,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="ruby19.lib libxml2.lib"
-				OutputFile="C:\Development\ruby-1.9.1\usr\lib\ruby\gems\1.9.1\gems\libxml-ruby-0.9.9-x86-mswin32\lib\libxml_ruby.so"
+				OutputFile="C:\Development\ruby-1.9.1\usr\lib\ruby\gems\1.9.1\gems\libxml-ruby-1.1.3-x86-mswin32\lib\libxml_ruby.so"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;C:\Development\ruby-1.9.1\usr\lib&quot;;C:\Development\msys\local\lib"
 				GenerateDebugInformation="true"
@@ -176,10 +176,6 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\libxml\cbg.c"
-				>
-			</File>
-			<File
 				RelativePath="..\..\libxml\libxml.c"
 				>
 			</File>
@@ -197,6 +193,10 @@
 			</File>
 			<File
 				RelativePath="..\..\libxml\ruby_xml_attributes.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libxml\ruby_xml_cbg.c"
 				>
 			</File>
 			<File

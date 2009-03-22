@@ -8,7 +8,7 @@
 * Correctly set up parser context options.
 
 * Simplify DOM modification code (Node#next=, Node#prev=, Node#sibling=) and
-  update documenation.
+  update documentation.
 
 * Deprecated Node#add_child and Node#child=, use Node#<< instead
 
