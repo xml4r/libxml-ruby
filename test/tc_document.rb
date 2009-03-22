@@ -31,7 +31,7 @@ class TestDocument < Test::Unit::TestCase
     }
   end
 
-  def test_ruby_xml_document_compression
+  def test_compression
     if XML.enabled_zlib?
       0.upto(9) do |i|
         assert_equal(i, @doc.compression = i)
@@ -98,4 +98,16 @@ class TestDocument < Test::Unit::TestCase
     xhtml_dtd = XML::Dtd.new "-//W3C//DTD XHTML 1.0 Transitional//EN", "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd", nil, doc, true
 		assert doc.xhtml?
 	end
+
+  def test_import_node
+    doc1 = XML::Parser.string('<nums><one></one></nums>').parse
+    doc2 = XML::Parser.string('<nums><two></two></nums>').parse
+
+    node = doc1.root.child
+
+    doc2.root << doc2.import(node)
+
+    assert_equal("<nums>\n  <two/>\n  <one/>\n</nums>",
+                 doc2.root.to_s)
+  end
 end
