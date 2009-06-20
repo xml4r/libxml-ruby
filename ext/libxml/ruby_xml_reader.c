@@ -458,8 +458,15 @@ static VALUE rxml_reader_read_attr_value(VALUE self)
  */
 static VALUE rxml_reader_read_inner_xml(VALUE self)
 {
-  const xmlChar *result = xmlTextReaderReadInnerXml(rxml_text_reader_get(self));
-  return (result == NULL ? Qnil : rb_str_new2((const char*)result));
+  VALUE returnValue = Qnil;
+
+  xmlChar *result = xmlTextReaderReadInnerXml(rxml_text_reader_get(self));
+  if (result != NULL) {
+    returnValue = rb_str_new2((const char*) result);
+    xmlFree(result);
+  }
+
+  return returnValue;
 }
 
 /*
@@ -473,8 +480,15 @@ static VALUE rxml_reader_read_inner_xml(VALUE self)
  */
 static VALUE rxml_reader_read_outer_xml(VALUE self)
 {
-  const xmlChar *result = xmlTextReaderReadOuterXml(rxml_text_reader_get(self));
-  return (result == NULL ? Qnil : rb_str_new2((const char*)result));
+  VALUE returnValue = Qnil;
+
+  xmlChar *result = xmlTextReaderReadOuterXml(rxml_text_reader_get(self));
+  if (result != NULL) {
+    returnValue = rb_str_new2((const char*)result);
+    xmlFree(result);
+  }
+
+  return returnValue;
 }
 
 /*
@@ -499,8 +513,15 @@ static VALUE rxml_reader_read_state(VALUE self)
  */
 static VALUE rxml_reader_read_string(VALUE self)
 {
-  const xmlChar *result = xmlTextReaderReadString(rxml_text_reader_get(self));
-  return (result == NULL ? Qnil : rb_str_new2((const char*)result));
+  VALUE returnValue = Qnil;
+
+  xmlChar *result = xmlTextReaderReadString(rxml_text_reader_get(self));
+  if (result != NULL) {
+    returnValue = rb_str_new2((const char*)result);
+    xmlFree(result);
+  }
+
+  return returnValue;
 }
 
 /*
