@@ -807,25 +807,19 @@ static VALUE rxml_reader_lookup_namespace(VALUE self, VALUE prefix)
  */
 static VALUE rxml_reader_expand(VALUE self)
 {
-  xmlNodePtr node;
-  xmlDocPtr doc;
+  xmlNodePtr node, nodec;
   xmlTextReaderPtr reader = rxml_text_reader_get(self);
   node = xmlTextReaderExpand(reader);
 
   if (!node)
     return Qnil;
-
-  /* Okay this is tricky.  By accessing the returned node, we
-   take ownership of the reader's document.  Thus we need to
-   tell the reader to not free it.  Otherwise it will be
-   freed twice - once when the Ruby document wrapper goes
-   out of scope and once when the reader goes out of scope. */
-
-  xmlTextReaderPreserve(reader);
-  doc = xmlTextReaderCurrentDoc(reader);
-  rxml_document_wrap(doc);
-
-  return rxml_node_wrap(node);
+  else {
+    nodec = xmlCopyNode(node, 1);
+    if (!nodec)
+      return Qnil;
+    else
+      return rxml_node_wrap(nodec);
+  }
 }
 
 #if LIBXML_VERSION >= 20618
