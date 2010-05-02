@@ -125,10 +125,6 @@ task :extension => :build
 
 ext = Config::CONFIG["DLEXT"]
 task :extensions => ["ext/libxml/libxml_ruby.#{ext}"]
-file "ext/libxml/libxml_ruby.#{ext}" =>
-  ["ext/libxml/Makefile"] + FileList["ext/libxml/*.{c,h}"].to_a do |t|
-  Dir.chdir("ext/libxml") { sh "make" }
-end
 
 namespace :extensions do
   task :clean do
@@ -137,11 +133,6 @@ namespace :extensions do
       sh "rm -f *.{o,so,bundle,log}"
     end
   end
-end
-
-file "ext/libxml/Makefile" => ["ext/libxml/extconf.rb"] do
-  command = ["ruby"] + $:.map{|dir| "-I#{File.expand_path dir}"} + ["extconf.rb"]
-  Dir.chdir("ext/libxml") { sh(*command) }
 end
 
 # ---------  Publish Website to Rubyforge ---------

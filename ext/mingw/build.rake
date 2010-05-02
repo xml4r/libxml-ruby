@@ -10,7 +10,7 @@ RUBY_INCLUDE_DIR = Config::CONFIG["archdir"]
 RUBY_BIN_DIR = Config::CONFIG["bindir"]
 RUBY_LIB_DIR = Config::CONFIG["libdir"]
 RUBY_SHARED_LIB = Config::CONFIG["LIBRUBY"]
-RUBY_SHARED_DLL = RUBY_SHARED_LIB.gsub(/lib$/, 'dll')
+RUBY_SHARED_DLL = RUBY_SHARED_LIB.gsub(/^lib/, '').gsub(/lib$/, 'dll').gsub(/\.a$/, '')
 
 EXTENSION_NAME = "libxml_ruby.#{Config::CONFIG["DLEXT"]}"
 # MingW insists the import library is .dll.a
@@ -30,12 +30,12 @@ end
 SRC.each do |srcfile|
   objfile = File.basename(srcfile).ext('o')
   file objfile => srcfile do
-    command = "gcc -c -O2 -Wall -o #{objfile} -I/usr/local/include #{srcfile} -I#{RUBY_INCLUDE_DIR}"
+    command = "gcc -c -O2 -Wall -o #{objfile} -I/usr/local/include/libxml2 #{srcfile} -I#{RUBY_INCLUDE_DIR}"
     sh "sh -c '#{command}'" 
   end
 end
 
 file "libxml" => OBJ do
-  command = "gcc -shared -o #{EXTENSION_NAME} -Wl,--out-implib,#{EXTENSION_LIB_NAME} -L/usr/local/lib #{OBJ} -lxml2 #{RUBY_BIN_DIR}/#{RUBY_SHARED_DLL}" 
+  command = "gcc -shared -Wl,--enable-auto-import -o #{EXTENSION_NAME} -Wl,--out-implib,#{EXTENSION_LIB_NAME} -L/usr/local/lib #{OBJ} -lxml2 #{RUBY_BIN_DIR}/#{RUBY_SHARED_DLL}"
   sh "sh -c '#{command}'" 
 end
