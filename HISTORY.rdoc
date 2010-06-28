@@ -1,3 +1,5 @@
+= Release History
+
 == 1.1.3 / 2009-03-18 Charlie Savage
 
 * Improve performance 10 to 20% by turning on libxml2's dictionary

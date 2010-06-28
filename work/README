@@ -1,0 +1,19 @@
+= Work Directory
+
+The work directory is simply a place to store odds and
+ends and from which to run experiments. Generally it is
+broken down as follows:
+
+  reference  - Files to keep around simply for reference sake.
+               This could be someone elses code you are studying,
+               or a document, etc.
+
+  deprecated - Code that was part of the project but has been
+               removed and which will ultimately be trashed,
+               but kept on hand a while longer for reference sake.
+
+  sandbox    - Experimental scripts, ususally this is not kept in the SCM.
+
+  trash      - Files that can be deleted, but just in case are kept a bit
+               longer for reference sake.
+

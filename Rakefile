@@ -7,7 +7,12 @@ require 'rake/gempackagetask'
 require 'rake/rdoctask'
 require 'rake/testtask'
 require 'date'
+require 'yaml'
 
+UNIXNAME = File.read('.root/unixname').strip
+LOADPATH = File.read('.root/loadpath').strip
+VERSION  = File.read('VERSION').strip
+PROFILE  = YAML.load(File.new('PROFILE'))
 
 # ------- Default Package ----------
 FILES = FileList[
@@ -23,23 +28,17 @@ FILES = FileList[
   'ext/vc/*.sln',
   'ext/vc/*.vcproj',
   'lib/**/*',
-  'benchmark/**/*',
+  'script/**/*',
   'test/**/*'
 ]
 
 # Default GEM Specification
 default_spec = Gem::Specification.new do |spec|
-  spec.name = "libxml-ruby"
+  spec.name = UNIXNAME
   
-  spec.homepage = "http://libxml.rubyforge.org/"
-  spec.summary = "Ruby libxml bindings"
-  spec.description = <<-EOF
-    The Libxml-Ruby project provides Ruby language bindings for the GNOME
-    Libxml2 XML toolkit. It is free software, released under the MIT License.
-    Libxml-ruby's primary advantage over REXML is performance - if speed 
-    is your need, these are good libraries to consider, as demonstrated
-    by the informal benchmark below.
-  EOF
+  spec.homepage    = PROFILE['recources']['home']
+  spec.summary     = PROFILE['summary']
+  spec.description = PROFILE['description']
 
   # Determine the current version of the software
   spec.version = 
@@ -49,15 +48,15 @@ default_spec = Gem::Specification.new do |spec|
       CURRENT_VERSION = "0.0.0"
     end
   
-  spec.author = "Charlie Savage"
-  spec.email = "libxml-devel@rubyforge.org"
+  spec.author = PROFILE['authors'].first
+  spec.email  = PROFILE['recources']['mail'] # ?
   spec.platform = Gem::Platform::RUBY
-  spec.require_paths = ["lib", "ext/libxml"]
+  spec.require_paths = LOADPATH
   spec.bindir = "bin"
   spec.extensions = ["ext/libxml/extconf.rb"]
   spec.files = FILES.to_a
   spec.test_files = Dir.glob("test/tc_*.rb")
-  
+
   spec.required_ruby_version = '>= 1.8.4'
   spec.date = DateTime.now
   spec.rubyforge_project = 'libxml'
@@ -67,8 +66,8 @@ end
 
 # Rake task to build the default package
 Rake::GemPackageTask.new(default_spec) do |pkg|
-  pkg.package_dir = 'admin/pkg'
-  pkg.need_tar = true
+  pkg.package_dir = 'pkg'
+  pkg.need_tar    = false
 end
 
 
@@ -85,20 +84,20 @@ if RUBY_PLATFORM.match(/win32/)
 
   # Rake task to build the windows package
   Rake::GemPackageTask.new(win_spec) do |pkg|
-    pkg.package_dir = 'admin/pkg'
-    pkg.need_tar = false
+    pkg.package_dir = 'pkg'
+    pkg.need_tar    = false
   end
 end
 
 # ---------  RDoc Documentation ---------
 desc "Generate rdoc documentation"
 Rake::RDocTask.new("rdoc") do |rdoc|
-  rdoc.rdoc_dir = 'doc/rdoc'
+  rdoc.rdoc_dir = 'doc/libxml-ruby/rdoc'
   rdoc.title    = "LibXML"
   # Show source inline with line numbers
   rdoc.options << "--line-numbers"
   # Make the readme file the start page for the generated html
-  rdoc.options << '--main' << 'README'
+  rdoc.options << '--main' << 'README.rdoc'
   rdoc.rdoc_files.include('doc/*.rdoc',
                           'ext/**/libxml.c',
                           'ext/**/ruby_xml.c',
@@ -135,6 +134,9 @@ namespace :extensions do
   end
 end
 
+# TODO: Now that we are on GitHub, this will need to change.
+# Look into Grancher to copy web/ to gh-pages branch.
+
 # ---------  Publish Website to Rubyforge ---------
 desc "publish website (uses rsync)"
 task :publish => [:publish_website, :publish_rdoc]
@@ -167,16 +169,18 @@ task :publish_website do
   sh cmd
 end
 
-task :publish_rdoc do
-  unixname = 'libxml'
-  username = ENV['RUBYFORGE_USERNAME']
+# Instead of this, we simply ln -s web/rdoc ../doc/libxml-ruby/rdoc, and publish website.
+#task :publish_rdoc do
+#  unixname = 'libxml'
+#  username = ENV['RUBYFORGE_USERNAME']
+#
+#  dir = 'doc/rdoc'
+#  url = "#{username}@rubyforge.org:/var/www/gforge-projects/#{unixname}/rdoc"
+#
+#  dir = dir.chomp('/') + '/'
+#
+#  # maybe -p ?
+#  cmd = "rsync -rLvz --delete-after #{dir} #{url}"
+#  sh cmd
+#end
 
-  dir = 'doc/rdoc'
-  url = "#{username}@rubyforge.org:/var/www/gforge-projects/#{unixname}/rdoc"
-
-  dir = dir.chomp('/') + '/'
-
-  # maybe -p ?
-  cmd = "rsync -rLvz --delete-after #{dir} #{url}"
-  sh cmd
-end

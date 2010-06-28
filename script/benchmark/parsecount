@@ -1,4 +1,4 @@
-# file: xml_benchmarks.rb
+#!/usr/bin/env ruby
 #
 # Each test has an XML Parser open a 98k XML document and count one type of leaf 
 # element (466 entries). This is repeated a total of 100 times, twice for each Parser. 
@@ -83,10 +83,10 @@ if RUBY_PLATFORM =~ /java/
     @ruby_info = "Ruby version: MRI #{RUBY_VERSION} (#{RUBY_RELEASE_DATE} rev #{RUBY_PATCHLEVEL})"
     @ruby_info << ", platform: #{RUBY_PLATFORM}"
 
-    gem 'nokogiri', '= 1.0.6'
+    gem 'nokogiri', '>= 1.0.6'
     require 'nokogiri'
 
-    gem 'libxml-ruby', '= 0.9.2'
+    gem 'libxml-ruby', '>= 0.9.2'
     require 'libxml'
     @xml_parser = LibXML::XML::Parser.new
 end
