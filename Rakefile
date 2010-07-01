@@ -6,6 +6,7 @@ require 'rubygems'
 require 'rake/gempackagetask'
 require 'hanna/rdoctask'
 require 'rake/testtask'
+require 'grancher/task'
 require 'date'
 require 'yaml'
 
@@ -135,40 +136,49 @@ namespace :extensions do
   end
 end
 
-# TODO: Now that we are on GitHub, this will need to change.
-# Look into Grancher to copy web/ to gh-pages branch.
+# ---------  Publish Website to Github ---------
+Grancher::Task.new do |g|
+  # push gh-pages
+  g.branch  = 'gh-pages'
+  # to origin
+  g.push_to = 'origin'
+  # copy the website directory
+  g.directory 'web'
+  # and the rdoc directory
+  g.directory 'doc/libxml-ruby/rdoc' 'rdoc'
+end
 
 # ---------  Publish Website to Rubyforge ---------
-desc "publish website (uses rsync)"
-task :publish => [:publish_website, :publish_rdoc]
+#desc "publish website (uses rsync)"
+#task :publish => [:publish_website, :publish_rdoc]
 
-task :publish_website do
-  unixname = 'libxml'
-  username = ENV['RUBYFORGE_USERNAME']
+#task :publish_website do
+  #unixname = 'libxml'
+  #username = ENV['RUBYFORGE_USERNAME']
 
-  dir = 'admin/web'
-  url = "#{username}@rubyforge.org:/var/www/gforge-projects/#{unixname}"
+  #dir = 'admin/web'
+  #url = "#{username}@rubyforge.org:/var/www/gforge-projects/#{unixname}"
 
-  dir = dir.chomp('/') + '/'
+  #dir = dir.chomp('/') + '/'
 
-  # Using commandline filter options didn't seem to work, so
-  # I opted for creating an .rsync_filter file for all cases.
+  ## Using commandline filter options didn't seem to work, so
+  ## I opted for creating an .rsync_filter file for all cases.
 
-  protect = %w{usage statcvs statsvn robot.txt wiki}
-  exclude = %w{.svn}
+  #protect = %w{usage statcvs statsvn robot.txt wiki}
+  #exclude = %w{.svn}
 
-  rsync_file = File.join(dir,'.rsync-filter')
-  unless File.file?(rsync_file)
-    File.open(rsync_file, 'w') do |f|
-      exclude.each{|e| f << "- #{e}\n"}
-      protect.each{|e| f << "P #{e}\n"}
-    end
-  end
+  #rsync_file = File.join(dir,'.rsync-filter')
+  #unless File.file?(rsync_file)
+    #File.open(rsync_file, 'w') do |f|
+      #exclude.each{|e| f << "- #{e}\n"}
+      #protect.each{|e| f << "P #{e}\n"}
+    #end
+  #end
 
-  # maybe -p ?
-  cmd = "rsync -rLvz --delete-after --filter='dir-merge #{rsync_file}' #{dir} #{url}"
-  sh cmd
-end
+  ## maybe -p ?
+  #cmd = "rsync -rLvz --delete-after --filter='dir-merge #{rsync_file}' #{dir} #{url}"
+  #sh cmd
+#end
 
 # Instead of this, we simply ln -s web/rdoc ../doc/libxml-ruby/rdoc, and publish website.
 #task :publish_rdoc do
