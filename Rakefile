@@ -4,7 +4,7 @@
 
 require 'rubygems'
 require 'rake/gempackagetask'
-require 'rake/rdoctask'
+require 'hanna/rdoctask'
 require 'rake/testtask'
 require 'date'
 require 'yaml'
@@ -36,7 +36,7 @@ FILES = FileList[
 default_spec = Gem::Specification.new do |spec|
   spec.name = UNIXNAME
   
-  spec.homepage    = PROFILE['recources']['home']
+  spec.homepage    = PROFILE['resources']['home']
   spec.summary     = PROFILE['summary']
   spec.description = PROFILE['description']
 
@@ -49,7 +49,7 @@ default_spec = Gem::Specification.new do |spec|
     end
   
   spec.author = PROFILE['authors'].first
-  spec.email  = PROFILE['recources']['mail'] # ?
+  spec.email  = PROFILE['resources']['mail'] # ?
   spec.platform = Gem::Platform::RUBY
   spec.require_paths = LOADPATH
   spec.bindir = "bin"
@@ -97,14 +97,15 @@ Rake::RDocTask.new("rdoc") do |rdoc|
   # Show source inline with line numbers
   rdoc.options << "--line-numbers"
   # Make the readme file the start page for the generated html
-  rdoc.options << '--main' << 'README.rdoc'
+  rdoc.main = 'README.rdoc'
   rdoc.rdoc_files.include('doc/*.rdoc',
                           'ext/**/libxml.c',
                           'ext/**/ruby_xml.c',
                           'ext/**/*.c',
                           'lib/**/*.rb',
-                          'CHANGES',
-                          'README',
+                          'README.rdoc',
+                          'TODO',
+                          'HISTORY',
                           'LICENSE')
 end
 
