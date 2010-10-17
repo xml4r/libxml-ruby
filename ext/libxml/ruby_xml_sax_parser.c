@@ -102,14 +102,13 @@ static VALUE rxml_sax_parser_parse(VALUE self)
   if (ctxt->sax != (xmlSAXHandlerPtr) &xmlDefaultSAXHandler)
     xmlFree(ctxt->sax);
     
-  ctxt->sax = (xmlSAXHandlerPtr)&rxml_sax_handler;
+  ctxt->sax = (xmlSAXHandlerPtr) xmlMalloc(sizeof(rxml_sax_handler));
+  if (ctxt->sax == NULL)
+    rb_fatal("Not enough memory.");
+  memcpy(ctxt->sax, &rxml_sax_handler, sizeof(rxml_sax_handler));
     
   status = xmlParseDocument(ctxt);
 
-  /* IMPORTANT - null the handle to our sax handler
-     so libxml doesn't try to free it.*/
-  ctxt->sax = NULL;
-  
   /* Now check the parsing result*/
   if (status == -1 || !ctxt->wellFormed)
   {
