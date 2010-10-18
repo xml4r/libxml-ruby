@@ -178,4 +178,14 @@ class TestNode < Test::Unit::TestCase
 		affected.last.output_escaping = false
 		assert node.output_escaping?.nil?
   end
+
+  def test_space_preserve
+    node = @doc.root
+
+    node.space_preserve = false
+    assert_equal XML::Node::SPACE_DEFAULT, node.space_preserve
+
+    node.space_preserve = true
+    assert_equal XML::Node::SPACE_PRESERVE, node.space_preserve
+  end
 end
