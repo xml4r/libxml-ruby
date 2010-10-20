@@ -81,7 +81,7 @@ end
 
 
 # ------- Windows GEM ----------
-if RUBY_PLATFORM.match(/win32/)
+if RUBY_PLATFORM.match(/win32|mingw32/)
   binaries = (FileList['ext/mingw/*.so',
                        'ext/mingw/*.dll*'])
 
