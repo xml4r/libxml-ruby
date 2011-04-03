@@ -65,6 +65,14 @@ default_spec = Gem::Specification.new do |spec|
   spec.has_rdoc = true
 end
 
+spec_file = "#{default_spec.name}.gemspec"
+desc "Create #{spec_file}"
+file spec_file => "Rakefile" do
+  File.open(spec_file, "w") do |file|
+    file.puts default_spec.to_ruby
+  end
+end
+
 # Rake task to build the default package
 Rake::GemPackageTask.new(default_spec) do |pkg|
   pkg.package_dir = 'pkg'
@@ -73,7 +81,7 @@ end
 
 
 # ------- Windows GEM ----------
-if RUBY_PLATFORM.match(/win32/)
+if RUBY_PLATFORM.match(/win32|mingw32/)
   binaries = (FileList['ext/mingw/*.so',
                        'ext/mingw/*.dll*'])
 

@@ -1233,9 +1233,9 @@ static VALUE rxml_node_space_preserve_set(VALUE self, VALUE bool)
   Data_Get_Struct(self, xmlNode, xnode);
 
   if (TYPE(bool) == T_FALSE)
-    xmlNodeSetSpacePreserve(xnode, 1);
-  else
     xmlNodeSetSpacePreserve(xnode, 0);
+  else
+    xmlNodeSetSpacePreserve(xnode, 1);
 
   return (Qnil);
 }
