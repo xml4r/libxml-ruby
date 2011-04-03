@@ -50,7 +50,7 @@ Using libxml is easy. First decide what parser you want to use:
 * To parse HTML files use LibXML::XML::HTMLParser.
 * If you are masochistic, then use the LibXML::XML::SaxParser, which provides a callback API.
 
-Once you have choosen a parser, choose a datasource.  Libxml can parse files, strings, URIs
+Once you have chosen a parser, choose a datasource.  Libxml can parse files, strings, URIs
 and IO streams.  For each data source you can specify an LibXML::XML::Encoding, a base uri and
 various parser options.  For more information, refer the LibXML::XML::Parser.document,
 LibXML::XML::Parser.file, LibXML::XML::Parser.io or LibXML:::XML::Parser.string methods (the
