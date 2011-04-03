@@ -1,84 +1,20 @@
 #!/usr/bin/env ruby
 
-# Be sure to set ENV['RUBYFORGE_USERNAME'] to use publish.
-
 require 'rubygems'
 require 'rake/gempackagetask'
-require 'hanna/rdoctask'
 require 'rake/testtask'
+require 'rake/rdoctask'
 require 'grancher/task'
-require 'date'
 require 'yaml'
 
-UNIXNAME = File.read('.root/unixname').strip
-LOADPATH = File.read('.root/loadpath').strip
-VERSION  = File.read('VERSION').strip
-PROFILE  = YAML.load(File.new('PROFILE'))
-
-# ------- Default Package ----------
-FILES = FileList[
-  'Rakefile',
-  'CHANGES',
-  'LICENSE',
-  'README',
-  'setup.rb',
-  'doc/**/*',
-  'ext/libxml/*',
-  'ext/mingw/Rakefile',
-  'ext/mingw/build.rake',
-  'ext/vc/*.sln',
-  'ext/vc/*.vcproj',
-  'lib/**/*',
-  'script/**/*',
-  'test/**/*'
-]
-
-# Default GEM Specification
-default_spec = Gem::Specification.new do |spec|
-  spec.name = UNIXNAME
-  
-  spec.homepage    = PROFILE['resources']['home']
-  spec.summary     = PROFILE['summary']
-  spec.description = PROFILE['description']
-
-  # Determine the current version of the software
-  spec.version = 
-    if File.read('ext/libxml/ruby_xml_version.h') =~ /\s*RUBY_LIBXML_VERSION\s*['"](\d.+)['"]/
-      CURRENT_VERSION = $1
-    else
-      CURRENT_VERSION = "0.0.0"
-    end
-  
-  spec.author = PROFILE['authors'].first
-  spec.email  = PROFILE['resources']['mail'] # ?
-  spec.platform = Gem::Platform::RUBY
-  spec.require_paths = LOADPATH
-  spec.bindir = "bin"
-  spec.extensions = ["ext/libxml/extconf.rb"]
-  spec.files = FILES.to_a
-  spec.test_files = Dir.glob("test/tc_*.rb")
-
-  spec.required_ruby_version = '>= 1.8.4'
-  spec.date = DateTime.now
-  spec.rubyforge_project = 'libxml'
-  
-  spec.has_rdoc = true
-end
-
-spec_file = "#{default_spec.name}.gemspec"
-desc "Create #{spec_file}"
-file spec_file => "Rakefile" do
-  File.open(spec_file, "w") do |file|
-    file.puts default_spec.to_ruby
-  end
-end
+# Read the spec file
+spec = Gem::Specification.load("libxml-ruby.gemspec")
 
 # Rake task to build the default package
-Rake::GemPackageTask.new(default_spec) do |pkg|
+Rake::GemPackageTask.new(spec) do |pkg|
   pkg.package_dir = 'pkg'
   pkg.need_tar    = false
 end
-
 
 # ------- Windows GEM ----------
 if RUBY_PLATFORM.match(/win32|mingw32/)
@@ -86,7 +22,7 @@ if RUBY_PLATFORM.match(/win32|mingw32/)
                        'ext/mingw/*.dll*'])
 
   # Windows specification
-  win_spec = default_spec.clone
+  win_spec =spec.clone
   win_spec.extensions = ['ext/mingw/Rakefile']
   win_spec.platform = Gem::Platform::CURRENT
   win_spec.files += binaries.to_a
@@ -155,51 +91,3 @@ Grancher::Task.new do |g|
   # and the rdoc directory
   g.directory 'doc/libxml-ruby/rdoc' 'rdoc'
 end
-
-# ---------  Publish Website to Rubyforge ---------
-#desc "publish website (uses rsync)"
-#task :publish => [:publish_website, :publish_rdoc]
-
-#task :publish_website do
-  #unixname = 'libxml'
-  #username = ENV['RUBYFORGE_USERNAME']
-
-  #dir = 'admin/web'
-  #url = "#{username}@rubyforge.org:/var/www/gforge-projects/#{unixname}"
-
-  #dir = dir.chomp('/') + '/'
-
-  ## Using commandline filter options didn't seem to work, so
-  ## I opted for creating an .rsync_filter file for all cases.
-
-  #protect = %w{usage statcvs statsvn robot.txt wiki}
-  #exclude = %w{.svn}
-
-  #rsync_file = File.join(dir,'.rsync-filter')
-  #unless File.file?(rsync_file)
-    #File.open(rsync_file, 'w') do |f|
-      #exclude.each{|e| f << "- #{e}\n"}
-      #protect.each{|e| f << "P #{e}\n"}
-    #end
-  #end
-
-  ## maybe -p ?
-  #cmd = "rsync -rLvz --delete-after --filter='dir-merge #{rsync_file}' #{dir} #{url}"
-  #sh cmd
-#end
-
-# Instead of this, we simply ln -s web/rdoc ../doc/libxml-ruby/rdoc, and publish website.
-#task :publish_rdoc do
-#  unixname = 'libxml'
-#  username = ENV['RUBYFORGE_USERNAME']
-#
-#  dir = 'doc/rdoc'
-#  url = "#{username}@rubyforge.org:/var/www/gforge-projects/#{unixname}/rdoc"
-#
-#  dir = dir.chomp('/') + '/'
-#
-#  # maybe -p ?
-#  cmd = "rsync -rLvz --delete-after #{dir} #{url}"
-#  sh cmd
-#end
-
