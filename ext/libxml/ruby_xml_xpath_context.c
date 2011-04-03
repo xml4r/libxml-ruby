@@ -167,7 +167,7 @@ static VALUE rxml_xpath_context_register_namespaces_from_node(VALUE self,
   return self;
 }
 
-static int iterate_ns_hash(st_data_t prefix, st_data_t uri, st_data_t self)
+static int iterate_ns_hash(VALUE prefix, VALUE uri, VALUE self)
 {
   rxml_xpath_context_register_namespace(self, prefix, uri);
   return ST_CONTINUE;
@@ -220,7 +220,7 @@ static VALUE rxml_xpath_context_register_namespaces(VALUE self, VALUE nslist)
     }
     break;
   case T_HASH:
-    st_foreach(RHASH_TBL(nslist), iterate_ns_hash, self);
+    rb_hash_foreach(nslist, iterate_ns_hash, self);
     break;
   default:
     rb_raise(
