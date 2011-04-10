@@ -9,7 +9,7 @@
  *
  * Basic Usage:
  *
- *  require 'xml'
+ *  require 'test_helper'
  *
  *  doc = XML::Document.new(<some_file>)
  *  attribute = doc.root.attributes.get_attribute_ns('http://www.w3.org/1999/xlink', 'href')
@@ -188,7 +188,7 @@ static VALUE rxml_attr_name_get(VALUE self)
   if (xattr->name == NULL)
     return Qnil;
   else
-    return rb_str_new2((const char*) xattr->name);
+    return rxml_str_new2((const char*) xattr->name, xattr->doc->encoding);
 }
 
 /*
@@ -304,7 +304,7 @@ VALUE rxml_attr_value_get(VALUE self)
 
   if (value != NULL)
   {
-    result = rb_str_new2((const char*) value);
+    result = rxml_str_new2((const char*) value, xattr->doc->encoding);
     xmlFree(value);
   }
   return result;

@@ -69,12 +69,12 @@ static VALUE rxml_encoding_from_s(VALUE klass, VALUE encoding)
  */
 static VALUE rxml_encoding_to_s(VALUE klass, VALUE encoding)
 {
-  const char* xecoding = xmlGetCharEncodingName(NUM2INT(encoding));
+  const char* xencoding = xmlGetCharEncodingName(NUM2INT(encoding));
 
-  if (!xecoding)
+  if (!xencoding)
     return Qnil;
   else
-    return rb_str_new2(xecoding);
+    return rxml_str_new2(xencoding, xencoding);
 }
 
 void rxml_init_encoding(void)

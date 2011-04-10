@@ -155,8 +155,8 @@ static VALUE rxml_xpath_context_register_namespaces_from_node(VALUE self,
        Skip it for now. */
       if (xns->prefix)
       {
-        VALUE prefix = rb_str_new2((const char*)xns->prefix);
-        VALUE uri = rb_str_new2((const char*)xns->href);
+        VALUE prefix = rxml_str_new2((const char*)xns->prefix, xctxt->doc->encoding);
+        VALUE uri = rxml_str_new2((const char*)xns->href, xctxt->doc->encoding);
         rxml_xpath_context_register_namespace(self, prefix, uri);
       }
       xns = xns->next;
@@ -192,6 +192,9 @@ static VALUE rxml_xpath_context_register_namespaces(VALUE self, VALUE nslist)
   char *cp;
   long i;
   VALUE rprefix, ruri;
+  xmlXPathContextPtr xctxt;
+
+  Data_Get_Struct(self, xmlXPathContext, xctxt);
 
   /* Need to loop through the 2nd argument and iterate through the
    * list of namespaces that we want to allow */
@@ -208,7 +211,7 @@ static VALUE rxml_xpath_context_register_namespaces(VALUE self, VALUE nslist)
     {
       rprefix = rb_str_new(StringValuePtr(nslist), (int) ((long) cp
           - (long) StringValuePtr(nslist)));
-      ruri = rb_str_new2(&cp[1]);
+      ruri = rxml_str_new2(&cp[1], xctxt->doc->encoding);
     }
     /* Should test the results of this */
     rxml_xpath_context_register_namespace(self, rprefix, ruri);
@@ -306,7 +309,7 @@ static VALUE rxml_xpath_context_find(VALUE self, VALUE xpath_expr)
     xmlXPathFreeObject(xobject);
     break;
   case XPATH_STRING:
-    result = rb_str_new2((const char*)xobject->stringval);
+    result = rxml_str_new2((const char*)xobject->stringval, xctxt->doc->encoding);
     xmlXPathFreeObject(xobject);
     break;
   default:

@@ -8,7 +8,7 @@
  * Provides access to an element's attributes (XML::Attr).
  *
  * Basic Usage:
- *  require 'xml'
+ *  require 'test_helper'
  *
  *  doc = XML::Document.new(<some_file>)
  *  attributes = doc.root.attributes

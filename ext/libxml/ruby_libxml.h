@@ -46,6 +46,9 @@
 #define OpenFile rb_io_t
 #endif
 
+// Ruby 1.8/1.9 encoding compatibility
+VALUE rxml_str_new2(const char* xstr, const char* xencoding);
+
 #ifdef LIBXML_DEBUG_ENABLED
 #include <libxml/xpathInternals.h>
 #endif

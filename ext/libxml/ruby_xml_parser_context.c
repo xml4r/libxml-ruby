@@ -190,7 +190,7 @@ static VALUE rxml_parser_context_base_uri_get(VALUE self)
   Data_Get_Struct(self, xmlParserCtxt, ctxt);
 
   if (ctxt->input && ctxt->input->filename)
-    return rb_str_new2(ctxt->input->filename);
+    return rxml_str_new2(ctxt->input->filename, ctxt->encoding);
   else
     return Qnil;
 }
@@ -231,7 +231,7 @@ static VALUE rxml_parser_context_data_directory_get(VALUE self)
   if (ctxt->directory == NULL)
     return (Qnil);
   else
-    return (rb_str_new2(ctxt->directory));
+    return (rxml_str_new2(ctxt->directory, ctxt->encoding));
 }
 
 /*
@@ -489,7 +489,7 @@ static VALUE rxml_parser_context_name_node_get(VALUE self)
   if (ctxt->name == NULL)
     return (Qnil);
   else
-    return (rb_str_new2((const char*) ctxt->name));
+    return (rxml_str_new2((const char*) ctxt->name, ctxt->encoding));
 }
 
 /*
@@ -516,7 +516,7 @@ static VALUE rxml_parser_context_name_tab_get(VALUE self)
     if (ctxt->nameTab[i] == NULL)
       continue;
     else
-      rb_ary_push(tab_ary, rb_str_new2((const char*) ctxt->nameTab[i]));
+      rb_ary_push(tab_ary, rxml_str_new2((const char*) ctxt->nameTab[i], ctxt->encoding));
   }
 
   return (tab_ary);
@@ -782,7 +782,7 @@ static VALUE rxml_parser_context_subset_name_get(VALUE self)
   if (ctxt->intSubName == NULL)
     return (Qnil);
   else
-    return (rb_str_new2((const char*) ctxt->intSubName));
+    return (rxml_str_new2((const char*) ctxt->intSubName, ctxt->encoding));
 }
 
 /*
@@ -801,7 +801,7 @@ static VALUE rxml_parser_context_subset_external_uri_get(VALUE self)
   if (ctxt->extSubURI == NULL)
     return (Qnil);
   else
-    return (rb_str_new2((const char*) ctxt->extSubURI));
+    return (rxml_str_new2((const char*) ctxt->extSubURI, ctxt->encoding));
 }
 
 /*
@@ -820,7 +820,7 @@ static VALUE rxml_parser_context_subset_external_system_id_get(VALUE self)
   if (ctxt->extSubSystem == NULL)
     return (Qnil);
   else
-    return (rb_str_new2((const char*) ctxt->extSubSystem));
+    return (rxml_str_new2((const char*) ctxt->extSubSystem, ctxt->encoding));
 }
 
 /*
@@ -905,7 +905,7 @@ static VALUE rxml_parser_context_version_get(VALUE self)
   if (ctxt->version == NULL)
     return (Qnil);
   else
-    return (rb_str_new2((const char*) ctxt->version));
+    return (rxml_str_new2((const char*) ctxt->version, ctxt->encoding));
 }
 
 /*

@@ -98,7 +98,7 @@ static VALUE rxml_namespace_href_get(VALUE self)
   if (xns->href == NULL)
     return Qnil;
   else
-    return rb_str_new2((const char*) xns->href);
+    return rxml_str_new2((const char*) xns->href, xns->context ? xns->context->encoding : NULL);
 }
 
 /*
@@ -133,7 +133,7 @@ static VALUE rxml_namespace_prefix_get(VALUE self)
   if (xns->prefix == NULL)
     return Qnil;
   else
-    return rb_str_new2((const char*) xns->prefix);
+    return rxml_str_new2((const char*) xns->prefix, xns->context ? xns->context->encoding : NULL);
 }
 
 /*

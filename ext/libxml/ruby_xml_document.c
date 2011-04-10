@@ -683,7 +683,7 @@ static VALUE rxml_document_url_get(VALUE self)
   if (xdoc->URL == NULL)
     return (Qnil);
   else
-    return (rb_str_new2((const char*) xdoc->URL));
+    return (rxml_str_new2((const char*) xdoc->URL, xdoc->encoding));
 }
 
 /*
@@ -700,7 +700,7 @@ static VALUE rxml_document_version_get(VALUE self)
   if (xdoc->version == NULL)
     return (Qnil);
   else
-    return (rb_str_new2((const char*) xdoc->version));
+    return (rxml_str_new2((const char*) xdoc->version, xdoc->encoding));
 }
 
 /*

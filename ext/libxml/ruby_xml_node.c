@@ -279,7 +279,7 @@ static VALUE rxml_node_base_uri_get(VALUE self)
   base_uri = xmlNodeGetBase(xnode->doc, xnode);
   if (base_uri)
   {
-    result = rb_str_new2((const char*) base_uri);
+    result = rxml_str_new2((const char*) base_uri, xnode->doc ? xnode->doc->encoding : NULL);
     xmlFree(base_uri);
   }
 
@@ -323,7 +323,7 @@ static VALUE rxml_node_content_get(VALUE self)
   content = xmlNodeGetContent(xnode);
   if (content)
   {
-    result = rb_str_new2((const char *) content);
+    result = rxml_str_new2((const char *) content, xnode->doc ? xnode->doc->encoding : NULL);
     xmlFree(content);
   }
 
@@ -370,7 +370,7 @@ static VALUE rxml_node_content_stripped_get(VALUE self)
   content = xmlNodeGetContent(xnode);
   if (content)
   {
-    result = rb_str_new2((const char*) content);
+    result = rxml_str_new2((const char*) content, xnode->doc ? xnode->doc->encoding : NULL);
     xmlFree(content);
   }
   return (result);
@@ -572,9 +572,9 @@ static VALUE rxml_node_to_s(int argc, VALUE *argv, VALUE self)
   xmlOutputBufferFlush(output);
 
   if (output->conv)
-    result = rb_str_new2((const char*) output->conv->content);
+    result = rxml_str_new2((const char*) output->conv->content, xencoding);
   else
-    result = rb_str_new2((const char*) output->buffer->content);
+    result = rxml_str_new2((const char*) output->buffer->content, xencoding);
 
   xmlOutputBufferClose(output);
   
@@ -678,7 +678,7 @@ static VALUE rxml_node_lang_get(VALUE self)
 
   if (lang)
   {
-    result = rb_str_new2((const char*) lang);
+    result = rxml_str_new2((const char*) lang, xnode->doc ? xnode->doc->encoding : NULL);
     xmlFree(lang);
   }
 
@@ -811,11 +811,11 @@ static VALUE rxml_node_xlink_type_name(VALUE self)
   case XLINK_TYPE_NONE:
     return (Qnil);
   case XLINK_TYPE_SIMPLE:
-    return (rb_str_new2("simple"));
+    return (rxml_str_new2("simple", xnode->doc ? xnode->doc->encoding : NULL));
   case XLINK_TYPE_EXTENDED:
-    return (rb_str_new2("extended"));
+    return (rxml_str_new2("extended", xnode->doc ? xnode->doc->encoding : NULL));
   case XLINK_TYPE_EXTENDED_SET:
-    return (rb_str_new2("extended_set"));
+    return (rxml_str_new2("extended_set", xnode->doc ? xnode->doc->encoding : NULL));
   default:
     rb_fatal("Unknowng xlink type, %d", xlt);
   }
@@ -866,7 +866,7 @@ static VALUE rxml_node_name_get(VALUE self)
   if (xnode->name == NULL)
     return (Qnil);
   else
-    return (rb_str_new2((const char*) name));
+    return (rxml_str_new2((const char*) name, xnode->doc ? xnode->doc->encoding : NULL));
 }
 
 /*
@@ -958,7 +958,7 @@ static VALUE rxml_node_path(VALUE self)
   if (path == NULL)
     return (Qnil);
   else
-    return (rb_str_new2((const char*) path));
+    return (rxml_str_new2((const char*) path, xnode->doc ? xnode->doc->encoding : NULL));
 }
 
 /*

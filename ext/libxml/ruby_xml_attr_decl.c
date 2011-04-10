@@ -15,28 +15,28 @@
 
 VALUE cXMLAttrDecl;
 
-void rxml_attr_decl_mark(xmlAttributePtr xattribute)
+void rxml_attr_decl_mark(xmlAttributePtr xattr)
 {
-  if (xattribute->_private == NULL)
+  if (xattr->_private == NULL)
   {
     rb_warning("AttrDecl is not bound! (%s:%d)", __FILE__, __LINE__);
     return;
   }
 
-  rxml_node_mark((xmlNodePtr) xattribute);
+  rxml_node_mark((xmlNodePtr) xattr);
 }
 
-VALUE rxml_attr_decl_wrap(xmlAttributePtr xattribute)
+VALUE rxml_attr_decl_wrap(xmlAttributePtr xattr)
 {
   VALUE result;
 
   // This node is already wrapped
-  if (xattribute->_private != NULL)
-    return (VALUE) xattribute->_private;
+  if (xattr->_private != NULL)
+    return (VALUE) xattr->_private;
 
-  result = Data_Wrap_Struct(cXMLAttrDecl, rxml_attr_decl_mark, NULL, xattribute);
+  result = Data_Wrap_Struct(cXMLAttrDecl, rxml_attr_decl_mark, NULL, xattr);
 
-  xattribute->_private = (void*) result;
+  xattr->_private = (void*) result;
 
   return result;
 }
@@ -49,12 +49,12 @@ VALUE rxml_attr_decl_wrap(xmlAttributePtr xattribute)
  */
 static VALUE rxml_attr_decl_doc_get(VALUE self)
 {
-  xmlAttributePtr xattribute;
-  Data_Get_Struct(self, xmlAttribute, xattribute);
-  if (xattribute->doc == NULL)
+  xmlAttributePtr xattr;
+  Data_Get_Struct(self, xmlAttribute, xattr);
+  if (xattr->doc == NULL)
     return Qnil;
   else
-    return rxml_document_wrap(xattribute->doc);
+    return rxml_document_wrap(xattr->doc);
 }
 
 
@@ -66,13 +66,13 @@ static VALUE rxml_attr_decl_doc_get(VALUE self)
  */
 static VALUE rxml_attr_decl_name_get(VALUE self)
 {
-  xmlAttributePtr xattribute;
-  Data_Get_Struct(self, xmlAttribute, xattribute);
+  xmlAttributePtr xattr;
+  Data_Get_Struct(self, xmlAttribute, xattr);
 
-  if (xattribute->name == NULL)
+  if (xattr->name == NULL)
     return Qnil;
   else
-    return rb_str_new2((const char*) xattribute->name);
+    return rxml_str_new2((const char*) xattr->name, xattr->doc->encoding);
 }
 
 /*
@@ -83,12 +83,12 @@ static VALUE rxml_attr_decl_name_get(VALUE self)
  */
 static VALUE rxml_attr_decl_next_get(VALUE self)
 {
-  xmlAttributePtr xattribute;
-  Data_Get_Struct(self, xmlAttribute, xattribute);
-  if (xattribute->next == NULL)
+  xmlAttributePtr xattr;
+  Data_Get_Struct(self, xmlAttribute, xattr);
+  if (xattr->next == NULL)
     return Qnil;
   else
-    return rxml_attr_decl_wrap((xmlAttributePtr)xattribute->next);
+    return rxml_attr_decl_wrap((xmlAttributePtr)xattr->next);
 }
 
 /*
@@ -113,13 +113,13 @@ static VALUE rxml_attr_decl_node_type(VALUE self)
  */
 static VALUE rxml_attr_decl_parent_get(VALUE self)
 {
-  xmlAttributePtr xattribute;
-  Data_Get_Struct(self, xmlAttribute, xattribute);
+  xmlAttributePtr xattr;
+  Data_Get_Struct(self, xmlAttribute, xattr);
 
-  if (xattribute->parent == NULL)
+  if (xattr->parent == NULL)
     return Qnil;
   else
-    return rxml_dtd_wrap(xattribute->parent);
+    return rxml_dtd_wrap(xattr->parent);
 }
 
 /*
@@ -131,13 +131,13 @@ static VALUE rxml_attr_decl_parent_get(VALUE self)
  */
 static VALUE rxml_attr_decl_prev_get(VALUE self)
 {
-  xmlAttributePtr xattribute;
-  Data_Get_Struct(self, xmlAttribute, xattribute);
+  xmlAttributePtr xattr;
+  Data_Get_Struct(self, xmlAttribute, xattr);
 
-  if (xattribute->prev == NULL)
+  if (xattr->prev == NULL)
     return Qnil;
   else
-    return rxml_attr_decl_wrap((xmlAttributePtr)xattribute->prev);
+    return rxml_attr_decl_wrap((xmlAttributePtr)xattr->prev);
 }
 
 /*
@@ -148,12 +148,12 @@ static VALUE rxml_attr_decl_prev_get(VALUE self)
  */
 VALUE rxml_attr_decl_value_get(VALUE self)
 {
-  xmlAttributePtr xattribute;
+  xmlAttributePtr xattr;
 
-  Data_Get_Struct(self, xmlAttribute, xattribute);
+  Data_Get_Struct(self, xmlAttribute, xattr);
 
-  if (xattribute->defaultValue)
-    return rb_str_new2((const char *)xattribute->defaultValue);
+  if (xattr->defaultValue)
+    return rxml_str_new2((const char *)xattr->defaultValue, xattr->doc->encoding);
   else
     return Qnil;
 }

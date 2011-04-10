@@ -6,6 +6,11 @@
 #include <util.h>
 #endif
 
+#ifdef HAVE_RUBY_ENCODING_H
+#include <ruby/encoding.h>
+#endif
+
+
 VALUE mLibXML;
 
 static void rxml_init_memory(void)
@@ -20,6 +25,21 @@ static void rxml_init_memory(void)
   );*/
 }
 
+VALUE rxml_str_new2(const char* xstr, const char* xencoding)
+{
+#ifdef HAVE_RUBY_ENCODING_H
+  if (xencoding)
+  {
+    int idx = rb_enc_find_index(xencoding);
+
+    rb_encoding* encoding = rb_enc_from_index(idx);
+    return rb_external_str_new_with_enc(xstr, strlen(xstr), encoding);
+  }
+#endif
+  return rb_str_new2(xstr);
+}
+
+
 #if defined(_WIN32)
 __declspec(dllexport)
 #endif
@@ -28,7 +48,7 @@ void Init_libxml_ruby(void)
 /* The libxml gem provides Ruby language bindings for GNOME's Libxml2
  * XML toolkit.  To get started you may:
  *
- *  require 'xml'
+ *  require 'test_helper'
  *  document = XML::Document.new
  *
  * However, when creating an application or library you plan to
