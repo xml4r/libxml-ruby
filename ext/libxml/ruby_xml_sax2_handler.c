@@ -253,7 +253,19 @@ static void start_element_ns_callback(void *ctx,
 
 static void structured_error_callback(void *ctx, xmlErrorPtr xerror)
 {
-  VALUE handler = (VALUE) ctx;
+  /* Older versions of Libxml will pass a NULL context from the sax parser.  Fixed on
+     Feb 23, 2011.  See:
+
+     http://git.gnome.org/browse/libxml2/commit/?id=241d4a1069e6bedd0ee2295d7b43858109c1c6d1 */
+
+  VALUE handler;
+
+  #if LIBXML_VERSION <= 20708
+    xmlParserCtxtPtr ctxt = (xmlParserCtxt*)(xerror->ctxt);
+    ctx = ctxt->userData;
+  #endif
+
+  handler = (VALUE) ctx;
 
   if (handler != Qnil)
   {
