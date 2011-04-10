@@ -1,10 +1,11 @@
-require "xml"
+require 'test_helper'
+
 require 'test/unit'
 
-# Properties is deprecated - use attributes instead.
+# attributes is deprecated - use attributes instead.
 # Tests for backwards compatibility
 
-class TestProperties < Test::Unit::TestCase
+class Testattributes < Test::Unit::TestCase
   def setup()
     xp = XML::Parser.string('<ruby_array uga="booga" foo="bar"><fixnum>one</fixnum><fixnum>two</fixnum></ruby_array>')
     @doc = xp.parse
@@ -15,10 +16,10 @@ class TestProperties < Test::Unit::TestCase
   end
 
   def test_traversal
-    properties = @doc.root.properties
+    attributes = @doc.root.attributes
     
-    assert_instance_of(XML::Attributes, properties)
-    attribute = properties.first
+    assert_instance_of(XML::Attributes, attributes)
+    attribute = attributes.first
     assert_equal('uga', attribute.name)
     assert_equal('booga', attribute.value)
 
@@ -28,9 +29,9 @@ class TestProperties < Test::Unit::TestCase
     assert_equal('bar', attribute.value)
   end
   
-  def test_no_properties
-    properties = @doc.root.child.properties
-    assert_instance_of(XML::Attributes, properties)
-    assert_equal(0, properties.length)
+  def test_no_attributes
+    attributes = @doc.root.child.attributes
+    assert_instance_of(XML::Attributes, attributes)
+    assert_equal(0, attributes.length)
   end
 end

@@ -1,4 +1,4 @@
-require 'xml'
+require 'test_helper'
 require "test/unit"
 
 class TC_XML_XPointer < Test::Unit::TestCase

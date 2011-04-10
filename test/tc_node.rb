@@ -1,4 +1,4 @@
-require 'xml'
+require 'test_helper'
 require 'test/unit'
 
 class TestNode < Test::Unit::TestCase
@@ -118,7 +118,7 @@ class TestNode < Test::Unit::TestCase
 
   def test_base
     doc = XML::Parser.string('<person />').parse
-    assert_nil(doc.root.base)
+    assert_nil(doc.root.base_uri)
   end
 
 	# We use the same facility that libXSLT does here to disable output escaping.

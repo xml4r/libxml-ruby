@@ -1,4 +1,4 @@
-require 'xml'
+require 'test_helper'
 require "tempfile"
 require "test/unit"
 

@@ -1,4 +1,4 @@
-require 'xml'
+require 'test_helper'
 
 100.times do |count|
 

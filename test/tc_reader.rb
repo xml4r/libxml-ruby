@@ -1,4 +1,4 @@
-require 'xml'
+require 'test_helper'
 require 'stringio'
 require 'test/unit'
 
@@ -164,11 +164,10 @@ class TestReader < Test::Unit::TestCase
     reader = XML::Reader.file(XML_FILE)
     reader.read
     node = reader.expand
+    assert_nil(node.doc)
     doc = node.doc
     reader.close
     GC.start
-
-    doc.standalone?
   end
 
   def test_mode

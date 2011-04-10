@@ -1,4 +1,5 @@
-require "xml"
+require 'test_helper'
+
 require 'test/unit'
 
 class TestRelaxNG < Test::Unit::TestCase
@@ -26,7 +27,7 @@ class TestRelaxNG < Test::Unit::TestCase
   
   def test_invalid
     new_node = XML::Node.new('invalid', 'this will mess up validation')
-    @doc.root.child_add(new_node)
+    @doc.root << new_node
     
     error = assert_raise(XML::Error) do
       @doc.validate_relaxng(relaxng)

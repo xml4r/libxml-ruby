@@ -1,4 +1,4 @@
-require 'xml'
+require 'test_helper'
 require 'test/unit'
 
 class AttrDeclTest < Test::Unit::TestCase

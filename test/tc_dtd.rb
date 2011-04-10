@@ -1,4 +1,5 @@
-require "xml"
+require 'test_helper'
+
 require 'test/unit'
 
 class TestDtd < Test::Unit::TestCase
@@ -62,9 +63,8 @@ class TestDtd < Test::Unit::TestCase
 
   def test_invalid
     new_node = XML::Node.new('invalid', 'this will mess up validation')
-    @doc.root.child_add(new_node)
+    @doc.root << new_node
 
-    messages = Hash.new
     error = assert_raise(XML::Error) do
       @doc.validate(dtd)
     end

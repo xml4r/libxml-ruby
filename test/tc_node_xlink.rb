@@ -1,5 +1,6 @@
 # $Id$
-require "xml"
+require 'test_helper'
+
 require 'test/unit'
 
 class TC_XML_Node_XLink < Test::Unit::TestCase

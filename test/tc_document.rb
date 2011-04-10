@@ -1,4 +1,5 @@
-require "xml"
+require 'test_helper'
+
 require 'test/unit'
 
 

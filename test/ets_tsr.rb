@@ -1,4 +1,4 @@
-require 'xml'
+require 'test_helper'
 
 10_000.times {|n|
 j=XML::Node.new2(nil,"happy#{n}")

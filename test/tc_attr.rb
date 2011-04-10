@@ -1,4 +1,4 @@
-require 'xml'
+require 'test_helper'
 require 'test/unit'
 
 class AttrNodeTest < Test::Unit::TestCase
@@ -105,7 +105,7 @@ class AttrNodeTest < Test::Unit::TestCase
   def test_create_ns
     assert_equal(5, city_member.attributes.length)
     
-    ns = XML::NS.new(city_member, 'my_namepace', 'http://www.mynamespace.com')
+    ns = XML::Namespace.new(city_member, 'my_namepace', 'http://www.mynamespace.com')
     attr = XML::Attr.new(city_member, 'rating', 'rocks', ns)
     assert_instance_of(XML::Attr, attr)
     assert_equal('rating', attr.name)

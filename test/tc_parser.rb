@@ -1,4 +1,4 @@
-require 'xml'
+require 'test_helper'
 require 'test/unit'
 require 'stringio'
 
@@ -80,11 +80,11 @@ class TestParser < Test::Unit::TestCase
 
     parser = XML::Parser.file(file)
     doc = parser.parse
-    assert(doc.child.base.match(/test\/model\/bands.xml/))
+    assert(doc.child.base_uri.match(/test\/model\/bands.xml/))
 
     parser = XML::Parser.file(file, :base_uri => "http://libxml.org")
     doc = parser.parse
-    assert(doc.child.base.match(/test\/model\/bands.xml/))
+    assert(doc.child.base_uri.match(/test\/model\/bands.xml/))
   end
 
   def test_io
@@ -159,7 +159,7 @@ class TestParser < Test::Unit::TestCase
     # Parse normally
     parser = XML::Parser.string(xml)
     doc = parser.parse
-    assert_nil(doc.child.base)
+    assert_nil(doc.child.base_uri)
 
     # Cdata section should be cdata nodes
     node = doc.find_first('/test/cdata').child

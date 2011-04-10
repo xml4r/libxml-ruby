@@ -1,4 +1,4 @@
-require 'xml'
+require 'test_helper'
 require 'test/unit'
 
 # see mailing list archive
@@ -24,7 +24,7 @@ class TestNodeCopy < Test::Unit::TestCase
   def test_libxml_node_copy_not_segv
     @div2.each do |child|
       c = child.copy(false)
-      @div1.child_add(c)
+      @div1 << c
     end
     assert @div1.to_s =~ /foo/
   end
@@ -32,7 +32,7 @@ class TestNodeCopy < Test::Unit::TestCase
   def test_libxml_node_clone_not_segv
     @div2.each do |child|
       c = child.clone
-      @div1.child_add(c)
+      @div1 << c
     end
     assert @div1.to_s =~ /foo/
   end

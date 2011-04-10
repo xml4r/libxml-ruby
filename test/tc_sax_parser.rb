@@ -1,4 +1,4 @@
-require 'xml'
+require 'test_helper'
 require 'stringio'
 require 'test/unit'
 
