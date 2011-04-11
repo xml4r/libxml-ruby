@@ -1,4 +1,4 @@
-require 'test_helper'
+require './test_helper'
 require 'test/unit'
 require 'stringio'
 
@@ -13,9 +13,9 @@ class TestParser < Test::Unit::TestCase
     GC.start
   end
       
-  # -----  Sources  ------
+  # -----  Sources  -------8
   def test_document
-    file = File.expand_path(File.join(File.dirname(__FILE__), 'model/bands.xml'))
+    file = File.expand_path(File.join(File.dirname(__FILE__), 'model/bands.utf-8.xml'))
     parser = XML::Parser.file(file)
     doc = parser.parse
 
@@ -61,7 +61,7 @@ class TestParser < Test::Unit::TestCase
   end
 
   def test_file_encoding
-    file = File.expand_path(File.join(File.dirname(__FILE__), 'model/bands.xml'))
+    file = File.expand_path(File.join(File.dirname(__FILE__), 'model/bands.utf-8.xml'))
     parser = XML::Parser.file(file, :encoding => XML::Encoding::ISO_8859_1)
 
     error = assert_raise(XML::Error) do
@@ -76,15 +76,15 @@ class TestParser < Test::Unit::TestCase
   end
 
   def test_file_base_uri
-    file = File.expand_path(File.join(File.dirname(__FILE__), 'model/bands.xml'))
+    file = File.expand_path(File.join(File.dirname(__FILE__), 'model/bands.utf-8.xml'))
 
     parser = XML::Parser.file(file)
     doc = parser.parse
-    assert(doc.child.base_uri.match(/test\/model\/bands.xml/))
+    assert(doc.child.base_uri.match(/test\/model\/bands.utf-8.xml/))
 
     parser = XML::Parser.file(file, :base_uri => "http://libxml.org")
     doc = parser.parse
-    assert(doc.child.base_uri.match(/test\/model\/bands.xml/))
+    assert(doc.child.base_uri.match(/test\/model\/bands.utf-8.xml/))
   end
 
   def test_io
@@ -196,7 +196,7 @@ class TestParser < Test::Unit::TestCase
     EOS
 
     # Parse as UTF_8
-    parser = XML::Parser.string(xml)
+    parser = XML::Parser.string(xml, :encoding => XML::Encoding::UTF_8)
 
     error = assert_raise(XML::Error) do
       doc = parser.parse
@@ -209,9 +209,13 @@ class TestParser < Test::Unit::TestCase
     parser = XML::Parser.string(xml, :encoding => XML::Encoding::ISO_8859_1)
     doc = parser.parse
     node = doc.find_first('//metal')
-    assert_equal("m\303\266tley_cr\303\274e", node.content)
+    if defined?(Encoding)
+      assert_equal(Encoding::ISO8859_1, node.content.encoding)
+      assert_equal("m\303\266tley_cr\303\274e".force_encoding(Encoding::ISO8859_1), node.content)
+    else
+      assert_equal("m\303\266tley_cr\303\274e", node.content)
+    end
   end
-
 
   def test_fd_gc
     # Test opening # of documents up to the file limit for the OS.
@@ -282,7 +286,7 @@ class TestParser < Test::Unit::TestCase
 
   # Deprecated methods
   def test_document_deprecated
-    file = File.expand_path(File.join(File.dirname(__FILE__), 'model/bands.xml'))
+    file = File.expand_path(File.join(File.dirname(__FILE__), 'model/bands.utf-8.xml'))
     parser = XML::Parser.file(file)
     doc = parser.parse
 

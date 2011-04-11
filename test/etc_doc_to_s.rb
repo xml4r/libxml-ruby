@@ -1,4 +1,4 @@
-require 'test_helper'
+require './test_helper'
 
 1.times do |count|
 

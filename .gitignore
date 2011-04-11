@@ -3,3 +3,7 @@ nbproject
 web/_site
 *.swp
 *.swo
+
+/ext/vc/libxml_ruby.sdf
+/ext/vc/libxml_ruby_19/Debug
+/ext/vc/libxml_ruby_18/Debug

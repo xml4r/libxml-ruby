@@ -22,10 +22,12 @@ module LibXML
       # the node, use XML::Node#to_s.  For more information about
       # the supported options, see XML::Node#to_s.
       def inner_xml(options = Hash.new)
-        io = StringIO.new
-
+        io = nil
         self.each do |node|
-          io << node.to_s(options)
+          xml = node.to_s(options)
+          # Create the string IO here since we now know the encoding
+          io = create_string_io(xml) unless io
+          io << xml
         end
 
         io.string
@@ -380,6 +382,16 @@ module LibXML
       end
 
       # :startdoc:
+
+      private
+
+      def create_string_io(xml)
+        result = StringIO.new("")
+        if defined?(Encoding)
+          result.set_encoding(xml.encoding)
+        end
+        result
+      end
     end
   end
 end

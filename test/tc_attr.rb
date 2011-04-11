@@ -1,8 +1,8 @@
-require 'test_helper'
+require './test_helper'
 require 'test/unit'
 
 class AttrNodeTest < Test::Unit::TestCase
-  def setup()
+  def setup
     xp = XML::Parser.string(<<-EOS)
     <CityModel
       xmlns="http://www.opengis.net/examples"
@@ -23,12 +23,17 @@ class AttrNodeTest < Test::Unit::TestCase
     @doc = xp.parse
   end
   
-  def teardown()
+  def teardown
     @doc = nil
   end
   
   def city_member
     @doc.find('/city:CityModel/city:cityMember').first
+  end
+
+  def test_doc
+    assert_not_nil(@doc)
+    assert_equal(XML::Encoding::NONE, @doc.encoding)
   end
   
   def test_types
@@ -40,6 +45,7 @@ class AttrNodeTest < Test::Unit::TestCase
   def test_name
     attribute = city_member.attributes.get_attribute('name')
     assert_equal('name', attribute.name)
+    assert_equal(Encoding::ASCII_8BIT, attribute.name.encoding) if defined?(Encoding)
     
     attribute = city_member.attributes.get_attribute('href')
     assert_equal('href', attribute.name)
@@ -55,6 +61,7 @@ class AttrNodeTest < Test::Unit::TestCase
   def test_value
     attribute = city_member.attributes.get_attribute('name')
     assert_equal('Cambridge', attribute.value)
+    assert_equal(Encoding::ASCII_8BIT, attribute.value.encoding) if defined?(Encoding)
     
     attribute = city_member.attributes.get_attribute('href')
     assert_equal('http://www.foo.net/cgi-bin/wfs?FeatureID=C10239', attribute.value)
@@ -64,10 +71,12 @@ class AttrNodeTest < Test::Unit::TestCase
     attribute = city_member.attributes.get_attribute('name')
     attribute.value = 'London'
     assert_equal('London', attribute.value)
+    assert_equal(Encoding::ASCII_8BIT, attribute.value.encoding) if defined?(Encoding)
     
     attribute = city_member.attributes.get_attribute('href')
     attribute.value = 'http://i.have.changed'
     assert_equal('http://i.have.changed', attribute.value)
+    assert_equal(Encoding::ASCII_8BIT, attribute.value.encoding) if defined?(Encoding)
   end
   
   def test_set_nil

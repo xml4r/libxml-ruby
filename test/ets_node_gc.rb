@@ -1,4 +1,4 @@
-require 'test_helper'
+require './test_helper'
 
 # test of bug 13310, clears MEM2
 

@@ -1,4 +1,4 @@
-require 'test_helper'
+require './test_helper'
 
 require 'test/unit'
 
@@ -76,28 +76,31 @@ class TestDocument < Test::Unit::TestCase
   def test_encoding
     doc = XML::Document.new
     assert_equal(XML::Encoding::NONE, doc.encoding)
+    assert_equal(Encoding::ASCII_8BIT, doc.rb_encoding) if defined?(Encoding)
 
     file = File.expand_path(File.join(File.dirname(__FILE__), 'model/bands.xml'))
     doc = XML::Document.file(file)
     assert_equal(XML::Encoding::UTF_8, doc.encoding)
+    assert_equal(Encoding::UTF_8, doc.rb_encoding) if defined?(Encoding)
 
     doc.encoding = XML::Encoding::ISO_8859_1
     assert_equal(XML::Encoding::ISO_8859_1, doc.encoding)
+    assert_equal(Encoding::ISO8859_1, doc.rb_encoding) if defined?(Encoding)
   end
 
   def test_doc_node_type
-    assert_equal XML::Node::DOCUMENT_NODE, XML::Document.new.node_type
+    assert_equal(XML::Node::DOCUMENT_NODE, XML::Document.new.node_type)
   end
 
   def test_doc_node_type_name
-    assert_equal 'document_xml', XML::Document.new.node_type_name
+    assert_equal('document_xml', XML::Document.new.node_type_name)
   end
 
   def test_xhtml
 		doc = XML::Document.new
-		assert ! doc.xhtml?
-    xhtml_dtd = XML::Dtd.new "-//W3C//DTD XHTML 1.0 Transitional//EN", "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd", nil, doc, true
-		assert doc.xhtml?
+		assert(!doc.xhtml?)
+    XML::Dtd.new "-//W3C//DTD XHTML 1.0 Transitional//EN", "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd", nil, doc, true
+		assert(doc.xhtml?)
 	end
 
   def test_import_node

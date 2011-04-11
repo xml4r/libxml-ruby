@@ -1,4 +1,4 @@
-require 'test_helper'
+require './test_helper'
 
 require 'test/unit'
 
@@ -74,7 +74,7 @@ class TestParserContext < Test::Unit::TestCase
   end
 
   def test_version_info
-    file = File.expand_path(File.join(File.dirname(__FILE__), 'model/bands.xml'))
+    file = File.expand_path(File.join(File.dirname(__FILE__), 'model/bands.utf-8.xml'))
     parser = XML::Parser.file(file)
     assert_nil(parser.context.version)
     parser.parse
