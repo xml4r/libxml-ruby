@@ -282,7 +282,7 @@ static VALUE rxml_document_debug(VALUE self)
  * call-seq:
  *    document.encoding -> XML::Encoding::UTF_8
  *
- * Obtain the encoding specified by this document.
+ * Returns the LibXML encoding constant specified by this document.
  */
 static VALUE rxml_document_encoding_get(VALUE self)
 {
@@ -292,6 +292,25 @@ static VALUE rxml_document_encoding_get(VALUE self)
 
   xencoding = (const char*)xdoc->encoding;
   return INT2NUM(xmlParseCharEncoding(xencoding));
+}
+
+
+/*
+ * call-seq:
+ *    document.rb_encoding -> Encoding
+ *
+ * Returns the Ruby encoding specified by this document
+ * (available on Ruby 1.9.x and higher).
+ */
+static VALUE rxml_document_rb_encoding_get(VALUE self)
+{
+  xmlDocPtr xdoc;
+  const char *xencoding;
+  VALUE encoding;
+  Data_Get_Struct(self, xmlDoc, xdoc);
+
+  xencoding = (const char*)xdoc->encoding;
+  return rxml_xml_encoding_to_rb_encoding(mXMLEncoding, xmlParseCharEncoding(xencoding));
 }
 
 /*
@@ -664,7 +683,7 @@ static VALUE rxml_document_to_s(int argc, VALUE *argv, VALUE self)
   Data_Get_Struct(self, xmlDoc, xdoc);
   xmlDocDumpFormatMemoryEnc(xdoc, &buffer, &length, xencoding, indent);
 
-  result = rb_str_new((const char*) buffer, length);
+  result = rxml_str_new2((const char*) buffer, xencoding);
   xmlFree(buffer);
   return result;
 }
@@ -909,6 +928,9 @@ void rxml_init_document(void)
   rb_define_method(cXMLDocument, "compression?", rxml_document_compression_q, 0);
   rb_define_method(cXMLDocument, "debug", rxml_document_debug, 0);
   rb_define_method(cXMLDocument, "encoding", rxml_document_encoding_get, 0);
+#ifdef HAVE_RUBY_ENCODING_H
+  rb_define_method(cXMLDocument, "rb_encoding", rxml_document_rb_encoding_get, 0);
+#endif
   rb_define_method(cXMLDocument, "encoding=", rxml_document_encoding_set, 1);
   rb_define_method(cXMLDocument, "import", rxml_document_import, 1);
   rb_define_method(cXMLDocument, "last", rxml_document_last_get, 0);

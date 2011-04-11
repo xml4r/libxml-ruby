@@ -40,10 +40,15 @@
 #define RHASH_TBL(s) (RHASH(s)->tbl)
 #endif
 
-// not in Ruby 1.9
+// Not in Ruby 1.9
 #ifndef GetWriteFile
 #define GetWriteFile(fp) rb_io_stdio_file(fp)
 #define OpenFile rb_io_t
+#endif
+
+// Encoding support added in Ruby 1.9.*
+#ifdef HAVE_RUBY_ENCODING_H
+#include <ruby/encoding.h>
 #endif
 
 // Ruby 1.8/1.9 encoding compatibility

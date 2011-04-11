@@ -538,7 +538,7 @@ static VALUE rxml_node_to_s(int argc, VALUE *argv, VALUE self)
 
   int level = 0;
   int indent = 1;
-  const char *xencoding = NULL;
+  const char *xencoding = "UTF-8";
 
   rb_scan_args(argc, argv, "01", &options);
 

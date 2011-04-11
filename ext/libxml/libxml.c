@@ -6,10 +6,6 @@
 #include <util.h>
 #endif
 
-#ifdef HAVE_RUBY_ENCODING_H
-#include <ruby/encoding.h>
-#endif
-
 
 VALUE mLibXML;
 
@@ -30,10 +26,10 @@ VALUE rxml_str_new2(const char* xstr, const char* xencoding)
 #ifdef HAVE_RUBY_ENCODING_H
   if (xencoding)
   {
-    int idx = rb_enc_find_index(xencoding);
-
-    rb_encoding* encoding = rb_enc_from_index(idx);
-    return rb_external_str_new_with_enc(xstr, strlen(xstr), encoding);
+    xmlCharEncoding xmlEncoding = xmlParseCharEncoding(xencoding);
+    VALUE encoding = rxml_xml_encoding_to_rb_encoding(mXMLEncoding, xmlEncoding);
+    rb_encoding* xencodingPtr = (rb_encoding*) RDATA(encoding)->data;
+    return rb_external_str_new_with_enc(xstr, strlen(xstr), xencodingPtr);
   }
 #endif
   return rb_str_new2(xstr);

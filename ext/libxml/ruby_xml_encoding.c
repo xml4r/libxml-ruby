@@ -41,7 +41,6 @@
 
 VALUE mXMLEncoding;
 
-
 /*
  * call-seq:
  *    Input.s_to_encoding("UTF_8") -> XML::Encoding::UTF_8
@@ -64,7 +63,7 @@ static VALUE rxml_encoding_from_s(VALUE klass, VALUE encoding)
  * call-seq:
  *    Input.encoding_to_s(Input::ENCODING) -> "encoding"
  *
- * Converts an encoding contstant defined on the XML::Encoding
+ * Converts an encoding constant defined on the XML::Encoding
  * class to its text representation.
  */
 static VALUE rxml_encoding_to_s(VALUE klass, VALUE encoding)
@@ -77,11 +76,97 @@ static VALUE rxml_encoding_to_s(VALUE klass, VALUE encoding)
     return rxml_str_new2(xencoding, xencoding);
 }
 
+VALUE rxml_xml_encoding_to_rb_encoding(VALUE klass, xmlCharEncoding xmlEncoding)
+{
+  ID encoding_name;
+
+  switch (xmlEncoding)
+  {
+    case XML_CHAR_ENCODING_UTF8:
+      encoding_name = rb_intern("UTF_8");
+      break;
+    case XML_CHAR_ENCODING_UTF16LE:
+      encoding_name = rb_intern("UTF_16LE");
+      break;
+    case XML_CHAR_ENCODING_UTF16BE:
+      encoding_name = rb_intern("UTF_16BE");
+      break;
+    case XML_CHAR_ENCODING_UCS4LE:
+      encoding_name = rb_intern("UCS_4LE");
+      break;
+    case XML_CHAR_ENCODING_UCS4BE:
+      encoding_name = rb_intern("UCS_4BE");
+      break;
+    case XML_CHAR_ENCODING_UCS2:
+      encoding_name = rb_intern("UCS_2");
+      break;
+    case XML_CHAR_ENCODING_8859_1:
+      encoding_name = rb_intern("ISO8859_1");
+      break;
+    case XML_CHAR_ENCODING_8859_2:
+      encoding_name = rb_intern("ISO8859_2");
+      break;
+    case XML_CHAR_ENCODING_8859_3:
+      encoding_name = rb_intern("ISO8859_3");
+      break;
+    case XML_CHAR_ENCODING_8859_4:
+      encoding_name = rb_intern("ISO8859_4");
+      break;
+    case XML_CHAR_ENCODING_8859_5:
+      encoding_name = rb_intern("ISO8859_5");
+      break;
+    case XML_CHAR_ENCODING_8859_6:
+      encoding_name = rb_intern("ISO8859_6");
+      break;
+    case XML_CHAR_ENCODING_8859_7:
+      encoding_name = rb_intern("ISO8859_7");
+      break;
+    case XML_CHAR_ENCODING_8859_8:
+      encoding_name = rb_intern("ISO8859_8");
+      break;
+    case XML_CHAR_ENCODING_8859_9:
+      encoding_name = rb_intern("ISO8859_9");
+      break;
+    case XML_CHAR_ENCODING_2022_JP:
+      encoding_name = rb_intern("ISO_2022_JP");
+      break;
+    case XML_CHAR_ENCODING_SHIFT_JIS:
+      encoding_name = rb_intern("SHIFT_JIS");
+      break;
+    case XML_CHAR_ENCODING_EUC_JP:
+      encoding_name = rb_intern("EUC_JP");
+      break;
+    case XML_CHAR_ENCODING_ASCII:
+      encoding_name = rb_intern("US-ASCII");
+      break;
+    default:
+      /* Covers XML_CHAR_ENCODING_ERROR, XML_CHAR_ENCODING_NONE, XML_CHAR_ENCODING_EBCDIC */
+      encoding_name = rb_intern("ASCII_8BIT");
+  }
+  return rb_const_get(rb_cEncoding, encoding_name);
+}
+
+/*
+ * call-seq:
+ *    Input.encoding_to_rb_encoding(Input::ENCODING) -> Encoding
+ *
+ * Converts an encoding constant defined on the XML::Encoding
+ * class to a Ruby encoding object (available on Ruby 1.9.* and higher).
+ */
+VALUE rxml_encoding_to_rb_encoding(VALUE klass, VALUE encoding)
+{
+  return rxml_xml_encoding_to_rb_encoding(klass, NUM2INT(encoding));
+}
+
 void rxml_init_encoding(void)
 {
   mXMLEncoding = rb_define_module_under(mXML, "Encoding");
   rb_define_module_function(mXMLEncoding, "from_s", rxml_encoding_from_s, 1);
   rb_define_module_function(mXMLEncoding, "to_s", rxml_encoding_to_s, 1);
+
+#ifdef HAVE_RUBY_ENCODING_H
+ // rb_define_module_function(mXMLEncoding, "to_rb_encoding", rxml_encoding_to_rb_encoding, 2);
+#endif
 
   /* -1: No char encoding detected. */
   rb_define_const(mXMLEncoding, "ERROR", INT2NUM(XML_CHAR_ENCODING_ERROR));
