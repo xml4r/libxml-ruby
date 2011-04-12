@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 require './test_helper'
 
 # test of bug 13310, clears MEM2

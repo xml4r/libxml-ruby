@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 ## Provide hpricot API for libxml.  Provided by Michael Guterl,
 ## inspired by http://thebogles.com/blog/an-hpricot-style-interface-to-libxml
 #

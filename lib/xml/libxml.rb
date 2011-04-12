@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 # This is here for backward compatibility.
 #
 # TODO: DEPRECATE!

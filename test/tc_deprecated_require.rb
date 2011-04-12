@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 require 'xml/libxml'
 require 'test/unit'
 

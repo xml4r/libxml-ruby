@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 require './test_helper'
 
 100.times do |count|

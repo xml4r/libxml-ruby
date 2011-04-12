@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 require './test_helper'
 
 # This is related to bug 8337, complaint is on amd64/fbsd

@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 # $Id$
 require './test_helper'
 

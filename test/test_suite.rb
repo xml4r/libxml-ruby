@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 require './tc_attributes'
 require './tc_attr'
 require './tc_attr_decl'

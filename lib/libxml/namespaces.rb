@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 module LibXML
   module XML
     class Namespaces

@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 require './test_helper'
 require 'tmpdir'
 require 'test/unit'
