@@ -15,8 +15,8 @@ class TestDocumentWrite < Test::Unit::TestCase
   end
 
   def load_encoding(name)
-    @encoding = Encoding.find(name)
-    @file_name = "model/bands.#{@encoding.name.downcase}.xml"
+    @encoding = Encoding.find(name) if defined?(Encoding)
+    @file_name = "model/bands.#{name.downcase}.xml"
 
     # Strip spaces to make testing easier
     XML.default_keep_blanks = false
@@ -31,7 +31,7 @@ class TestDocumentWrite < Test::Unit::TestCase
       assert_equal("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<bands genre=\"metal\">\n  <m\u00F6tley_cr\u00FCe country=\"us\">M\u00F6tley Cr\u00FCe is an American heavy metal band formed in Los Angeles, California in 1981.</m\u00F6tley_cr\u00FCe>\n  <iron_maiden country=\"uk\">Iron Maiden is a British heavy metal band formed in 1975.</iron_maiden>\n</bands>\n",
                    @doc.to_s)
     else
-      assert_equal("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<bands genre=\"metal\">\n  <m\303\266tley_cr\303\274e country=\"us\">An American heavy metal band formed in Los Angeles, California in 1981.</m\303\266tley_cr\303\274e>\n  <iron_maiden country=\"uk\">British heavy metal band formed in 1975.</iron_maiden>\n</bands>\n",
+      assert_equal("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<bands genre=\"metal\">\n  <m\303\266tley_cr\303\274e country=\"us\">M\303\266tley Cr\303\274e is an American heavy metal band formed in Los Angeles, California in 1981.</m\303\266tley_cr\303\274e>\n  <iron_maiden country=\"uk\">Iron Maiden is a British heavy metal band formed in 1975.</iron_maiden>\n</bands>\n",
                    @doc.to_s)
     end
   end
@@ -46,7 +46,7 @@ class TestDocumentWrite < Test::Unit::TestCase
       assert_equal("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<bands genre=\"metal\">\n<m\u00F6tley_cr\u00FCe country=\"us\">M\u00F6tley Cr\u00FCe is an American heavy metal band formed in Los Angeles, California in 1981.</m\u00F6tley_cr\u00FCe>\n<iron_maiden country=\"uk\">Iron Maiden is a British heavy metal band formed in 1975.</iron_maiden>\n</bands>\n",
                    value)
     else
-      assert_equal("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<bands genre=\"metal\">\n<m\303\266tley_cr\303\274e country=\"us\">An American heavy metal band formed in Los Angeles, California in 1981.</m\303\266tley_cr\303\274e>\n<iron_maiden country=\"uk\">British heavy metal band formed in 1975.</iron_maiden>\n</bands>\n",
+      assert_equal("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<bands genre=\"metal\">\n<m\303\266tley_cr\303\274e country=\"us\">M\303\266tley Cr\303\274e is an American heavy metal band formed in Los Angeles, California in 1981.</m\303\266tley_cr\303\274e>\n<iron_maiden country=\"uk\">Iron Maiden is a British heavy metal band formed in 1975.</iron_maiden>\n</bands>\n",
                    value)
     end
   ensure
@@ -61,7 +61,7 @@ class TestDocumentWrite < Test::Unit::TestCase
       assert_equal("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<bands genre=\"metal\"><m\u00F6tley_cr\u00FCe country=\"us\">M\u00F6tley Cr\u00FCe is an American heavy metal band formed in Los Angeles, California in 1981.</m\u00F6tley_cr\u00FCe><iron_maiden country=\"uk\">Iron Maiden is a British heavy metal band formed in 1975.</iron_maiden></bands>\n",
                    value)
     else
-      assert_equal("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<bands genre=\"metal\"><m\303\266tley_cr\303\274e country=\"us\">An American heavy metal band formed in Los Angeles, California in 1981.</m\303\266tley_cr\303\274e><iron_maiden country=\"uk\">British heavy metal band formed in 1975.</iron_maiden></bands>\n",
+      assert_equal("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<bands genre=\"metal\"><m\303\266tley_cr\303\274e country=\"us\">M\303\266tley Cr\303\274e is an American heavy metal band formed in Los Angeles, California in 1981.</m\303\266tley_cr\303\274e><iron_maiden country=\"uk\">Iron Maiden is a British heavy metal band formed in 1975.</iron_maiden></bands>\n",
                    value)
     end
   end
@@ -78,7 +78,7 @@ class TestDocumentWrite < Test::Unit::TestCase
       assert_equal("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<bands genre=\"metal\">\n  <m\u00F6tley_cr\u00FCe country=\"us\">M\u00F6tley Cr\u00FCe is an American heavy metal band formed in Los Angeles, California in 1981.</m\u00F6tley_cr\u00FCe>\n  <iron_maiden country=\"uk\">Iron Maiden is a British heavy metal band formed in 1975.</iron_maiden>\n</bands>\n",
                    value)
     else
-      assert_equal("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<bands genre=\"metal\">\n  <m\303\266tley_cr\303\274e country=\"us\">An American heavy metal band formed in Los Angeles, California in 1981.</m\303\266tley_cr\303\274e>\n  <iron_maiden country=\"uk\">British heavy metal band formed in 1975.</iron_maiden>\n</bands>\n",
+      assert_equal("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<bands genre=\"metal\">\n  <m\303\266tley_cr\303\274e country=\"us\">M\303\266tley Cr\303\274e is an American heavy metal band formed in Los Angeles, California in 1981.</m\303\266tley_cr\303\274e>\n  <iron_maiden country=\"uk\">Iron Maiden is a British heavy metal band formed in 1975.</iron_maiden>\n</bands>\n",
                    value)
     end
 
@@ -91,7 +91,7 @@ class TestDocumentWrite < Test::Unit::TestCase
       assert_equal("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n<bands genre=\"metal\">\n  <m\xF6tley_cr\xFCe country=\"us\">M\xF6tley Cr\xFCe is an American heavy metal band formed in Los Angeles, California in 1981.</m\xF6tley_cr\xFCe>\n  <iron_maiden country=\"uk\">Iron Maiden is a British heavy metal band formed in 1975.</iron_maiden>\n</bands>\n".force_encoding(Encoding::ISO8859_1),
                    @doc.to_s(:encoding => XML::Encoding::ISO_8859_1))
     else
-      assert_equal("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n<bands genre=\"metal\">\n  <m\366tley_cr\374e country=\"us\">An American heavy metal band formed in Los Angeles, California in 1981.</m\366tley_cr\374e>\n  <iron_maiden country=\"uk\">British heavy metal band formed in 1975.</iron_maiden>\n</bands>\n",
+      assert_equal("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n<bands genre=\"metal\">\n  <m\366tley_cr\374e country=\"us\">M\366tley Cr\374e is an American heavy metal band formed in Los Angeles, California in 1981.</m\366tley_cr\374e>\n  <iron_maiden country=\"uk\">Iron Maiden is a British heavy metal band formed in 1975.</iron_maiden>\n</bands>\n",
                    @doc.to_s(:encoding => XML::Encoding::ISO_8859_1))
     end
     
@@ -115,8 +115,8 @@ class TestDocumentWrite < Test::Unit::TestCase
       assert_equal("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<bands genre=\"metal\">\n  <m\u00F6tley_cr\u00FCe country=\"us\">M\u00F6tley Cr\u00FCe is an American heavy metal band formed in Los Angeles, California in 1981.</m\u00F6tley_cr\u00FCe>\n  <iron_maiden country=\"uk\">Iron Maiden is a British heavy metal band formed in 1975.</iron_maiden>\n</bands>\n",
                     contents)
     else
-      contents = File.read(temp_filename, nil, nil, :encoding => Encoding::UTF_8)
-      assert_equal("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<bands genre=\"metal\">\n  <m\303\266tley_cr\303\274e country=\"us\">An American heavy metal band formed in Los Angeles, California in 1981.</m\303\266tley_cr\303\274e>\n  <iron_maiden country=\"uk\">British heavy metal band formed in 1975.</iron_maiden>\n</bands>\n",
+      contents = File.read(temp_filename)
+      assert_equal("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<bands genre=\"metal\">\n  <m\303\266tley_cr\303\274e country=\"us\">M\303\266tley Cr\303\274e is an American heavy metal band formed in Los Angeles, California in 1981.</m\303\266tley_cr\303\274e>\n  <iron_maiden country=\"uk\">Iron Maiden is a British heavy metal band formed in 1975.</iron_maiden>\n</bands>\n",
                  contents)
     end
   ensure
@@ -135,7 +135,7 @@ class TestDocumentWrite < Test::Unit::TestCase
                  contents)
     else
       contents = File.read(temp_filename)
-      assert_equal("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<bands genre=\"metal\"><m\303\266tley_cr\303\274e country=\"us\">An American heavy metal band formed in Los Angeles, California in 1981.</m\303\266tley_cr\303\274e><iron_maiden country=\"uk\">British heavy metal band formed in 1975.</iron_maiden></bands>\n",
+      assert_equal("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<bands genre=\"metal\"><m\303\266tley_cr\303\274e country=\"us\">M\303\266tley Cr\303\274e is an American heavy metal band formed in Los Angeles, California in 1981.</m\303\266tley_cr\303\274e><iron_maiden country=\"uk\">Iron Maiden is a British heavy metal band formed in 1975.</iron_maiden></bands>\n",
                  contents)
     end
   ensure
