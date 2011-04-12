@@ -76,6 +76,7 @@ static VALUE rxml_encoding_to_s(VALUE klass, VALUE encoding)
     return rxml_str_new2(xencoding, xencoding);
 }
 
+#ifdef HAVE_RUBY_ENCODING_H
 VALUE rxml_xml_encoding_to_rb_encoding(VALUE klass, xmlCharEncoding xmlEncoding)
 {
   ID encoding_name;
@@ -157,6 +158,7 @@ VALUE rxml_encoding_to_rb_encoding(VALUE klass, VALUE encoding)
 {
   return rxml_xml_encoding_to_rb_encoding(klass, NUM2INT(encoding));
 }
+#endif
 
 void rxml_init_encoding(void)
 {
