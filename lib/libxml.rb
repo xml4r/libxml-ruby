@@ -1,7 +1,12 @@
 # encoding: UTF-8
 
 # Load the C-based binding.
-require "libxml_ruby"
+begin
+  RUBY_VERSION =~ /(\d+.\d+)/
+  require "#{$1}/libxml_ruby"
+rescue LoadError
+  require "libxml_ruby"
+end
 
 # Load Ruby supporting code.
 require 'libxml/error'

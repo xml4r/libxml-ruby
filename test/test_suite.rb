@@ -1,4 +1,6 @@
 # encoding: UTF-8
+dir = File.dirname(__FILE__)
+Dir.chdir(dir)
 
 require './tc_attributes'
 require './tc_attr'

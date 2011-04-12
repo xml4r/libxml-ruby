@@ -1,37 +1,31 @@
 #!/usr/bin/env ruby
 
-require 'rubygems'
-require 'rake/gempackagetask'
-require 'rake/testtask'
-require 'rake/rdoctask'
-require 'grancher/task'
-require 'yaml'
+require "rubygems"
+require "rake/extensiontask"
+require "rake/testtask"
+require "rake/rdoctask"
+require "grancher/task"
+require "yaml"
+
+GEM_NAME = "libxml-ruby"
+SO_NAME  = "libxml_ruby"
 
 # Read the spec file
-spec = Gem::Specification.load("libxml-ruby.gemspec")
+spec = Gem::Specification.load("#{GEM_NAME}.gemspec")
 
-# Rake task to build the default package
+# Setup native gems
+Rake::ExtensionTask.new do |ext|
+  ext.gem_spec = spec
+  ext.name = SO_NAME
+  ext.ext_dir = "ext/libxml"
+  ext.lib_dir = "lib/#{RUBY_VERSION.sub(/\.\d$/, '')}"
+  ext.config_options << "--with-xml2-include=C:/MinGW/local/include/libxml2"
+end
+
+# Setup generic gem
 Rake::GemPackageTask.new(spec) do |pkg|
   pkg.package_dir = 'pkg'
   pkg.need_tar    = false
-end
-
-# ------- Windows GEM ----------
-if RUBY_PLATFORM.match(/win32|mingw32/)
-  binaries = (FileList['ext/mingw/*.so',
-                       'ext/mingw/*.dll*'])
-
-  # Windows specification
-  win_spec =spec.clone
-  win_spec.extensions = ['ext/mingw/Rakefile']
-  win_spec.platform = Gem::Platform::CURRENT
-  win_spec.files += binaries.to_a
-
-  # Rake task to build the windows package
-  Rake::GemPackageTask.new(win_spec) do |pkg|
-    pkg.package_dir = 'pkg'
-    pkg.need_tar    = false
-  end
 end
 
 # ---------  RDoc Documentation ---------
@@ -49,35 +43,13 @@ Rake::RDocTask.new("rdoc") do |rdoc|
                           'ext/**/*.c',
                           'lib/**/*.rb',
                           'README.rdoc',
-                          'TODO',
                           'HISTORY',
                           'LICENSE')
 end
 
 Rake::TestTask.new do |t|
   t.libs << "test"
-  t.libs << "lib"
-  t.libs << "ext/libxml"
-end
-
-if not RUBY_PLATFORM.match(/mswin32/i)
-  Rake::Task[:test].prerequisites << :extensions
-end
-
-task :default => :package
-task :build => :extensions
-task :extension => :build
-
-ext = Config::CONFIG["DLEXT"]
-task :extensions => ["ext/libxml/libxml_ruby.#{ext}"]
-
-namespace :extensions do
-  task :clean do
-    Dir.chdir("ext/libxml") do
-      sh "rm -f Makefile"
-      sh "rm -f *.{o,so,bundle,log}"
-    end
-  end
+  t.verbose = true
 end
 
 # ---------  Publish Website to Github ---------
