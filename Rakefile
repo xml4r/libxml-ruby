@@ -13,7 +13,7 @@ SO_NAME  = "libxml_ruby"
 # Read the spec file
 spec = Gem::Specification.load("#{GEM_NAME}.gemspec")
 
-# Setup native gems
+# Setup compile tasks
 Rake::ExtensionTask.new do |ext|
   ext.gem_spec = spec
   ext.name = SO_NAME
@@ -28,7 +28,23 @@ Rake::GemPackageTask.new(spec) do |pkg|
   pkg.need_tar    = false
 end
 
-# ---------  RDoc Documentation ---------
+# Setup Windows Gem
+if RUBY_PLATFORM.match(/win32|mingw32/)
+  binaries = (FileList['lib/**/*.so'])
+
+  # Windows specification
+  win_spec = spec.clone
+  win_spec.platform = Gem::Platform::CURRENT
+  win_spec.files += binaries.to_a
+
+  # Rake task to build the windows package
+  Rake::GemPackageTask.new(win_spec) do |pkg|
+    pkg.package_dir = 'pkg'
+    pkg.need_tar = false
+  end
+end
+
+# RDoc Task
 desc "Generate rdoc documentation"
 Rake::RDocTask.new("rdoc") do |rdoc|
   rdoc.rdoc_dir = 'doc/libxml-ruby/rdoc'
@@ -47,12 +63,13 @@ Rake::RDocTask.new("rdoc") do |rdoc|
                           'LICENSE')
 end
 
+# Test Task
 Rake::TestTask.new do |t|
   t.libs << "test"
   t.verbose = true
 end
 
-# ---------  Publish Website to Github ---------
+# Publish Website to Github
 Grancher::Task.new do |g|
   # push gh-pages
   g.branch  = 'gh-pages'

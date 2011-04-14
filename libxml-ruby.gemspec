@@ -19,7 +19,7 @@ FILES = FileList[
   'ext/mingw/build.rake',
   'ext/vc/*.sln',
   'ext/vc/*.vcproj',
-  'lib/**/*',
+  'lib/**/*.rb',
   'script/**/*',
   'test/**/*'
 ]

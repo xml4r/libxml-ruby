@@ -238,6 +238,7 @@ static VALUE rxml_reader_string(int argc, VALUE *argv, VALUE klass)
     VALUE encoding = Qnil;
     VALUE parserOptions = Qnil;
 
+    int foo;
     Check_Type(options, T_HASH);
 
     baseurl = rb_hash_aref(options, BASE_URI_SYMBOL);
@@ -458,15 +459,19 @@ static VALUE rxml_reader_read_attr_value(VALUE self)
  */
 static VALUE rxml_reader_read_inner_xml(VALUE self)
 {
-  VALUE returnValue = Qnil;
+  VALUE result = Qnil;
+  xmlTextReaderPtr xReader = rxml_text_reader_get(self);
 
-  xmlChar *result = xmlTextReaderReadInnerXml(rxml_text_reader_get(self));
-  if (result != NULL) {
-    returnValue = rb_str_new2((const char*) result);
-    xmlFree(result);
+  xmlChar *xml = xmlTextReaderReadInnerXml(xReader);
+
+  if (xml != NULL)
+  {
+    const xmlChar *xencoding = xmlTextReaderConstEncoding(xReader);
+    result = rxml_str_new2((const char*) xml, xencoding);
+    xmlFree(xml);
   }
 
-  return returnValue;
+  return result;
 }
 
 /*
@@ -480,15 +485,19 @@ static VALUE rxml_reader_read_inner_xml(VALUE self)
  */
 static VALUE rxml_reader_read_outer_xml(VALUE self)
 {
-  VALUE returnValue = Qnil;
+  VALUE result = Qnil;
+  xmlTextReaderPtr xReader = rxml_text_reader_get(self);
 
-  xmlChar *result = xmlTextReaderReadOuterXml(rxml_text_reader_get(self));
-  if (result != NULL) {
-    returnValue = rb_str_new2((const char*)result);
-    xmlFree(result);
+  xmlChar *xml = xmlTextReaderReadOuterXml(xReader);
+
+  if (xml != NULL)
+  {
+    const xmlChar *xencoding = xmlTextReaderConstEncoding(xReader);
+    result = rxml_str_new2((const char*) xml, xencoding);
+    xmlFree(xml);
   }
 
-  return returnValue;
+  return result;
 }
 
 /*
@@ -513,15 +522,19 @@ static VALUE rxml_reader_read_state(VALUE self)
  */
 static VALUE rxml_reader_read_string(VALUE self)
 {
-  VALUE returnValue = Qnil;
+  VALUE result = Qnil;
+  xmlTextReaderPtr xReader = rxml_text_reader_get(self);
 
-  xmlChar *result = xmlTextReaderReadString(rxml_text_reader_get(self));
-  if (result != NULL) {
-    returnValue = rb_str_new2((const char*)result);
-    xmlFree(result);
+  xmlChar *xml = xmlTextReaderReadString(xReader);
+
+  if (xml != NULL)
+  {
+    const xmlChar *xencoding = xmlTextReaderConstEncoding(xReader);
+    result = rxml_str_new2((const char*) xml, xencoding);
+    xmlFree(xml);
   }
 
-  return returnValue;
+  return result;
 }
 
 /*
@@ -570,8 +583,11 @@ rxml_reader_schema_validate(VALUE self, VALUE xsd)
  */
 static VALUE rxml_reader_name(VALUE self)
 {
-  const xmlChar *result = xmlTextReaderConstName(rxml_text_reader_get(self));
-  return (result == NULL ? Qnil : rb_str_new2((const char*)result));
+  xmlTextReaderPtr xReader = rxml_text_reader_get(self);
+  const xmlChar *result = xmlTextReaderConstName(xReader);
+  const xmlChar *xencoding = xmlTextReaderConstEncoding(xReader);
+
+  return (result == NULL ? Qnil : rxml_str_new2(result, xencoding));
 }
 
 /*
@@ -582,8 +598,11 @@ static VALUE rxml_reader_name(VALUE self)
  */
 static VALUE rxml_reader_local_name(VALUE self)
 {
-  const xmlChar *result = xmlTextReaderConstLocalName(rxml_text_reader_get(self));
-  return (result == NULL ? Qnil : rb_str_new2((const char*)result));
+  xmlTextReaderPtr xReader = rxml_text_reader_get(self);
+  const xmlChar *result = xmlTextReaderConstLocalName(xReader);
+  const xmlChar *xencoding = xmlTextReaderConstEncoding(xReader);
+
+  return (result == NULL ? Qnil : rxml_str_new2(result, xencoding));
 }
 
 /*
@@ -631,8 +650,11 @@ static VALUE rxml_reader_encoding(VALUE self)
  */
 static VALUE rxml_reader_base_uri(VALUE self)
 {
-  const xmlChar *result = xmlTextReaderConstBaseUri(rxml_text_reader_get(self));
-  return (result == NULL ? Qnil : rb_str_new2((const char*)result));
+  xmlTextReaderPtr xReader = rxml_text_reader_get(self);
+  const xmlChar *result = xmlTextReaderConstBaseUri(xReader);
+  const xmlChar *xencoding = xmlTextReaderConstEncoding(xReader);
+
+  return (result == NULL ? Qnil : rxml_str_new2(result, xencoding));
 }
 
 /*
@@ -643,8 +665,11 @@ static VALUE rxml_reader_base_uri(VALUE self)
  */
 static VALUE rxml_reader_namespace_uri(VALUE self)
 {
-  const xmlChar *result = xmlTextReaderConstNamespaceUri(rxml_text_reader_get(self));
-  return (result == NULL ? Qnil : rb_str_new2((const char*)result));
+  xmlTextReaderPtr xReader = rxml_text_reader_get(self);
+  const xmlChar *result = xmlTextReaderConstNamespaceUri(xReader);
+  const xmlChar *xencoding = xmlTextReaderConstEncoding(xReader);
+
+  return (result == NULL ? Qnil : rxml_str_new2(result, xencoding));
 }
 
 /*
@@ -655,8 +680,11 @@ static VALUE rxml_reader_namespace_uri(VALUE self)
  */
 static VALUE rxml_reader_value(VALUE self)
 {
-  const xmlChar *result = xmlTextReaderConstValue(rxml_text_reader_get(self));
-  return (result == NULL ? Qnil : rb_str_new2((const char*)result));
+  xmlTextReaderPtr xReader = rxml_text_reader_get(self);
+  const xmlChar *result = xmlTextReaderConstValue(xReader);
+  const xmlChar *xencoding = xmlTextReaderConstEncoding(xReader);
+
+  return (result == NULL ? Qnil : rxml_str_new2(result, xencoding));
 }
 
 /*
@@ -667,8 +695,11 @@ static VALUE rxml_reader_value(VALUE self)
  */
 static VALUE rxml_reader_prefix(VALUE self)
 {
-  const xmlChar *result = xmlTextReaderConstPrefix(rxml_text_reader_get(self));
-  return (result == NULL ? Qnil : rb_str_new2((const char*)result));
+  xmlTextReaderPtr xReader = rxml_text_reader_get(self);
+  const xmlChar *result = xmlTextReaderConstPrefix(xReader);
+  const xmlChar *xencoding = xmlTextReaderConstEncoding(xReader);
+
+  return (result == NULL ? Qnil : rxml_str_new2(result, xencoding));
 }
 
 /*
@@ -717,8 +748,11 @@ static VALUE rxml_reader_standalone(VALUE self)
  */
 static VALUE rxml_reader_xml_lang(VALUE self)
 {
-  const xmlChar *result = xmlTextReaderConstXmlLang(rxml_text_reader_get(self));
-  return (result == NULL ? Qnil : rb_str_new2((const char*)result));
+  xmlTextReaderPtr xReader = rxml_text_reader_get(self);
+  const xmlChar *result = xmlTextReaderConstXmlLang(xReader);
+  const xmlChar *xencoding = xmlTextReaderConstEncoding(xReader);
+
+  return (result == NULL ? Qnil : rxml_str_new2(result, xencoding));
 }
 
 /*
@@ -729,8 +763,11 @@ static VALUE rxml_reader_xml_lang(VALUE self)
  */
 static VALUE rxml_reader_xml_version(VALUE self)
 {
-  const xmlChar *result = xmlTextReaderConstXmlVersion(rxml_text_reader_get(self));
-  return (result == NULL ? Qnil : rb_str_new2((const char*)result));
+  xmlTextReaderPtr xReader = rxml_text_reader_get(self);
+  const xmlChar *result = xmlTextReaderConstXmlVersion(xReader);
+  const xmlChar *xencoding = xmlTextReaderConstEncoding(xReader);
+
+  return (result == NULL ? Qnil : rxml_str_new2(result, xencoding));
 }
 
 /*
@@ -768,18 +805,19 @@ static VALUE rxml_reader_attribute(VALUE self, VALUE key)
 {
   xmlTextReaderPtr reader;
   xmlChar *attr;
+  xmlTextReaderPtr xReader = rxml_text_reader_get(self);
+  const xmlChar *xencoding = xmlTextReaderConstEncoding(xReader);
 
-  reader = rxml_text_reader_get(self);
 
   if (TYPE(key) == T_FIXNUM)
   {
-    attr = xmlTextReaderGetAttributeNo(reader, FIX2INT(key));
+    attr = xmlTextReaderGetAttributeNo(xReader, FIX2INT(key));
   }
   else
   {
-    attr = xmlTextReaderGetAttribute(reader, (const xmlChar *) StringValueCStr(key));
+    attr = xmlTextReaderGetAttribute(xReader, (const xmlChar *) StringValueCStr(key));
   }
-  return (attr == NULL ? Qnil : rb_str_new2((const char*)attr));
+  return (attr == NULL ? Qnil : rxml_str_new2(attr, xencoding));
 }
 
 /*
@@ -791,9 +829,11 @@ static VALUE rxml_reader_attribute(VALUE self, VALUE key)
  */
 static VALUE rxml_reader_lookup_namespace(VALUE self, VALUE prefix)
 {
-  const xmlChar *result = xmlTextReaderLookupNamespace(rxml_text_reader_get(
-      self), (const xmlChar *) StringValueCStr(prefix));
-  return (result == NULL ? Qnil : rb_str_new2((const char*)result));
+  xmlTextReaderPtr xReader = rxml_text_reader_get(self);
+  const xmlChar *result = xmlTextReaderLookupNamespace(xReader, (const xmlChar *) StringValueCStr(prefix));
+  const xmlChar *xencoding = xmlTextReaderConstEncoding(xReader);
+
+  return (result == NULL ? Qnil : rxml_str_new2(result, xencoding));
 }
 
 /*
