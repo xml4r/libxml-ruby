@@ -228,7 +228,7 @@ class TestParser < Test::Unit::TestCase
     # otherwise an exception will be thrown.
     XML::Error.set_handler {|error|}
 
-    max_fd = if RUBY_PLATFORM.match(/mswin32/i)
+    max_fd = if RUBY_PLATFORM.match(/mswin32|mingw/i)
       500
     else
       (`ulimit -n`.chomp.to_i) + 1
