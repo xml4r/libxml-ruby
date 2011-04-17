@@ -191,5 +191,20 @@ class TestXPath < Test::Unit::TestCase
 		nodes = doc.find("//object/param[translate(@name, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'wmode']")
 		assert_not_nil nodes
 	end
-  
+
+  def test_invalid_expression
+    xml = LibXML::XML::Document.string('<a></a>')
+
+    # Using the expression twice used to cause a Segmentation Fault
+    error = assert_raise(XML::Error) do
+      xml.find('//a/')
+    end
+    assert_equal("Error: Invalid expression.", error.to_s)
+
+    # Try again - this used to cause a Segmentation Fault
+    error = assert_raise(XML::Error) do
+      xml.find('//a/')
+    end
+    assert_equal("Error: Invalid expression.", error.to_s)
+  end
 end
