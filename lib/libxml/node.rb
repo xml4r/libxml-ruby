@@ -228,12 +228,12 @@ module LibXML
         node_type == DOCB_DOCUMENT_NODE
       end
 
-      # Specifies if this is an docbook node
+      # Specifies if this is an doctype node
       def doctype?
         node_type == DOCUMENT_TYPE_NODE
       end
 
-      # Specifies if this is an DOCTYPE node
+      # Specifies if this is an document node
       def document?
         node_type == DOCUMENT_NODE
       end

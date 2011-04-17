@@ -143,7 +143,7 @@ module LibXML
       end
       # :enddoc:
 
-      # Specifies if this is an DOCTYPE node
+      # Specifies if this is an document node
       def document?
         node_type == XML::Node::DOCUMENT_NODE
       end
