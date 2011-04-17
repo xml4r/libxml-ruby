@@ -83,3 +83,6 @@ Grancher::Task.new do |g|
   # and the rdoc directory
   g.directory 'doc/libxml-ruby/rdoc', 'rdoc'
 end
+
+desc "Build docs, and publish the website"
+task :publish_with_docs => [:rdoc, :publish]
