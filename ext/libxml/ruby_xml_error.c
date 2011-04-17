@@ -5,7 +5,6 @@
 VALUE eXMLError;
 static ID CALL_METHOD;
 static ID ERROR_HANDLER_ID;
-static ID ON_ERROR_METHOD;
 
 /*
  * Document-class: LibXML::XML::Error
@@ -144,18 +143,6 @@ static void structuredErrorFunc(void *userData, xmlErrorPtr xerror)
       userData = ctxt->userData;
   }
 
-  /* If the target has an on_error method call it.  This
-   gets around a bug in libxml where a sax's structured
-   error handler is overriden by the global error handler. */
-  if (userData)
-  {  
-    VALUE target = (VALUE) userData;
-    if (!NIL_P(target) && rb_respond_to(target, ON_ERROR_METHOD))
-    {
-      rb_funcall(target, ON_ERROR_METHOD, 1, error);
-    }
-  }
-
   /* Now call global handler */
   if (block != Qnil)
   {
@@ -172,7 +159,6 @@ void rxml_raise(xmlErrorPtr xerror)
 
 void rxml_init_error()
 {
-  ON_ERROR_METHOD = rb_intern("on_error");
   CALL_METHOD = rb_intern("call");
   ERROR_HANDLER_ID = rb_intern("@@__error_handler_callback__");
 
