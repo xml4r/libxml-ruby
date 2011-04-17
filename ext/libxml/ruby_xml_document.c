@@ -81,21 +81,6 @@ VALUE rxml_document_wrap(xmlDocPtr xdoc)
   return result;
 }
 
-static void LibXML_validity_warning(void * ctxt, const char * msg, va_list ap)
-{
-  if (rb_block_given_p())
-  {
-    char buff[1024];
-    snprintf(buff, 1024, msg, ap);
-    rb_yield(rb_ary_new3(2, rb_str_new2(buff), Qfalse));
-  }
-  else
-  {
-    fprintf(stderr, "warning -- found validity error: ");
-    fprintf(stderr, msg, ap);
-  }
-}
-
 /*
  * call-seq:
  *    XML::Document.alloc(xml_version = 1.0) -> document
@@ -771,21 +756,6 @@ static VALUE rxml_document_xinclude(VALUE self)
 #endif
 }
 
-void LibXML_validity_error(void * ctxt, const char * msg, va_list ap)
-{
-  if (rb_block_given_p())
-  {
-    char buff[1024];
-    snprintf(buff, 1024, msg, ap);
-    rb_yield(rb_ary_new3(2, rb_str_new2(buff), Qtrue));
-  }
-  else
-  {
-    fprintf(stderr, "error -- found validity error: ");
-    fprintf(stderr, msg, ap);
-  }
-}
-
 /*
  * call-seq:
  *    document.order_elements! 
@@ -806,10 +776,6 @@ static VALUE rxml_document_order_elements(VALUE self)
  *    document.validate_schema(schema) -> (true|false)
  *
  * Validate this document against the specified XML::Schema.
- *
- * If a block is provided it is used as an error handler for validaten errors.
- * The block is called with two argument, the message and a flag indication
- * if the message is an error (true) or a warning (false).
  */
 static VALUE rxml_document_validate_schema(VALUE self, VALUE schema)
 {
@@ -822,10 +788,6 @@ static VALUE rxml_document_validate_schema(VALUE self, VALUE schema)
   Data_Get_Struct(schema, xmlSchema, xschema);
 
   vptr = xmlSchemaNewValidCtxt(xschema);
-
-  xmlSchemaSetValidErrors(vptr,
-      (xmlSchemaValidityErrorFunc) LibXML_validity_error,
-      (xmlSchemaValidityWarningFunc) LibXML_validity_warning, NULL);
 
   is_invalid = xmlSchemaValidateDoc(vptr, xdoc);
   xmlSchemaFreeValidCtxt(vptr);
@@ -845,10 +807,6 @@ static VALUE rxml_document_validate_schema(VALUE self, VALUE schema)
  *    document.validate_schema(relaxng) -> (true|false)
  *
  * Validate this document against the specified XML::RelaxNG.
- *
- * If a block is provided it is used as an error handler for validaten errors.
- * The block is called with two argument, the message and a flag indication
- * if the message is an error (true) or a warning (false).
  */
 static VALUE rxml_document_validate_relaxng(VALUE self, VALUE relaxng)
 {
@@ -861,10 +819,6 @@ static VALUE rxml_document_validate_relaxng(VALUE self, VALUE relaxng)
   Data_Get_Struct(relaxng, xmlRelaxNG, xrelaxng);
 
   vptr = xmlRelaxNGNewValidCtxt(xrelaxng);
-
-  xmlRelaxNGSetValidErrors(vptr,
-      (xmlRelaxNGValidityErrorFunc) LibXML_validity_error,
-      (xmlRelaxNGValidityWarningFunc) LibXML_validity_warning, NULL);
 
   is_invalid = xmlRelaxNGValidateDoc(vptr, xdoc);
   xmlRelaxNGFreeValidCtxt(vptr);
@@ -896,8 +850,6 @@ static VALUE rxml_document_validate_dtd(VALUE self, VALUE dtd)
   Data_Get_Struct(dtd, xmlDtd, xdtd);
 
   ctxt.userData = &error;
-  ctxt.error = (xmlValidityErrorFunc) LibXML_validity_error;
-  ctxt.warning = (xmlValidityWarningFunc) LibXML_validity_warning;
 
   ctxt.nodeNr = 0;
   ctxt.nodeTab = NULL;
