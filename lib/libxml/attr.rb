@@ -48,6 +48,16 @@ module LibXML
         not self.ns.nil?
       end
 
+      # call-seq:
+      #   attr.namespacess -> XML::Namespaces
+      #
+      # Returns this node's XML::Namespaces object,
+      # which is used to access the namespaces
+      # associated with this node.
+      def namespaces
+        @namespaces ||= XML::Namespaces.new(self)
+      end
+      
       #
       # call-seq:
       #    attr.parent? -> (true|false)

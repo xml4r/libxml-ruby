@@ -14,14 +14,21 @@ class TestNamespaces < Test::Unit::TestCase
     @doc = nil
   end
 
-  def test_namespace
+  def test_namespace_node
     node = @doc.root
     ns = node.namespaces.namespace
     assert_equal('soap', ns.prefix)
     assert_equal('http://schemas.xmlsoap.org/soap/envelope/', ns.href)
   end
 
-  def test_set_namespace
+  def test_namespace_attr
+    node = @doc.root
+    attr = node.attributes.get_attribute('encodingStyle')
+    assert_equal('soap', attr.ns.prefix)
+    assert_equal('soap', attr.namespaces.namespace.prefix)
+  end
+
+  def test_set_namespace_node
     node = XML::Node.new('Envelope')
     assert_equal('<Envelope/>', node.to_s)
 
@@ -33,6 +40,35 @@ class TestNamespaces < Test::Unit::TestCase
     node.namespaces.namespace = ns
     assert_not_nil(node.namespaces.namespace)
     assert_equal("<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"/>", node.to_s)
+  end
+
+  def test_set_namespace_attribute
+    # Create node
+    node = XML::Node.new('Envelope')
+    assert_equal('<Envelope/>', node.to_s)
+
+    # Create attribute
+    attr = XML::Attr.new(node, "encodingStyle", "http://www.w3.org/2001/12/soap-encoding")
+    assert_equal('<Envelope encodingStyle="http://www.w3.org/2001/12/soap-encoding"/>',
+                 node.to_s)
+
+    # Create namespace attribute
+    ns = XML::Namespace.new(node, 'soap', 'http://schemas.xmlsoap.org/soap/envelope/')
+    assert_equal('<Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" encodingStyle="http://www.w3.org/2001/12/soap-encoding"/>',
+                  node.to_s)
+    assert_nil(node.namespaces.namespace)
+
+    # Now put the node in the soap namespace
+    node.namespaces.namespace = ns
+    assert_not_nil(node.namespaces.namespace)
+    assert_equal('<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" encodingStyle="http://www.w3.org/2001/12/soap-encoding"/>',
+                  node.to_s)
+
+    # Now put the attribute in the soap namespace
+    attr.namespaces.namespace = ns
+    assert_not_nil(node.namespaces.namespace)
+    assert_equal('<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" soap:encodingStyle="http://www.w3.org/2001/12/soap-encoding"/>',
+                  node.to_s)
   end
 
   def test_define_namespace
@@ -127,9 +163,6 @@ class TestNamespaces < Test::Unit::TestCase
   end
 
   def test_find_by_prefix
-    node = @doc.find_first('//ns1:getManufacturerNamesResponse',
-                           :ns1 => 'http://services.somewhere.com')
-
     namespace = @doc.root.namespaces.find_by_prefix('soap')
 
     assert_instance_of(XML::Namespace, namespace)
