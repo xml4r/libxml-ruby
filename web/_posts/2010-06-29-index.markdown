@@ -20,21 +20,27 @@ these are good libraries to consider, as demonstrated by the informal benchmark 
     <tr><td> xpath         </td><td> 0.013269 </td><td> 2.981499 </td></tr>
 </table>
 
-## Download
 
-You can find the latest release at:
+## Installation
+Installation is very simple - just issue the appropriate command, e.g:
 
-<pre>
-          <a href="http://rubyforge.org/frs/?group_id=494">http://rubyforge.org/frs/?group_id=494</a>
-</pre>
+      gem install -r libxml-ruby
 
-Libxml-Ruby is also available for installation via <a href="http://rubygems.rubyforge.org">Rubygems</a>
--- see the <a href="install.xml">installation page</a>	for details.
+Note that depending on your setup you may need to run this as root:
 
-## Project Status 
+      su -c 'gem install -r libxml-ruby'
+
+During installation Gems should build and install the extension to the correct location.
+
+## Windows Support
+libxml-ruby comes with prebuilt Windows binaries for both Ruby 1.8 and 1.9.
 
 
-The code has now been updated to work with Ruby 1.8, and is compiling cleanly
-and working well with GCC 4.x. We still have a number of open bugs to address,
-which is being done as we work toward a 0.4.0 release and the library is
-generally fairly stable in use.
+## Prerequisites
+libxml requires a few other libraries to be installed in order to build and function properly.
+
+	  * libm      (math routines: very standard)
+	  * libz      (zlib)
+	  * libiconv
+	  * libxml2
+	
