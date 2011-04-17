@@ -204,7 +204,7 @@ class TestReader < Test::Unit::TestCase
 
     reader.read
     assert_equal(reader.base_uri, "http://libxml.rubyforge.org")
-    assert_equal(Encoding::UTF_8, reader.base_uri.encoding)
+    assert_equal(::Encoding::UTF_8, reader.base_uri.encoding) if defined?(::Encoding)
   end
 
   def test_options
