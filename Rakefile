@@ -3,7 +3,7 @@
 require "rubygems"
 require "rake/extensiontask"
 require "rake/testtask"
-require "rake/rdoctask"
+require 'hanna/rdoctask'
 require "grancher/task"
 require "yaml"
 
@@ -36,6 +36,9 @@ if RUBY_PLATFORM.match(/win32|mingw32/)
   win_spec = spec.clone
   win_spec.platform = Gem::Platform::CURRENT
   win_spec.files += binaries.to_a
+
+  # Unset extensions
+  win_spec.extensions = nil
 
   # Rake task to build the windows package
   Rake::GemPackageTask.new(win_spec) do |pkg|
