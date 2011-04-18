@@ -15,10 +15,8 @@ FILES = FileList[
   'ext/libxml/*.h',
   'ext/libxml/*.c',
   'ext/libxml/*.rb',
-  'ext/mingw/Rakefile',
-  'ext/mingw/build.rake',
   'ext/vc/*.sln',
-  'ext/vc/*.vcproj',
+  'ext/vc/*.vcprojx',
   'lib/**/*.rb',
   'script/**/*',
   'test/**/*'
