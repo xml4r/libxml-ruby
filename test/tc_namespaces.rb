@@ -127,7 +127,7 @@ class TestNamespaces < Test::Unit::TestCase
     node = @doc.find_first('//ns1:IdAndName',
                            :ns1 => 'http://domain.somewhere.com')
 
-    namespaces = node.namespaces.each do |namespace|
+    node.namespaces.each do |namespace|
       assert_instance_of(XML::Namespace, namespace)
     end
   end
