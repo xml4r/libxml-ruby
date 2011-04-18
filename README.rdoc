@@ -75,9 +75,9 @@ then install the libxslt gem which is available at
 http://rubyforge.org/projects/libxsl/.
 
 == Usage
-For information about using libxml-ruby please refer
-to its documentation at http://libxml.rubyforge.org/rdoc/index.html.
-Some tutorials are also available at https://github.com/xml4r/libxml-ruby/wiki.
+For information about using libxml-ruby please refer to its documentation at
+http://xml4r.github.com/libxml-ruby/rdoc/index.html Some tutorials are also
+available at https://github.com/xml4r/libxml-ruby/wiki.
 
 All libxml classes are in the LibXML::XML module. The easiest
 way to use libxml is to require 'xml'.  This will mixin
