@@ -201,7 +201,7 @@ class TestSaxParser < Test::Unit::TestCase
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE Results SYSTEM "results.dtd">
 <Results>
-  <a>a1</a>
+<a>a1</a>
 </Results>
 EOS
     parser = XML::SaxParser.string(xml)
@@ -272,5 +272,49 @@ EOS
     assert_equal(1, error.int1)
     assert_equal(1, error.int2)
     assert_nil(error.node)
+  end
+
+  def test_parse_seg_fail
+    xml = <<-EOS
+      <?xml version="1.0" encoding="ISO-8859-1" ?>
+      <Products>
+        <Product>
+          <ProductDescription>
+            AQUALIA THERMAL Lichte cr├иme - Versterkende & kalmerende 24 u hydraterende verzorging<br />
+            Huid wordt continu gehydrateerd, intens versterkt en gekalmeerd.<br />
+            Hypoallergeen. Geschikt voor de gevoelige huid.<br />
+            <br />
+            01.EFFECTIVITEIT<br />
+            Intensief gehydrateerd, de huid voelt gekalmeerd. Ze voelt de hele dag soepel en fluweelzacht aan, zonder een trekkerig gevoel. De huid is elastischer, soepeler en stralender. Doeltreffendheid getest onder dermatologisch toezicht. <br />
+            <br />
+            02.GEBRUIK<br />
+            's Morgens en/ of 's avonds aanbrengen. <br />
+            <br />
+            03.ACTIEVE INGREDIENTEN<br />
+            Technologische innovatie: 24 u continue cellulaire vochtnevel. Voor de 1ste keer worden Thermaal Bronwater van Vichy, rijk aan zeldzame mineralen en Actief HyaluronineтДв verwerkt in microcapsules, die deze vervolgens verspreiden in de cellen. <br />
+            <br />
+            04.TEXTUUR<br />
+            De lichte cr├иme is verfrissend en trekt makkelijk in. Niet vet en niet kleverig. Zonder 'maskereffect'. <br />
+            <br />
+            05.GEUR<br />
+            Geparfumeerd <br />
+            <br />
+            06.INHOUD<br />
+            40 ml tube <br />
+          </ProductDescription>
+        </Product>
+      </Products>
+    EOS
+
+    parser = XML::SaxParser.string(xml)
+    parser.callbacks = TestCaseCallbacks.new
+
+    error = assert_raise(XML::Error) do
+      parser.parse
+    end
+    assert_equal("Fatal error: xmlParseEntityRef: no name at :5.", error.to_s)
+
+    # Check callbacks
+    result = parser.callbacks.result
   end
 end
