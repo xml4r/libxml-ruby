@@ -152,8 +152,8 @@ ruby/lib/ruby/1.8/rdoc_old.
 
 If you have any questions about using libxml-ruby, please send them to
 libxml-devel@rubyforge.org.  If you have found any bugs in libxml-devel,
-or have developed new patches, please submit them to Ruby Forge at
-http://rubyforge.org/tracker/?group_id=494.
+or have developed new patches, please submit them to Git Hub at
+https://github.com/xml4r/libxml-ruby/issues.
 
 == License
 See LICENSE for license information.
