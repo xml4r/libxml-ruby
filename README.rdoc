@@ -134,12 +134,14 @@ From https://svn.concord.org/svn/projects/trunk/common/ruby/xml_benchmarks/
 
 
 == Documentation
-Documentation is available via rdoc.  To generate the documentation,
-run the the command 'rake doc'.  libxml-ruby's online documentation
-is generated using Hanna.  To use hanna:
+Documentation is available via rdoc, and is installed automatically with the
+gem.
 
-  gem install mislav-hanna
-  rake rdoc RDOCOPT="-S -T hanna"
+libxml-ruby's online documentation is generated using Hanna.  To generate
+documentation from source:
+
+  gem install hanna
+  rake rdoc
 
 Note that older versions of Rdoc, which ship with Ruby 1.8.x, will report
 a number of errors.  To avoid them, install Rdoc 2.1 or higher from
