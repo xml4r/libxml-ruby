@@ -48,7 +48,8 @@ end
 
 unless have_library('z', 'inflate') or
        have_library('zlib', 'inflate') or
-       have_library('zlib1', 'inflate')
+       have_library('zlib1', 'inflate') or
+       have_library('libz', 'inflate')
   crash('need zlib')
 else
   $defs.push('-DHAVE_ZLIB_H')

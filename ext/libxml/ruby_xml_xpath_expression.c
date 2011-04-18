@@ -1,5 +1,3 @@
-/* $Id: rxml_xpath.c 461 2008-07-15 21:35:56Z cfis $ */
-
 /* Please see the LICENSE file for copyright and distribution information */
 
 #include "ruby_libxml.h"

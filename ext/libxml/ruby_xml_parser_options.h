@@ -1,5 +1,3 @@
-/* $Id: ruby_xml_parser.h 710 2009-01-20 05:30:51Z cfis $ */
-
 /* Please see the LICENSE file for copyright and distribution information */
 
 #ifndef __RXML_PARSER_OPTIONS__

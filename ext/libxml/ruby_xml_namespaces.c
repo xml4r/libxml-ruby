@@ -1,5 +1,3 @@
-/* $Id: ruby_xml_ns.c 660 2008-12-02 08:52:06Z cfis $ */
-
 /* Please see the LICENSE file for copyright and distribution information */
 
 #include "ruby_libxml.h"

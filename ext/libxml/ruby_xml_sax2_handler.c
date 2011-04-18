@@ -1,5 +1,3 @@
-/* $Id: ruby_xml_sax_parser.c 682 2008-12-09 05:31:13Z cfis $ */
-
 /* Please see the LICENSE file for copyright and distribution information */
 
 #include "ruby_libxml.h"

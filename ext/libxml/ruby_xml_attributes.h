@@ -1,5 +1,3 @@
-/* $Id: rxml_attributes.h 282 2008-07-01 06:44:30Z cfis $ */
-
 /* Please see the LICENSE file for copyright and distribution information */
 
 #ifndef __RXML_ATTRIBUTES__

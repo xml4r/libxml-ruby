@@ -166,9 +166,6 @@
     <ClInclude Include="..\..\libxml\ruby_xml_xpath_object.h" />
     <ClInclude Include="..\..\libxml\ruby_xml_xpointer.h" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="ReadMe.txt" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

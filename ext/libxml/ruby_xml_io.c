@@ -1,5 +1,3 @@
-/* $Id: libxml.c 734 2009-01-22 04:41:07Z cfis $ */
-
 /* Please see the LICENSE file for copyright and distribution information */
 
 #include "ruby_libxml.h"

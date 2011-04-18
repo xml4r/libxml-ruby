@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /* Please see the LICENSE file for copyright and distribution information */
 
 #ifndef __RXML_XINCLUDE__

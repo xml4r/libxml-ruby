@@ -1,5 +1,3 @@
-/* $Id: rxml_input.c 528 2008-11-15 23:43:48Z cfis $ */
-
 /* Please see the LICENSE file for copyright and distribution information */
 
 #include <stdarg.h>

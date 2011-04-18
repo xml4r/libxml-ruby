@@ -1,5 +1,3 @@
-/* $Id$ */
-
 #include "ruby_libxml.h"
 #include "ruby_xml_xinclude.h"
 

@@ -1,5 +1,3 @@
-/* $Id: rxml_attributes.c 300 2008-07-01 19:14:15Z cfis $ */
-
 /* Please see the LICENSE file for copyright and distribution information */
 
 /*

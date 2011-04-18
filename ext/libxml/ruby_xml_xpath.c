@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * Document-class: LibXML::XML::XPath
  *
