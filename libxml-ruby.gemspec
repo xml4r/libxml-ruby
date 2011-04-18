@@ -1,4 +1,4 @@
-# -*- encoding: utf-8 -*-
+# encoding: utf-8
 
 # Determine the current version of the software
 version = File.read('ext/libxml/ruby_xml_version.h').match(/\s*RUBY_LIBXML_VERSION\s*['"](\d.+)['"]/)[1]
@@ -46,5 +46,4 @@ Gem::Specification.new do |spec|
 
   spec.required_ruby_version = '>= 1.8.6'
   spec.date = DateTime.now
-  spec.has_rdoc = true
 end
