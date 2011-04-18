@@ -30,17 +30,13 @@ The easiest way to install libxml-ruby is via Ruby Gems.  To install:
 <tt>gem install libxml-ruby</tt>
 
 If you are running Windows, make sure to install the Win32 RubyGem
-which includes an already built binary file.  The binary is built
-against libxml2 version 2.7.2 and iconv version 1.11.  Both of these
-are also included as pre-built binaries, and should be put either in
-the libxml/lib directory or on the Windows path.  Due to a bug
-in ruby-gems, you cannot install the gem to a path that contains
-spaces (see http://rubyforge.org/tracker/?func=detail&aid=23003&group_id=126&atid=577).
+which includes  binary files for Ruby 1.8 and Ruby 1.9.  The binaries
+are built against libxml2 version 2.7.8, iconv version 1.13 and zlib
+version 1.2.5.
 
 The Windows binaries are built with MingW and include libxml-ruby, 
-libxml2 and iconv.  The gem also includes a Microsoft VC++ 2008
-solution.  If you wish to run a debug version of libxml-ruby on
-Windows, then it is highly recommended you use VC++.
+libxml2 and iconv.  The gem also includes a Microsoft VC++ 2010
+solution (useful for debugging).
 
 == Getting Started
 Using libxml is easy. First decide what parser you want to use:
@@ -78,8 +74,9 @@ then install the libxslt gem which is available at
 http://rubyforge.org/projects/libxsl/.
 
 == Usage
-For in-depth information about using libxml-ruby please refer
-to its online Rdoc documentation.
+For information about using libxml-ruby please refer
+to its documentation at http://libxml.rubyforge.org/rdoc/index.html.
+Some tutorials are also available at https://github.com/xml4r/libxml-ruby/wiki.
 
 All libxml classes are in the LibXML::XML module. The easiest
 way to use libxml is to require 'xml'.  This will mixin
@@ -136,7 +133,7 @@ From https://svn.concord.org/svn/projects/trunk/common/ruby/xml_benchmarks/
 
 
 == Documentation
-Documentation is provided via rdoc.  To generate the documentation,
+Documentation is available via rdoc.  To generate the documentation,
 run the the command 'rake doc'.  libxml-ruby's online documentation
 is generated using Hanna.  To use hanna:
 
