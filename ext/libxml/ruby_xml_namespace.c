@@ -49,14 +49,13 @@ VALUE rxml_namespace_wrap(xmlNsPtr xns, RUBY_DATA_FUNC freeFunc)
   }
 }
 
-
 static VALUE rxml_namespace_string(xmlNsPtr xns, const char* buffer)
 {
    const char* xencoding = NULL;
 #if LIBXML_VERSION >= 20628
    xencoding = xns->context ? xns->context->encoding : NULL;
 #endif
-  return rxml_str_new2((const char*) xns->href, xencoding);
+  return rxml_str_new2(buffer, xencoding);
 }
 
 
@@ -107,7 +106,7 @@ static VALUE rxml_namespace_href_get(VALUE self)
   if (xns->href == NULL)
     return Qnil;
   else
-    return rxml_namespace_string((const char*) xns->href, xns);
+    return rxml_namespace_string(xns, (const char*) xns->href);
 }
 
 /*
@@ -142,7 +141,7 @@ static VALUE rxml_namespace_prefix_get(VALUE self)
   if (xns->prefix == NULL)
     return Qnil;
   else
-    return rxml_namespace_string((const char*) xns->prefix, xns);
+    return rxml_namespace_string(xns, (const char*) xns->prefix);
 }
 
 /*
