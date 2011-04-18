@@ -30,7 +30,8 @@ end
 
 # Setup Windows Gem
 if RUBY_PLATFORM.match(/win32|mingw32/)
-  binaries = (FileList['lib/**/*.so'])
+  binaries = (FileList['lib/**/*.so',
+                       'lib/**/*dll'])
 
   # Windows specification
   win_spec = spec.clone
