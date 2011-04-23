@@ -803,11 +803,11 @@ static VALUE rxml_reader_has_value(VALUE self)
  */
 static VALUE rxml_reader_attribute(VALUE self, VALUE key)
 {
+  VALUE result;
   xmlTextReaderPtr reader;
   xmlChar *attr;
   xmlTextReaderPtr xReader = rxml_text_reader_get(self);
   const xmlChar *xencoding = xmlTextReaderConstEncoding(xReader);
-
 
   if (TYPE(key) == T_FIXNUM)
   {
@@ -817,7 +817,13 @@ static VALUE rxml_reader_attribute(VALUE self, VALUE key)
   {
     attr = xmlTextReaderGetAttribute(xReader, (const xmlChar *) StringValueCStr(key));
   }
-  return (attr == NULL ? Qnil : rxml_str_new2(attr, xencoding));
+
+  if (attr != NULL)
+  {
+    result = rb_str_new2((const char*) attr);
+    xmlFree(attr);
+  }
+  return result;
 }
 
 /*
