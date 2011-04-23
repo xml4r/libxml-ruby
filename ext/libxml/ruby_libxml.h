@@ -14,6 +14,7 @@
 #include <libxml/catalog.h>
 #include <libxml/HTMLparser.h>
 #include <libxml/xmlreader.h>
+#include <libxml/c14n.h>
 
 /* Needed for Ruby 1.8.5 */
 #ifndef RARRAY_LEN

@@ -20,7 +20,7 @@
  *  doc = XML::Document.new()
  *  doc.root = XML::Node.new('root_node')
  *  doc.root << XML::Node.new('elem1')
- *  doc.save(filename, :indent => true, :encoding => 'UTF-8')
+ *  doc.save(filename, :indent => true, :encoding => XML::Encoding::UTF_8)
  *
  * To write a document to a file:
  *
@@ -45,7 +45,7 @@
  *
  *  elem3['attr'] = 'baz'
  *
- *  doc.save(filename, :indent => true, :encoding => 'UTF-8')
+ *  doc.save(filename, :indent => true, :encoding => XML::Encoding::UTF_8)
  */
 
 #include <stdarg.h>
@@ -123,6 +123,40 @@ static VALUE rxml_document_initialize(int argc, VALUE *argv, VALUE self)
   return self;
 }
 
+  /*
+   * call-seq:
+  *    document.canonicalize(comments) -> String 
+   *
+   * 	Returns a string containing the canonicalized form of the document.
+   *
+   *  :comments - Specifies if comments should be output.  This is an optional
+   *              parameter whose default value is false.
+   */
+static VALUE rxml_document_canonicalize(int argc, VALUE *argv, VALUE self)
+{
+  VALUE result = Qnil;
+  VALUE comments = Qnil ;
+  xmlDocPtr xdoc;
+  xmlChar *buffer = NULL;
+  int length;
+
+  rb_scan_args(argc, argv, "01", &comments);
+  
+  Data_Get_Struct(self, xmlDoc, xdoc);
+  length = xmlC14NDocDumpMemory(xdoc, NULL, XML_C14N_1_1, NULL, 
+                                (comments == Qtrue ? 1 : 0),
+                                &buffer);
+
+  if (buffer)
+  {
+    result = rxml_str_new2((const char*) buffer, (const char*)xdoc->encoding);
+    xmlFree(buffer);
+  }
+
+  return result;
+}
+  
+ 
 /*
  * call-seq:
  *    document.compression -> num
@@ -285,16 +319,17 @@ static VALUE rxml_document_encoding_get(VALUE self)
  * Returns the Ruby encoding specified by this document
  * (available on Ruby 1.9.x and higher).
  */
+#ifdef HAVE_RUBY_ENCODING_H
 static VALUE rxml_document_rb_encoding_get(VALUE self)
 {
   xmlDocPtr xdoc;
   const char *xencoding;
-  VALUE encoding;
   Data_Get_Struct(self, xmlDoc, xdoc);
 
   xencoding = (const char*)xdoc->encoding;
   return rxml_xml_encoding_to_rb_encoding(mXMLEncoding, xmlParseCharEncoding(xencoding));
 }
+#endif 
 
 /*
  * call-seq:
@@ -541,7 +576,7 @@ static VALUE rxml_document_root_set(VALUE self, VALUE node)
 /*
  * call-seq:
  *    document.save(filename) -> int
- *    document.save(filename, :indent => true, :encoding => 'UTF-8') -> int
+ *    document.save(filename, :indent => true, :encoding => XML::Encoding::UTF_8) -> int
  *
  * Saves a document to a file.  You may provide an optional hash table
  * to control how the string is generated.  Valid options are:
@@ -877,6 +912,7 @@ void rxml_init_document(void)
   rb_define_alloc_func(cXMLDocument, rxml_document_alloc);
 
   rb_define_method(cXMLDocument, "initialize", rxml_document_initialize, -1);
+  rb_define_method(cXMLDocument, "canonicalize", rxml_document_canonicalize, -1);
   rb_define_method(cXMLDocument, "child", rxml_document_child_get, 0);
   rb_define_method(cXMLDocument, "child?", rxml_document_child_q, 0);
   rb_define_method(cXMLDocument, "compression", rxml_document_compression_get, 0);

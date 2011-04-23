@@ -31,6 +31,22 @@ class TestDocument < Test::Unit::TestCase
     }
   end
 
+  def test_canonicalize
+    doc = XML::Parser.string(<<-EOS).parse
+      <?xml-stylesheet href="doc.xsl" type="text/xsl"?>
+      <doc>Hello, world!<!-- Comment 1 --></doc>
+    EOS
+
+    expected = "<?xml-stylesheet href=\"doc.xsl\" type=\"text/xsl\"?>\n<doc>Hello, world!</doc>"
+    assert_equal(expected, doc.canonicalize)
+
+    expected = "<?xml-stylesheet href=\"doc.xsl\" type=\"text/xsl\"?>\n<doc>Hello, world!<!-- Comment 1 --></doc>"
+    assert_equal(expected, doc.canonicalize(true))
+
+    expected = "<?xml-stylesheet href=\"doc.xsl\" type=\"text/xsl\"?>\n<doc>Hello, world!</doc>"
+    assert_equal(expected, doc.canonicalize(false))
+  end
+
   def test_compression
     if XML.enabled_zlib?
       0.upto(9) do |i|
