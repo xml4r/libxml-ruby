@@ -113,7 +113,7 @@ static xmlNodePtr rxml_get_xnode(VALUE node)
    Data_Get_Struct(node, xmlNode, result);
 
    if (!result)
-     rb_raise(rb_eRuntimeError, "This node has already been freed.");
+    rb_raise(rb_eRuntimeError, "This node has already been freed.");
 
    return result;
 }
@@ -253,6 +253,8 @@ static VALUE rxml_node_modify_dom(VALUE self, VALUE target,
 
   if (xtarget->doc != NULL && xtarget->doc != xnode->doc)
     rb_raise(eXMLError, "Nodes belong to different documents.  You must first import the by calling XML::Document.import");
+
+  xmlUnlinkNode(xtarget);
 
   /* This target node could be freed here. */  
   xresult = xmlFunc(xnode, xtarget);
@@ -446,14 +448,13 @@ static VALUE rxml_node_content_add(VALUE self, VALUE obj)
   VALUE str;
 
   xnode = rxml_get_xnode(self);
+
   /* XXX This should only be legal for a CDATA type node, I think,
    * resulting in a merge of content, as if a string were passed
    * danj 070827
    */
   if (rb_obj_is_kind_of(obj, cXMLNode))
   { 
-    xmlNodePtr xtarget = rxml_get_xnode(obj);
-    xmlUnlinkNode(xtarget);
     rxml_node_modify_dom(self, obj, xmlAddChild);
   }
   else

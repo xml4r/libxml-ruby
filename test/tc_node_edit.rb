@@ -69,7 +69,7 @@ class TestNodeEdit < Test::Unit::TestCase
 
   def test_freed_node
     root = XML::Node.new("root")
-    
+
     a = XML::Node.new("a")
     root << a
 
@@ -107,7 +107,7 @@ class TestNodeEdit < Test::Unit::TestCase
     node = @doc.root.first.remove!
     assert_not_nil(node)
 
-    # Add it to the end of the documnet
+    # Add it to the end of the document
     @doc.root.last.next = node
 
     assert_equal('<test><num>two</num><num>three</num><num>one</num></test>',
@@ -124,6 +124,7 @@ class TestNodeEdit < Test::Unit::TestCase
   end
 
   def test_wrong_doc
+    puts 333333
     doc1 = XML::Parser.string('<nums><one></one></nums>').parse
     doc2 = XML::Parser.string('<nums><two></two></nums>').parse
 
@@ -133,10 +134,10 @@ class TestNodeEdit < Test::Unit::TestCase
       doc2.root << node
     end
 
+    GC.start
     assert_equal(' Nodes belong to different documents.  You must first import the by calling XML::Document.import.',
                  error.to_s)
   end
-
 
   # This test is to verify that an earlier reported bug has been fixed
   def test_merge
