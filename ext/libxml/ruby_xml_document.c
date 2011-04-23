@@ -771,9 +771,11 @@ static VALUE rxml_document_order_elements(VALUE self)
 
 /*
  * call-seq:
- *    document.validate_schema(schema) -> (true|false)
+ *    document.validate_schema(schema) 
  *
  * Validate this document against the specified XML::Schema.
+ * If the document is valid the method returns true.  Otherwise an
+ * exception is raised with validation information.
  */
 static VALUE rxml_document_validate_schema(VALUE self, VALUE schema)
 {
@@ -802,9 +804,11 @@ static VALUE rxml_document_validate_schema(VALUE self, VALUE schema)
 
 /*
  * call-seq:
- *    document.validate_schema(relaxng) -> (true|false)
+ *    document.validate_relaxng(relaxng) 
  *
  * Validate this document against the specified XML::RelaxNG.
+ * If the document is valid the method returns true.  Otherwise an
+ * exception is raised with validation information.
  */
 static VALUE rxml_document_validate_relaxng(VALUE self, VALUE relaxng)
 {
@@ -836,6 +840,8 @@ static VALUE rxml_document_validate_relaxng(VALUE self, VALUE relaxng)
  *    document.validate(dtd) -> (true|false)
  *
  * Validate this document against the specified XML::DTD.
+ * If the document is valid the method returns true.  Otherwise an
+ * exception is raised with validation information.
  */
 static VALUE rxml_document_validate_dtd(VALUE self, VALUE dtd)
 {
