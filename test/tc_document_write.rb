@@ -180,6 +180,19 @@ class TestDocumentWrite < Test::Unit::TestCase
     File.delete(temp_filename)
   end
 
+  def test_thread_write
+    # Previously segfault happened on assigning document root
+    thread = Thread.new {
+       100000.times {|i|
+          document = LibXML::XML::Document.new
+          document.root = LibXML::XML::Node.new('test')
+       }
+    }
+
+    thread.join
+    assert(true)
+  end
+
   # --- Debug ---
   def test_debug
     assert(@doc.debug)
