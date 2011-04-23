@@ -255,4 +255,15 @@ class TestNode < Test::Unit::TestCase
     node.space_preserve = true
     assert_equal XML::Node::SPACE_PRESERVE, node.space_preserve
   end
+
+  def test_empty
+    text = '<name> </name>'
+    doc = XML::Parser.string(text).parse
+
+    node = doc.root
+    assert(!node.empty?)
+    
+    text_node = node.first
+    assert(text_node.empty?)
+  end
 end

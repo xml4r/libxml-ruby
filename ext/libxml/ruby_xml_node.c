@@ -617,7 +617,7 @@ static VALUE rxml_node_each(VALUE self)
  * call-seq:
  *    node.empty? -> (true|false)
  *
- * Determine whether this node is empty.
+ * Determine whether this node is an empty or whitespace only text-node.
  */
 static VALUE rxml_node_empty_q(VALUE self)
 {
