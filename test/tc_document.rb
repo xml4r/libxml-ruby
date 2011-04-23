@@ -1,9 +1,6 @@
 # encoding: UTF-8
-
 require './test_helper'
-
 require 'test/unit'
-
 
 class TestDocument < Test::Unit::TestCase
   def setup
