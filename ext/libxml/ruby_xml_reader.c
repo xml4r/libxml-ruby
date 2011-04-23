@@ -967,7 +967,7 @@ void rxml_init_reader(void)
 {
   BASE_URI_SYMBOL = ID2SYM(rb_intern("base_uri"));
   ENCODING_SYMBOL = ID2SYM(rb_intern("encoding"));
-  IO_ATTR = ID2SYM(rb_intern("@io"));
+  IO_ATTR = rb_intern("@io");
   OPTIONS_SYMBOL = ID2SYM(rb_intern("options"));
 
   cXMLReader = rb_define_class_under(mXML, "Reader", rb_cObject);
