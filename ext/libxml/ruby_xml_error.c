@@ -131,18 +131,6 @@ static void structuredErrorFunc(void *userData, xmlErrorPtr xerror)
   /* Wrap error up as Ruby object and send it off to ruby */
   VALUE block = rb_cvar_get(eXMLError, ERROR_HANDLER_ID);
 
-  /* This next bit of code is a total hack to get around a bug
-     in libxml which causes error handlers on sax handlers to
-     be ignored in favor of the global handler.  In addition,
-     the correct context is also not passed in.  So try to 
-     dig it out. */
-  if (!userData && xerror->ctxt)
-  {
-    xmlParserCtxtPtr ctxt = (xmlParserCtxtPtr) xerror->ctxt;
-    if (ctxt != ctxt->userData)
-      userData = ctxt->userData;
-  }
-
   /* Now call global handler */
   if (block != Qnil)
   {
