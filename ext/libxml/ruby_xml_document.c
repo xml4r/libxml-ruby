@@ -619,7 +619,7 @@ static VALUE rxml_document_standalone_q(VALUE self)
 /*
  * call-seq:
  *    document.to_s -> "string"
- *    document.to_s(:indent => true, :encoding => 'UTF-8') -> "string"
+ *    document.to_s(:indent => true, :encoding => XML::Encoding::UTF_8) -> "string"
  *
  * Converts a document, and all of its children, to a string representation.
  * You may provide an optional hash table to control how the string is 
