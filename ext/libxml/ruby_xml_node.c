@@ -107,6 +107,17 @@ static VALUE rxml_node_alloc(VALUE klass)
   return Data_Wrap_Struct(klass, rxml_node_mark, rxml_node_free, NULL);
 }
 
+static xmlNodePtr rxml_get_xnode(VALUE node)
+{
+   xmlNodePtr result;
+   Data_Get_Struct(node, xmlNode, result);
+
+   if (!result)
+     rb_raise(rb_eRuntimeError, "This node has already been freed.");
+
+   return result;
+}
+
 /*
  * call-seq:
  *    XML::Node.new_cdata(content = nil) -> XML::Node
@@ -237,8 +248,8 @@ static VALUE rxml_node_modify_dom(VALUE self, VALUE target,
   if (rb_obj_is_kind_of(target, cXMLNode) == Qfalse)
     rb_raise(rb_eTypeError, "Must pass an XML::Node object");
 
-  Data_Get_Struct(self, xmlNode, xnode);
-  Data_Get_Struct(target, xmlNode, xtarget);
+  xnode = rxml_get_xnode(self);
+  xtarget = rxml_get_xnode(target);
 
   if (xtarget->doc != NULL && xtarget->doc != xnode->doc)
     rb_raise(eXMLError, "Nodes belong to different documents.  You must first import the by calling XML::Document.import");
@@ -271,7 +282,7 @@ static VALUE rxml_node_base_uri_get(VALUE self)
   xmlChar* base_uri;
   VALUE result = Qnil;
 
-  Data_Get_Struct(self, xmlNode, xnode);
+  xnode = rxml_get_xnode(self);
 
   if (xnode->doc == NULL)
     return (result);
@@ -299,7 +310,7 @@ static VALUE rxml_node_base_uri_set(VALUE self, VALUE uri)
   xmlNodePtr xnode;
 
   Check_Type(uri, T_STRING);
-  Data_Get_Struct(self, xmlNode, xnode);
+  xnode = rxml_get_xnode(self);
   if (xnode->doc == NULL)
     return (Qnil);
 
@@ -319,7 +330,7 @@ static VALUE rxml_node_content_get(VALUE self)
   xmlChar *content;
   VALUE result = Qnil;
 
-  Data_Get_Struct(self, xmlNode, xnode);
+  xnode = rxml_get_xnode(self);
   content = xmlNodeGetContent(xnode);
   if (content)
   {
@@ -341,7 +352,7 @@ static VALUE rxml_node_content_set(VALUE self, VALUE content)
   xmlNodePtr xnode;
 
   Check_Type(content, T_STRING);
-  Data_Get_Struct(self, xmlNode, xnode);
+  xnode = rxml_get_xnode(self);
   // XXX docs indicate need for escaping entites, need to be done? danj
   xmlNodeSetContent(xnode, (xmlChar*) StringValuePtr(content));
   return (Qtrue);
@@ -362,7 +373,7 @@ static VALUE rxml_node_content_stripped_get(VALUE self)
   xmlChar* content;
   VALUE result = Qnil;
 
-  Data_Get_Struct(self, xmlNode, xnode);
+  xnode = rxml_get_xnode(self);
 
   if (!xnode->content)
     return result;
@@ -387,7 +398,7 @@ static VALUE rxml_node_debug(VALUE self)
 {
 #ifdef LIBXML_DEBUG_ENABLED
   xmlNodePtr xnode;
-  Data_Get_Struct(self, xmlNode, xnode);
+  xnode = rxml_get_xnode(self);
   xmlDebugDumpNode(NULL, xnode, 2);
   return Qtrue;
 #else
@@ -406,7 +417,7 @@ static VALUE rxml_node_first_get(VALUE self)
 {
   xmlNodePtr xnode;
 
-  Data_Get_Struct(self, xmlNode, xnode);
+  xnode = rxml_get_xnode(self);
 
   if (xnode->children)
     return (rxml_node_wrap(xnode->children));
@@ -434,15 +445,14 @@ static VALUE rxml_node_content_add(VALUE self, VALUE obj)
   xmlNodePtr xnode;
   VALUE str;
 
-  Data_Get_Struct(self, xmlNode, xnode);
+  xnode = rxml_get_xnode(self);
   /* XXX This should only be legal for a CDATA type node, I think,
    * resulting in a merge of content, as if a string were passed
    * danj 070827
    */
   if (rb_obj_is_kind_of(obj, cXMLNode))
   { 
-    xmlNodePtr xtarget;
-    Data_Get_Struct(obj, xmlNode, xtarget);
+    xmlNodePtr xtarget = rxml_get_xnode(obj);
     xmlUnlinkNode(xtarget);
     rxml_node_modify_dom(self, obj, xmlAddChild);
   }
@@ -468,7 +478,7 @@ static VALUE rxml_node_doc(VALUE self)
   xmlNodePtr xnode;
   xmlDocPtr doc = NULL;
 
-  Data_Get_Struct(self, xmlNode, xnode);
+  xnode = rxml_get_xnode(self);
 
   switch (xnode->type)
   {
@@ -567,7 +577,8 @@ static VALUE rxml_node_to_s(int argc, VALUE *argv, VALUE self)
   encodingHandler = xmlFindCharEncodingHandler(xencoding);
   output = xmlAllocOutputBuffer(encodingHandler);
 
-  Data_Get_Struct(self, xmlNode, xnode);
+  xnode = rxml_get_xnode(self);
+
   xmlNodeDumpOutput(output, xnode->doc, xnode, level, indent, xencoding);
   xmlOutputBufferFlush(output);
 
@@ -597,7 +608,7 @@ static VALUE rxml_node_each(VALUE self)
 {
   xmlNodePtr xnode;
   xmlNodePtr xcurrent;
-  Data_Get_Struct(self, xmlNode, xnode);
+  xnode = rxml_get_xnode(self);
 
   xcurrent = xnode->children;
 
@@ -622,7 +633,7 @@ static VALUE rxml_node_each(VALUE self)
 static VALUE rxml_node_empty_q(VALUE self)
 {
   xmlNodePtr xnode;
-  Data_Get_Struct(self, xmlNode, xnode);
+  xnode = rxml_get_xnode(self);
   if (xnode == NULL)
     return (Qnil);
 
@@ -673,7 +684,7 @@ static VALUE rxml_node_lang_get(VALUE self)
   xmlChar *lang;
   VALUE result = Qnil;
 
-  Data_Get_Struct(self, xmlNode, xnode);
+  xnode = rxml_get_xnode(self);
   lang = xmlNodeGetLang(xnode);
 
   if (lang)
@@ -699,7 +710,7 @@ static VALUE rxml_node_lang_set(VALUE self, VALUE lang)
   xmlNodePtr xnode;
 
   Check_Type(lang, T_STRING);
-  Data_Get_Struct(self, xmlNode, xnode);
+  xnode = rxml_get_xnode(self);
   xmlNodeSetLang(xnode, (xmlChar*) StringValuePtr(lang));
 
   return (Qtrue);
@@ -715,7 +726,7 @@ static VALUE rxml_node_last_get(VALUE self)
 {
   xmlNodePtr xnode;
 
-  Data_Get_Struct(self, xmlNode, xnode);
+  xnode = rxml_get_xnode(self);
 
   if (xnode->last)
     return (rxml_node_wrap(xnode->last));
@@ -735,7 +746,7 @@ static VALUE rxml_node_line_num(VALUE self)
 {
   xmlNodePtr xnode;
   long line_num;
-  Data_Get_Struct(self, xmlNode, xnode);
+  xnode = rxml_get_xnode(self);
 
   if (!xmlLineNumbersDefaultValue)
     rb_warn(
@@ -759,7 +770,7 @@ static VALUE rxml_node_xlink_q(VALUE self)
   xmlNodePtr xnode;
   xlinkType xlt;
 
-  Data_Get_Struct(self, xmlNode, xnode);
+  xnode = rxml_get_xnode(self);
   xlt = xlinkIsLink(xnode->doc, xnode);
 
   if (xlt == XLINK_TYPE_NONE)
@@ -781,7 +792,7 @@ static VALUE rxml_node_xlink_type(VALUE self)
   xmlNodePtr xnode;
   xlinkType xlt;
 
-  Data_Get_Struct(self, xmlNode, xnode);
+  xnode = rxml_get_xnode(self);
   xlt = xlinkIsLink(xnode->doc, xnode);
 
   if (xlt == XLINK_TYPE_NONE)
@@ -803,7 +814,7 @@ static VALUE rxml_node_xlink_type_name(VALUE self)
   xmlNodePtr xnode;
   xlinkType xlt;
 
-  Data_Get_Struct(self, xmlNode, xnode);
+  xnode = rxml_get_xnode(self);
   xlt = xlinkIsLink(xnode->doc, xnode);
 
   switch (xlt)
@@ -832,7 +843,7 @@ static VALUE rxml_node_name_get(VALUE self)
   xmlNodePtr xnode;
   const xmlChar *name;
 
-  Data_Get_Struct(self, xmlNode, xnode);
+  xnode = rxml_get_xnode(self);
 
   switch (xnode->type)
   {
@@ -881,7 +892,7 @@ static VALUE rxml_node_name_set(VALUE self, VALUE name)
   const xmlChar *xname;
 
   Check_Type(name, T_STRING);
-  Data_Get_Struct(self, xmlNode, xnode);
+  xnode = rxml_get_xnode(self);
   xname = (const xmlChar*)StringValuePtr(name);
 
 	/* Note: calling xmlNodeSetName() for a text node is ignored by libXML. */
@@ -900,7 +911,7 @@ static VALUE rxml_node_next_get(VALUE self)
 {
   xmlNodePtr xnode;
 
-  Data_Get_Struct(self, xmlNode, xnode);
+  xnode = rxml_get_xnode(self);
 
   if (xnode->next)
     return (rxml_node_wrap(xnode->next));
@@ -933,7 +944,7 @@ static VALUE rxml_node_parent_get(VALUE self)
 {
   xmlNodePtr xnode;
 
-  Data_Get_Struct(self, xmlNode, xnode);
+  xnode = rxml_get_xnode(self);
 
   if (xnode->parent)
     return (rxml_node_wrap(xnode->parent));
@@ -952,7 +963,7 @@ static VALUE rxml_node_path(VALUE self)
   xmlNodePtr xnode;
   xmlChar *path;
 
-  Data_Get_Struct(self, xmlNode, xnode);
+  xnode = rxml_get_xnode(self);
   path = xmlGetNodePath(xnode);
 
   if (path == NULL)
@@ -982,7 +993,7 @@ static VALUE rxml_node_prev_get(VALUE self)
 {
   xmlNodePtr xnode;
   xmlNodePtr node;
-  Data_Get_Struct(self, xmlNode, xnode);
+  xnode = rxml_get_xnode(self);
 
   switch (xnode->type)
   {
@@ -1036,7 +1047,7 @@ static VALUE rxml_node_attributes_get(VALUE self)
 {
   xmlNodePtr xnode;
 
-  Data_Get_Struct(self, xmlNode, xnode);
+  xnode = rxml_get_xnode(self);
   return rxml_attributes_new(xnode);
 }
 
@@ -1077,7 +1088,7 @@ static VALUE rxml_node_property_set(VALUE self, VALUE name, VALUE value)
 static VALUE rxml_node_remove_ex(VALUE self)
 {
   xmlNodePtr xnode, xresult;
-  Data_Get_Struct(self, xmlNode, xnode);
+  xnode = rxml_get_xnode(self);
 
   /* First unlink the node from its parent. */
   xmlUnlinkNode(xnode);
@@ -1137,7 +1148,7 @@ static VALUE rxml_node_sibling_set(VALUE self, VALUE sibling)
 static VALUE rxml_node_output_escaping_q(VALUE self)
 {
   xmlNodePtr xnode;
-  Data_Get_Struct(self, xmlNode, xnode);
+  xnode = rxml_get_xnode(self);
 
   switch (xnode->type) {
   case XML_TEXT_NODE:
@@ -1184,7 +1195,7 @@ static VALUE rxml_node_output_escaping_q(VALUE self)
 static VALUE rxml_node_output_escaping_set(VALUE self, VALUE bool)
 {
   xmlNodePtr xnode;
-  Data_Get_Struct(self, xmlNode, xnode);
+  xnode = rxml_get_xnode(self);
 
   switch (xnode->type) {
   case XML_TEXT_NODE:
@@ -1217,7 +1228,7 @@ static VALUE rxml_node_space_preserve_get(VALUE self)
 {
   xmlNodePtr xnode;
 
-  Data_Get_Struct(self, xmlNode, xnode);
+  xnode = rxml_get_xnode(self);
   return (INT2NUM(xmlNodeGetSpacePreserve(xnode)));
 }
 
@@ -1230,7 +1241,7 @@ static VALUE rxml_node_space_preserve_get(VALUE self)
 static VALUE rxml_node_space_preserve_set(VALUE self, VALUE bool)
 {
   xmlNodePtr xnode;
-  Data_Get_Struct(self, xmlNode, xnode);
+  xnode = rxml_get_xnode(self);
 
   if (TYPE(bool) == T_FALSE)
     xmlNodeSetSpacePreserve(xnode, 0);
@@ -1249,7 +1260,7 @@ static VALUE rxml_node_space_preserve_set(VALUE self, VALUE bool)
 static VALUE rxml_node_type(VALUE self)
 {
   xmlNodePtr xnode;
-  Data_Get_Struct(self, xmlNode, xnode);
+  xnode = rxml_get_xnode(self);
   return (INT2NUM(xnode->type));
 }
 
@@ -1268,7 +1279,7 @@ static VALUE rxml_node_copy(VALUE self, VALUE deep)
   xmlNodePtr xnode;
   xmlNodePtr xcopy;
   int recursive = (deep == Qnil || deep == Qfalse) ? 0 : 1;
-  Data_Get_Struct(self, xmlNode, xnode);
+  xnode = rxml_get_xnode(self);
 
   xcopy = xmlCopyNode(xnode, recursive);
 
