@@ -75,9 +75,9 @@ then install the libxslt gem which is available at
 http://rubyforge.org/projects/libxsl/.
 
 == Usage
-For information about using libxml-ruby please refer
-to its documentation at http://libxml.rubyforge.org/rdoc/index.html.
-Some tutorials are also available at https://github.com/xml4r/libxml-ruby/wiki.
+For information about using libxml-ruby please refer to its documentation at
+http://xml4r.github.com/libxml-ruby/rdoc/index.html Some tutorials are also
+available at https://github.com/xml4r/libxml-ruby/wiki.
 
 All libxml classes are in the LibXML::XML module. The easiest
 way to use libxml is to require 'xml'.  This will mixin
@@ -134,12 +134,14 @@ From https://svn.concord.org/svn/projects/trunk/common/ruby/xml_benchmarks/
 
 
 == Documentation
-Documentation is available via rdoc.  To generate the documentation,
-run the the command 'rake doc'.  libxml-ruby's online documentation
-is generated using Hanna.  To use hanna:
+Documentation is available via rdoc, and is installed automatically with the
+gem.
 
-  gem install mislav-hanna
-  rake rdoc RDOCOPT="-S -T hanna"
+libxml-ruby's online documentation is generated using Hanna.  To generate
+documentation from source:
+
+  gem install hanna
+  rake rdoc
 
 Note that older versions of Rdoc, which ship with Ruby 1.8.x, will report
 a number of errors.  To avoid them, install Rdoc 2.1 or higher from
@@ -152,8 +154,8 @@ ruby/lib/ruby/1.8/rdoc_old.
 
 If you have any questions about using libxml-ruby, please send them to
 libxml-devel@rubyforge.org.  If you have found any bugs in libxml-devel,
-or have developed new patches, please submit them to Ruby Forge at
-http://rubyforge.org/tracker/?group_id=494.
+or have developed new patches, please submit them to Git Hub at
+https://github.com/xml4r/libxml-ruby/issues.
 
 == License
 See LICENSE for license information.
