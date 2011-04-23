@@ -238,7 +238,6 @@ static VALUE rxml_reader_string(int argc, VALUE *argv, VALUE klass)
     VALUE encoding = Qnil;
     VALUE parserOptions = Qnil;
 
-    int foo;
     Check_Type(options, T_HASH);
 
     baseurl = rb_hash_aref(options, BASE_URI_SYMBOL);
@@ -804,7 +803,6 @@ static VALUE rxml_reader_has_value(VALUE self)
 static VALUE rxml_reader_attribute(VALUE self, VALUE key)
 {
   VALUE result = Qnil;
-  xmlTextReaderPtr reader;
   xmlChar *xattr;
   xmlTextReaderPtr xReader = rxml_text_reader_get(self);
   const xmlChar *xencoding = xmlTextReaderConstEncoding(xReader);
@@ -842,8 +840,8 @@ static VALUE rxml_reader_lookup_namespace(VALUE self, VALUE prefix)
 
   if (xnamespace)
   {
-    result = rxml_str_new2(xnamespace, xencoding);
-    xmlFree(xnamespace);
+    result = rxml_str_new2((const char*)xnamespace, (const char*)xencoding);
+    xmlFree((void *)xnamespace);
   }
   return result;
 }
