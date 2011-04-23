@@ -464,7 +464,7 @@ static VALUE rxml_reader_read_inner_xml(VALUE self)
 
   xmlChar *xml = xmlTextReaderReadInnerXml(xReader);
 
-  if (xml != NULL)
+  if (xml)
   {
     const xmlChar *xencoding = xmlTextReaderConstEncoding(xReader);
     result = rxml_str_new2((const char*) xml, xencoding);
@@ -490,7 +490,7 @@ static VALUE rxml_reader_read_outer_xml(VALUE self)
 
   xmlChar *xml = xmlTextReaderReadOuterXml(xReader);
 
-  if (xml != NULL)
+  if (xml)
   {
     const xmlChar *xencoding = xmlTextReaderConstEncoding(xReader);
     result = rxml_str_new2((const char*) xml, xencoding);
@@ -527,7 +527,7 @@ static VALUE rxml_reader_read_string(VALUE self)
 
   xmlChar *xml = xmlTextReaderReadString(xReader);
 
-  if (xml != NULL)
+  if (xml)
   {
     const xmlChar *xencoding = xmlTextReaderConstEncoding(xReader);
     result = rxml_str_new2((const char*) xml, xencoding);
@@ -803,25 +803,25 @@ static VALUE rxml_reader_has_value(VALUE self)
  */
 static VALUE rxml_reader_attribute(VALUE self, VALUE key)
 {
-  VALUE result;
+  VALUE result = Qnil;
   xmlTextReaderPtr reader;
-  xmlChar *attr;
+  xmlChar *xattr;
   xmlTextReaderPtr xReader = rxml_text_reader_get(self);
   const xmlChar *xencoding = xmlTextReaderConstEncoding(xReader);
 
   if (TYPE(key) == T_FIXNUM)
   {
-    attr = xmlTextReaderGetAttributeNo(xReader, FIX2INT(key));
+    xattr = xmlTextReaderGetAttributeNo(xReader, FIX2INT(key));
   }
   else
   {
-    attr = xmlTextReaderGetAttribute(xReader, (const xmlChar *) StringValueCStr(key));
+    xattr = xmlTextReaderGetAttribute(xReader, (const xmlChar *) StringValueCStr(key));
   }
 
-  if (attr != NULL)
+  if (xattr)
   {
-    result = rb_str_new2((const char*) attr);
-    xmlFree(attr);
+    result = rxml_str_new2(xattr, xencoding);
+    xmlFree(xattr);
   }
   return result;
 }
@@ -835,11 +835,17 @@ static VALUE rxml_reader_attribute(VALUE self, VALUE key)
  */
 static VALUE rxml_reader_lookup_namespace(VALUE self, VALUE prefix)
 {
+  VALUE result = Qnil;
   xmlTextReaderPtr xReader = rxml_text_reader_get(self);
-  const xmlChar *result = xmlTextReaderLookupNamespace(xReader, (const xmlChar *) StringValueCStr(prefix));
+  const xmlChar *xnamespace = xmlTextReaderLookupNamespace(xReader, (const xmlChar *) StringValueCStr(prefix));
   const xmlChar *xencoding = xmlTextReaderConstEncoding(xReader);
 
-  return (result == NULL ? Qnil : rxml_str_new2(result, xencoding));
+  if (xnamespace)
+  {
+    result = rxml_str_new2(xnamespace, xencoding);
+    xmlFree(xnamespace);
+  }
+  return result;
 }
 
 /*
