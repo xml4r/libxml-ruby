@@ -5,8 +5,16 @@ require 'test/unit'
 require 'stringio'
 
 class TestError < Test::Unit::TestCase
+  def test_error_codes
+    assert_equal(4, XML::Error::DTD)
+    assert_equal(4, XML::Error.const_get('DTD'))
+
+    assert_equal(4, XML::Error::DOCUMENT_EMPTY)
+    assert_equal(4, XML::Error.const_get('DOCUMENT_EMPTY'))
+  end
+
   def test_invalid_handler
-    assert_raises(RuntimeError) do
+    assert_raise(RuntimeError) do
       XML::Error.set_handler
     end
   end
@@ -18,15 +26,18 @@ class TestError < Test::Unit::TestCase
     end
 
     # Raise the error
-    XML::Reader.new('<foo').read
+    error = assert_raise(XML::Error) do
+      XML::Reader.string('<foo').read
+    end
+    assert_equal(exception, error)
 
     # Check the handler worked
     assert_not_nil(exception)
     assert_kind_of(XML::Error, exception)
     assert_equal("Fatal error: Couldn't find end of Start Tag foo at :1.", exception.message)
-    assert_equal(XML::Error::XML_FROM_PARSER, exception.domain)
-    assert_equal(XML::Error::XML_ERR_GT_REQUIRED, exception.code)
-    assert_equal(XML::Error::XML_ERR_FATAL, exception.level)
+    assert_equal(XML::Error::PARSER, exception.domain)
+    assert_equal(XML::Error::GT_REQUIRED, exception.code)
+    assert_equal(XML::Error::FATAL, exception.level)
     assert_nil(exception.file)
     assert_equal(1, exception.line)
     assert_equal('foo', exception.str1)
@@ -44,7 +55,7 @@ class TestError < Test::Unit::TestCase
     end
 
     XML::Error.reset_handler
-    reader = XML::Reader.new('<foo')
+    XML::Reader.string('<foo')
     assert_nil(exception)
   end
 
@@ -87,9 +98,9 @@ class TestError < Test::Unit::TestCase
 
     assert_instance_of(XML::Error, exception)
     assert_equal("Fatal error: Opening and ending tag mismatch: foo line 1 and foz at :1.", exception.message)
-    assert_equal(XML::Error::XML_FROM_PARSER, exception.domain)
-    assert_equal(XML::Error::XML_ERR_TAG_NAME_MISMATCH, exception.code)
-    assert_equal(XML::Error::XML_ERR_FATAL, exception.level)
+    assert_equal(XML::Error::PARSER, exception.domain)
+    assert_equal(XML::Error::TAG_NAME_MISMATCH, exception.code)
+    assert_equal(XML::Error::FATAL, exception.level)
     assert_nil(exception.file)
     assert_equal(1, exception.line)
   end
@@ -98,14 +109,14 @@ class TestError < Test::Unit::TestCase
     doc = XML::Document.file(File.join(File.dirname(__FILE__), 'model/soap.xml'))
 
     exception = assert_raise(XML::Error) do
-      elements = doc.find('/foo[bar=test')
+      doc.find('/foo[bar=test')
     end
 
     assert_instance_of(XML::Error, exception)
-    assert_equal("Error: Invalid predicate at :0.", exception.message)
-    assert_equal(XML::Error::XML_FROM_XPATH, exception.domain)
-    assert_equal(XML::Error::XML_XPATH_INVALID_PREDICATE_ERROR, exception.code)
-    assert_equal(XML::Error::XML_ERR_ERROR, exception.level)
+    assert_equal("Error: Invalid predicate.", exception.message)
+    assert_equal(XML::Error::XPATH, exception.domain)
+    assert_equal(XML::Error::XPATH_INVALID_PREDICATE_ERROR, exception.code)
+    assert_equal(XML::Error::ERROR, exception.level)
     assert_nil(exception.file)
     assert_nil(nil)
   end
@@ -113,26 +124,27 @@ class TestError < Test::Unit::TestCase
   def test_double_parse
     XML::Parser.register_error_handler(lambda {|msg| nil })
     parser = XML::Parser.string("<test>something</test>")
-    doc = parser.parse
+    parser.parse
 
-    error = assert_raise(RuntimeError) do
+    error = assert_raise(XML::Error) do
       # Try parsing a second time
       parser.parse
     end
 
-    assert_equal("You cannot parse a data source twice", error.to_s)
+    assert_equal("Fatal error: Document is empty at :1.", error.to_s)
   end
 
   def test_libxml_parser_empty_string
     xp = XML::Parser.new
 
-    assert_raise(TypeError) do
+    error = assert_raise(TypeError) do
       xp.string = nil
     end
+    assert_equal('wrong argument type nil (expected String)', error.to_s)
 
-    xp.string = ''
-    assert_raise(XML::Error) do
-      xp.parse
+    error = assert_raise(ArgumentError) do
+      xp.string = ''
     end
+    assert_equal('Must specify a string with one or more characters', error.to_s)
   end
 end

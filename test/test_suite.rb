@@ -5,15 +5,16 @@
 dir = File.dirname(__FILE__)
 Dir.chdir(dir)
 
-require './tc_attributes'
 require './tc_attr'
 require './tc_attr_decl'
+require './tc_attributes'
 require './tc_document'
 require './tc_document_write'
 require './tc_dtd'
+require './tc_error'
 require './tc_html_parser'
-require './tc_namespaces'
 require './tc_namespace'
+require './tc_namespaces'
 require './tc_node'
 require './tc_node_cdata'
 require './tc_node_comment'
@@ -31,6 +32,7 @@ require './tc_schema'
 require './tc_traversal'
 require './tc_xinclude'
 require './tc_xpath'
+require './tc_xpath_context'
 require './tc_xpath_expression'
 require './tc_xpointer'
 
