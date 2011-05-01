@@ -15,7 +15,7 @@ class TestParser < Test::Unit::TestCase
     GC.start
   end
       
-  # -----  Sources  -------8
+  # -----  Sources  -------
   def test_document
     file = File.expand_path(File.join(File.dirname(__FILE__), 'model/bands.utf-8.xml'))
     parser = XML::Parser.file(file)
@@ -128,6 +128,21 @@ class TestParser < Test::Unit::TestCase
     assert_instance_of(XML::Parser::Context, parser.context)
   end
 
+  def test_string_io_thread
+    thread = Thread.new do
+      data = File.read(File.join(File.dirname(__FILE__), 'model/rubynet.xml'))
+      string_io = StringIO.new(data)
+      parser = XML::Parser.io(string_io)
+
+      doc = parser.parse
+      assert_instance_of(XML::Document, doc)
+      assert_instance_of(XML::Parser::Context, parser.context)
+    end
+
+    thread.join
+    assert(true)
+  end
+  
   def test_string
     str = '<ruby_array uga="booga" foo="bar"><fixnum>one</fixnum><fixnum>two</fixnum></ruby_array>'
 

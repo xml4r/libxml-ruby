@@ -33,11 +33,11 @@ VALUE cXMLNode;
  * a libxml document.  When a Ruby node is freed, the _private
  * field is set back to null.  
  *
- * In the sweep phase in Ruby 1.9.1, the document is freed before
- * the nodes.  To support that, the bindingds register a callback 
- * function with libxml that is called each time a node is freed.
- * In that case, the data_ptr is set to null, so the bindings
- * can recognize the situtation.
+ * In the sweep phase in Ruby 1.9.*, the document tends to be
+ * freed before the nodes.  To support this, the bindings register
+ * a callback function with libxml that is called each time a node
+ * is freed.  In that case, the data_ptr is set to null, so the bindings
+ * can recognize the situation.
  */
 
 static void rxml_node_deregisterNode(xmlNodePtr xnode)
@@ -50,6 +50,8 @@ static void rxml_node_deregisterNode(xmlNodePtr xnode)
       try to free the node a second time. */
     VALUE node = (VALUE) xnode->_private;
     RDATA(node)->data = NULL;
+    RDATA(node)->dfree = NULL;
+    RDATA(node)->dmark = NULL;
   }
 }
 
@@ -64,10 +66,14 @@ static void rxml_node_free(xmlNodePtr xnode)
   /* The ruby object wrapping the xml object no longer exists. */
   xnode->_private = NULL;
 
-  /* Ruby is responsible for freeing this node since it
-     has no parent. */
+  /* Ruby is responsible for freeing this node if it does not
+     have a parent and is not owned by a document.  Note a corner
+     case here - calling node2 = doc.import(node1) will cause node2
+     to not have a parent but to have a document. */
   if (xnode->parent == NULL)
+  {
     xmlFreeNode(xnode);
+  }
 }
 
  void rxml_node_mark(xmlNodePtr xnode)
@@ -87,17 +93,19 @@ static void rxml_node_free(xmlNodePtr xnode)
 
 VALUE rxml_node_wrap(xmlNodePtr xnode)
 {
+  VALUE result;
+
   /* Is the node already wrapped? */
   if (xnode->_private != NULL)
   {
-    return (VALUE) xnode->_private;
+    result = (VALUE) xnode->_private;
   }
   else
   {
-    VALUE node = Data_Wrap_Struct(cXMLNode, rxml_node_mark, rxml_node_free, xnode);
-    xnode->_private = (void*) node;
-    return node;
+    result = Data_Wrap_Struct(cXMLNode, rxml_node_mark, rxml_node_free, xnode);
+    xnode->_private = (void*) result;
   }
+  return result;
 }
 
 static VALUE rxml_node_alloc(VALUE klass)
@@ -252,7 +260,7 @@ static VALUE rxml_node_modify_dom(VALUE self, VALUE target,
   xtarget = rxml_get_xnode(target);
 
   if (xtarget->doc != NULL && xtarget->doc != xnode->doc)
-    rb_raise(eXMLError, "Nodes belong to different documents.  You must first import the by calling XML::Document.import");
+    rb_raise(eXMLError, "Nodes belong to different documents.  You must first import the node by calling XML::Document.import");
 
   xmlUnlinkNode(xtarget);
 
@@ -650,26 +658,26 @@ static VALUE rxml_node_empty_q(VALUE self)
  * if they are the same node or have the same XML representation.*/
 static VALUE rxml_node_eql_q(VALUE self, VALUE other)
 {
-if(self == other)
-{
-  return Qtrue;
-}
-else if (NIL_P(other))
-{
-  return Qfalse;
-}
-else
-{
-  VALUE self_xml;
-  VALUE other_xml;
+  if(self == other)
+  {
+    return Qtrue;
+  }
+  else if (NIL_P(other))
+  {
+    return Qfalse;
+  }
+  else
+  {
+    VALUE self_xml;
+    VALUE other_xml;
 
-  if (rb_obj_is_kind_of(other, cXMLNode) == Qfalse)
-  rb_raise(rb_eTypeError, "Nodes can only be compared against other nodes");
+    if (rb_obj_is_kind_of(other, cXMLNode) == Qfalse)
+      rb_raise(rb_eTypeError, "Nodes can only be compared against other nodes");
 
-  self_xml = rxml_node_to_s(0, NULL, self);
-  other_xml = rxml_node_to_s(0, NULL, other);
-  return(rb_funcall(self_xml, rb_intern("=="), 1, other_xml));
-}
+    self_xml = rxml_node_to_s(0, NULL, self);
+    other_xml = rxml_node_to_s(0, NULL, other);
+    return(rb_funcall(self_xml, rb_intern("=="), 1, other_xml));
+  }
 }
 
 /*
@@ -1292,7 +1300,11 @@ static VALUE rxml_node_copy(VALUE self, VALUE deep)
 
 void rxml_init_node(void)
 {
+  /* Register callback for main thread */
   xmlDeregisterNodeDefault(rxml_node_deregisterNode);
+
+  /* Register callback for all other threads */
+  xmlThrDefDeregisterNodeDefault(rxml_node_deregisterNode);
 
   cXMLNode = rb_define_class_under(mXML, "Node", rb_cObject);
 

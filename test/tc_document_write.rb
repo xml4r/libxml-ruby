@@ -94,7 +94,7 @@ class TestDocumentWrite < Test::Unit::TestCase
       assert_equal("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n<bands genre=\"metal\">\n  <m\366tley_cr\374e country=\"us\">M\366tley Cr\374e is an American heavy metal band formed in Los Angeles, California in 1981.</m\366tley_cr\374e>\n  <iron_maiden country=\"uk\">Iron Maiden is a British heavy metal band formed in 1975.</iron_maiden>\n</bands>\n",
                    @doc.to_s(:encoding => XML::Encoding::ISO_8859_1))
     end
-    
+
     # Invalid encoding
     error = assert_raise(ArgumentError) do
       @doc.to_s(:encoding => -9999)
@@ -180,15 +180,16 @@ class TestDocumentWrite < Test::Unit::TestCase
     File.delete(temp_filename)
   end
 
-  def test_thread_write
-    # Previously segfault happened on assigning document root
-    thread = Thread.new {
-       100000.times {|i|
-          document = LibXML::XML::Document.new
-          document.root = LibXML::XML::Node.new('test')
-       }
-    }
-
+  def test_thread_set_root
+    # Previously a segmentation fault occurred when running libxml in
+    # background threads.
+    thread = Thread.new do
+      100000.times do |i|
+        document = LibXML::XML::Document.new
+        node = LibXML::XML::Node.new('test')
+        document.root = node
+      end
+    end
     thread.join
     assert(true)
   end
