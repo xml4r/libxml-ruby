@@ -357,6 +357,11 @@ static VALUE rxml_document_encoding_set(VALUE self, VALUE encoding)
  *
  * Creates a copy of the node that can be inserted into the
  * current document.
+ *
+ * IMPORTANT - The returned node MUST be inserted into the document.
+ * This is because the returned node refereces internal LibXML data
+ * structures owned by the document.  Therefore, if the document is
+ * is freed before the the node is freed a segmentation fault will occur.
  */
 static VALUE rxml_document_import(VALUE self, VALUE node)
 {
@@ -568,6 +573,9 @@ static VALUE rxml_document_root_set(VALUE self, VALUE node)
 
   Data_Get_Struct(self, xmlDoc, xdoc);
   Data_Get_Struct(node, xmlNode, xnode);
+
+  if (xnode->doc != NULL && xnode->doc != xdoc)
+    rb_raise(eXMLError, "Nodes belong to different documents.  You must first import the node by calling XML::Document.import");
 
   xroot = xmlDocSetRootElement(xdoc, xnode);
   return node;
