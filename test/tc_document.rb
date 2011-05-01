@@ -118,15 +118,39 @@ class TestDocument < Test::Unit::TestCase
 		assert(doc.xhtml?)
 	end
 
+  def test_document_root
+    doc1 = LibXML::XML::Document.string("<one/>")
+    doc2 = LibXML::XML::Document.string("<two/>")
+
+    error = assert_raise(XML::Error) do
+      doc1.root = doc2.root
+    end
+    assert_equal(" Nodes belong to different documents.  You must first import the node by calling XML::Document.import.",
+                 error.to_s)
+
+    doc2.root << doc2.import(doc1.root)
+    assert_equal('<one/>', doc1.root.to_s)
+    assert_equal('<two><one/></two>', doc2.root.to_s(:indent => false))
+
+    assert(!doc1.root.equal?(doc2.root))
+    assert(doc1.root.doc != doc2.root.doc)
+  end
+
   def test_import_node
     doc1 = XML::Parser.string('<nums><one></one></nums>').parse
     doc2 = XML::Parser.string('<nums><two></two></nums>').parse
 
     node = doc1.root.child
 
+    error = assert_raise(XML::Error) do
+      doc2.root << node
+    end
+    assert_equal(" Nodes belong to different documents.  You must first import the node by calling XML::Document.import.",
+                 error.to_s)
+
     doc2.root << doc2.import(node)
 
-    assert_equal("<nums>\n  <two/>\n  <one/>\n</nums>",
-                 doc2.root.to_s)
+    assert_equal("<nums><two/><one/></nums>",
+                 doc2.root.to_s(:indent => false))
   end
 end

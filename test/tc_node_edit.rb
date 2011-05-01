@@ -135,7 +135,7 @@ class TestNodeEdit < Test::Unit::TestCase
     end
 
     GC.start
-    assert_equal(' Nodes belong to different documents.  You must first import the by calling XML::Document.import.',
+    assert_equal(' Nodes belong to different documents.  You must first import the node by calling XML::Document.import.',
                  error.to_s)
   end
 
