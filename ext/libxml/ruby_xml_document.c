@@ -123,15 +123,21 @@ static VALUE rxml_document_initialize(int argc, VALUE *argv, VALUE self)
   return self;
 }
 
-  /*
-   * call-seq:
+/* XML_C14N_1_1 is not defined until libxml 1.1.25, so define this
+   constant to the same value of XML_C14N_1_0 if it isn't defined. */
+#ifndef XML_C14N_1_1
+#define XML_C14N_1_1 0
+#endif
+
+/*
+  * call-seq:
   *    document.canonicalize(comments) -> String 
-   *
-   * 	Returns a string containing the canonicalized form of the document.
-   *
-   *  :comments - Specifies if comments should be output.  This is an optional
-   *              parameter whose default value is false.
-   */
+  *
+  * 	Returns a string containing the canonicalized form of the document.
+  *
+  *  :comments - Specifies if comments should be output.  This is an optional
+  *              parameter whose default value is false.
+  */
 static VALUE rxml_document_canonicalize(int argc, VALUE *argv, VALUE self)
 {
   VALUE result = Qnil;
