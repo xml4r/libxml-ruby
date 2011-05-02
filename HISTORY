@@ -7,6 +7,9 @@
   background threads in Ruby 1.9.x and higher would often cause
   segmentation faults.  This has now been fixed (Charlie Savage).
 
+* Update Reader#expand so that returned node correctly remembers its
+  encoding in Ruby 1.9.x (zerebubuth).
+
 * Add check to verify a node has not been deleted.  This can happen when
   a ruby variable holds a reference to a child node that gets freed
   when its parent gets freed.  Previously when this happened a

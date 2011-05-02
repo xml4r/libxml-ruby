@@ -78,16 +78,16 @@ static void rxml_node_free(xmlNodePtr xnode)
 
  void rxml_node_mark(xmlNodePtr xnode)
 {
-  /* Either the node has been created yet in initialize
+  /* Either the node has not been created yet in initialize
      or it has been freed by libxml already in Ruby's 
      mark phase. */
   if (xnode == NULL)
     return;
 
-  if (xnode->doc != NULL)
+  if (xnode->doc && xnode->doc->_private)
     rb_gc_mark((VALUE) xnode->doc->_private);
   
-  if (xnode->parent != NULL)
+  if (xnode->parent && xnode->parent->_private)
     rb_gc_mark((VALUE) xnode->_private);
 }
 
@@ -484,41 +484,32 @@ static VALUE rxml_node_content_add(VALUE self, VALUE obj)
  */
 static VALUE rxml_node_doc(VALUE self)
 {
-  xmlNodePtr xnode;
-  xmlDocPtr doc = NULL;
-
-  xnode = rxml_get_xnode(self);
+  xmlDocPtr xdoc = NULL;
+  xmlNodePtr xnode = rxml_get_xnode(self);
 
   switch (xnode->type)
   {
   case XML_DOCUMENT_NODE:
 #ifdef LIBXML_DOCB_ENABLED
-    case XML_DOCB_DOCUMENT_NODE:
+  case XML_DOCB_DOCUMENT_NODE:
 #endif
   case XML_HTML_DOCUMENT_NODE:
-    doc = NULL;
+  case XML_NAMESPACE_DECL:
     break;
   case XML_ATTRIBUTE_NODE:
-  {
-    xmlAttrPtr attr = (xmlAttrPtr) xnode;
-    doc = attr->doc;
-    break;
-  }
-  case XML_NAMESPACE_DECL:
-    doc = NULL;
+    xdoc = (xmlDocPtr)((xmlAttrPtr) xnode->doc);
     break;
   default:
-    doc = xnode->doc;
-    break;
+    xdoc = xnode->doc;
   }
 
-  if (doc == NULL)
+  if (xdoc == NULL)
     return (Qnil);
-
-  if (doc->_private == NULL)
-    rb_raise(rb_eRuntimeError, "existing document object has no ruby-instance");
-
-  return (VALUE) doc->_private;
+  else if (xdoc->_private)
+    return (VALUE) xdoc->_private;
+  else
+    /* This can happen by calling Reader#expand.doc */
+    rb_raise(eXMLError, "Document is not accessible to Ruby (hint - did you call Reader#expand?)");
 }
 
 /*

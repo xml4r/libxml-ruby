@@ -49,15 +49,14 @@ static ID ENCODING_SYMBOL;
 static ID IO_ATTR;
 static ID OPTIONS_SYMBOL;
 
-
-static void rxml_reader_free(xmlTextReaderPtr reader)
+static void rxml_reader_free(xmlTextReaderPtr xreader)
 {
-  xmlFreeTextReader(reader);
+  xmlFreeTextReader(xreader);
 }
 
-static VALUE rxml_reader_wrap(xmlTextReaderPtr reader)
+static VALUE rxml_reader_wrap(xmlTextReaderPtr xreader)
 {
-  return Data_Wrap_Struct(cXMLReader, NULL, rxml_reader_free, reader);
+  return Data_Wrap_Struct(cXMLReader, NULL, rxml_reader_free, xreader);
 }
 
 static xmlTextReaderPtr rxml_text_reader_get(VALUE obj)
@@ -268,7 +267,8 @@ static VALUE rxml_reader_string(int argc, VALUE *argv, VALUE klass)
  */
 static VALUE rxml_reader_close(VALUE self)
 {
-  return INT2FIX(xmlTextReaderClose(rxml_text_reader_get(self)));
+  xmlTextReaderPtr xreader = rxml_text_reader_get(self);
+  return INT2FIX(xmlTextReaderClose(xreader));
 }
 
 /*
@@ -308,7 +308,8 @@ static VALUE rxml_reader_move_to_attr(VALUE self, VALUE val)
  */
 static VALUE rxml_reader_move_to_first_attr(VALUE self)
 {
-  return INT2FIX(xmlTextReaderMoveToFirstAttribute(rxml_text_reader_get(self)));
+  xmlTextReaderPtr xreader = rxml_text_reader_get(self);
+  return INT2FIX(xmlTextReaderMoveToFirstAttribute(xreader));
 }
 
 /*
@@ -320,7 +321,8 @@ static VALUE rxml_reader_move_to_first_attr(VALUE self)
  */
 static VALUE rxml_reader_move_to_next_attr(VALUE self)
 {
-  return INT2FIX(xmlTextReaderMoveToNextAttribute(rxml_text_reader_get(self)));
+  xmlTextReaderPtr xreader = rxml_text_reader_get(self);
+  return INT2FIX(xmlTextReaderMoveToNextAttribute(xreader));
 }
 
 /*
@@ -332,7 +334,8 @@ static VALUE rxml_reader_move_to_next_attr(VALUE self)
  */
 static VALUE rxml_reader_move_to_element(VALUE self)
 {
-  return INT2FIX(xmlTextReaderMoveToElement(rxml_text_reader_get(self)));
+  xmlTextReaderPtr xreader = rxml_text_reader_get(self);
+  return INT2FIX(xmlTextReaderMoveToElement(xreader));
 }
 
 /*
@@ -344,7 +347,8 @@ static VALUE rxml_reader_move_to_element(VALUE self)
  */
 static VALUE rxml_reader_next(VALUE self)
 {
-  return INT2FIX(xmlTextReaderNext(rxml_text_reader_get(self)));
+  xmlTextReaderPtr xreader = rxml_text_reader_get(self);
+  return INT2FIX(xmlTextReaderNext(xreader));
 }
 
 /*
@@ -357,7 +361,8 @@ static VALUE rxml_reader_next(VALUE self)
  */
 static VALUE rxml_reader_next_sibling(VALUE self)
 {
-  return INT2FIX(xmlTextReaderNextSibling(rxml_text_reader_get(self)));
+  xmlTextReaderPtr xreader = rxml_text_reader_get(self);
+  return INT2FIX(xmlTextReaderNextSibling(xreader));
 }
 
 /*
@@ -385,7 +390,8 @@ static VALUE rxml_reader_node(VALUE self)
  */
 static VALUE rxml_reader_node_type(VALUE self)
 {
-  return INT2FIX(xmlTextReaderNodeType(rxml_text_reader_get(self)));
+  xmlTextReaderPtr xreader = rxml_text_reader_get(self);
+  return INT2FIX(xmlTextReaderNodeType(xreader));
 }
 
 /*
@@ -402,7 +408,8 @@ static VALUE rxml_reader_node_type(VALUE self)
  */
 static VALUE rxml_reader_normalization(VALUE self)
 {
-  return INT2FIX(xmlTextReaderNormalization(rxml_text_reader_get(self)));
+  xmlTextReaderPtr xreader = rxml_text_reader_get(self);
+  return INT2FIX(xmlTextReaderNormalization(xreader));
 }
 
 /*
@@ -415,7 +422,8 @@ static VALUE rxml_reader_normalization(VALUE self)
  * nodes to read.  On errors, an exception is raised.*/
 static VALUE rxml_reader_read(VALUE self)
 {
-  int result = xmlTextReaderRead(rxml_text_reader_get(self));
+  xmlTextReaderPtr xreader = rxml_text_reader_get(self);
+  int result = xmlTextReaderRead(xreader);
   switch(result)
   {
     case -1:
@@ -444,7 +452,8 @@ static VALUE rxml_reader_read(VALUE self)
  */
 static VALUE rxml_reader_read_attr_value(VALUE self)
 {
-  return INT2FIX(xmlTextReaderReadAttributeValue(rxml_text_reader_get(self)));
+  xmlTextReaderPtr xreader = rxml_text_reader_get(self);
+  return INT2FIX(xmlTextReaderReadAttributeValue(xreader));
 }
 
 /*
@@ -507,7 +516,8 @@ static VALUE rxml_reader_read_outer_xml(VALUE self)
  */
 static VALUE rxml_reader_read_state(VALUE self)
 {
-  return INT2FIX(xmlTextReaderReadState(rxml_text_reader_get(self)));
+  xmlTextReaderPtr xreader = rxml_text_reader_get(self);
+  return INT2FIX(xmlTextReaderReadState(xreader));
 }
 
 /*
@@ -550,7 +560,8 @@ static VALUE rxml_reader_read_string(VALUE self)
 static VALUE rxml_reader_relax_ng_validate(VALUE self, VALUE rng)
 {
   char *xrng = NIL_P(rng) ? NULL : StringValueCStr(rng);
-  return INT2FIX(xmlTextReaderRelaxNGValidate(rxml_text_reader_get(self), xrng));
+  xmlTextReaderPtr xreader = rxml_text_reader_get(self);
+  return INT2FIX(xmlTextReaderRelaxNGValidate(xreader, xrng));
 }
 
 #if LIBXML_VERSION >= 20620
@@ -569,7 +580,8 @@ static VALUE
 rxml_reader_schema_validate(VALUE self, VALUE xsd)
 {
   char *xxsd = NIL_P(xsd) ? NULL : StringValueCStr(xsd);
-  int status = xmlTextReaderSchemaValidate(rxml_text_reader_get(self), xxsd);
+  xmlTextReaderPtr xreader = rxml_text_reader_get(self);
+  int status = xmlTextReaderSchemaValidate(xreader, xxsd);
   return INT2FIX(status);
 }
 #endif
@@ -612,7 +624,8 @@ static VALUE rxml_reader_local_name(VALUE self)
  */
 static VALUE rxml_reader_attr_count(VALUE self)
 {
-  return INT2FIX(xmlTextReaderAttributeCount(rxml_text_reader_get(self)));
+  xmlTextReaderPtr xreader = rxml_text_reader_get(self);
+  return INT2FIX(xmlTextReaderAttributeCount(xreader));
 }
 
 /*
@@ -709,7 +722,8 @@ static VALUE rxml_reader_prefix(VALUE self)
  */
 static VALUE rxml_reader_depth(VALUE self)
 {
-  return INT2FIX(xmlTextReaderDepth(rxml_text_reader_get(self)));
+  xmlTextReaderPtr xreader = rxml_text_reader_get(self);
+  return INT2FIX(xmlTextReaderDepth(xreader));
 }
 
 /*
@@ -721,7 +735,8 @@ static VALUE rxml_reader_depth(VALUE self)
  */
 static VALUE rxml_reader_quote_char(VALUE self)
 {
-  return INT2FIX(xmlTextReaderQuoteChar(rxml_text_reader_get(self)));
+  xmlTextReaderPtr xreader = rxml_text_reader_get(self);
+  return INT2FIX(xmlTextReaderQuoteChar(xreader));
 }
 
 /*
@@ -736,7 +751,8 @@ static VALUE rxml_reader_quote_char(VALUE self)
  */
 static VALUE rxml_reader_standalone(VALUE self)
 {
-  return INT2FIX(xmlTextReaderStandalone(rxml_text_reader_get(self)));
+  xmlTextReaderPtr xreader = rxml_text_reader_get(self);
+  return INT2FIX(xmlTextReaderStandalone(xreader));
 }
 
 /*
@@ -777,8 +793,8 @@ static VALUE rxml_reader_xml_version(VALUE self)
  */
 static VALUE rxml_reader_has_attributes(VALUE self)
 {
-  return xmlTextReaderHasAttributes(rxml_text_reader_get(self)) ? Qtrue
-      : Qfalse;
+  xmlTextReaderPtr xreader = rxml_text_reader_get(self);
+  return xmlTextReaderHasAttributes(xreader) ? Qtrue : Qfalse;
 }
 
 /*
@@ -789,7 +805,8 @@ static VALUE rxml_reader_has_attributes(VALUE self)
  */
 static VALUE rxml_reader_has_value(VALUE self)
 {
-  return xmlTextReaderHasValue(rxml_text_reader_get(self)) ? Qtrue : Qfalse;
+  xmlTextReaderPtr xreader = rxml_text_reader_get(self);
+  return xmlTextReaderHasValue(xreader) ? Qtrue : Qfalse;
 }
 
 /*
@@ -850,25 +867,21 @@ static VALUE rxml_reader_lookup_namespace(VALUE self, VALUE prefix)
  * call-seq:
  *    reader.expand -> node
  *
- * Read the contents of the current node and the full subtree. It then makes
- * the subtree available until the next read call.
- *
- * Return an XML::Node object, or nil in case of error.
+ * Returns the current node and its full subtree. Note the returned node
+ * is valid ONLY until the next read call.  
  */
 static VALUE rxml_reader_expand(VALUE self)
 {
-  xmlNodePtr node, nodec;
-  xmlTextReaderPtr reader = rxml_text_reader_get(self);
-  node = xmlTextReaderExpand(reader);
-
-  if (!node)
+  xmlTextReaderPtr xreader = rxml_text_reader_get(self);
+  xmlNodePtr xnode = xmlTextReaderExpand(xreader);
+  
+  if (!xnode)
+  {
     return Qnil;
-  else {
-    nodec = xmlCopyNode(node, 1);
-    if (!nodec)
-      return Qnil;
-    else
-      return rxml_node_wrap(nodec);
+  }
+  else
+  {
+    return rxml_node_wrap(xnode);
   }
 }
 
@@ -883,7 +896,8 @@ static VALUE rxml_reader_expand(VALUE self)
 static VALUE
 rxml_reader_byte_consumed(VALUE self)
 {
-  return INT2NUM(xmlTextReaderByteConsumed(rxml_text_reader_get(self)));
+  xmlTextReaderPtr xreader = rxml_text_reader_get(self);
+  return INT2NUM(xmlTextReaderByteConsumed(xreader));
 }
 #endif
 
@@ -897,7 +911,8 @@ rxml_reader_byte_consumed(VALUE self)
 static VALUE
 rxml_reader_column_number(VALUE self)
 {
-  return INT2NUM(xmlTextReaderGetParserColumnNumber(rxml_text_reader_get(self)));
+  xmlTextReaderPtr xreader = rxml_text_reader_get(self);
+  return INT2NUM(xmlTextReaderGetParserColumnNumber(xreader));
 }
 
 /*
@@ -909,7 +924,8 @@ rxml_reader_column_number(VALUE self)
 static VALUE
 rxml_reader_line_number(VALUE self)
 {
-  return INT2NUM(xmlTextReaderGetParserLineNumber(rxml_text_reader_get(self)));
+  xmlTextReaderPtr xreader = rxml_text_reader_get(self);
+  return INT2NUM(xmlTextReaderGetParserLineNumber(xreader));
 }
 #endif
 
@@ -922,7 +938,8 @@ rxml_reader_line_number(VALUE self)
  */
 static VALUE rxml_reader_default(VALUE self)
 {
-  return xmlTextReaderIsDefault(rxml_text_reader_get(self)) ? Qtrue : Qfalse;
+  xmlTextReaderPtr xreader = rxml_text_reader_get(self);
+  return xmlTextReaderIsDefault(xreader) ? Qtrue : Qfalse;
 }
 
 /*
@@ -934,8 +951,8 @@ static VALUE rxml_reader_default(VALUE self)
  */
 static VALUE rxml_reader_namespace_declaration(VALUE self)
 {
-  return xmlTextReaderIsNamespaceDecl(rxml_text_reader_get(self)) ? Qtrue
-      : Qfalse;
+  xmlTextReaderPtr xreader = rxml_text_reader_get(self);
+  return xmlTextReaderIsNamespaceDecl(xreader) ? Qtrue : Qfalse;
 }
 
 /*
@@ -946,8 +963,8 @@ static VALUE rxml_reader_namespace_declaration(VALUE self)
  */
 static VALUE rxml_reader_empty_element(VALUE self)
 {
-  return xmlTextReaderIsEmptyElement(rxml_text_reader_get(self)) ? Qtrue
-      : Qfalse;
+  xmlTextReaderPtr xreader = rxml_text_reader_get(self);
+  return xmlTextReaderIsEmptyElement(xreader) ? Qtrue : Qfalse;
 }
 
 /*
@@ -958,7 +975,8 @@ static VALUE rxml_reader_empty_element(VALUE self)
  */
 static VALUE rxml_reader_valid(VALUE self)
 {
-  return xmlTextReaderIsValid(rxml_text_reader_get(self)) ? Qtrue : Qfalse;
+  xmlTextReaderPtr xreader = rxml_text_reader_get(self);
+  return xmlTextReaderIsValid(xreader) ? Qtrue : Qfalse;
 }
 
 void rxml_init_reader(void)

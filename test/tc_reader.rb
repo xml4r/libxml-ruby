@@ -164,11 +164,19 @@ class TestReader < Test::Unit::TestCase
 
   def test_expand
     reader = XML::Reader.file(XML_FILE)
+    reader.read.to_s
     reader.read
+
+    # Read a node
     node = reader.expand
-    assert_nil(node.doc)
-    reader.close
-    GC.start
+    assert_equal('feed', node.name)
+    assert_equal(::Encoding::UTF_8, node.name.encoding) if defined?(::Encoding)
+
+    # Try to access the document
+    error = assert_raise(XML::Error) do
+      assert_not_nil(node.doc)
+    end
+    assert_equal(" Document is not accessible to Ruby (hint - did you call Reader#expand?).", error.to_s)
   end
 
   def test_mode
