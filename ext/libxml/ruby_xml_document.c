@@ -902,12 +902,9 @@ static VALUE rxml_document_validate_dtd(VALUE self, VALUE dtd)
   Data_Get_Struct(self, xmlDoc, xdoc);
   Data_Get_Struct(dtd, xmlDtd, xdtd);
 
+  /* Setup context */
+  memset(&ctxt, 0, sizeof(xmlValidCtxt));
   ctxt.userData = &error;
-
-  ctxt.nodeNr = 0;
-  ctxt.nodeTab = NULL;
-  ctxt.vstateNr = 0;
-  ctxt.vstateTab = NULL;
 
   if (xmlValidateDtd(&ctxt, xdoc, xdtd))
   {
