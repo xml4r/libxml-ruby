@@ -25,8 +25,9 @@ VALUE rxml_str_new2(const char* xstr, const char* xencoding)
 {
 #ifdef HAVE_RUBY_ENCODING_H
   if (xencoding)
-  {
-    rb_encoding* xencodingPtr = rb_enc_find(xencoding);
+  {      
+    xmlCharEncoding xmlEncoding = xmlParseCharEncoding(xencoding);
+    rb_encoding* xencodingPtr = rxml_xml_encoding_to_rb_encoding_ptr(xmlEncoding);
     return rb_external_str_new_with_enc(xstr, strlen(xstr), xencodingPtr);
   }
 #endif

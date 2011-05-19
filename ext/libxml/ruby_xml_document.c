@@ -330,13 +330,10 @@ static VALUE rxml_document_rb_encoding_get(VALUE self)
 {
   xmlDocPtr xdoc;
   const char *xencoding;
-  rb_encoding* xencodingPtr;
   Data_Get_Struct(self, xmlDoc, xdoc);
 
   xencoding = (const char*)xdoc->encoding;
-  xencodingPtr = rb_enc_find(xencoding);
-  
-  return rb_enc_from_encoding(xencodingPtr);
+  return rxml_xml_encoding_to_rb_encoding(mXMLEncoding, xmlParseCharEncoding(xencoding));
 }
 #endif 
 

@@ -75,74 +75,54 @@ static VALUE rxml_encoding_to_s(VALUE klass, VALUE encoding)
 }
 
 #ifdef HAVE_RUBY_ENCODING_H
-VALUE rxml_xml_encoding_to_rb_encoding(VALUE klass, xmlCharEncoding xmlEncoding)
+/*
+ * Converts an xmlCharEncoding enum value into an rb_encoding object (available
+ * on Ruby 1.9.* and higher).
+ */
+rb_encoding* rxml_xml_encoding_to_rb_encoding_ptr(xmlCharEncoding xmlEncoding)
 {
-  ID encoding_name;
+  const char* encodingName;
 
   switch (xmlEncoding)
   {
     case XML_CHAR_ENCODING_UTF8:
-      encoding_name = rb_intern("UTF_8");
-      break;
     case XML_CHAR_ENCODING_UTF16LE:
-      encoding_name = rb_intern("UTF_16LE");
-      break;
     case XML_CHAR_ENCODING_UTF16BE:
-      encoding_name = rb_intern("UTF_16BE");
-      break;
     case XML_CHAR_ENCODING_UCS4LE:
-      encoding_name = rb_intern("UCS_4LE");
-      break;
     case XML_CHAR_ENCODING_UCS4BE:
-      encoding_name = rb_intern("UCS_4BE");
-      break;
     case XML_CHAR_ENCODING_UCS2:
-      encoding_name = rb_intern("UCS_2");
-      break;
     case XML_CHAR_ENCODING_8859_1:
-      encoding_name = rb_intern("ISO8859_1");
-      break;
     case XML_CHAR_ENCODING_8859_2:
-      encoding_name = rb_intern("ISO8859_2");
-      break;
     case XML_CHAR_ENCODING_8859_3:
-      encoding_name = rb_intern("ISO8859_3");
-      break;
     case XML_CHAR_ENCODING_8859_4:
-      encoding_name = rb_intern("ISO8859_4");
-      break;
     case XML_CHAR_ENCODING_8859_5:
-      encoding_name = rb_intern("ISO8859_5");
-      break;
     case XML_CHAR_ENCODING_8859_6:
-      encoding_name = rb_intern("ISO8859_6");
-      break;
     case XML_CHAR_ENCODING_8859_7:
-      encoding_name = rb_intern("ISO8859_7");
-      break;
     case XML_CHAR_ENCODING_8859_8:
-      encoding_name = rb_intern("ISO8859_8");
-      break;
     case XML_CHAR_ENCODING_8859_9:
-      encoding_name = rb_intern("ISO8859_9");
-      break;
     case XML_CHAR_ENCODING_2022_JP:
-      encoding_name = rb_intern("ISO_2022_JP");
-      break;
     case XML_CHAR_ENCODING_SHIFT_JIS:
-      encoding_name = rb_intern("SHIFT_JIS");
-      break;
     case XML_CHAR_ENCODING_EUC_JP:
-      encoding_name = rb_intern("EUC_JP");
-      break;
     case XML_CHAR_ENCODING_ASCII:
-      encoding_name = rb_intern("US-ASCII");
+      /* Get the canonical version of the name */
+      encodingName = xmlGetCharEncodingName(xmlEncoding);
       break;
     default:
       /* Covers XML_CHAR_ENCODING_ERROR, XML_CHAR_ENCODING_NONE, XML_CHAR_ENCODING_EBCDIC */
-      encoding_name = rb_intern("ASCII_8BIT");
+      encodingName = xmlGetCharEncodingName(XML_CHAR_ENCODING_ASCII);
+      break;
   }
-  return rb_const_get(rb_cEncoding, encoding_name);
+
+  return rb_enc_find(encodingName);
+}
+
+/*
+ * Converts an xmlCharEncoding enum value into a Ruby Encoding object (available
+ * on Ruby 1.9.* and higher).
+ */
+VALUE rxml_xml_encoding_to_rb_encoding(VALUE klass, xmlCharEncoding xmlEncoding)
+{
+  return rb_enc_from_encoding(rxml_xml_encoding_to_rb_encoding_ptr(xmlEncoding));
 }
 
 /*
