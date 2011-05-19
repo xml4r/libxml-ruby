@@ -86,30 +86,65 @@ rb_encoding* rxml_xml_encoding_to_rb_encoding_ptr(xmlCharEncoding xmlEncoding)
   switch (xmlEncoding)
   {
     case XML_CHAR_ENCODING_UTF8:
+      encodingName = "UTF-8";
+      break;
     case XML_CHAR_ENCODING_UTF16LE:
+      encodingName = "UTF-16LE";
+      break;
     case XML_CHAR_ENCODING_UTF16BE:
+      encodingName = "UTF-16BE";
+      break;
     case XML_CHAR_ENCODING_UCS4LE:
+      encodingName = "UCS-4LE";
+      break;
     case XML_CHAR_ENCODING_UCS4BE:
+      encodingName = "UCS-4BE";
+      break;
     case XML_CHAR_ENCODING_UCS2:
+      encodingName = "UCS-2";
+      break;
     case XML_CHAR_ENCODING_8859_1:
+      encodingName = "ISO8859-1";
+      break;
     case XML_CHAR_ENCODING_8859_2:
+      encodingName = "ISO8859-2";
+      break;
     case XML_CHAR_ENCODING_8859_3:
+      encodingName = "ISO8859-3";
+      break;
     case XML_CHAR_ENCODING_8859_4:
+      encodingName = "ISO8859-4";
+      break;
     case XML_CHAR_ENCODING_8859_5:
+      encodingName = "ISO8859-5";
+      break;
     case XML_CHAR_ENCODING_8859_6:
+      encodingName = "ISO8859-6";
+      break;
     case XML_CHAR_ENCODING_8859_7:
+      encodingName = "ISO8859-7";
+      break;
     case XML_CHAR_ENCODING_8859_8:
+      encodingName = "ISO8859-8";
+      break;
     case XML_CHAR_ENCODING_8859_9:
+      encodingName = "ISO8859-9";
+      break;
     case XML_CHAR_ENCODING_2022_JP:
+      encodingName = "ISO-2022-JP";
+      break;
     case XML_CHAR_ENCODING_SHIFT_JIS:
+      encodingName = "SHIFT-JIS";
+      break;
     case XML_CHAR_ENCODING_EUC_JP:
+      encodingName = "EUC-JP";
+      break;
     case XML_CHAR_ENCODING_ASCII:
-      /* Get the canonical version of the name */
-      encodingName = xmlGetCharEncodingName(xmlEncoding);
+      encodingName = "US-ASCII";
       break;
     default:
       /* Covers XML_CHAR_ENCODING_ERROR, XML_CHAR_ENCODING_NONE, XML_CHAR_ENCODING_EBCDIC */
-      encodingName = xmlGetCharEncodingName(XML_CHAR_ENCODING_ASCII);
+      encodingName = "ASCII-8BIT";
       break;
   }
 
