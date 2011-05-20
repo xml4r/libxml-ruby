@@ -76,10 +76,10 @@ static VALUE rxml_encoding_to_s(VALUE klass, VALUE encoding)
 
 #ifdef HAVE_RUBY_ENCODING_H
 /*
- * Converts an xmlCharEncoding enum value into an rb_encoding object (available
+ * Converts an xmlCharEncoding enum value into a Ruby Encoding object (available
  * on Ruby 1.9.* and higher).
  */
-rb_encoding* rxml_xml_encoding_to_rb_encoding_ptr(xmlCharEncoding xmlEncoding)
+VALUE rxml_xml_encoding_to_rb_encoding(VALUE klass, xmlCharEncoding xmlEncoding)
 {
   const char* encodingName;
 
@@ -148,16 +148,7 @@ rb_encoding* rxml_xml_encoding_to_rb_encoding_ptr(xmlCharEncoding xmlEncoding)
       break;
   }
 
-  return rb_enc_find(encodingName);
-}
-
-/*
- * Converts an xmlCharEncoding enum value into a Ruby Encoding object (available
- * on Ruby 1.9.* and higher).
- */
-VALUE rxml_xml_encoding_to_rb_encoding(VALUE klass, xmlCharEncoding xmlEncoding)
-{
-  return rb_enc_from_encoding(rxml_xml_encoding_to_rb_encoding_ptr(xmlEncoding));
+  return rb_enc_from_encoding(rb_enc_find(encodingName));
 }
 
 /*
