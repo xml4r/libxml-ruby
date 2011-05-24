@@ -894,7 +894,6 @@ static VALUE rxml_document_validate_relaxng(VALUE self, VALUE relaxng)
  */
 static VALUE rxml_document_validate_dtd(VALUE self, VALUE dtd)
 {
-  VALUE error = Qnil;
   xmlValidCtxt ctxt;
   xmlDocPtr xdoc;
   xmlDtdPtr xdtd;
@@ -904,11 +903,10 @@ static VALUE rxml_document_validate_dtd(VALUE self, VALUE dtd)
 
   /* Setup context */
   memset(&ctxt, 0, sizeof(xmlValidCtxt));
-  ctxt.userData = &error;
 
   if (xmlValidateDtd(&ctxt, xdoc, xdtd))
   {
-    return (Qtrue);
+    return Qtrue;
   }
   else
   {
