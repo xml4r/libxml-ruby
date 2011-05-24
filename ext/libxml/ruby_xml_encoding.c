@@ -75,74 +75,80 @@ static VALUE rxml_encoding_to_s(VALUE klass, VALUE encoding)
 }
 
 #ifdef HAVE_RUBY_ENCODING_H
+/*
+ * Converts an xmlCharEncoding enum value into a Ruby Encoding object (available
+ * on Ruby 1.9.* and higher).
+ */
 VALUE rxml_xml_encoding_to_rb_encoding(VALUE klass, xmlCharEncoding xmlEncoding)
 {
-  ID encoding_name;
+  const char* encodingName;
 
   switch (xmlEncoding)
   {
     case XML_CHAR_ENCODING_UTF8:
-      encoding_name = rb_intern("UTF_8");
+      encodingName = "UTF-8";
       break;
     case XML_CHAR_ENCODING_UTF16LE:
-      encoding_name = rb_intern("UTF_16LE");
+      encodingName = "UTF-16LE";
       break;
     case XML_CHAR_ENCODING_UTF16BE:
-      encoding_name = rb_intern("UTF_16BE");
+      encodingName = "UTF-16BE";
       break;
     case XML_CHAR_ENCODING_UCS4LE:
-      encoding_name = rb_intern("UCS_4LE");
+      encodingName = "UCS-4LE";
       break;
     case XML_CHAR_ENCODING_UCS4BE:
-      encoding_name = rb_intern("UCS_4BE");
+      encodingName = "UCS-4BE";
       break;
     case XML_CHAR_ENCODING_UCS2:
-      encoding_name = rb_intern("UCS_2");
+      encodingName = "UCS-2";
       break;
     case XML_CHAR_ENCODING_8859_1:
-      encoding_name = rb_intern("ISO8859_1");
+      encodingName = "ISO8859-1";
       break;
     case XML_CHAR_ENCODING_8859_2:
-      encoding_name = rb_intern("ISO8859_2");
+      encodingName = "ISO8859-2";
       break;
     case XML_CHAR_ENCODING_8859_3:
-      encoding_name = rb_intern("ISO8859_3");
+      encodingName = "ISO8859-3";
       break;
     case XML_CHAR_ENCODING_8859_4:
-      encoding_name = rb_intern("ISO8859_4");
+      encodingName = "ISO8859-4";
       break;
     case XML_CHAR_ENCODING_8859_5:
-      encoding_name = rb_intern("ISO8859_5");
+      encodingName = "ISO8859-5";
       break;
     case XML_CHAR_ENCODING_8859_6:
-      encoding_name = rb_intern("ISO8859_6");
+      encodingName = "ISO8859-6";
       break;
     case XML_CHAR_ENCODING_8859_7:
-      encoding_name = rb_intern("ISO8859_7");
+      encodingName = "ISO8859-7";
       break;
     case XML_CHAR_ENCODING_8859_8:
-      encoding_name = rb_intern("ISO8859_8");
+      encodingName = "ISO8859-8";
       break;
     case XML_CHAR_ENCODING_8859_9:
-      encoding_name = rb_intern("ISO8859_9");
+      encodingName = "ISO8859-9";
       break;
     case XML_CHAR_ENCODING_2022_JP:
-      encoding_name = rb_intern("ISO_2022_JP");
+      encodingName = "ISO-2022-JP";
       break;
     case XML_CHAR_ENCODING_SHIFT_JIS:
-      encoding_name = rb_intern("SHIFT_JIS");
+      encodingName = "SHIFT-JIS";
       break;
     case XML_CHAR_ENCODING_EUC_JP:
-      encoding_name = rb_intern("EUC_JP");
+      encodingName = "EUC-JP";
       break;
     case XML_CHAR_ENCODING_ASCII:
-      encoding_name = rb_intern("US-ASCII");
+      encodingName = "US-ASCII";
       break;
     default:
       /* Covers XML_CHAR_ENCODING_ERROR, XML_CHAR_ENCODING_NONE, XML_CHAR_ENCODING_EBCDIC */
-      encoding_name = rb_intern("ASCII_8BIT");
+      encodingName = "ASCII-8BIT";
+      break;
   }
-  return rb_const_get(rb_cEncoding, encoding_name);
+
+  return rb_enc_from_encoding(rb_enc_find(encodingName));
 }
 
 /*
