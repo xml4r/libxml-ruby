@@ -15,7 +15,7 @@ class TestSchema < Test::Unit::TestCase
   
   def schema
     document = XML::Document.file(File.join(File.dirname(__FILE__), 'model/shiporder.xsd'))
-    schema = XML::Schema.document(document)
+    XML::Schema.document(document)
   end
 
   def test_from_doc
