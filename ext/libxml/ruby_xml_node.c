@@ -1056,7 +1056,7 @@ static VALUE rxml_node_attributes_get(VALUE self)
  *    node.property("name") -> "string"
  *    node["name"]          -> "string"
  *
- * Obtain the named pyroperty.
+ * Obtain the named property.
  */
 static VALUE rxml_node_attribute_get(VALUE self, VALUE name)
 {
