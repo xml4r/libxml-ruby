@@ -1,5 +1,11 @@
 = Release History
 
+== 2.0.7 / 2011-06-23 Charlie Savage
+
+* Add in 2 new HTML Parser constants - NODEFDTD and NOIMPLIED.
+
+* Fix compile issue on Ruby 1.9.3
+
 == 2.0.6 / 2011-05-23 Charlie Savage
 
 * Fix segfault that sometimes occurred when looking up encodings on 1.9.
