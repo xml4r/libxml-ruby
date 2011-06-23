@@ -3,7 +3,9 @@
 require "rubygems"
 require "rake/extensiontask"
 require "rake/testtask"
-require 'hanna/rdoctask'
+require "rubygems/package_task"
+##require 'hanna/rdoctask'
+require "rdoc/task"
 require "grancher/task"
 require "yaml"
 
@@ -23,7 +25,7 @@ Rake::ExtensionTask.new do |ext|
 end
 
 # Setup generic gem
-Rake::GemPackageTask.new(spec) do |pkg|
+Gem::PackageTask.new(spec) do |pkg|
   pkg.package_dir = 'pkg'
   pkg.need_tar    = false
 end
@@ -42,7 +44,7 @@ if RUBY_PLATFORM.match(/win32|mingw32/)
   win_spec.extensions = nil
 
   # Rake task to build the windows package
-  Rake::GemPackageTask.new(win_spec) do |pkg|
+  Gem::PackageTask.new(win_spec) do |pkg|
     pkg.package_dir = 'pkg'
     pkg.need_tar = false
   end
@@ -50,7 +52,7 @@ end
 
 # RDoc Task
 desc "Generate rdoc documentation"
-Rake::RDocTask.new("rdoc") do |rdoc|
+RDoc::Task.new("rdoc") do |rdoc|
   rdoc.rdoc_dir = 'doc/libxml-ruby/rdoc'
   rdoc.title    = "LibXML"
   # Show source inline with line numbers
