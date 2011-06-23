@@ -2,15 +2,6 @@
 
 require 'rbconfig'
 
-def method_missing(s, *args)
-  if v = Config::CONFIG[s] || Config::CONFIG[s.upcase]
-    return v
-  else
-    puts "missing: #{s}"
-    super
-  end
-end
-
 require 'mkmf'
 
 if defined?(CFLAGS)
