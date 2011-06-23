@@ -21,6 +21,10 @@ void rxml_init_html_parser_options(void)
   /* 1: Relax parsing. */
   rb_define_const(mXMLHtmlParserOptions, "RECOVER", INT2NUM(HTML_PARSE_RECOVER)); 
 #endif
+#if LIBXML_VERSION >= 20708
+  /* 2:  Do not default a doctype if not found */
+  rb_define_const(mXMLHtmlParserOptions, "NODEFDTD", INT2NUM(HTML_PARSE_NODEFDTD));
+#endif
   /* 32: Suppress error reports. */
   rb_define_const(mXMLHtmlParserOptions, "NOERROR", INT2NUM(HTML_PARSE_NOERROR)); 
   /* 64: Suppress warning reports. */
@@ -34,5 +38,9 @@ void rxml_init_html_parser_options(void)
   rb_define_const(mXMLHtmlParserOptions, "NONET", INT2NUM(HTML_PARSE_NONET)); 
   /* 65536: Compact small text nodes. */
   rb_define_const(mXMLHtmlParserOptions, "COMPACT", INT2NUM(HTML_PARSE_COMPACT));
+#endif
+#if LIBXML_VERSION >= 20707
+  /* 8192:  Do not add implied html/body... elements */
+  rb_define_const(mXMLHtmlParserOptions, "NOIMPLIED", INT2NUM(HTML_PARSE_NOIMPLIED));
 #endif
 }
