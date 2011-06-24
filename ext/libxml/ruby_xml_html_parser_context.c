@@ -284,11 +284,21 @@ static VALUE rxml_html_parser_context_disable_cdata_set(VALUE self, VALUE bool)
 static VALUE rxml_html_parser_context_options_set(VALUE self, VALUE options)
 {
   int result;
+  int xml_options = NUM2INT(options);
   htmlParserCtxtPtr ctxt;
   Check_Type(options, T_FIXNUM);
 
   Data_Get_Struct(self, htmlParserCtxt, ctxt);
-  result = htmlCtxtUseOptions(ctxt, NUM2INT(options));
+  result = htmlCtxtUseOptions(ctxt, xml_options);
+
+#if LIBXML_VERSION >= 20707
+  /* Big hack here, but htmlCtxtUseOptions doens't support HTML_PARSE_NOIMPLIED.
+     So do it ourselves. There must be a better way??? */
+  if (xml_options & HTML_PARSE_NOIMPLIED) 
+  {
+	  ctxt->options |= HTML_PARSE_NOIMPLIED;
+  }
+#endif
 
   return self;
 }

@@ -137,4 +137,11 @@ class HTMLParserTest < Test::Unit::TestCase
     assert_instance_of XML::Node, world
     assert_equal 'World', world.content
   end
+
+  def test_no_implied
+    html = "hello world"
+    parser = XML::HTMLParser.string(html, :options => XML::HTMLParser::Options::NOIMPLIED)
+    doc = parser.parse
+    assert_equal("<p>#{html}</p>", doc.root.to_s)
+  end
 end
