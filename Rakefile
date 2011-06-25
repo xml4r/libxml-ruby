@@ -22,6 +22,7 @@ Rake::ExtensionTask.new do |ext|
   ext.ext_dir = "ext/libxml"
   ext.lib_dir = "lib/#{RUBY_VERSION.sub(/\.\d$/, '')}"
   ext.config_options << "--with-xml2-include=C:/MinGW/local/include/libxml2"
+  ext.config_options << "--with-zlib-dir=C:/MinGW/local"
 end
 
 # Setup generic gem
