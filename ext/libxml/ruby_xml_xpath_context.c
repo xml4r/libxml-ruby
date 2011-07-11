@@ -264,7 +264,6 @@ static VALUE rxml_xpath_context_find(VALUE self, VALUE xpath_expr)
   xmlXPathContextPtr xctxt;
   xmlXPathObjectPtr xobject;
   xmlXPathCompExprPtr xcompexpr;
-  VALUE result;
 
   Data_Get_Struct(self, xmlXPathContext, xctxt);
 
@@ -284,37 +283,7 @@ static VALUE rxml_xpath_context_find(VALUE self, VALUE xpath_expr)
         "Argument should be an intance of a String or XPath::Expression");
   }
 
-  if (xobject == NULL)
-  {
-    /* xmlLastError is different than xctxt->lastError.  Use
-     xmlLastError since it has the message set while xctxt->lastError
-     does not. */
-    xmlErrorPtr xerror = xmlGetLastError();
-    rxml_raise(xerror);
-  }
-
-  switch (xobject->type)
-  {
-  case XPATH_NODESET:
-    result = rxml_xpath_object_wrap(xctxt->doc, xobject);
-    break;
-  case XPATH_BOOLEAN:
-    result = (xobject->boolval != 0) ? Qtrue : Qfalse;
-    xmlXPathFreeObject(xobject);
-    break;
-  case XPATH_NUMBER:
-    result = rb_float_new(xobject->floatval);
-    xmlXPathFreeObject(xobject);
-    break;
-  case XPATH_STRING:
-    result = rxml_str_new2((const char*)xobject->stringval, xctxt->doc->encoding);
-    xmlXPathFreeObject(xobject);
-    break;
-  default:
-    result = Qnil;
-    xmlXPathFreeObject(xobject);
-  }
-  return result;
+  return rxml_xpath_to_value(xctxt, xobject);
 }
 
 #if LIBXML_VERSION >= 20626
