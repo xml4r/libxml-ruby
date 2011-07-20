@@ -81,6 +81,7 @@ VALUE mXPath;
 VALUE
 rxml_xpath_to_value(xmlXPathContextPtr xctxt, xmlXPathObjectPtr xobject) {
   VALUE result;
+  int type;
 
   if (xobject == NULL) {
     /* xmlLastError is different than xctxt->lastError.  Use
@@ -90,7 +91,7 @@ rxml_xpath_to_value(xmlXPathContextPtr xctxt, xmlXPathObjectPtr xobject) {
     rxml_raise(xerror);
   }
 
-  switch (xobject->type) {
+  switch (type = xobject->type) {
     case XPATH_NODESET:
       result = rxml_xpath_object_wrap(xctxt->doc, xobject);
       break;
@@ -107,8 +108,10 @@ rxml_xpath_to_value(xmlXPathContextPtr xctxt, xmlXPathObjectPtr xobject) {
       xmlXPathFreeObject(xobject);
       break;
     default:
-      result = Qnil;
       xmlXPathFreeObject(xobject);
+      rb_raise(rb_eTypeError,
+        "can't convert XPath object of type %d to Ruby value", type
+      );
   }
 
   return result;
