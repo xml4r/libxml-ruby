@@ -6,7 +6,7 @@ require 'test/unit'
 class AttributesTest < Test::Unit::TestCase
   def setup
     xp = XML::Parser.string(<<-EOS)
-    <CityModel
+    <CityModel name="value"
       xmlns="http://www.opengis.net/examples"
       xmlns:city="http://www.opengis.net/examples"
       xmlns:gml="http://www.opengis.net/gml"
@@ -88,6 +88,14 @@ class AttributesTest < Test::Unit::TestCase
     attributes = city_member.attributes
     assert_equal('Cambridge', attributes[:name])
     assert_equal('http://www.foo.net/cgi-bin/wfs?FeatureID=C10239', attributes[:href])
+  end
+
+  def test_get_values_gc
+    # There used to be a bug caused by accessing an
+    # attribute over and over and over again.
+    20000.times do
+      @doc.root.attributes["key"]
+    end
   end
 
   def test_set_values

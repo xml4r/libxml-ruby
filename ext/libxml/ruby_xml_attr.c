@@ -54,10 +54,10 @@ VALUE rxml_attr_wrap(xmlAttrPtr xattr)
 {
   VALUE result;
 
-  /* Check if the node is already wrapped. */
-  if (xattr->_private != NULL)
-    return (VALUE) xattr->_private;
-
+  /* We always return a new ruby object.  We used to check _private, but
+     the problem is the user can get an attribute, let it go, get 
+     the same attribute back, but the attribute was on the gc list
+     and then gets collected. */
   result = Data_Wrap_Struct(cXMLAttr, rxml_attr_mark, rxml_attr_free, xattr);
   xattr->_private = (void*) result;
   
