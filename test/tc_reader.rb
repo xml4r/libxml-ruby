@@ -171,12 +171,33 @@ class TestReader < Test::Unit::TestCase
     node = reader.expand
     assert_equal('feed', node.name)
     assert_equal(::Encoding::UTF_8, node.name.encoding) if defined?(::Encoding)
+  end
+
+  def test_expand_doc
+    reader = XML::Reader.file(XML_FILE)
+    reader.read.to_s
+    reader.read
+
+    # Read a node
+    node = reader.expand
 
     # Try to access the document
-    error = assert_raise(XML::Error) do
-      assert_not_nil(node.doc)
-    end
-    assert_equal(" Document is not accessible to Ruby (hint - did you call Reader#expand?).", error.to_s)
+    assert_not_nil(node.doc)
+  end
+
+  def test_expand_find
+    reader = XML::Reader.file(XML_FILE)
+    reader.read.to_s
+    reader.read
+
+    # Read first node which
+    node = reader.expand
+    assert_equal('feed', node.name)
+
+    # Search for entries
+    entries = node.find('atom:entry', 'atom:http://www.w3.org/2005/Atom')
+
+    assert_equal(1, entries.length)
   end
 
   def test_mode

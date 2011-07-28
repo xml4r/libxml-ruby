@@ -508,8 +508,7 @@ static VALUE rxml_node_doc(VALUE self)
   else if (xdoc->_private)
     return (VALUE) xdoc->_private;
   else
-    /* This can happen by calling Reader#expand.doc */
-    rb_raise(eXMLError, "Document is not accessible to Ruby (hint - did you call Reader#expand?)");
+    return (Qnil);
 }
 
 /*

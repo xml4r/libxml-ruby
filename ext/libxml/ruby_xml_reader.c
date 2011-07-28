@@ -42,6 +42,11 @@
  *
  * For a more in depth tutorial, albeit in C, see http://xmlsoft.org/xmlreader.html.*/
 
+
+  /* NOTE - We need to wrap the readers document to support Reader.read.node.find('/').
+     To do this we need to use xmlTextReaderCurrentDoc which means we have to free the
+     document ourselves. Annoying... */
+
 VALUE cXMLReader;
 
 static ID BASE_URI_SYMBOL;
@@ -54,10 +59,19 @@ static void rxml_reader_free(xmlTextReaderPtr xreader)
   xmlFreeTextReader(xreader);
 }
 
+static void rxml_reader_mark(xmlTextReaderPtr xreader)
+{
+  xmlDocPtr xdoc = xmlTextReaderCurrentDoc(xreader);
+
+  if (xdoc && xdoc->_private)
+    rb_gc_mark((VALUE) xdoc->_private);
+}
+
 static VALUE rxml_reader_wrap(xmlTextReaderPtr xreader)
 {
   return Data_Wrap_Struct(cXMLReader, NULL, rxml_reader_free, xreader);
 }
+
 
 static xmlTextReaderPtr rxml_text_reader_get(VALUE obj)
 {
@@ -414,7 +428,7 @@ static VALUE rxml_reader_normalization(VALUE self)
 
 /*
  * call-seq:
- *    reader.read -> code
+ *    reader.read -> nil|true|false
  *
  * Causes the reader to move to the next node in the stream, exposing its properties.
  *
@@ -873,7 +887,15 @@ static VALUE rxml_reader_lookup_namespace(VALUE self, VALUE prefix)
 static VALUE rxml_reader_expand(VALUE self)
 {
   xmlTextReaderPtr xreader = rxml_text_reader_get(self);
-  xmlNodePtr xnode = xmlTextReaderExpand(xreader);
+  xmlNodePtr xnode = NULL;
+
+  /* At this point we need to wrap the reader's document as explained above. */
+  rxml_document_wrap(xmlTextReaderCurrentDoc(xreader));
+
+  /* And now hook in a mark function */
+  RDATA(self)->dmark = rxml_reader_mark;
+
+  xnode = xmlTextReaderExpand(xreader);
   
   if (!xnode)
   {
