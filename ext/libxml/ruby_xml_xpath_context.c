@@ -81,6 +81,22 @@ static VALUE rxml_xpath_context_initialize(VALUE self, VALUE node)
 
 /*
  * call-seq:
+ *    context.doc -> document
+ *
+ * Obtain the XML::Document this node belongs to.
+ */
+static VALUE rxml_xpath_context_doc(VALUE self)
+{
+  xmlDocPtr xdoc = NULL;
+  xmlXPathContextPtr ctxt;
+  Data_Get_Struct(self, xmlXPathContext, ctxt);
+  
+  xdoc = ctxt->doc;
+  return rxml_document_wrap(xdoc);
+}
+
+/*
+ * call-seq:
  *    context.register_namespace(prefix, uri) -> (true|false)
  *
  * Register the specified namespace URI with the specified prefix
@@ -342,7 +358,7 @@ void rxml_init_xpath_context(void)
 {
   cXMLXPathContext = rb_define_class_under(mXPath, "Context", rb_cObject);
   rb_define_alloc_func(cXMLXPathContext, rxml_xpath_context_alloc);
-  rb_define_attr(cXMLXPathContext, "doc", 1, 0);
+  rb_define_method(cXMLXPathContext, "doc", rxml_xpath_context_doc, 0);
   rb_define_method(cXMLXPathContext, "initialize", rxml_xpath_context_initialize, 1);
   rb_define_method(cXMLXPathContext, "register_namespaces", rxml_xpath_context_register_namespaces, 1);
   rb_define_method(cXMLXPathContext, "register_namespaces_from_node", rxml_xpath_context_register_namespaces_from_node, 1);
