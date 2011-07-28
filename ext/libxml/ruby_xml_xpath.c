@@ -78,6 +78,88 @@
 
 VALUE mXPath;
 
+VALUE
+rxml_xpath_to_value(xmlXPathContextPtr xctxt, xmlXPathObjectPtr xobject) {
+  VALUE result;
+  int type;
+
+  if (xobject == NULL) {
+    /* xmlLastError is different than xctxt->lastError.  Use
+     xmlLastError since it has the message set while xctxt->lastError
+     does not. */
+    xmlErrorPtr xerror = xmlGetLastError();
+    rxml_raise(xerror);
+  }
+
+  switch (type = xobject->type) {
+    case XPATH_NODESET:
+      result = rxml_xpath_object_wrap(xctxt->doc, xobject);
+      break;
+    case XPATH_BOOLEAN:
+      result = (xobject->boolval != 0) ? Qtrue : Qfalse;
+      xmlXPathFreeObject(xobject);
+      break;
+    case XPATH_NUMBER:
+      result = rb_float_new(xobject->floatval);
+      xmlXPathFreeObject(xobject);
+      break;
+    case XPATH_STRING:
+      result = rxml_str_new2((const char*)xobject->stringval, xctxt->doc->encoding);
+      xmlXPathFreeObject(xobject);
+      break;
+    default:
+      xmlXPathFreeObject(xobject);
+      rb_raise(rb_eTypeError,
+        "can't convert XPath object of type %d to Ruby value", type
+      );
+  }
+
+  return result;
+}
+
+xmlXPathObjectPtr
+rxml_xpath_from_value(VALUE value) {
+  xmlXPathObjectPtr result = NULL;
+
+  switch (TYPE(value)) {
+    case T_TRUE:
+    case T_FALSE:
+      result = xmlXPathNewBoolean(RTEST(value));
+      break;
+    case T_FIXNUM:
+    case T_FLOAT:
+      result = xmlXPathNewFloat(NUM2DBL(value));
+      break;
+    case T_STRING:
+      result = xmlXPathWrapString(xmlStrdup((const xmlChar *)StringValuePtr(value)));
+      break;
+    case T_NIL:
+      result = xmlXPathNewNodeSet(NULL);
+      break;
+    case T_ARRAY: {
+      int i, j;
+      result = xmlXPathNewNodeSet(NULL);
+
+      for (i = RARRAY_LEN(value); i > 0; i--) {
+        xmlXPathObjectPtr obj = rxml_xpath_from_value(rb_ary_shift(value));
+
+        if ((obj->nodesetval != NULL) && (obj->nodesetval->nodeNr != 0)) {
+          for (j = 0; j < obj->nodesetval->nodeNr; j++) {
+            xmlXPathNodeSetAdd(result->nodesetval, obj->nodesetval->nodeTab[j]);
+          }
+        }
+      }
+      break;
+    }
+    default:
+      rb_raise(rb_eTypeError,
+        "can't convert object of type %s to XPath object", rb_obj_classname(value)
+      );
+  }
+
+  return result;
+}
+
 void rxml_init_xpath(void)
 {
   mXPath = rb_define_module_under(mXML, "XPath");
