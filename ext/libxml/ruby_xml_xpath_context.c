@@ -26,16 +26,20 @@
 
 VALUE cXMLXPathContext;
 
-static ID DOC_ATTRIBUTE;
-
 static void rxml_xpath_context_free(xmlXPathContextPtr ctxt)
 {
   xmlXPathFreeContext(ctxt);
 }
 
+static void rxml_xpath_context_mark(xmlXPathContextPtr ctxt)
+{
+  if (ctxt->doc->_private)
+    rb_gc_mark((VALUE) ctxt->doc->_private);
+}
+
 static VALUE rxml_xpath_context_alloc(VALUE klass)
 {
-  return Data_Wrap_Struct(cXMLXPathContext, NULL, rxml_xpath_context_free, NULL);
+  return Data_Wrap_Struct(cXMLXPathContext, rxml_xpath_context_mark, rxml_xpath_context_free, NULL);
 }
 
 /* call-seq:
@@ -71,9 +75,6 @@ static VALUE rxml_xpath_context_initialize(VALUE self, VALUE node)
 
   Data_Get_Struct(document, xmlDoc, xdoc);
   DATA_PTR(self) = xmlXPathNewContext(xdoc);
-
-  /* Save the doc as an attribute, this will expose it to Ruby's GC. */
-  rb_ivar_set(self, DOC_ATTRIBUTE, document);
 
   return self;
 }
@@ -370,8 +371,6 @@ rxml_xpath_context_disable_cache(VALUE self)
 
 void rxml_init_xpath_context(void)
 {
-  DOC_ATTRIBUTE = rb_intern("@doc");
-
   cXMLXPathContext = rb_define_class_under(mXPath, "Context", rb_cObject);
   rb_define_alloc_func(cXMLXPathContext, rxml_xpath_context_alloc);
   rb_define_attr(cXMLXPathContext, "doc", 1, 0);
