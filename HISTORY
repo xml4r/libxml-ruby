@@ -1,5 +1,26 @@
 = Release History
 
+== 2.1.0 / 2011-07-30 Charlie Savage
+
+* Added XPath expression <-> Ruby value conversion methods (Jens Wille).
+
+* Extracted rxml_xpath_to_value from rxml_xpath_context_find (Jens Wille).
+
+* Adapted rxml_xpath_from_value from Gregoire Lejeune's ruby-xslt
+  library, see https://github.com/glejeune/ruby-xslt (Jens Wille).
+
+* Fix segmentation fault that intermittently occurred when accessing
+  attributes (Charlie Savage)
+
+* Allow calling #find on nodes returned from Reader (Charlie Savage).
+
+* Change document handling in XPath::Context to address segmentation fault on
+  Ruby Enterprise Edition (Charlie Savage).
+
+* Update gemspec file to work directly with bundler thereby allowing git
+  repository to be used as gem (Charlie Savage).
+
+
 == 2.0.8 / 2011-06-23 Charlie Savage
 
 * Add in 2 new HTML Parser constants - NODEFDTD and NOIMPLIED.

@@ -4,7 +4,6 @@ require "rubygems"
 require "rake/extensiontask"
 require "rake/testtask"
 require "rubygems/package_task"
-##require 'hanna/rdoctask'
 require "rdoc/task"
 require "grancher/task"
 require "yaml"
@@ -40,6 +39,7 @@ if RUBY_PLATFORM.match(/win32|mingw32/)
   win_spec = spec.clone
   win_spec.platform = Gem::Platform::CURRENT
   win_spec.files += binaries.to_a
+  win_spec.instance_variable_set(:@cache_file, nil)
 
   # Unset extensions
   win_spec.extensions = nil
