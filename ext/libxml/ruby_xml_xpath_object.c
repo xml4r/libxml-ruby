@@ -93,7 +93,6 @@ VALUE rxml_xpath_object_wrap(xmlDocPtr xdoc, xmlXPathObjectPtr xpop)
 
 static VALUE rxml_xpath_object_tabref(xmlXPathObjectPtr xpop, int apos)
 {
-
   if (apos < 0)
     apos = xpop->nodesetval->nodeNr + apos;
 
