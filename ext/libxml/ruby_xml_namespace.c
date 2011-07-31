@@ -21,32 +21,17 @@ VALUE cXMLNamespace;
  *   assert_nil(node.namespaces.namespace)
  */
 
-static void rxml_namespace_free(xmlNsPtr xns)
-{
-  xns->_private = NULL;
-}
+/* Namespaces are owned and freed by their nodes.  Thus, its easier for the
+   ruby bindings to not manage attribute memory management. */
 
 static VALUE rxml_namespace_alloc(VALUE klass)
 {
-  return Data_Wrap_Struct(klass, NULL, rxml_namespace_free, NULL);
+  return Data_Wrap_Struct(klass, NULL, NULL, NULL);
 }
 
-VALUE rxml_namespace_wrap(xmlNsPtr xns, RUBY_DATA_FUNC freeFunc)
+VALUE rxml_namespace_wrap(xmlNsPtr xns)
 {
-  if (xns->_private)
-  {
-    return (VALUE)xns->_private;
-  }
-  else
-  {
-    VALUE ns;
-    if (freeFunc == NULL)
-      freeFunc = (RUBY_DATA_FUNC)rxml_namespace_free;
-
-    ns = Data_Wrap_Struct(cXMLNamespace, NULL, freeFunc, xns);
-    xns->_private = (void*)ns;
-    return ns;
-  }
+  return Data_Wrap_Struct(cXMLNamespace, NULL, NULL, xns);
 }
 
 static VALUE rxml_namespace_string(xmlNsPtr xns, const char* buffer)
@@ -84,7 +69,6 @@ static VALUE rxml_namespace_initialize(VALUE self, VALUE node, VALUE prefix,
   if (!xns)
     rxml_raise(&xmlLastError);
 
-  xns->_private = (void*)self;
   DATA_PTR(self) = xns;
   return self;
 }
