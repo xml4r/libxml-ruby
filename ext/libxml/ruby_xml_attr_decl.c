@@ -15,28 +15,12 @@ VALUE cXMLAttrDecl;
 
 void rxml_attr_decl_mark(xmlAttributePtr xattr)
 {
-  if (xattr->_private == NULL)
-  {
-    rb_warning("AttrDecl is not bound! (%s:%d)", __FILE__, __LINE__);
-    return;
-  }
-
   rxml_node_mark((xmlNodePtr) xattr);
 }
 
 VALUE rxml_attr_decl_wrap(xmlAttributePtr xattr)
 {
-  VALUE result;
-
-  // This node is already wrapped
-  if (xattr->_private != NULL)
-    return (VALUE) xattr->_private;
-
-  result = Data_Wrap_Struct(cXMLAttrDecl, rxml_attr_decl_mark, NULL, xattr);
-
-  xattr->_private = (void*) result;
-
-  return result;
+  return Data_Wrap_Struct(cXMLAttrDecl, rxml_attr_decl_mark, NULL, xattr);
 }
 
 /*

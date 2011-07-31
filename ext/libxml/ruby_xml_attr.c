@@ -16,57 +16,38 @@
  *  attribute.remove!
  */
 
+/* Attributes are owned and freed by their nodes.  Thus, its easier for the
+   ruby bindings to not manage attribute memory management.  This does mean
+   that accessing a particular attribute multiple times will return multiple
+   different ruby objects.  Since we are not using free or xnode->_private
+   this works out fine.  Previous versions of the bindings had a one to
+   one mapping between ruby object and xml attribute, but that could 
+   result in segfaults because the ruby object could be gc'ed.  In theory
+   the mark method on the parent node could prevent that, but if an 
+   attribute is returned using an xpath statement then the node would
+   never by surfaced to ruby and the mark method never called. */
+
 #include "ruby_libxml.h"
 #include "ruby_xml_attr.h"
 
 VALUE cXMLAttr;
 
-void rxml_attr_free(xmlAttrPtr xattr)
-{
-  if (!xattr)
-    return;
-
-  xattr->_private = NULL;
-
-  if (xattr->parent == NULL && xattr->doc == NULL)
-  {
-    xmlFreeProp(xattr);
-  }
-}
-
 void rxml_attr_mark(xmlAttrPtr xattr)
 {
   /* This can happen if Ruby does a GC run after creating the
      new attribute but before initializing it. */
-  if (xattr == NULL)
-    return;
-
-  if (xattr->_private == NULL)
-  {
-    rb_warning("XmlAttr is not bound! (%s:%d)", __FILE__, __LINE__);
-    return;
-  }
-
-  rxml_node_mark((xmlNodePtr) xattr);
+  if (xattr != NULL)
+    rxml_node_mark((xmlNodePtr) xattr);
 }
 
 VALUE rxml_attr_wrap(xmlAttrPtr xattr)
 {
-  VALUE result;
-
-  /* We always return a new ruby object.  We used to check _private, but
-     the problem is the user can get an attribute, let it go, get 
-     the same attribute back, but the attribute was on the gc list
-     and then gets collected. */
-  result = Data_Wrap_Struct(cXMLAttr, rxml_attr_mark, rxml_attr_free, xattr);
-  xattr->_private = (void*) result;
-  
-  return result;
+  return Data_Wrap_Struct(cXMLAttr, rxml_attr_mark, NULL, xattr);
 }
 
 static VALUE rxml_attr_alloc(VALUE klass)
 {
-  return Data_Wrap_Struct(klass, rxml_attr_mark, rxml_attr_free, NULL);
+  return Data_Wrap_Struct(klass, rxml_attr_mark, NULL, NULL);
 }
 
 /*
@@ -116,7 +97,6 @@ static VALUE rxml_attr_initialize(int argc, VALUE *argv, VALUE self)
   if (!xattr)
     rb_raise(rb_eRuntimeError, "Could not create attribute.");
 
-  xattr->_private = (void *) self;
   DATA_PTR( self) = xattr;
   return self;
 }
@@ -268,21 +248,24 @@ static VALUE rxml_attr_prev_get(VALUE self)
 
 /*
  * call-seq:
- *     node.remove! -> nil
+ *     attr.remove! -> nil
  *
- * Removes this attribute from it's parent.
+ * Removes this attribute from it's parent.  Note
+ * the attribute and its content is freed and can
+ * no longer be used.  If you try to use it you 
+ * will get a segmentation fault.
  */
 static VALUE rxml_attr_remove_ex(VALUE self)
 {
   xmlAttrPtr xattr;
   Data_Get_Struct(self, xmlAttr, xattr);
+  xmlRemoveProp(xattr);
 
-  if (xattr->_private == NULL)
-    xmlRemoveProp(xattr);
-  else
-    xmlUnlinkNode((xmlNodePtr) xattr);
+  RDATA(self)->data = NULL;
+  RDATA(self)->dfree = NULL;
+  RDATA(self)->dmark = NULL;
 
-  return Qnil;;
+  return Qnil;
 }
 
 /*
