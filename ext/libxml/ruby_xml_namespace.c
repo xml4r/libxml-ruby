@@ -147,7 +147,7 @@ static VALUE rxml_namespace_next(VALUE self)
   if (xns == NULL || xns->next == NULL)
     return (Qnil);
   else
-    return (rxml_namespace_wrap(xns->next, NULL));
+    return rxml_namespace_wrap(xns->next);
 }
 
 void rxml_init_namespace(void)

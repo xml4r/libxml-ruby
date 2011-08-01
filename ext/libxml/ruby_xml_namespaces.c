@@ -90,7 +90,7 @@ static VALUE rxml_namespaces_definitions(VALUE self)
 
   while (xns)
   {
-    VALUE anamespace = rxml_namespace_wrap(xns, NULL);
+    VALUE anamespace = rxml_namespace_wrap(xns);
     rb_ary_push(arr, anamespace);
     xns = xns->next;
   }
@@ -126,7 +126,7 @@ static VALUE rxml_namespaces_each(VALUE self)
 
   for (xns = nsList; *xns != NULL; xns++)
   {
-    VALUE ns = rxml_namespace_wrap(*xns, NULL);
+    VALUE ns = rxml_namespace_wrap(*xns);
     rb_yield(ns);
   }
   xmlFree(nsList);
@@ -161,7 +161,7 @@ static VALUE rxml_namespaces_find_by_href(VALUE self, VALUE href)
 
   xns = xmlSearchNsByHref(xnode->doc, xnode, (xmlChar*) StringValuePtr(href));
   if (xns)
-    return rxml_namespace_wrap(xns, NULL);
+    return rxml_namespace_wrap(xns);
   else
     return Qnil;
 }
@@ -200,7 +200,7 @@ static VALUE rxml_namespaces_find_by_prefix(VALUE self, VALUE prefix)
   
   xns = xmlSearchNs(xnode->doc, xnode, xprefix);
   if (xns)
-    return rxml_namespace_wrap(xns, NULL);
+    return rxml_namespace_wrap(xns);
   else
     return Qnil;
 }
@@ -224,7 +224,7 @@ static VALUE rxml_namespaces_namespace_get(VALUE self)
   Data_Get_Struct(self, xmlNode, xnode);
 
   if (xnode->ns)
-    return rxml_namespace_wrap(xnode->ns, NULL);
+    return rxml_namespace_wrap(xnode->ns);
   else
     return Qnil;
 }

@@ -45,7 +45,6 @@ static void rxml_xpath_object_free(rxml_xpath_object *rxpop)
 /* Custom free function for copied namespace nodes */
 static void rxml_namespace_xpath_free(xmlNsPtr xns)
 {
-  xns->_private = NULL;
   xmlFreeNs(xns);
 }
 
@@ -82,7 +81,8 @@ VALUE rxml_xpath_object_wrap(xmlDocPtr xdoc, xmlXPathObjectPtr xpop)
 
         /* Specify a custom free function here since by default
            namespace nodes will not be freed */
-        ns = rxml_namespace_wrap((xmlNsPtr)xnode, (RUBY_DATA_FUNC)rxml_namespace_xpath_free);
+        ns = rxml_namespace_wrap((xmlNsPtr)xnode);
+        RDATA(ns)->dfree = (RUBY_DATA_FUNC)rxml_namespace_xpath_free;
         rb_ary_push(rxpop->nsnodes, ns);
       }
     }
@@ -105,7 +105,7 @@ static VALUE rxml_xpath_object_tabref(xmlXPathObjectPtr xpop, int apos)
     return rxml_attr_wrap((xmlAttrPtr) xpop->nodesetval->nodeTab[apos]);
     break;
   case XML_NAMESPACE_DECL:
-    return rxml_namespace_wrap((xmlNsPtr)xpop->nodesetval->nodeTab[apos], NULL);
+    return rxml_namespace_wrap((xmlNsPtr)xpop->nodesetval->nodeTab[apos]);
     break;
   default:
     return rxml_node_wrap(xpop->nodesetval->nodeTab[apos]);

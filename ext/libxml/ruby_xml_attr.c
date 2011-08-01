@@ -211,7 +211,7 @@ static VALUE rxml_attr_ns_get(VALUE self)
   if (xattr->ns == NULL)
     return Qnil;
   else
-    return rxml_namespace_wrap(xattr->ns, NULL);
+    return rxml_namespace_wrap(xattr->ns);
 }
 
 /*

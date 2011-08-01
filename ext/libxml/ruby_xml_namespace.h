@@ -6,5 +6,5 @@
 extern VALUE cXMLNamespace;
 
 void rxml_init_namespace(void);
-VALUE rxml_namespace_wrap(xmlNsPtr xns, RUBY_DATA_FUNC freeFunc);
+VALUE rxml_namespace_wrap(xmlNsPtr xns);
 #endif
