@@ -893,7 +893,7 @@ static VALUE rxml_reader_expand(VALUE self)
   rxml_document_wrap(xmlTextReaderCurrentDoc(xreader));
 
   /* And now hook in a mark function */
-  RDATA(self)->dmark = rxml_reader_mark;
+  RDATA(self)->dmark = (RUBY_DATA_FUNC)rxml_reader_mark;
 
   xnode = xmlTextReaderExpand(xreader);
   
