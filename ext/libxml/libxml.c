@@ -36,9 +36,6 @@ VALUE rxml_str_new2(const char* xstr, const char* xencoding)
 }
 
 
-#if defined(_WIN32)
-__declspec(dllexport)
-#endif
 void Init_libxml_ruby(void)
 {
 /* The libxml gem provides Ruby language bindings for GNOME's Libxml2

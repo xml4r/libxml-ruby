@@ -4,12 +4,7 @@
 #define __RXML_DOCUMENT__
 
 extern VALUE cXMLDocument;
-
 void rxml_init_document();
-
-
-#if defined(_WIN32)
-__declspec(dllexport) 
-#endif
 VALUE rxml_document_wrap(xmlDocPtr xnode);
+
 #endif
