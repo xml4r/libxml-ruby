@@ -34,6 +34,22 @@ class TestParserContext < Test::Unit::TestCase
     assert_equal(XML::Encoding::ISO_8859_1, context.encoding)
   end
 
+  def test_invalid_encoding
+    # UTF8
+    xml = <<-EOS
+      <bands>
+        <metal>m\303\266tley_cr\303\274e</metal>
+      </bands>
+    EOS
+
+    context = XML::Parser::Context.string(xml)
+
+    error = assert_raise(ArgumentError) do
+      context.encoding = -999
+    end
+    assert_equal("Unknown encoding: -999", error.to_s)
+  end
+
   def test_base_uri
     # UTF8
     xml = <<-EOS
@@ -51,7 +67,7 @@ class TestParserContext < Test::Unit::TestCase
 
   def test_string_empty
     error = assert_raise(TypeError) do
-      parser = XML::Parser::Context.string(nil)
+      XML::Parser::Context.string(nil)
     end
     assert_equal("wrong argument type nil (expected String)", error.to_s)
 
