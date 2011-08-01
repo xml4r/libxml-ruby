@@ -350,7 +350,7 @@ static VALUE rxml_parser_context_encoding_set(VALUE self, VALUE encoding)
   xmlCharEncodingHandlerPtr hdlr = xmlFindCharEncodingHandler(xencoding);
   
   if (!hdlr)
-    rb_raise(rb_eRuntimeError, "Unknown encoding: %s", encoding);
+    rb_raise(rb_eArgError, "Unknown encoding: %i", NUM2INT(encoding));
 
   Data_Get_Struct(self, xmlParserCtxt, ctxt);
   result = xmlSwitchToEncoding(ctxt, hdlr);
