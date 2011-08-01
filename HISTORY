@@ -1,6 +1,8 @@
 = Release History
 
-== 2.1.0 / 2011-07-30 Charlie Savage
+== 2.1.0 / 2011-07-31 Charlie Savage
+
+* Ruby 1.9.3 compatability (Charlie Savage).
 
 * Added XPath expression <-> Ruby value conversion methods (Jens Wille).
 
@@ -9,9 +11,6 @@
 * Adapted rxml_xpath_from_value from Gregoire Lejeune's ruby-xslt
   library, see https://github.com/glejeune/ruby-xslt (Jens Wille).
 
-* Fix segmentation fault that intermittently occurred when accessing
-  attributes (Charlie Savage)
-
 * Allow calling #find on nodes returned from Reader (Charlie Savage).
 
 * Change document handling in XPath::Context to address segmentation fault on
@@ -19,6 +18,11 @@
 
 * Update gemspec file to work directly with bundler thereby allowing git
   repository to be used as gem (Charlie Savage).
+
+* Support gem buld (Charlie Savage).
+
+* Simplify memory management of attributes namespaces to fix
+  segmentation faults that occurred when using Ruby 1.9.3 (Charlie Savage).
 
 
 == 2.0.8 / 2011-06-23 Charlie Savage
