@@ -55,6 +55,25 @@
 VALUE cXMLDocument;
 
 
+void rxml_document_mark_node_list(xmlNodePtr xnode)
+{
+  if (xnode == NULL) return;
+  
+  while (xnode != NULL)
+  {
+    rxml_document_mark_node_list(xnode->children);
+    if (xnode->_private)
+      rb_gc_mark((VALUE) xnode->doc->_private);
+	  xnode = xnode->next;
+  }
+}
+
+void rxml_document_mark(xmlDocPtr xdoc)
+{
+  if (xdoc)
+    rxml_document_mark_node_list(xdoc->children);
+}
+
 void rxml_document_free(xmlDocPtr xdoc)
 {
   xdoc->_private = NULL;
@@ -72,7 +91,7 @@ VALUE rxml_document_wrap(xmlDocPtr xdoc)
   }
   else
   {
-    result = Data_Wrap_Struct(cXMLDocument, NULL, rxml_document_free, xdoc);
+    result = Data_Wrap_Struct(cXMLDocument, rxml_document_mark, rxml_document_free, xdoc);
     xdoc->_private = (void*) result;
   }
 
@@ -88,7 +107,7 @@ VALUE rxml_document_wrap(xmlDocPtr xdoc)
  */
 static VALUE rxml_document_alloc(VALUE klass)
 {
-  return Data_Wrap_Struct(klass, NULL, rxml_document_free, NULL);
+  return Data_Wrap_Struct(klass, rxml_document_mark, rxml_document_free, NULL);
 }
 
 /*
