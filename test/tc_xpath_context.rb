@@ -20,11 +20,12 @@ class TestXPathContext < Test::Unit::TestCase
     @context = nil
   end
   
-  #def test_no_ns
-    #assert_raise(XML::XPath::InvalidPath) do
-      #@context.find('/soap:Envelope')
-    #end
-  #end    
+  def test_no_ns
+    error = assert_raise(LibXML::XML::Error) do
+      @context.find('/soap:Envelope')
+    end
+    assert_equal("Error: Undefined namespace prefix.", error.to_s)
+  end    
 
   def test_ns_register
     @context.register_namespace(SOAP_PREFIX, SOAP_URI)
@@ -76,5 +77,13 @@ class TestXPathContext < Test::Unit::TestCase
     @context.enable_cache
     @context.enable_cache(10)
     @context.disable_cache
+  end
+
+  def test_require_doc
+    doc = XML::Document.file(File.join(File.dirname(__FILE__), 'model/soap.xml'))
+    error = assert_raise(TypeError) do
+      @context = XML::XPath::Context.new(doc.root)
+    end
+    assert_equal("Supplied argument must be a document or node.", error.to_s)
   end
 end

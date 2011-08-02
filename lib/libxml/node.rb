@@ -55,7 +55,7 @@ module LibXML
           raise(TypeError, "A node must belong to a document before a xpath context can be created")
         end
 
-        context = XPath::Context.new(self)
+        context = XPath::Context.new(self.doc)
         context.node = self
         context.register_namespaces_from_node(self)
         context.register_namespaces_from_node(self.doc.root)

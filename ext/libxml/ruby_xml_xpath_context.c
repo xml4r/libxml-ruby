@@ -33,7 +33,7 @@ static void rxml_xpath_context_free(xmlXPathContextPtr ctxt)
 
 static void rxml_xpath_context_mark(xmlXPathContextPtr ctxt)
 {
-  if (ctxt->doc->_private)
+  if (ctxt && ctxt->doc->_private)
     rb_gc_mark((VALUE) ctxt->doc->_private);
 }
 
@@ -43,7 +43,7 @@ static VALUE rxml_xpath_context_alloc(VALUE klass)
 }
 
 /* call-seq:
- *    XPath::Context.new(node) -> XPath::Context
+ *    XPath::Context.new(doc) -> XPath::Context
  *
  * Creates a new XPath context for the specified document.  The
  * context can then be used to evaluate an XPath expression.
@@ -53,22 +53,11 @@ static VALUE rxml_xpath_context_alloc(VALUE klass)
  *  nodes = XPath::Object.new('//first', context)
  *  nodes.length == 1
  */
-static VALUE rxml_xpath_context_initialize(VALUE self, VALUE node)
+static VALUE rxml_xpath_context_initialize(VALUE self, VALUE document)
 {
   xmlDocPtr xdoc;
-  VALUE document;
 
-  if (rb_obj_is_kind_of(node, cXMLNode) == Qtrue)
-  {
-    document = rb_funcall(node, rb_intern("doc"), 0);
-    if (NIL_P(document))
-    rb_raise(rb_eTypeError, "Supplied node must belong to a document.");
-  }
-  else if (rb_obj_is_kind_of(node, cXMLDocument) == Qtrue)
-  {
-    document = node;
-  }
-  else
+  if (rb_obj_is_kind_of(document, cXMLDocument) != Qtrue)
   {
     rb_raise(rb_eTypeError, "Supplied argument must be a document or node.");
   }
