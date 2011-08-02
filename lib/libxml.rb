@@ -7,7 +7,6 @@ begin
 rescue LoadError
   require "libxml_ruby"
 end
-
 # Load Ruby supporting code.
 require 'libxml/error'
 require 'libxml/parser'

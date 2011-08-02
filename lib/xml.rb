@@ -11,6 +11,4 @@
 # app/libs namespace.
 
 require 'libxml'
-
 include LibXML
-
