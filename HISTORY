@@ -1,5 +1,13 @@
 = Release History
 
+== 2.1.2 / 2011-08-03 Charlie Savage
+
+* Fix segmentation fault that could occur when an XPathContext was marked
+  before it was fully initialized (Charlie Savage).
+
+* Add mark method to document to mark all nodes currently being accessed
+  by ruby.  This make Ruby Enterprise Edition happy (Charlie Savage).
+
 == 2.1.1 / 2011-07-31 Charlie Savage
 
 * Switch to using def files to control library exports (Charlie Savage).
