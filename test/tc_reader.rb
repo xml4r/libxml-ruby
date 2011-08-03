@@ -200,6 +200,37 @@ class TestReader < Test::Unit::TestCase
     assert_equal(1, entries.length)
   end
 
+  def test_expand_invalid
+    reader = XML::Reader.file(XML_FILE)
+
+    # Expand a node before one has been read
+    error = assert_raise(RuntimeError) do
+      reader.expand
+    end
+    assert_equal("The reader does not have a document.  Did you forget to call read?", error.to_s)
+  end
+
+  def test_expand_invalid_access
+    reader = XML::Reader.file(XML_FILE)
+
+    # Read a node
+    reader.read
+    reader.read
+
+    # Expand the node
+    node = reader.expand
+    assert_equal('feed', node.name)
+
+    # Read another node, this makes the last node invalid
+    reader.next
+
+    # The previous node is now invalid
+    error = assert_raise(RuntimeError) do
+      assert_equal('feed', node.name)
+    end
+    assert_equal("This node has already been freed.", error.to_s)
+  end
+
   def test_mode
     reader = XML::Reader.string('<xml/>')
     assert_equal(XML::Reader::MODE_INITIAL, reader.read_state)

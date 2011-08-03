@@ -890,7 +890,12 @@ static VALUE rxml_reader_expand(VALUE self)
   xmlNodePtr xnode = NULL;
 
   /* At this point we need to wrap the reader's document as explained above. */
-  rxml_document_wrap(xmlTextReaderCurrentDoc(xreader));
+  xmlDocPtr xdoc = xmlTextReaderCurrentDoc(xreader);
+
+  if (!xdoc)
+    rb_raise(rb_eRuntimeError, "The reader does not have a document.  Did you forget to call read?");
+
+  rxml_document_wrap(xdoc);
 
   /* And now hook in a mark function */
   RDATA(self)->dmark = (RUBY_DATA_FUNC)rxml_reader_mark;
