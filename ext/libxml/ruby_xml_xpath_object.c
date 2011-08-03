@@ -43,7 +43,7 @@ static void rxml_xpath_object_free(rxml_xpath_object *rxpop)
 }
 
 /* Custom free function for copied namespace nodes */
-static void rxml_namespace_xpath_free(xmlNsPtr xns)
+static void rxml_xpath_namespace_free(xmlNsPtr xns)
 {
   xmlFreeNs(xns);
 }
@@ -69,7 +69,7 @@ VALUE rxml_xpath_object_wrap(xmlDocPtr xdoc, xmlXPathObjectPtr xpop)
     for (i = 0;i < xpop->nodesetval->nodeNr; i++)
     {
       xmlNodePtr xnode = xpop->nodesetval->nodeTab[i];
-      if (xnode!= NULL && xnode->type == XML_NAMESPACE_DECL)
+      if (xnode != NULL && xnode->type == XML_NAMESPACE_DECL)
       {
         VALUE ns = Qnil;
         xmlNsPtr xns = (xmlNsPtr)xnode;
@@ -82,7 +82,7 @@ VALUE rxml_xpath_object_wrap(xmlDocPtr xdoc, xmlXPathObjectPtr xpop)
         /* Specify a custom free function here since by default
            namespace nodes will not be freed */
         ns = rxml_namespace_wrap((xmlNsPtr)xnode);
-        RDATA(ns)->dfree = (RUBY_DATA_FUNC)rxml_namespace_xpath_free;
+        RDATA(ns)->dfree = (RUBY_DATA_FUNC)rxml_xpath_namespace_free;
         rb_ary_push(rxpop->nsnodes, ns);
       }
     }
@@ -91,24 +91,24 @@ VALUE rxml_xpath_object_wrap(xmlDocPtr xdoc, xmlXPathObjectPtr xpop)
   return Data_Wrap_Struct(cXMLXPathObject, rxml_xpath_object_mark, rxml_xpath_object_free, rxpop);
 }
 
-static VALUE rxml_xpath_object_tabref(xmlXPathObjectPtr xpop, int apos)
+static VALUE rxml_xpath_object_tabref(xmlXPathObjectPtr xpop, int index)
 {
-  if (apos < 0)
-    apos = xpop->nodesetval->nodeNr + apos;
+  if (index < 0)
+    index = xpop->nodesetval->nodeNr + index;
 
-  if (apos < 0 || apos + 1 > xpop->nodesetval->nodeNr)
+  if (index < 0 || index + 1 > xpop->nodesetval->nodeNr)
     return Qnil;
 
-  switch (xpop->nodesetval->nodeTab[apos]->type)
+  switch (xpop->nodesetval->nodeTab[index]->type)
   {
   case XML_ATTRIBUTE_NODE:
-    return rxml_attr_wrap((xmlAttrPtr) xpop->nodesetval->nodeTab[apos]);
+    return rxml_attr_wrap((xmlAttrPtr) xpop->nodesetval->nodeTab[index]);
     break;
   case XML_NAMESPACE_DECL:
-    return rxml_namespace_wrap((xmlNsPtr)xpop->nodesetval->nodeTab[apos]);
+    return rxml_namespace_wrap((xmlNsPtr)xpop->nodesetval->nodeTab[index]);
     break;
   default:
-    return rxml_node_wrap(xpop->nodesetval->nodeTab[apos]);
+    return rxml_node_wrap(xpop->nodesetval->nodeTab[index]);
   }
 }
 
