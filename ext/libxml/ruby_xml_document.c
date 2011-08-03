@@ -63,8 +63,8 @@ void rxml_document_mark_node_list(xmlNodePtr xnode)
   {
     rxml_document_mark_node_list(xnode->children);
     if (xnode->_private)
-      rb_gc_mark((VALUE) xnode->doc->_private);
-	  xnode = xnode->next;
+      rb_gc_mark((VALUE) xnode->_private);
+    xnode = xnode->next;
   }
 }
 
