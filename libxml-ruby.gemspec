@@ -13,6 +13,7 @@ FILES = FileList[
   'Rakefile',
   'README.rdoc',
   'setup.rb',
+  'ext/libxml/*.def',
   'ext/libxml/*.h',
   'ext/libxml/*.c',
   'ext/libxml/*.rb',
