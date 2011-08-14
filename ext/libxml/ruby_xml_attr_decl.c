@@ -54,7 +54,7 @@ static VALUE rxml_attr_decl_name_get(VALUE self)
   if (xattr->name == NULL)
     return Qnil;
   else
-    return rxml_str_new2((const char*) xattr->name, xattr->doc->encoding);
+    return rxml_new_cstr((const char*) xattr->name, xattr->doc->encoding);
 }
 
 /*
@@ -135,7 +135,7 @@ VALUE rxml_attr_decl_value_get(VALUE self)
   Data_Get_Struct(self, xmlAttribute, xattr);
 
   if (xattr->defaultValue)
-    return rxml_str_new2((const char *)xattr->defaultValue, xattr->doc->encoding);
+    return rxml_new_cstr((const char *)xattr->defaultValue, NULL);
   else
     return Qnil;
 }

@@ -166,7 +166,7 @@ static VALUE rxml_attr_name_get(VALUE self)
   if (xattr->name == NULL)
     return Qnil;
   else
-    return rxml_str_new2((const char*) xattr->name, (xattr->doc ? xattr->doc->encoding : NULL));
+    return rxml_new_cstr((const char*) xattr->name, NULL);
 }
 
 /*
@@ -285,7 +285,7 @@ VALUE rxml_attr_value_get(VALUE self)
 
   if (value != NULL)
   {
-    result = rxml_str_new2((const char*) value, (xattr->doc ? xattr->doc->encoding : NULL));
+    result = rxml_new_cstr((const char*) value, NULL);
     xmlFree(value);
   }
   return result;

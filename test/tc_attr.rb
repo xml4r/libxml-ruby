@@ -48,7 +48,7 @@ class AttrNodeTest < Test::Unit::TestCase
   def test_name
     attribute = city_member.attributes.get_attribute('name')
     assert_equal('name', attribute.name)
-    assert_equal(Encoding::ASCII_8BIT, attribute.name.encoding) if defined?(Encoding)
+    assert_equal(Encoding::UTF_8, attribute.name.encoding) if defined?(Encoding)
 
     attribute = city_member.attributes.get_attribute('href')
     assert_equal('href', attribute.name)
@@ -64,7 +64,7 @@ class AttrNodeTest < Test::Unit::TestCase
   def test_value
     attribute = city_member.attributes.get_attribute('name')
     assert_equal('Cambridge', attribute.value)
-    assert_equal(Encoding::ASCII_8BIT, attribute.value.encoding) if defined?(Encoding)
+    assert_equal(Encoding::UTF_8, attribute.value.encoding) if defined?(Encoding)
 
     attribute = city_member.attributes.get_attribute('href')
     assert_equal('http://www.foo.net/cgi-bin/wfs?FeatureID=C10239', attribute.value)
@@ -74,12 +74,12 @@ class AttrNodeTest < Test::Unit::TestCase
     attribute = city_member.attributes.get_attribute('name')
     attribute.value = 'London'
     assert_equal('London', attribute.value)
-    assert_equal(Encoding::ASCII_8BIT, attribute.value.encoding) if defined?(Encoding)
+    assert_equal(Encoding::UTF_8, attribute.value.encoding) if defined?(Encoding)
 
     attribute = city_member.attributes.get_attribute('href')
     attribute.value = 'http://i.have.changed'
     assert_equal('http://i.have.changed', attribute.value)
-    assert_equal(Encoding::ASCII_8BIT, attribute.value.encoding) if defined?(Encoding)
+    assert_equal(Encoding::UTF_8, attribute.value.encoding) if defined?(Encoding)
   end
 
   def test_set_nil

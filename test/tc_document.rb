@@ -88,20 +88,6 @@ class TestDocument < Test::Unit::TestCase
                  @doc.to_s(:indent => false))
   end
 
-  def test_encoding
-    doc = XML::Document.new
-    assert_equal(XML::Encoding::NONE, doc.encoding)
-    assert_equal(Encoding::ASCII_8BIT, doc.rb_encoding) if defined?(Encoding)
-
-    file = File.expand_path(File.join(File.dirname(__FILE__), 'model/bands.xml'))
-    doc = XML::Document.file(file)
-    assert_equal(XML::Encoding::UTF_8, doc.encoding)
-    assert_equal(Encoding::UTF_8, doc.rb_encoding) if defined?(Encoding)
-
-    doc.encoding = XML::Encoding::ISO_8859_1
-    assert_equal(XML::Encoding::ISO_8859_1, doc.encoding)
-    assert_equal(Encoding::ISO8859_1, doc.rb_encoding) if defined?(Encoding)
-  end
 
   def test_doc_node_type
     assert_equal(XML::Node::DOCUMENT_NODE, XML::Document.new.node_type)

@@ -71,7 +71,7 @@ static VALUE rxml_encoding_to_s(VALUE klass, VALUE encoding)
   if (!xencoding)
     return Qnil;
   else
-    return rxml_str_new2(xencoding, xencoding);
+    return rxml_new_cstr(xencoding, xencoding);
 }
 
 #ifdef HAVE_RUBY_ENCODING_H
@@ -79,7 +79,7 @@ static VALUE rxml_encoding_to_s(VALUE klass, VALUE encoding)
  * Converts an xmlCharEncoding enum value into a Ruby Encoding object (available
  * on Ruby 1.9.* and higher).
  */
-VALUE rxml_xml_encoding_to_rb_encoding(VALUE klass, xmlCharEncoding xmlEncoding)
+rb_encoding* rxml_xml_encoding_to_rb_encoding(VALUE klass, xmlCharEncoding xmlEncoding)
 {
   const char* encodingName;
 
@@ -148,7 +148,7 @@ VALUE rxml_xml_encoding_to_rb_encoding(VALUE klass, xmlCharEncoding xmlEncoding)
       break;
   }
 
-  return rb_enc_from_encoding(rb_enc_find(encodingName));
+  return rb_enc_find(encodingName);
 }
 
 /*
@@ -160,9 +160,30 @@ VALUE rxml_xml_encoding_to_rb_encoding(VALUE klass, xmlCharEncoding xmlEncoding)
  */
 VALUE rxml_encoding_to_rb_encoding(VALUE klass, VALUE encoding)
 {
-  return rxml_xml_encoding_to_rb_encoding(klass, NUM2INT(encoding));
+  xmlCharEncoding xmlEncoding = (xmlCharEncoding)NUM2INT(encoding);
+  rb_encoding* rbencoding = rxml_xml_encoding_to_rb_encoding(klass, xmlEncoding);
+  return rb_enc_from_encoding(rbencoding);
 }
 #endif
+
+
+VALUE rxml_new_cstr(const char* xstr, const char* xencoding)
+{
+#ifdef HAVE_RUBY_ENCODING_H
+  rb_encoding* rbencoding;
+  if (xencoding)
+  {
+    xmlCharEncoding xmlEncoding = xmlParseCharEncoding(xencoding);
+    rbencoding = rxml_xml_encoding_to_rb_encoding(mXMLEncoding, xmlEncoding);
+  }
+  else
+  {
+    rbencoding = rb_utf8_encoding();
+  }
+  return rb_external_str_new_with_enc(xstr, strlen(xstr), rbencoding);
+#endif
+  return rb_str_new2(xstr);
+}
 
 void rxml_init_encoding(void)
 {

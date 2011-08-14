@@ -227,8 +227,8 @@ class TestParser < Test::Unit::TestCase
     doc = parser.parse
     node = doc.find_first('//metal')
     if defined?(Encoding)
-      assert_equal(Encoding::ISO8859_1, node.content.encoding)
-      assert_equal("m\303\266tley_cr\303\274e".force_encoding(Encoding::ISO8859_1), node.content)
+      assert_equal(Encoding::UTF_8, node.content.encoding)
+      assert_equal("m\303\266tley_cr\303\274e", node.content)
     else
       assert_equal("m\303\266tley_cr\303\274e", node.content)
     end

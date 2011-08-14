@@ -489,7 +489,7 @@ static VALUE rxml_reader_read_inner_xml(VALUE self)
   if (xml)
   {
     const xmlChar *xencoding = xmlTextReaderConstEncoding(xReader);
-    result = rxml_str_new2((const char*) xml, xencoding);
+    result = rxml_new_cstr((const char*) xml, xencoding);
     xmlFree(xml);
   }
 
@@ -515,7 +515,7 @@ static VALUE rxml_reader_read_outer_xml(VALUE self)
   if (xml)
   {
     const xmlChar *xencoding = xmlTextReaderConstEncoding(xReader);
-    result = rxml_str_new2((const char*) xml, xencoding);
+    result = rxml_new_cstr((const char*) xml, xencoding);
     xmlFree(xml);
   }
 
@@ -553,7 +553,7 @@ static VALUE rxml_reader_read_string(VALUE self)
   if (xml)
   {
     const xmlChar *xencoding = xmlTextReaderConstEncoding(xReader);
-    result = rxml_str_new2((const char*) xml, xencoding);
+    result = rxml_new_cstr((const char*) xml, xencoding);
     xmlFree(xml);
   }
 
@@ -612,7 +612,7 @@ static VALUE rxml_reader_name(VALUE self)
   const xmlChar *result = xmlTextReaderConstName(xReader);
   const xmlChar *xencoding = xmlTextReaderConstEncoding(xReader);
 
-  return (result == NULL ? Qnil : rxml_str_new2(result, xencoding));
+  return (result == NULL ? Qnil : rxml_new_cstr(result, xencoding));
 }
 
 /*
@@ -627,7 +627,7 @@ static VALUE rxml_reader_local_name(VALUE self)
   const xmlChar *result = xmlTextReaderConstLocalName(xReader);
   const xmlChar *xencoding = xmlTextReaderConstEncoding(xReader);
 
-  return (result == NULL ? Qnil : rxml_str_new2(result, xencoding));
+  return (result == NULL ? Qnil : rxml_new_cstr(result, xencoding));
 }
 
 /*
@@ -680,7 +680,7 @@ static VALUE rxml_reader_base_uri(VALUE self)
   const xmlChar *result = xmlTextReaderConstBaseUri(xReader);
   const xmlChar *xencoding = xmlTextReaderConstEncoding(xReader);
 
-  return (result == NULL ? Qnil : rxml_str_new2(result, xencoding));
+  return (result == NULL ? Qnil : rxml_new_cstr(result, xencoding));
 }
 
 /*
@@ -695,7 +695,7 @@ static VALUE rxml_reader_namespace_uri(VALUE self)
   const xmlChar *result = xmlTextReaderConstNamespaceUri(xReader);
   const xmlChar *xencoding = xmlTextReaderConstEncoding(xReader);
 
-  return (result == NULL ? Qnil : rxml_str_new2(result, xencoding));
+  return (result == NULL ? Qnil : rxml_new_cstr(result, xencoding));
 }
 
 /*
@@ -710,7 +710,7 @@ static VALUE rxml_reader_value(VALUE self)
   const xmlChar *result = xmlTextReaderConstValue(xReader);
   const xmlChar *xencoding = xmlTextReaderConstEncoding(xReader);
 
-  return (result == NULL ? Qnil : rxml_str_new2(result, xencoding));
+  return (result == NULL ? Qnil : rxml_new_cstr(result, xencoding));
 }
 
 /*
@@ -725,7 +725,7 @@ static VALUE rxml_reader_prefix(VALUE self)
   const xmlChar *result = xmlTextReaderConstPrefix(xReader);
   const xmlChar *xencoding = xmlTextReaderConstEncoding(xReader);
 
-  return (result == NULL ? Qnil : rxml_str_new2(result, xencoding));
+  return (result == NULL ? Qnil : rxml_new_cstr(result, xencoding));
 }
 
 /*
@@ -781,7 +781,7 @@ static VALUE rxml_reader_xml_lang(VALUE self)
   const xmlChar *result = xmlTextReaderConstXmlLang(xReader);
   const xmlChar *xencoding = xmlTextReaderConstEncoding(xReader);
 
-  return (result == NULL ? Qnil : rxml_str_new2(result, xencoding));
+  return (result == NULL ? Qnil : rxml_new_cstr(result, xencoding));
 }
 
 /*
@@ -796,7 +796,7 @@ static VALUE rxml_reader_xml_version(VALUE self)
   const xmlChar *result = xmlTextReaderConstXmlVersion(xReader);
   const xmlChar *xencoding = xmlTextReaderConstEncoding(xReader);
 
-  return (result == NULL ? Qnil : rxml_str_new2(result, xencoding));
+  return (result == NULL ? Qnil : rxml_new_cstr(result, xencoding));
 }
 
 /*
@@ -849,7 +849,7 @@ static VALUE rxml_reader_attribute(VALUE self, VALUE key)
 
   if (xattr)
   {
-    result = rxml_str_new2(xattr, xencoding);
+    result = rxml_new_cstr(xattr, xencoding);
     xmlFree(xattr);
   }
   return result;
@@ -871,7 +871,7 @@ static VALUE rxml_reader_lookup_namespace(VALUE self, VALUE prefix)
 
   if (xnamespace)
   {
-    result = rxml_str_new2((const char*)xnamespace, (const char*)xencoding);
+    result = rxml_new_cstr((const char*)xnamespace, (const char*)xencoding);
     xmlFree((void *)xnamespace);
   }
   return result;

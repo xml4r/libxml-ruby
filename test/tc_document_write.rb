@@ -6,22 +6,17 @@ require 'test/unit'
 
 class TestDocumentWrite < Test::Unit::TestCase
   def setup
-    load_encoding("utf-8")
-  end
-
-  def teardown
-    XML.default_keep_blanks = true
-    @doc = nil
-  end
-
-  def load_encoding(name)
-    @encoding = Encoding.find(name) if defined?(Encoding)
-    @file_name = "model/bands.#{name.downcase}.xml"
+    @file_name = "model/bands.utf-8.xml"
 
     # Strip spaces to make testing easier
     XML.default_keep_blanks = false
     file = File.join(File.dirname(__FILE__), @file_name)
     @doc = XML::Document.file(file)
+  end
+
+  def teardown
+    XML.default_keep_blanks = true
+    @doc = nil
   end
 
   # ---  to_s tests  ---

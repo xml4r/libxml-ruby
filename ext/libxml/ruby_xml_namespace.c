@@ -34,15 +34,6 @@ VALUE rxml_namespace_wrap(xmlNsPtr xns)
   return Data_Wrap_Struct(cXMLNamespace, NULL, NULL, xns);
 }
 
-static VALUE rxml_namespace_string(xmlNsPtr xns, const char* buffer)
-{
-   const char* xencoding = NULL;
-#if LIBXML_VERSION >= 20628
-   xencoding = xns->context ? xns->context->encoding : NULL;
-#endif
-  return rxml_str_new2(buffer, xencoding);
-}
-
 
 /*
  * call-seq:
@@ -90,7 +81,7 @@ static VALUE rxml_namespace_href_get(VALUE self)
   if (xns->href == NULL)
     return Qnil;
   else
-    return rxml_namespace_string(xns, (const char*) xns->href);
+    return rxml_new_cstr((const char*) xns->href, NULL);
 }
 
 /*
@@ -125,7 +116,7 @@ static VALUE rxml_namespace_prefix_get(VALUE self)
   if (xns->prefix == NULL)
     return Qnil;
   else
-    return rxml_namespace_string(xns, (const char*) xns->prefix);
+    return rxml_new_cstr((const char*) xns->prefix, NULL);
 }
 
 /*

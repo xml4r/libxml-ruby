@@ -174,7 +174,7 @@ static VALUE rxml_document_canonicalize(int argc, VALUE *argv, VALUE self)
 
   if (buffer)
   {
-    result = rxml_str_new2((const char*) buffer, (const char*)xdoc->encoding);
+    result = rxml_new_cstr((const char*) buffer, NULL);
     xmlFree(buffer);
   }
 
@@ -349,10 +349,12 @@ static VALUE rxml_document_rb_encoding_get(VALUE self)
 {
   xmlDocPtr xdoc;
   const char *xencoding;
+  rb_encoding* rbencoding;
   Data_Get_Struct(self, xmlDoc, xdoc);
 
   xencoding = (const char*)xdoc->encoding;
-  return rxml_xml_encoding_to_rb_encoding(mXMLEncoding, xmlParseCharEncoding(xencoding));
+  rbencoding = rxml_xml_encoding_to_rb_encoding(mXMLEncoding, xmlParseCharEncoding(xencoding));
+  return rb_enc_from_encoding(rbencoding);
 }
 #endif 
 
@@ -734,7 +736,7 @@ static VALUE rxml_document_to_s(int argc, VALUE *argv, VALUE self)
   Data_Get_Struct(self, xmlDoc, xdoc);
   xmlDocDumpFormatMemoryEnc(xdoc, &buffer, &length, xencoding, indent);
 
-  result = rxml_str_new2((const char*) buffer, xencoding);
+  result = rxml_new_cstr((const char*) buffer, xencoding);
   xmlFree(buffer);
   return result;
 }
@@ -753,7 +755,7 @@ static VALUE rxml_document_url_get(VALUE self)
   if (xdoc->URL == NULL)
     return (Qnil);
   else
-    return (rxml_str_new2((const char*) xdoc->URL, xdoc->encoding));
+    return (rxml_new_cstr((const char*) xdoc->URL, NULL));
 }
 
 /*
@@ -770,7 +772,7 @@ static VALUE rxml_document_version_get(VALUE self)
   if (xdoc->version == NULL)
     return (Qnil);
   else
-    return (rxml_str_new2((const char*) xdoc->version, xdoc->encoding));
+    return (rxml_new_cstr((const char*) xdoc->version, NULL));
 }
 
 /*

@@ -292,7 +292,7 @@ static VALUE rxml_xpath_object_string(VALUE self)
   if (rxpop->xpop->stringval == NULL)
     return Qnil;
 
-  return rxml_str_new2((const char*) rxpop->xpop->stringval, rxpop->xdoc->encoding);
+  return rxml_new_cstr((const char*) rxpop->xpop->stringval, rxpop->xdoc->encoding);
 }
 
 /*

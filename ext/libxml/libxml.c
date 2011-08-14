@@ -21,21 +21,6 @@ static void rxml_init_memory(void)
   );*/
 }
 
-VALUE rxml_str_new2(const char* xstr, const char* xencoding)
-{
-#ifdef HAVE_RUBY_ENCODING_H
-  if (xencoding)
-  {
-    xmlCharEncoding xmlEncoding = xmlParseCharEncoding(xencoding);
-    VALUE encoding = rxml_xml_encoding_to_rb_encoding(mXMLEncoding, xmlEncoding);
-    rb_encoding* xencodingPtr = (rb_encoding*) RDATA(encoding)->data;
-    return rb_external_str_new_with_enc(xstr, strlen(xstr), xencodingPtr);
-  }
-#endif
-  return rb_str_new2(xstr);
-}
-
-
 void Init_libxml_ruby(void)
 {
 /* The libxml gem provides Ruby language bindings for GNOME's Libxml2

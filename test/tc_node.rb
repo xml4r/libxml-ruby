@@ -5,22 +5,17 @@ require 'test/unit'
 
 class TestNode < Test::Unit::TestCase
   def setup
-    load_encoding("utf-8")
-  end
-  
-  def teardown
-    XML.default_keep_blanks = true
-    @doc = nil
-  end
-
-  def load_encoding(name)
-    @encoding = Encoding.find(name) if defined?(Encoding)
-    @file_name = "model/bands.#{name.downcase}.xml"
+    @file_name = "model/bands.utf-8.xml"
 
     # Strip spaces to make testing easier
     XML.default_keep_blanks = false
     file = File.join(File.dirname(__FILE__), @file_name)
     @doc = XML::Document.file(file)
+  end
+  
+  def teardown
+    XML.default_keep_blanks = true
+    @doc = nil
   end
 
   def nodes
@@ -65,7 +60,7 @@ class TestNode < Test::Unit::TestCase
     assert_instance_of(XML::Node, @doc.root.child)
 
     if defined?(Encoding)
-      assert_equal(@encoding, @doc.root.child.name.encoding)
+      assert_equal(Encoding::UTF_8, @doc.root.child.name.encoding)
       assert_equal("m\u00F6tley_cr\u00FCe", @doc.root.child.name)
     else
       assert_equal("m\303\266tley_cr\303\274e", @doc.root.child.name)
@@ -79,25 +74,8 @@ class TestNode < Test::Unit::TestCase
   end
   
   def test_name
-    if defined?(Encoding)
-      assert_equal(@encoding, nodes[0].name.encoding)
-      assert_equal("m\u00F6tley_cr\u00FCe", nodes[0].name)
-    else
-      assert_equal("m\303\266tley_cr\303\274e", nodes[0].name)
-    end
-    assert_equal("iron_maiden", nodes[1].name)
-  end
-
-  def test_name_iso_8859_1
-    load_encoding("iso-8859-1")
-    
-    if defined?(Encoding)
-      assert_equal(@encoding, nodes[0].name.encoding)
-      assert_equal("m\303\266tley_cr\303\274e".force_encoding(@encoding), nodes[0].name)
-    else
-      assert_equal("m\303\266tley_cr\303\274e", nodes[0].name)
-    end
-    assert_equal("iron_maiden", nodes[1].name)
+    node = @doc.root.children.last
+    assert_equal("iron_maiden", node.name)
   end
 
   def test_node_find
@@ -140,47 +118,9 @@ class TestNode < Test::Unit::TestCase
   end
 
   def test_content
-    if defined?(Encoding)
-      assert_equal(@encoding, @doc.root.content.encoding)
-      assert_equal("M\u00F6tley Cr\u00FCe is an American heavy metal band formed in Los Angeles, California in 1981.Iron Maiden is a British heavy metal band formed in 1975.",
-                   @doc.root.content)
-
-      first = @doc.root.child
-      assert_equal("M\u00F6tley Cr\u00FCe is an American heavy metal band formed in Los Angeles, California in 1981.",
-                   first.content)
-      assert_equal("Iron Maiden is a British heavy metal band formed in 1975.", first.next.content)
-    else
-      assert_equal("M\303\266tley Cr\303\274e is an American heavy metal band formed in Los Angeles, California in 1981.Iron Maiden is a British heavy metal band formed in 1975.",
-                   @doc.root.content)
-
-      first = @doc.root.child
-      assert_equal("M\303\266tley Cr\303\274e is an American heavy metal band formed in Los Angeles, California in 1981.",
-                   first.content)
-      assert_equal("Iron Maiden is a British heavy metal band formed in 1975.",
-                   first.next.content)
-    end
-  end
-
-  def test_content_iso_8859_1
-    load_encoding("iso-8859-1")
-    if defined?(Encoding)
-      assert_equal(@encoding, @doc.root.content.encoding)
-      assert_equal("M\xC3\xB6tley Cr\xC3\xBCe is an American heavy metal band formed in Los Angeles, California in 1981.Iron Maiden is a British heavy metal band formed in 1975.".force_encoding(@encoding),
-                   @doc.root.content)
-
-      first = @doc.root.child
-      assert_equal("M\xC3\xB6tley Cr\xC3\xBCe is an American heavy metal band formed in Los Angeles, California in 1981.".force_encoding(@encoding),
-                   first.content)
-      assert_equal("Iron Maiden is a British heavy metal band formed in 1975.", first.next.content)
-    else
-      assert_equal("M\303\266tley Cr\303\274e is an American heavy metal band formed in Los Angeles, California in 1981.Iron Maiden is a British heavy metal band formed in 1975.",
-                   @doc.root.content)
-
-      first = @doc.root.child
-      assert_equal("M\303\266tley Cr\303\274e is an American heavy metal band formed in Los Angeles, California in 1981.",
-                   first.content)
-      assert_equal("Iron Maiden is a British heavy metal band formed in 1975.", first.next.content)
-    end
+    node = @doc.root.last
+    assert_equal("Iron Maiden is a British heavy metal band formed in 1975.",
+                 node.content)
   end
 
   def test_base

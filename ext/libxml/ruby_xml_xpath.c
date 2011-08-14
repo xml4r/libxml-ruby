@@ -104,7 +104,7 @@ rxml_xpath_to_value(xmlXPathContextPtr xctxt, xmlXPathObjectPtr xobject) {
       xmlXPathFreeObject(xobject);
       break;
     case XPATH_STRING:
-      result = rxml_str_new2((const char*)xobject->stringval, xctxt->doc->encoding);
+      result = rxml_new_cstr((const char*)xobject->stringval, xctxt->doc->encoding);
       xmlXPathFreeObject(xobject);
       break;
     default:
