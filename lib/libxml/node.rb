@@ -32,7 +32,7 @@ module LibXML
           io << xml
         end
 
-        io.string
+        io ? io.string : nil
       end
       
       # :call-seq:

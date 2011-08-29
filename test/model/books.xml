@@ -143,4 +143,12 @@
       environment.
     </description>
   </book>
+  <book id="bk113">
+    <author>Test Mike</author>
+    <title>Test Data with empty nodes</title>
+    <genre/>
+    <price/>
+    <publish_date/>
+    <description/>
+  </book>
 </catalog>
