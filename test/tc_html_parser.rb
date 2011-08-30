@@ -144,4 +144,10 @@ class HTMLParserTest < Test::Unit::TestCase
     doc = parser.parse
     assert_equal("<p>#{html}</p>", doc.root.to_s)
   end
+
+  def test_open_many_files
+    1000.times do
+      doc = XML::HTMLParser.file('model/ruby-lang.html').parse
+    end
+  end
 end

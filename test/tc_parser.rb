@@ -256,6 +256,11 @@ class TestParser < Test::Unit::TestCase
     XML::Error.reset_handler {|error|}
   end
 
+  def test_open_many_files
+    1000.times do
+      doc = XML::Parser.file('model/atom.xml').parse
+    end
+  end
 
   # -----  Errors  ------
   def test_error

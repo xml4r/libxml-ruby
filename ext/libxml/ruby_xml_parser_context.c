@@ -214,6 +214,26 @@ static VALUE rxml_parser_context_base_uri_set(VALUE self, VALUE url)
   return self;
 }
 
+/*
+ * call-seq:
+ *    context.close -> nil
+ *
+ * Closes the underlying input streams.  This is useful when parsing a large amount of
+ * files and you want to close the files without relying on Ruby's garbage collector
+ * to run.
+ */
+static VALUE rxml_parser_context_close(VALUE self)
+{
+  xmlParserCtxtPtr ctxt;
+  xmlParserInputPtr xinput;
+  Data_Get_Struct(self, xmlParserCtxt, ctxt);
+
+  while ((xinput = inputPop(ctxt)) != NULL)
+  {
+	 xmlFreeInputStream(xinput);
+  }
+  return Qnil;
+}
 
 /*
  * call-seq:
@@ -937,6 +957,7 @@ void rxml_init_parser_context(void)
 
   rb_define_method(cXMLParserContext, "base_uri", rxml_parser_context_base_uri_get, 0);
   rb_define_method(cXMLParserContext, "base_uri=", rxml_parser_context_base_uri_set, 1);
+  rb_define_method(cXMLParserContext, "close", rxml_parser_context_close, 0);
   rb_define_method(cXMLParserContext, "data_directory", rxml_parser_context_data_directory_get, 0);
   rb_define_method(cXMLParserContext, "depth", rxml_parser_context_depth_get, 0);
   rb_define_method(cXMLParserContext, "disable_cdata?", rxml_parser_context_disable_cdata_q, 0);

@@ -562,41 +562,48 @@ static VALUE rxml_reader_read_string(VALUE self)
 
 /*
  * call-seq:
- *    reader.relax_ng_validate(rng) -> code
+ *    reader.relax_ng_validate(rng) -> boolean
  *
  * Use RelaxNG to validate the document as it is processed. Activation is only
  * possible before the first read. If +rng+ is nil, the RelaxNG validation is
  * desactivated.
  *
- * Return 0 in case the RelaxNG validation could be (des)activated and -1 in
+ * Return true in case the RelaxNG validation could be (des)activated and false in
  * case of error.
  */
 static VALUE rxml_reader_relax_ng_validate(VALUE self, VALUE rng)
 {
-  char *xrng = NIL_P(rng) ? NULL : StringValueCStr(rng);
   xmlTextReaderPtr xreader = rxml_text_reader_get(self);
-  return INT2FIX(xmlTextReaderRelaxNGValidate(xreader, xrng));
+  xmlRelaxNGPtr xrelax;
+  int status;
+  Data_Get_Struct(rng, xmlRelaxNG, xrelax);
+  
+  status = xmlTextReaderRelaxNGSetSchema(xreader, xrelax);
+  return (status == 0 ? Qtrue : Qfalse);
 }
 
 #if LIBXML_VERSION >= 20620
 /*
  * call-seq:
- *    reader.schema_validate(schema) -> code
+ *    reader.schema_validate(schema) -> boolean
  *
  * Use W3C XSD schema to validate the document as it is processed. Activation
  * is only possible before the first read. If +schema+ is nil, then XML Schema
- * validation is desactivated.
+ * validation is deactivated.
  *
- * Return 0 in case the schemas validation could be (de)activated and -1 in
- * case of error.
+ * Return false if if the schema's validation could be (de)activated and true
+ * otherwise.
  */
 static VALUE
 rxml_reader_schema_validate(VALUE self, VALUE xsd)
 {
-  char *xxsd = NIL_P(xsd) ? NULL : StringValueCStr(xsd);
   xmlTextReaderPtr xreader = rxml_text_reader_get(self);
-  int status = xmlTextReaderSchemaValidate(xreader, xxsd);
-  return INT2FIX(status);
+  xmlSchemaPtr xschema;
+  int status;
+
+  Data_Get_Struct(xsd, xmlSchema, xschema);
+  status = xmlTextReaderSetSchema(xreader, xschema);
+  return (status == 0 ? Qtrue : Qfalse);
 }
 #endif
 

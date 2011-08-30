@@ -131,7 +131,7 @@ class TestError < Test::Unit::TestCase
       parser.parse
     end
 
-    assert_equal("Fatal error: Document is empty at :1.", error.to_s)
+    assert_equal(" LibXML::XML::Error.", error.to_s)
   end
 
   def test_libxml_parser_empty_string

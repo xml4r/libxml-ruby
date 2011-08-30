@@ -72,6 +72,8 @@ static VALUE rxml_html_parser_parse(VALUE self)
     rxml_raise(&ctxt->lastError);
   }
 
+  rb_funcall(context, rb_intern("close"), 0);
+
   return rxml_document_wrap(ctxt->myDoc);
 }
 
