@@ -1,5 +1,31 @@
 = Release History
 
+== 2.2.2 / 2011-08-13 Charlie Savage
+
+* ++API CHANGE+++
+
+Reader#relax_ng_validate now takes a RelaxNG object.  This is
+what the documentation has always said it takes, but it previously
+took a string.  In addition, it now returns true or false instead of 0 or -1.
+
+Reader#schema_validate now takes a Schema object.  This is
+what the documentation has always said it takes, but it previously
+took a string.  In addition, it now returns true or false instead of 0 or -1.
+
+Fixes GitHub issue #30.
+
+* Added Parser::Context#close and HTMLParser::Context#close methods that
+  allow the underlying io stream (file, string, etc) to be closed.  Once a
+  parser is done parsing its data, it now calls one of these methods.
+  This means that if you parse thousands of files at the same time,
+  without running Ruby's garbage colllector, you won't get a too
+  many files open error.  Fixes GitHub issue #29.
+
+* Fixed bug where Node#inner_xml caused an error when it had no child nodes.
+  Fixes GitHub issues #31
+
+* Don't require 'rake' in the gemspec to avoid annoying Bunlder bugs
+
 == 2.2.1 / 2011-08-13 Charlie Savage
 
 * Packaging fix - include the custom .def file in the gem.
