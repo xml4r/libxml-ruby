@@ -4,7 +4,7 @@
     <LocalDebuggerCommand>C:\MinGW\local\ruby193vc\bin\ruby.exe</LocalDebuggerCommand>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LocalDebuggerCommandArguments>tc_document_write.rb -v</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>tc_document.rb</LocalDebuggerCommandArguments>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LocalDebuggerWorkingDirectory>C:\MinGW\local\src\libxml-ruby\test</LocalDebuggerWorkingDirectory>
