@@ -5,7 +5,6 @@ require "rake/extensiontask"
 require "rake/testtask"
 require "rubygems/package_task"
 require "rdoc/task"
-require "grancher/task"
 require "yaml"
 
 GEM_NAME = "libxml-ruby"
@@ -74,18 +73,6 @@ end
 Rake::TestTask.new do |t|
   t.libs << "test"
   t.verbose = true
-end
-
-# Publish Website to Github
-Grancher::Task.new do |g|
-  # push gh-pages
-  g.branch  = 'gh-pages'
-  # to origin
-  g.push_to = 'origin'
-  # copy the website directory
-  g.directory 'web'
-  # and the rdoc directory
-  g.directory 'doc/libxml-ruby/rdoc', 'rdoc'
 end
 
 desc "Build docs, and publish the website"
