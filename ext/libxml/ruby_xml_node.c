@@ -190,6 +190,43 @@ static VALUE rxml_node_new_comment(int argc, VALUE *argv, VALUE klass)
 
 /*
  * call-seq:
+ *    XML::Node.new_pi(name, content = nil) -> XML::Node
+ *
+ * Create a new pi node, optionally setting
+ * the node's content.
+ *
+ */
+static VALUE rxml_node_new_pi(int argc, VALUE *argv, VALUE klass)
+{
+  VALUE name = Qnil;
+  VALUE content = Qnil;
+  xmlNodePtr xnode;
+
+  rb_scan_args(argc, argv, "11", &name, &content);
+
+  if (NIL_P(name))
+  {
+    rb_raise(rb_eRuntimeError, "You must provide me with a name for a PI.");
+  }
+  name = rb_obj_as_string(name);
+  if (NIL_P(content))
+  {
+    xnode = xmlNewPI((xmlChar*) StringValuePtr(name), NULL);
+  }
+  else
+  {
+    content = rb_obj_as_string(content);
+    xnode = xmlNewPI((xmlChar*) StringValuePtr(name), (xmlChar*) StringValueCStr(content));
+  }
+
+  if (xnode == NULL)
+    rxml_raise(&xmlLastError);
+
+  return rxml_node_wrap(xnode);
+}
+
+/*
+ * call-seq:
  *    XML::Node.new_text(content) -> XML::Node
  *
  * Create a new text node.
@@ -1342,6 +1379,7 @@ void rxml_init_node(void)
 
   rb_define_singleton_method(cXMLNode, "new_cdata", rxml_node_new_cdata, -1);
   rb_define_singleton_method(cXMLNode, "new_comment", rxml_node_new_comment, -1);
+  rb_define_singleton_method(cXMLNode, "new_pi", rxml_node_new_pi, -1);
   rb_define_singleton_method(cXMLNode, "new_text", rxml_node_new_text, 1);
 
   /* Initialization */

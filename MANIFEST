@@ -138,6 +138,7 @@ test/tc_node_cdata.rb
 test/tc_node_comment.rb
 test/tc_node_copy.rb
 test/tc_node_edit.rb
+test/tc_node_pi.rb
 test/tc_node_text.rb
 test/tc_node_write.rb
 test/tc_node_xlink.rb

@@ -1,5 +1,9 @@
 = Release History
 
+== 2.2.3 / 2012-??-?? Charlie Savage
+
+* Add ability to insert new PI-nodes into the xmltree (Axel Struebing).
+
 == 2.2.2 / 2011-08-29 Charlie Savage
 
 * ++API CHANGE+++
