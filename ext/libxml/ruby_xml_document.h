@@ -7,4 +7,5 @@ extern VALUE cXMLDocument;
 void rxml_init_document();
 VALUE rxml_document_wrap(xmlDocPtr xnode);
 
+typedef xmlChar * xmlCharPtr;
 #endif

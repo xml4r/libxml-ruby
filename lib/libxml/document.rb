@@ -56,7 +56,7 @@ module LibXML
       end
 
       # call-seq:
-      #    XML::Document.string(string)
+      #    XML::Document.string(string) -> XML::Document
       #    XML::Document.string(string, :encoding => XML::Encoding::UTF_8,
       #                               :options => XML::Parser::Options::NOENT
       #                               :base_uri="http://libxml.org") -> XML::Document
@@ -66,12 +66,12 @@ module LibXML
       # You may provide an optional hash table to control how the
       # parsing is performed.  Valid options are:
       #
-      #  base_uri - The base url for the parsed document.
-      #  encoding - The document encoding, defaults to nil. Valid values
-      #             are the encoding constants defined on XML::Encoding.
-      #  options - Parser options.  Valid values are the constants defined on
-      #            XML::Parser::Options.  Mutliple options can be combined
-      #            by using Bitwise OR (|).
+      #   base_uri - The base url for the parsed document.
+      #   encoding - The document encoding, defaults to nil. Valid values
+      #              are the encoding constants defined on XML::Encoding.
+      #   options  - Parser options.  Valid values are the constants defined on
+      #              XML::Parser::Options.  Mutliple options can be combined
+      #              by using Bitwise OR (|).
       def self.string(value, options = {})
         Parser.string(value, options).parse
       end
@@ -94,11 +94,13 @@ module LibXML
       # optionally using the specified namespace.  For more 
       # information about working with namespaces, please refer
       # to the XML::XPath documentation.
+      #
+      # call-seq:
+      #   document.find(xpath, nslist=nil) -> XML::XPath::Object
       # 
       # Parameters:
       # * xpath - The xpath expression as a string
       # * namespaces - An optional list of namespaces (see XML::XPath for information).
-      # * Returns - XML::XPath::Object
       #
       #  document.find('/foo', 'xlink:http://www.w3.org/1999/xlink')
       #
@@ -131,14 +133,14 @@ module LibXML
       # Returns this node's type name    
       def node_type_name
         case node_type
-          when XML::Node::DOCUMENT_NODE
-            'document_xml'
-          when XML::Node::DOCB_DOCUMENT_NODE
-            'document_docbook'
-          when XML::Node::HTML_DOCUMENT_NODE
-            'document_html'
-          else
-            raise(UnknownType, "Unknown node type: %n", node.node_type);
+        when XML::Node::DOCUMENT_NODE
+          'document_xml'
+        when XML::Node::DOCB_DOCUMENT_NODE
+          'document_docbook'
+        when XML::Node::HTML_DOCUMENT_NODE
+          'document_html'
+        else
+          raise(UnknownType, "Unknown node type: %n", node.node_type);
         end
       end
       # :enddoc:
