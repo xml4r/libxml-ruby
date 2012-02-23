@@ -16,7 +16,8 @@ Gem::Specification.new do |spec|
     by the informal benchmark below.
   EOS
   spec.authors = ['Ross Bamform', 'Wai-Sun Chia', 'Sean Chittenden',
-                  'Dan Janwoski', 'Anurag Priyam', 'Charlie Savage']
+                  'Dan Janwoski', 'Anurag Priyam', 'Charlie Savage',
+                  'Ryan Johnson']
   spec.platform = Gem::Platform::RUBY
   spec.bindir = "bin"
   spec.extensions = ["ext/libxml/extconf.rb"]

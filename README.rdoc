@@ -94,12 +94,12 @@ namespace, in which case you can either write your code like this:
   require 'libxml'
   document = LibXML::XML::Document.new
 
-Or you can utilize a namespace for you own work and include LibXML into it.
+Or you can utilize a namespace for your own work and include LibXML into it.
 For example:
 
   require 'libxml'
 
-  mdoule MyApplication
+  module MyApplication
     include LibXML
 
     class MyClass
