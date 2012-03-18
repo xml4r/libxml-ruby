@@ -207,4 +207,27 @@ class TestXPath < Test::Unit::TestCase
     end
     assert_equal("Error: Invalid expression.", error.to_s)
   end
+
+  def test_find_cdata
+    doc = LibXML::XML::Document.string('<root>hi there <![CDATA[ mycdata ]]> bye!</root>')
+
+    nodes = doc.find('/root/text()')
+    assert_equal(3, nodes.length)
+    assert_equal(nodes[0].node_type, LibXML::XML::Node::TEXT_NODE)
+    assert_equal(nodes[0].content, 'hi there ')
+
+    assert_equal(nodes[1].node_type, LibXML::XML::Node::CDATA_SECTION_NODE)
+    assert_equal(nodes[1].content, ' mycdata ')
+
+    assert_equal(nodes[2].node_type, LibXML::XML::Node::TEXT_NODE)
+    assert_equal(nodes[2].content, ' bye!')
+  end
+
+  def test_find_comment
+    doc = LibXML::XML::Document.string('<root>hi there <!-- my comment --> bye!</root>')
+
+    nodes = doc.find('//comment()')
+    assert_equal(1, nodes.length)
+    assert_equal(nodes[0].content, ' my comment ')
+  end
 end
