@@ -164,25 +164,39 @@ VALUE rxml_encoding_to_rb_encoding(VALUE klass, VALUE encoding)
   rb_encoding* rbencoding = rxml_xml_encoding_to_rb_encoding(klass, xmlEncoding);
   return rb_enc_from_encoding(rbencoding);
 }
-#endif
 
+rb_encoding* rxml_figure_encoding(const char* xencoding)
+{
+  rb_encoding* result;
+  if (xencoding)
+  {
+    xmlCharEncoding xmlEncoding = xmlParseCharEncoding(xencoding);
+    result = rxml_xml_encoding_to_rb_encoding(mXMLEncoding, xmlEncoding);
+  }
+  else
+  {
+    result = rb_utf8_encoding();
+  }
+  return result;
+}
+#endif
 
 VALUE rxml_new_cstr(const char* xstr, const char* xencoding)
 {
 #ifdef HAVE_RUBY_ENCODING_H
-  rb_encoding* rbencoding;
-  if (xencoding)
-  {
-    xmlCharEncoding xmlEncoding = xmlParseCharEncoding(xencoding);
-    rbencoding = rxml_xml_encoding_to_rb_encoding(mXMLEncoding, xmlEncoding);
-  }
-  else
-  {
-    rbencoding = rb_utf8_encoding();
-  }
+  rb_encoding *rbencoding = rxml_figure_encoding(xencoding);
   return rb_external_str_new_with_enc(xstr, strlen(xstr), rbencoding);
 #endif
   return rb_str_new2(xstr);
+}
+
+VALUE rxml_new_cstr_len(const char* xstr, const int length, const char* xencoding)
+{
+#ifdef HAVE_RUBY_ENCODING_H
+  rb_encoding *rbencoding = rxml_figure_encoding(xencoding);
+  return rb_external_str_new_with_enc(xstr, length, rbencoding);
+#endif
+  return rb_str_new(xstr, length);
 }
 
 void rxml_init_encoding(void)
