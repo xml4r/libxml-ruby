@@ -58,7 +58,7 @@ VALUE cXMLDocument;
 void rxml_document_mark_node_list(xmlNodePtr xnode)
 {
   if (xnode == NULL) return;
-  
+
   while (xnode != NULL)
   {
     rxml_document_mark_node_list(xnode->children);
@@ -149,39 +149,169 @@ static VALUE rxml_document_initialize(int argc, VALUE *argv, VALUE self)
 #endif
 
 /*
-  * call-seq:
-  *    document.canonicalize(comments) -> String 
+  * :call-seq:
+  *   document.canonicalize -> String
+  *   document.canonicalize(options) -> String
   *
-  * 	Returns a string containing the canonicalized form of the document.
+  * Returns a string containing the canonicalized form of the document.
+  * Implemented to include all of the functionality of the libxml2
+  * {xmlC14NDocDumpMemory}[http://xmlsoft.org/html/libxml-c14n.html#xmlC14NDocDumpMemory]
+  * method.
   *
-  *  :comments - Specifies if comments should be output.  This is an optional
-  *              parameter whose default value is false.
+  * === Options
+  * [comments]
+  *   * *Type:* Boolean
+  *   * *Default:* false
+  *   Specifies if comments should be output.
+  *   * Must be boolean, otherwise defaults to false.
+  * [inclusive_ns_prefixes]
+  *   * *Type:* Array of strings
+  *   * *Default:* empty array
+  *   Array of namespace prefixes to include in exclusive canonicalization only.
+  *   * The last item in the list is reserved for a NULL value because the C method demands it, therefore
+  *     up to the first 255 valid entries will be used.
+  *   * <em>Only used for *XML_C14N_EXCLUSIVE_1_0* mode. Ignored otherwise.</em>
+  * [mode]
+  *   * *Type:* XML::Document Constant
+  *   * *Default:* XML_C14N_1_0
+  *   Specifies the mode of canonicalization.
+  *   * *NOTE:* XML_C14N_1_1 may not be fully implemented upon compilation due to C library compatibility.
+  *     Please check if XML_C14N_1_0 and XML_C14N_1_1 are the same value prior to using XML_C14N_1_1.
+  * [nodes]
+  *   * *Type:* Array of XML::Node objects
+  *   * *Default:* empty array
+  *   XML::Nodes to include in the canonicalization process
+  *   * For large lists of more than 256 valid namespaces, up to the first 256 valid entries will be used.
   */
-static VALUE rxml_document_canonicalize(int argc, VALUE *argv, VALUE self)
-{
-  VALUE result = Qnil;
-  VALUE comments = Qnil ;
+static VALUE
+rxml_document_canonicalize(
+  int argc,
+  VALUE *argv,
+  VALUE self
+) {
+  int length;
   xmlDocPtr xdoc;
   xmlChar *buffer = NULL;
-  int length;
+  VALUE option_hash = Qnil;
 
-  rb_scan_args(argc, argv, "01", &comments);
-  
+  // :comments option
+  VALUE comments = Qfalse;
+  // :mode option
+  int c14n_mode = XML_C14N_1_0;
+  // :inclusive_ns_prefixes option (ARRAY)
+#define C14N_NS_LIMIT 256
+  xmlChar * inc_ns_prefixes_ptr[C14N_NS_LIMIT];
+  /* At least one NULL value must be defined in the array or the extension will
+   * segfault when using XML_C14N_EXCLUSIVE_1_0 mode.
+   * API docs: "list of inclusive namespace prefixes ended with a NULL"
+   */
+  inc_ns_prefixes_ptr[0] = NULL;
+
+  // :nodes option (ARRAY)
+#define C14N_NODESET_LIMIT 256
+  xmlNodePtr  node_ptr_array[C14N_NODESET_LIMIT];
+  xmlNodeSet nodeset = {
+    0, C14N_NODESET_LIMIT, NULL
+  };
+
+  rb_scan_args(argc, argv, "01", &option_hash);
+  // Do stuff if ruby hash passed as argument
+  if (!NIL_P(option_hash)) {
+    Check_Type(option_hash, T_HASH);
+
+    VALUE o_comments = rb_hash_aref(option_hash, ID2SYM(rb_intern("comments")));
+    comments = (RTEST(o_comments) ? 1 : 0);
+
+    VALUE o_mode = rb_hash_aref(option_hash, ID2SYM(rb_intern("mode")));
+    if (!NIL_P(o_mode)) {
+      Check_Type(o_mode, T_FIXNUM);
+      c14n_mode = NUM2INT(o_mode);
+      //TODO: clean this up
+      //if (c14n_mode > 2) { c14n_mode = 0; }
+      //mode_int = (NUM2INT(o_mode) > 2 ? 0 : NUM2INT(o_mode));
+    }
+
+    VALUE o_i_ns_prefixes = rb_hash_aref(option_hash, ID2SYM(rb_intern("inclusive_ns_prefixes")));
+    if (!NIL_P(o_i_ns_prefixes)) {
+      Check_Type(o_i_ns_prefixes, T_ARRAY);
+
+      VALUE * list_in = RARRAY(o_i_ns_prefixes)->ptr;
+      int list_size = RARRAY(o_i_ns_prefixes)->len;
+      int i;
+      int p = 0; //pointer array index
+
+      if (list_size > 0) {
+        for(i=0; i < list_size; ++i) {
+          if (p >= C14N_NS_LIMIT) { break; }
+
+          if (RTEST(list_in[i])) {
+            if (TYPE(list_in[i]) == T_STRING) {
+              inc_ns_prefixes_ptr[p] = (xmlChar *)StringValueCStr(list_in[i]);
+              p++;
+            }
+          }
+        }
+      }
+
+      // ensure p is not out of bound
+      p = (p >= C14N_NS_LIMIT ? (C14N_NS_LIMIT-1) : p);
+
+      // API docs: "list of inclusive namespace prefixes ended with a NULL"
+      // Set last element to NULL
+      inc_ns_prefixes_ptr[p] = NULL;
+    }
+    //o_ns_prefixes will free at end of block
+
+    VALUE o_nodes = rb_hash_aref(option_hash, ID2SYM(rb_intern("nodes")));
+    if (!NIL_P(o_nodes)) {
+      Check_Type(o_nodes, T_ARRAY);
+
+      VALUE * list_in = RARRAY(o_nodes)->ptr;
+      int node_list_size = RARRAY(o_nodes)->len;
+      int i;
+      int p = 0; // index of pointer array
+
+      for(i=0; i < node_list_size; ++i){
+        if (p >= C14N_NODESET_LIMIT) { break; }
+
+        if (RTEST(list_in[i])) {
+          xmlNodePtr node_ptr;
+          Data_Get_Struct(list_in[i], xmlNode, node_ptr);
+          node_ptr_array[p] = node_ptr;
+          p++;
+        }
+      }
+
+      // Need to set values in nodeset struct
+      nodeset.nodeNr = (node_list_size > C14N_NODESET_LIMIT ?
+                        C14N_NODESET_LIMIT :
+                        node_list_size);
+      nodeset.nodeTab = node_ptr_array;
+    }
+  }//option_hash
+
   Data_Get_Struct(self, xmlDoc, xdoc);
-  length = xmlC14NDocDumpMemory(xdoc, NULL, XML_C14N_1_1, NULL, 
-                                (comments == Qtrue ? 1 : 0),
-                                &buffer);
+  length = xmlC14NDocDumpMemory(
+    xdoc,
+    (nodeset.nodeNr == 0 ? NULL : &nodeset),
+    c14n_mode,
+    &inc_ns_prefixes_ptr,
+    comments,
+    &buffer
+  );
 
-  if (buffer)
-  {
+  VALUE result = Qnil;
+  if (buffer) {
     result = rxml_new_cstr((const char*) buffer, NULL);
     xmlFree(buffer);
   }
 
   return result;
 }
-  
- 
+
+
+
+
 /*
  * call-seq:
  *    document.compression -> num
@@ -356,7 +486,7 @@ static VALUE rxml_document_rb_encoding_get(VALUE self)
   rbencoding = rxml_xml_encoding_to_rb_encoding(mXMLEncoding, xmlParseCharEncoding(xencoding));
   return rb_enc_from_encoding(rbencoding);
 }
-#endif 
+#endif
 
 /*
  * call-seq:
@@ -615,7 +745,7 @@ static VALUE rxml_document_root_set(VALUE self, VALUE node)
  *
  * Saves a document to a file.  You may provide an optional hash table
  * to control how the string is generated.  Valid options are:
- * 
+ *
  * :indent - Specifies if the string should be indented.  The default value
  * is true.  Note that indentation is only added if both :indent is
  * true and XML.indent_tree_output is true.  If :indent is set to false,
@@ -626,7 +756,7 @@ static VALUE rxml_document_root_set(VALUE self, VALUE node)
  * #encoding.  To override the orginal encoding, use one of the
  * XML::Encoding encoding constants. */
 static VALUE rxml_document_save(int argc, VALUE *argv, VALUE self)
-{ 
+{
   VALUE options = Qnil;
   VALUE filename = Qnil;
   xmlDocPtr xdoc;
@@ -665,7 +795,7 @@ static VALUE rxml_document_save(int argc, VALUE *argv, VALUE self)
 
   if (length == -1)
     rxml_raise(&xmlLastError);
-  
+
   return (INT2NUM(length));
 }
 
@@ -692,9 +822,9 @@ static VALUE rxml_document_standalone_q(VALUE self)
  *    document.to_s(:indent => true, :encoding => XML::Encoding::UTF_8) -> "string"
  *
  * Converts a document, and all of its children, to a string representation.
- * You may provide an optional hash table to control how the string is 
+ * You may provide an optional hash table to control how the string is
  * generated.  Valid options are:
- * 
+ *
  * :indent - Specifies if the string should be indented.  The default value
  * is true.  Note that indentation is only added if both :indent is
  * true and XML.indent_tree_output is true.  If :indent is set to false,
@@ -704,13 +834,13 @@ static VALUE rxml_document_standalone_q(VALUE self)
  * defaults to XML::Encoding::UTF8.  To change it, use one of the
  * XML::Encoding encoding constants. */
 static VALUE rxml_document_to_s(int argc, VALUE *argv, VALUE self)
-{ 
+{
   VALUE result;
   VALUE options = Qnil;
   xmlDocPtr xdoc;
   int indent = 1;
   const char *xencoding = "UTF-8";
-  xmlChar *buffer; 
+  xmlChar *buffer;
   int length;
 
   rb_scan_args(argc, argv, "01", &options);
@@ -826,10 +956,10 @@ static VALUE rxml_document_xinclude(VALUE self)
 
 /*
  * call-seq:
- *    document.order_elements! 
- * 
+ *    document.order_elements!
+ *
  * Call this routine to speed up XPath computation on static documents.
- * This stamps all the element nodes with the document order. 
+ * This stamps all the element nodes with the document order.
  */
 static VALUE rxml_document_order_elements(VALUE self)
 {
@@ -841,7 +971,7 @@ static VALUE rxml_document_order_elements(VALUE self)
 
 /*
  * call-seq:
- *    document.validate_schema(schema) 
+ *    document.validate_schema(schema)
  *
  * Validate this document against the specified XML::Schema.
  * If the document is valid the method returns true.  Otherwise an
@@ -874,7 +1004,7 @@ static VALUE rxml_document_validate_schema(VALUE self, VALUE schema)
 
 /*
  * call-seq:
- *    document.validate_relaxng(relaxng) 
+ *    document.validate_relaxng(relaxng)
  *
  * Validate this document against the specified XML::RelaxNG.
  * If the document is valid the method returns true.  Otherwise an
@@ -940,6 +1070,13 @@ void rxml_init_document(void)
 {
   cXMLDocument = rb_define_class_under(mXML, "Document", rb_cObject);
   rb_define_alloc_func(cXMLDocument, rxml_document_alloc);
+
+  /* Original C14N 1.0 spec */
+  rb_define_const(cXMLDocument, "XML_C14N_1_0", INT2NUM(XML_C14N_1_0));
+  /* Exclusive C14N 1.0 spec */
+  rb_define_const(cXMLDocument, "XML_C14N_EXCLUSIVE_1_0", INT2NUM(XML_C14N_EXCLUSIVE_1_0));
+  /* C14N 1.1 spec */
+  rb_define_const(cXMLDocument, "XML_C14N_1_1", INT2NUM(XML_C14N_1_1));
 
   rb_define_method(cXMLDocument, "initialize", rxml_document_initialize, -1);
   rb_define_method(cXMLDocument, "canonicalize", rxml_document_canonicalize, -1);
