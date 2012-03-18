@@ -1,16 +1,16 @@
 = Release History
 
-== TODO / 2012-??-?? Charlie Savage
+== 2.3.0 / 2012-02-22 Ryan Johnson
 
 * Add ability to insert new PI-nodes into the xmltree (Axel Struebing).
-
-== 2.3.0 / 2012-02-22 Ryan Johnson
 
 * Added full pass-through access to libxml2 xmlC14NDocDumpMemory method via
   LibXML::XML::Document#canonicalize method with optional arguments.
 
 * Added full test data for C14N based off of W3C spec. 
   (http://www.w3.org/TR/xml-c14n#Examples)
+
+* Update sax handler to support encodings on Ruby 1.9 and higher.
 
 == 2.2.2 / 2011-08-29 Charlie Savage
 
