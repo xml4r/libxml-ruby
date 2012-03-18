@@ -32,7 +32,7 @@ class TestEncoding < Test::Unit::TestCase
 
   def load_encoding(encoding)
     @encoding = encoding
-    file = filePfor_encoding(encoding)
+    file = file_for_encoding(encoding)
 
     # Strip spaces to make testing easier
     XML.default_keep_blanks = false

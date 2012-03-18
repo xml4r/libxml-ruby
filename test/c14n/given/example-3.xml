@@ -11,7 +11,7 @@
    <e6 xmlns="" xmlns:a="http://www.w3.org">
        <e7 xmlns="http://www.ietf.org">
            <e8 xmlns="" xmlns:a="http://www.w3.org">
-               <e9 xmlns="" xmlns:a="http://www.ietf.org"/>
+               <e9 xmlns="" xmlns:a="http://www.ietf.org" attr="default"/>
            </e8>
        </e7>
    </e6>

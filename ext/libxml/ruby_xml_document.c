@@ -285,7 +285,14 @@ rxml_document_canonicalize(int argc, VALUE *argv, VALUE self)
       VALUE * list_in = NULL;
       int node_list_size = 0;
 
-	  Check_Type(o_nodes, T_ARRAY);
+	  if (CLASS_OF(o_nodes) == cXMLXPathObject)
+	  {
+		  o_nodes = rb_funcall(o_nodes, rb_intern("to_a"), 0);
+	  }
+	  else
+	  {
+		  Check_Type(o_nodes, T_ARRAY);
+	  }
       list_in = RARRAY_PTR(o_nodes);
       node_list_size = RARRAY_LEN(o_nodes);
 

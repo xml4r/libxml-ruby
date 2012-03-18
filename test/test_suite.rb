@@ -8,6 +8,7 @@ Dir.chdir(dir)
 require './tc_attr'
 require './tc_attr_decl'
 require './tc_attributes'
+require './tc_canonicalize'
 require './tc_document'
 require './tc_document_write'
 require './tc_dtd'
