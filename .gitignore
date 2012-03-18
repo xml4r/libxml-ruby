@@ -10,3 +10,5 @@ web/_site
 /doc
 /tmp
 /.idea
+/ext/vc/ipch
+/ext/vc/libxml_ruby.opensdf
