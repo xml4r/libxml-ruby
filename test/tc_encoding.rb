@@ -1,6 +1,5 @@
 # encoding: UTF-8
 
-if defined?(Encoding)
 require './test_helper'
 require 'test/unit'
 
@@ -26,16 +25,20 @@ class TestEncoding < Test::Unit::TestCase
     Encoding.default_internal = nil
   end
 
+  def file_for_encoding(encoding)
+    file_name = "model/bands.#{encoding.name.downcase}.xml"
+    File.join(File.dirname(__FILE__), file_name)
+  end
+
   def load_encoding(encoding)
     @encoding = encoding
-    file_name = "model/bands.#{@encoding.name.downcase}.xml"
+    file = filePfor_encoding(encoding)
 
     # Strip spaces to make testing easier
     XML.default_keep_blanks = false
-    file = File.join(File.dirname(__FILE__), file_name)
     @doc = XML::Document.file(file)
   end
-  
+
   def test_encoding
     doc = XML::Document.new
     assert_equal(XML::Encoding::NONE, doc.encoding)
@@ -115,5 +118,4 @@ class TestEncoding < Test::Unit::TestCase
     assert_equal("109 246 116 108 101 121 95 99 114 252 101",
                  name.bytes.to_a.join(" "))
   end
-end
 end

@@ -11,7 +11,6 @@ require './tc_attributes'
 require './tc_document'
 require './tc_document_write'
 require './tc_dtd'
-require './tc_encoding'
 require './tc_error'
 require './tc_html_parser'
 require './tc_html_parser_context'
@@ -39,6 +38,11 @@ require './tc_xpath_context'
 require './tc_xpath_expression'
 require './tc_xpointer'
 
+
+if defined?(Encoding)
+  require './tc_encoding'
+  require './tc_encoding_sax'
+end
 # Compatibility
 require './tc_properties'
 require './tc_deprecated_require'

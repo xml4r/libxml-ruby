@@ -43,20 +43,6 @@ static ID CONTEXT_ATTR;
 
 /* ======  Parser  =========== */
 
-/*static int rxml_sax_parser_parse_io(VALUE self, VALUE input)
-{
-  VALUE handler = rb_ivar_get(self, CALLBACKS_ATTR);
-  VALUE io = rb_ivar_get(input, IO_ATTR);
-  VALUE encoding = rb_ivar_get(input, ENCODING_ATTR);
-  xmlCharEncoding xmlEncoding = NUM2INT(encoding);
-  xmlParserCtxtPtr ctxt =
-      xmlCreateIOParserCtxt((xmlSAXHandlerPtr) &rxml_sax_handler,
-          (void *) handler, (xmlInputReadCallback) rxml_read_callback, NULL,
-          (void *) io, xmlEncoding);
-  return xmlParseDocument(ctxt);
-}*/
-
-
 /*
  * call-seq:
  *    parser.initialize(context) -> XML::Parser

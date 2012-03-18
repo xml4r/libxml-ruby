@@ -30,30 +30,28 @@ const char *value, int len)
 
   if (handler != Qnil)
   {
-    rb_funcall(handler, cbidOnCdataBlock,1,rb_str_new(value, len));
+    rb_funcall(handler, cbidOnCdataBlock,1, rxml_new_cstr_len(value, len, NULL));
   }
 }
 
-static void characters_callback(void *ctx,
-const char *chars, int len)
+static void characters_callback(void *ctx, const char *chars, int len)
 {
   VALUE handler = (VALUE) ctx;
 
   if (handler != Qnil)
   {
-    VALUE rchars = rb_str_new(chars, len);
+    VALUE rchars = rxml_new_cstr_len(chars, len, NULL);
     rb_funcall(handler, cbidOnCharacters, 1, rchars);
   }
 }
 
-static void comment_callback(void *ctx,
-const char *msg)
+static void comment_callback(void *ctx, const char *msg)
 {
   VALUE handler = (VALUE) ctx;
 
   if (handler != Qnil)
   {
-    rb_funcall(handler, cbidOnComment,1,rb_str_new2(msg));
+    rb_funcall(handler, cbidOnComment,1,rxml_new_cstr(msg, NULL));
   }
 }
 
@@ -81,21 +79,21 @@ static void end_element_ns_callback(void *ctx,
     VALUE name;
     if (xprefix)
     {
-      name = rb_str_new2(xprefix);
+      name = rxml_new_cstr(xprefix, NULL);
       rb_str_cat2(name, ":"); 
       rb_str_cat2(name, xlocalname); 
     }
     else
     {
-      name = rb_str_new2(xlocalname);
+      name = rxml_new_cstr(xlocalname, NULL);
     }
     rb_funcall(handler, cbidOnEndElement, 1, name);
   }
 
   rb_funcall(handler, cbidOnEndElementNs, 3, 
-             rb_str_new2(xlocalname),
-             xprefix ? rb_str_new2(xprefix) : Qnil,
-             xURI ? rb_str_new2(xURI) : Qnil);
+             rxml_new_cstr(xlocalname, NULL),
+             xprefix ? rxml_new_cstr(xprefix, NULL) : Qnil,
+             xURI ? rxml_new_cstr(xURI, NULL) : Qnil);
 }
 
 static void external_subset_callback(void *ctx, const char *name, const char *extid, const char *sysid)
@@ -104,9 +102,9 @@ static void external_subset_callback(void *ctx, const char *name, const char *ex
 
   if (handler != Qnil)
   {
-    VALUE rname = name ? rb_str_new2(name) : Qnil;
-    VALUE rextid = extid ? rb_str_new2(extid) : Qnil;
-    VALUE rsysid = sysid ? rb_str_new2(sysid) : Qnil;
+    VALUE rname = name ? rxml_new_cstr(name, NULL) : Qnil;
+    VALUE rextid = extid ? rxml_new_cstr(extid, NULL) : Qnil;
+    VALUE rsysid = sysid ? rxml_new_cstr(sysid, NULL) : Qnil;
     rb_funcall(handler, cbidOnExternalSubset, 3, rname, rextid, rsysid);
   }
 }
@@ -137,9 +135,9 @@ static void internal_subset_callback(void *ctx, const char *name, const char *ex
 
   if (handler != Qnil)
   {
-    VALUE rname = name ? rb_str_new2(name) : Qnil;
-    VALUE rextid = extid ? rb_str_new2(extid) : Qnil;
-    VALUE rsysid = sysid ? rb_str_new2(sysid) : Qnil;
+    VALUE rname = name ? rxml_new_cstr(name, NULL) : Qnil;
+    VALUE rextid = extid ? rxml_new_cstr(extid, NULL) : Qnil;
+    VALUE rsysid = sysid ? rxml_new_cstr(sysid, NULL) : Qnil;
     rb_funcall(handler, cbidOnInternalSubset, 3, rname, rextid, rsysid);
   }
 }
@@ -160,8 +158,8 @@ static void processing_instruction_callback(void *ctx, const char *target, const
 
   if (handler != Qnil)
   {
-    VALUE rtarget = target ? rb_str_new2(target) : Qnil;
-    VALUE rdata = data ? rb_str_new2(data) : Qnil;
+    VALUE rtarget = target ? rxml_new_cstr(target, NULL) : Qnil;
+    VALUE rdata = data ? rxml_new_cstr(data, NULL) : Qnil;
     rb_funcall(handler, cbidOnProcessingInstruction, 2, rtarget, rdata);
   }
 }
@@ -172,7 +170,7 @@ static void reference_callback(void *ctx, const char *name)
 
   if (handler != Qnil)
   {
-    rb_funcall(handler, cbidOnReference,1,rb_str_new2(name));
+    rb_funcall(handler, cbidOnReference,1,rxml_new_cstr(name, NULL));
   }
 }
 
@@ -188,8 +186,8 @@ static void start_document_callback(void *ctx)
 
 static void start_element_ns_callback(void *ctx, 
                                       const xmlChar *xlocalname, const xmlChar *xprefix, const xmlChar *xURI,
-                            					int nb_namespaces, const xmlChar **xnamespaces,
-					                            int nb_attributes, int nb_defaulted, const xmlChar **xattributes)
+                            		  int nb_namespaces, const xmlChar **xnamespaces,
+					                  int nb_attributes, int nb_defaulted, const xmlChar **xattributes)
 {
   VALUE handler = (VALUE) ctx;
   VALUE attributes = rb_hash_new();
@@ -204,10 +202,8 @@ static void start_element_ns_callback(void *ctx,
     int i;
     for (i = 0;i < nb_attributes * 5; i+=5) 
     {
-      VALUE attrName = rb_str_new2(xattributes[i+0]);
-      VALUE attrValue = rb_str_new(xattributes[i+3], xattributes[i+4] - xattributes[i+3]);
-      /* VALUE attrPrefix = xattributes[i+1] ? rb_str_new2(xattributes[i+1]) : Qnil;
-         VALUE attrURI = xattributes[i+2] ? rb_str_new2(xattributes[i+2]) : Qnil; */
+      VALUE attrName = rxml_new_cstr(xattributes[i+0], NULL);
+      VALUE attrValue = rxml_new_cstr_len(xattributes[i+3], xattributes[i+4] - xattributes[i+3], NULL);
 
       rb_hash_aset(attributes, attrName, attrValue);
     }
@@ -218,8 +214,8 @@ static void start_element_ns_callback(void *ctx,
     int i;
     for (i = 0;i < nb_namespaces * 2; i+=2) 
     {
-      VALUE nsPrefix = xnamespaces[i+0] ? rb_str_new2(xnamespaces[i+0]) : Qnil;
-      VALUE nsURI = xnamespaces[i+1] ? rb_str_new2(xnamespaces[i+1]) : Qnil;
+      VALUE nsPrefix = xnamespaces[i+0] ? rxml_new_cstr(xnamespaces[i+0], NULL) : Qnil;
+      VALUE nsURI = xnamespaces[i+1] ? rxml_new_cstr(xnamespaces[i+1], NULL) : Qnil;
       rb_hash_aset(namespaces, nsPrefix, nsURI);
     }
   }
@@ -230,22 +226,22 @@ static void start_element_ns_callback(void *ctx,
     VALUE name;
     if (xprefix)
     {
-      name = rb_str_new2(xprefix);
+      name = rxml_new_cstr(xprefix, NULL);
       rb_str_cat2(name, ":"); 
       rb_str_cat2(name, xlocalname); 
     }
     else
     {
-      name = rb_str_new2(xlocalname);
+      name = rxml_new_cstr(xlocalname, NULL);
     }
     rb_funcall(handler, cbidOnStartElement, 2, name, attributes);
   }
 
   rb_funcall(handler, cbidOnStartElementNs, 5, 
-             rb_str_new2(xlocalname),
+             rxml_new_cstr(xlocalname, NULL),
              attributes,
-             xprefix ? rb_str_new2(xprefix) : Qnil,
-             xURI ? rb_str_new2(xURI) : Qnil,
+             xprefix ? rxml_new_cstr(xprefix, NULL) : Qnil,
+             xURI ? rxml_new_cstr(xURI, NULL) : Qnil,
              namespaces);
 }
 
