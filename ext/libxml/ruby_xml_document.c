@@ -183,47 +183,56 @@ static VALUE rxml_document_initialize(int argc, VALUE *argv, VALUE self)
   *   XML::Nodes to include in the canonicalization process
   *   * For large lists of more than 256 valid namespaces, up to the first 256 valid entries will be used.
   */
+#define C14N_NS_LIMIT 256
+#define C14N_NODESET_LIMIT 256
+
 static VALUE
-rxml_document_canonicalize(
-  int argc,
-  VALUE *argv,
-  VALUE self
-) {
+rxml_document_canonicalize(int argc, VALUE *argv, VALUE self)
+{
+  VALUE result = Qnil;
   int length;
   xmlDocPtr xdoc;
   xmlChar *buffer = NULL;
   VALUE option_hash = Qnil;
+  VALUE o_nodes = Qnil;
 
   // :comments option
   VALUE comments = Qfalse;
   // :mode option
   int c14n_mode = XML_C14N_1_0;
   // :inclusive_ns_prefixes option (ARRAY)
-#define C14N_NS_LIMIT 256
+
   xmlChar * inc_ns_prefixes_ptr[C14N_NS_LIMIT];
+
+  // :nodes option (ARRAY)
+  xmlNodePtr  node_ptr_array[C14N_NODESET_LIMIT];
+  xmlNodeSet nodeset = {
+    0, C14N_NODESET_LIMIT, NULL
+  };
+
   /* At least one NULL value must be defined in the array or the extension will
    * segfault when using XML_C14N_EXCLUSIVE_1_0 mode.
    * API docs: "list of inclusive namespace prefixes ended with a NULL"
    */
   inc_ns_prefixes_ptr[0] = NULL;
 
-  // :nodes option (ARRAY)
-#define C14N_NODESET_LIMIT 256
-  xmlNodePtr  node_ptr_array[C14N_NODESET_LIMIT];
-  xmlNodeSet nodeset = {
-    0, C14N_NODESET_LIMIT, NULL
-  };
-
   rb_scan_args(argc, argv, "01", &option_hash);
   // Do stuff if ruby hash passed as argument
-  if (!NIL_P(option_hash)) {
+  if (!NIL_P(option_hash)) 
+  {
+	VALUE o_comments = Qnil;
+	VALUE o_mode = Qnil;
+	VALUE o_i_ns_prefixes = Qnil;
+	VALUE * list_in = NULL;
+	
     Check_Type(option_hash, T_HASH);
 
-    VALUE o_comments = rb_hash_aref(option_hash, ID2SYM(rb_intern("comments")));
+    o_comments = rb_hash_aref(option_hash, ID2SYM(rb_intern("comments")));
     comments = (RTEST(o_comments) ? 1 : 0);
 
-    VALUE o_mode = rb_hash_aref(option_hash, ID2SYM(rb_intern("mode")));
-    if (!NIL_P(o_mode)) {
+    o_mode = rb_hash_aref(option_hash, ID2SYM(rb_intern("mode")));
+    if (!NIL_P(o_mode)) 
+	{
       Check_Type(o_mode, T_FIXNUM);
       c14n_mode = NUM2INT(o_mode);
       //TODO: clean this up
@@ -231,21 +240,27 @@ rxml_document_canonicalize(
       //mode_int = (NUM2INT(o_mode) > 2 ? 0 : NUM2INT(o_mode));
     }
 
-    VALUE o_i_ns_prefixes = rb_hash_aref(option_hash, ID2SYM(rb_intern("inclusive_ns_prefixes")));
-    if (!NIL_P(o_i_ns_prefixes)) {
-      Check_Type(o_i_ns_prefixes, T_ARRAY);
-
-      VALUE * list_in = RARRAY(o_i_ns_prefixes)->ptr;
-      int list_size = RARRAY(o_i_ns_prefixes)->len;
+    o_i_ns_prefixes = rb_hash_aref(option_hash, ID2SYM(rb_intern("inclusive_ns_prefixes")));
+    if (!NIL_P(o_i_ns_prefixes)) 
+	{
       int i;
       int p = 0; //pointer array index
+      VALUE *list_in = NULL;
+      int list_size = 0;
 
-      if (list_size > 0) {
+	  Check_Type(o_i_ns_prefixes, T_ARRAY);
+      list_in = RARRAY_PTR(o_i_ns_prefixes);
+      list_size = RARRAY_LEN(o_i_ns_prefixes);
+
+      if (list_size > 0) 
+	  {
         for(i=0; i < list_size; ++i) {
           if (p >= C14N_NS_LIMIT) { break; }
 
-          if (RTEST(list_in[i])) {
-            if (TYPE(list_in[i]) == T_STRING) {
+          if (RTEST(list_in[i])) 
+		  {
+            if (TYPE(list_in[i]) == T_STRING) 
+			{
               inc_ns_prefixes_ptr[p] = (xmlChar *)StringValueCStr(list_in[i]);
               p++;
             }
@@ -262,19 +277,24 @@ rxml_document_canonicalize(
     }
     //o_ns_prefixes will free at end of block
 
-    VALUE o_nodes = rb_hash_aref(option_hash, ID2SYM(rb_intern("nodes")));
-    if (!NIL_P(o_nodes)) {
-      Check_Type(o_nodes, T_ARRAY);
-
-      VALUE * list_in = RARRAY(o_nodes)->ptr;
-      int node_list_size = RARRAY(o_nodes)->len;
+    o_nodes = rb_hash_aref(option_hash, ID2SYM(rb_intern("nodes")));
+    if (!NIL_P(o_nodes)) 
+	{
       int i;
       int p = 0; // index of pointer array
+      VALUE * list_in = NULL;
+      int node_list_size = 0;
 
-      for(i=0; i < node_list_size; ++i){
+	  Check_Type(o_nodes, T_ARRAY);
+      list_in = RARRAY_PTR(o_nodes);
+      node_list_size = RARRAY_LEN(o_nodes);
+
+      for (i=0; i < node_list_size; ++i)
+	  {
         if (p >= C14N_NODESET_LIMIT) { break; }
 
-        if (RTEST(list_in[i])) {
+        if (RTEST(list_in[i])) 
+		{
           xmlNodePtr node_ptr;
           Data_Get_Struct(list_in[i], xmlNode, node_ptr);
           node_ptr_array[p] = node_ptr;
@@ -300,16 +320,14 @@ rxml_document_canonicalize(
     &buffer
   );
 
-  VALUE result = Qnil;
-  if (buffer) {
+  if (buffer)
+  {
     result = rxml_new_cstr((const char*) buffer, NULL);
     xmlFree(buffer);
   }
 
   return result;
 }
-
-
 
 
 /*
