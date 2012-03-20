@@ -142,10 +142,15 @@ static VALUE rxml_document_initialize(int argc, VALUE *argv, VALUE self)
   return self;
 }
 
-/* XML_C14N_1_1 is not defined until libxml 1.1.25, so define this
-   constant to the same value of XML_C14N_1_0 if it isn't defined. */
-#ifndef XML_C14N_1_1
-#define XML_C14N_1_1 0
+/* XML_C14N_1* constants are not defined until libxml 1.1.25, so if they
+   are not defined then define these constants to map to zero,
+   the same value as XML_C14N_1_0. */
+
+/* XML_C14N* constants are not defined until libxml 1.1.25, so define them
+   if needed so things compile. */
+#ifndef XML_C14N_1_0
+#define XML_C14N_EXCLUSIVE_1_0 XML_C14N_1_0
+#define XML_C14N_1_1 XML_C14N_1_0
 #endif
 
 /*
