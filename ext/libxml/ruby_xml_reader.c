@@ -20,7 +20,7 @@
  *
  * Example:
  *
- *  parser = XML::Reader.string("<foo><bar>1</bar><bar>2</bar><bar>3</bar></foo>")
+ *  reader = XML::Reader.string("<foo><bar>1</bar><bar>2</bar><bar>3</bar></foo>")
  *  reader.read
  *  assert_equal('foo', reader.name)
  *  assert_equal(nil, reader.value)
