@@ -22,6 +22,10 @@ static ID ERROR_HANDLER_ID;
  *
  *   XML::Error.set_handler(&XML::Error::QUIET_HANDLER)
  *
+ * Get the current handler:
+ *
+ *   proc = XML::Error.get_handler
+ *
  * Install your own handler:
  *
  *   XML::Error.set_handler do |error|
@@ -40,6 +44,19 @@ static void rxml_set_handler(VALUE self, VALUE block)
 #else
   rb_cvar_set(self, ERROR_HANDLER_ID, block);
 #endif
+}
+
+/*
+ * call-seq:
+ *    Error.get_error_handler
+ *
+ * Returns the proc that will be called when libxml generates
+ * warning, error or fatal error messages.
+ */
+static VALUE rxml_error_get_handler()
+{
+  VALUE block = rb_cvar_get(eXMLError, ERROR_HANDLER_ID);
+  return block;
 }
 
 /*
@@ -129,7 +146,7 @@ static void structuredErrorFunc(void *userData, xmlErrorPtr xerror)
   VALUE error = rxml_error_wrap(xerror);
 
   /* Wrap error up as Ruby object and send it off to ruby */
-  VALUE block = rb_cvar_get(eXMLError, ERROR_HANDLER_ID);
+  VALUE block = rxml_error_get_handler();
 
   /* Now call global handler */
   if (block != Qnil)
@@ -155,6 +172,7 @@ void rxml_init_error()
 
   /* Error class */
   eXMLError = rb_define_class_under(mXML, "Error", rb_eStandardError);
+  rb_define_singleton_method(eXMLError, "get_handler", rxml_error_get_handler, 0);
   rb_define_singleton_method(eXMLError, "set_handler", rxml_error_set_handler, 0);
   rb_define_singleton_method(eXMLError, "reset_handler", rxml_error_reset_handler, 0);
 
