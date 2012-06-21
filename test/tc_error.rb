@@ -60,7 +60,8 @@ class TestError < Test::Unit::TestCase
   end
 
   def test_get_handler
-    assert(XML::Error.respond_to?(:get_handler))
+    assert_respond_to(XML::Error, :get_handler)
+    assert_equal(0, XML::Error.method(:get_handler).arity)
 
     saved_handler = XML::Error.get_handler
     XML::Error.set_handler{ puts "New handler" }
