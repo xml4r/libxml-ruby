@@ -59,6 +59,18 @@ class TestError < Test::Unit::TestCase
     assert_nil(exception)
   end
 
+  def test_get_handler
+    assert_respond_to(XML::Error, :get_handler)
+    assert_equal(0, XML::Error.method(:get_handler).arity)
+
+    saved_handler = XML::Error.get_handler
+    XML::Error.set_handler{ puts "New handler" }
+    assert_not_equal(XML::Error.get_handler, saved_handler)
+
+    XML::Error.set_handler(&saved_handler)
+    assert_equal(XML::Error.get_handler, saved_handler)
+  end
+
   def test_verbose_handler
     XML::Error.set_handler(&XML::Error::VERBOSE_HANDLER)
     output = StringIO.new
