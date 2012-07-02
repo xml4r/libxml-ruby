@@ -149,6 +149,7 @@ static VALUE rxml_document_initialize(int argc, VALUE *argv, VALUE self)
 /* XML_C14N* constants are not defined until libxml 1.1.25, so define them
    if needed so things compile. */
 #ifndef XML_C14N_1_0
+#define XML_C14N_1_0 0
 #define XML_C14N_EXCLUSIVE_1_0 XML_C14N_1_0
 #define XML_C14N_1_1 XML_C14N_1_0
 #endif
