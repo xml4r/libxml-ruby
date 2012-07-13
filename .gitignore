@@ -12,3 +12,8 @@ web/_site
 /.idea
 /ext/vc/ipch
 /ext/vc/libxml_ruby.opensdf
+.config
+InstalledFiles
+ext/libxml/libxml_ruby.bundle
+libxml-ruby.xcodeproj/
+.DS_Store
