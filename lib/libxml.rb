@@ -25,5 +25,10 @@ require 'libxml/sax_parser'
 require 'libxml/sax_callbacks'
 require 'libxml/xpath_object'
 
+#Schema Interface
+require 'libxml/schema'
+require 'libxml/schema/type'
+require 'libxml/schema/element'
+
 # Deprecated
 require 'libxml/properties'
