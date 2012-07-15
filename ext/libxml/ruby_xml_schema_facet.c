@@ -29,6 +29,15 @@ static VALUE rxml_schema_facet_value(VALUE self)
   return rb_str_new2(facet->value);
 }
 
+static VALUE rxml_schema_facet_kind(VALUE self)
+{
+  xmlSchemaFacetPtr facet;
+
+  Data_Get_Struct(self, xmlSchemaFacetPtr, facet);
+
+  return INT2NUM(facet->type);
+}
+
 VALUE rxml_wrap_schema_facet(xmlSchemaFacetPtr facet)
 {
   return Data_Wrap_Struct(cXMLSchemaFacet, NULL, rxml_schema_facet_free, facet);
@@ -39,4 +48,5 @@ void rxml_init_schema_facet(void)
   cXMLSchemaFacet = rb_define_class_under(cXMLSchema, "Facet", rb_cObject);
   rb_define_method(cXMLSchemaFacet, "value", rxml_schema_facet_value, 0);
   rb_define_method(cXMLSchemaFacet, "node", rxml_schema_facet_node, 0);
+  rb_define_method(cXMLSchemaFacet, "kind", rxml_schema_facet_kind, 0);
 }

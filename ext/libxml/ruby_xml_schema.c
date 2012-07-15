@@ -37,6 +37,12 @@ static void rxml_schema_free(xmlSchemaPtr xschema)
   xmlSchemaFree(xschema);
 }
 
+VALUE rxml_wrap_schema(xmlSchemaPtr xschema)
+{
+  return Data_Wrap_Struct(cXMLSchema, NULL, rxml_schema_free, xschema);
+}
+
+
 /*
  * call-seq:
  *    XML::Schema.initialize(schema_uri) -> schema
@@ -146,6 +152,42 @@ static VALUE rxml_schema_document(VALUE self)
   return rxml_node_wrap(xmlDocGetRootElement(xschema->doc));
 }
 
+static void storeNs(xmlSchemaImportPtr import, VALUE self, xmlChar *nsname)
+{
+  VALUE schemas;
+  xmlNodePtr xnode;
+  xmlNsPtr xns;
+
+  schemas = rb_iv_get(self, "@namespaces");
+  if (import->doc) {
+    xnode = xmlDocGetRootElement(import->doc);
+
+    xns = xnode->nsDef;
+
+    while (xns) {
+      VALUE anamespace = rxml_namespace_wrap(xns);
+      rb_ary_push(schemas, anamespace);
+      xns = xns->next;
+    }
+  }
+}
+
+static VALUE rxml_schema_namespaces(VALUE self)
+{
+  VALUE schemas;
+  xmlSchemaPtr xschema;
+
+  Data_Get_Struct(self, xmlSchemaPtr, xschema);
+
+  if (rb_iv_get(self, "@namespaces") == Qnil) {
+    schemas = rb_ary_new();
+    rb_iv_set(self, "@namespaces", schemas);
+    xmlHashScan(xschema->schemasImports, (xmlHashScanner) storeNs, self);
+  }
+
+  return rb_iv_get(self, "@namespaces");
+}
+
 static void storeType(xmlSchemaTypePtr type, VALUE self, xmlChar *name)
 {
   VALUE types;
@@ -157,6 +199,8 @@ static void storeType(xmlSchemaTypePtr type, VALUE self, xmlChar *name)
   rb_hash_aset(types, rb_str_new2(name), rtype);
 }
 
+static void rxml_schema_collect_types(VALUE self);
+
 static VALUE rxml_schema_types(VALUE self)
 {
   VALUE types;
@@ -167,6 +211,7 @@ static VALUE rxml_schema_types(VALUE self)
   if (rb_iv_get(self, "@types") == Qnil) {
     types = rb_hash_new();
     rb_iv_set(self, "@types", types);
+    rxml_schema_collect_types(self);
     xmlHashScan(xschema->typeDecl, (xmlHashScanner) storeType, self);
   }
 
@@ -199,6 +244,26 @@ static VALUE rxml_schema_elements(VALUE self)
   return rb_iv_get(self, "@elements");
 }
 
+static void collectSchemaTypes(xmlSchemaImportPtr import, VALUE self)
+{
+  xmlSchemaPtr xschema;
+
+  if (import->imported && import->schema) {
+    xmlHashScan(import->schema->typeDecl, (xmlHashScanner) storeType, self);
+  }
+}
+
+static void rxml_schema_collect_types(VALUE self)
+{
+  xmlSchemaPtr xschema;
+
+  Data_Get_Struct(self, xmlSchemaPtr, xschema);
+
+  if(xschema){
+    xmlHashScan(xschema->schemasImports, (xmlHashScanner) collectSchemaTypes, self);
+  }
+}
+
 void rxml_init_schema(void)
 {
   cXMLSchema = rb_define_class_under(mXML, "Schema", rb_cObject);
@@ -212,6 +277,8 @@ void rxml_init_schema(void)
   rb_define_method(cXMLSchema, "version", rxml_schema_version, 0);
   rb_define_method(cXMLSchema, "document", rxml_schema_document, 0);
 
+  rb_define_method(cXMLSchema, "_namespaces", rxml_schema_namespaces, 0);
+  rb_define_method(cXMLSchema, "_collect_types", rxml_schema_collect_types, 0);
   rb_define_method(cXMLSchema, "types", rxml_schema_types, 0);
   rb_define_method(cXMLSchema, "elements", rxml_schema_elements, 0);
 

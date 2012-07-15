@@ -77,6 +77,15 @@ static VALUE rxml_schema_type_node(VALUE self)
   return rxml_node_wrap(xtype->node);
 }
 
+static VALUE rxml_schema_type_kind(VALUE self)
+{
+  xmlSchemaTypePtr xtype;
+
+  Data_Get_Struct(self, xmlSchemaTypePtr, xtype);
+
+  return INT2NUM(xtype->type);
+}
+
 static void rxmlSchemaCollectElements(xmlSchemaParticlePtr particle, FILE *output, VALUE self)
 {
   VALUE elements;
@@ -160,6 +169,7 @@ void rxml_init_schema_type(void)
   rb_define_method(cXMLSchemaType, "name", rxml_schema_type_name, 0);
   rb_define_method(cXMLSchemaType, "elements", rxml_schema_type_elements, 0);
   rb_define_method(cXMLSchemaType, "base", rxml_schema_type_base, 0);
+  rb_define_method(cXMLSchemaType, "kind", rxml_schema_type_kind, 0);
   rb_define_method(cXMLSchemaType, "node", rxml_schema_type_node, 0);
   rb_define_method(cXMLSchemaType, "facets", rxml_schema_type_facets, 0);
 }
