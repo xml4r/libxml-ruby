@@ -20,7 +20,7 @@ static VALUE rxml_schema_type_namespace(VALUE self)
 
   Data_Get_Struct(self, xmlSchemaTypePtr, xtype);
 
-  return rb_str_new2(xtype->targetNamespace);
+  QNIL_OR_STRING(xtype->targetNamespace)
 }
 
 static VALUE rxml_schema_type_name(VALUE self)
@@ -29,7 +29,7 @@ static VALUE rxml_schema_type_name(VALUE self)
 
   Data_Get_Struct(self, xmlSchemaTypePtr, xtype);
 
-  return rb_str_new2(xtype->name);
+  QNIL_OR_STRING(xtype->name)
 }
 
 static VALUE rxml_schema_type_base(VALUE self)
@@ -83,7 +83,10 @@ static VALUE rxml_schema_type_kind(VALUE self)
 
   Data_Get_Struct(self, xmlSchemaTypePtr, xtype);
 
-  return INT2NUM(xtype->type);
+  if(xtype->type == NULL)
+    return Qnil;
+  else
+    return INT2NUM(xtype->type);
 }
 
 static void rxmlSchemaCollectElements(xmlSchemaParticlePtr particle, FILE *output, VALUE self)

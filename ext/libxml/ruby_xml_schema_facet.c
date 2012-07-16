@@ -26,7 +26,7 @@ static VALUE rxml_schema_facet_value(VALUE self)
 
   Data_Get_Struct(self, xmlSchemaFacetPtr, facet);
 
-  return rb_str_new2(facet->value);
+  QNIL_OR_STRING(facet->value)
 }
 
 static VALUE rxml_schema_facet_kind(VALUE self)

@@ -112,7 +112,7 @@ static VALUE rxml_schema_target_namespace(VALUE self)
 
   Data_Get_Struct(self, xmlSchemaPtr, xschema);
 
-  return rb_str_new2(xschema->targetNamespace);
+  QNIL_OR_STRING(xschema->targetNamespace)
 }
 
 static VALUE rxml_schema_name(VALUE self)
@@ -121,7 +121,7 @@ static VALUE rxml_schema_name(VALUE self)
 
   Data_Get_Struct(self, xmlSchemaPtr, xschema);
 
-  return rb_str_new2(xschema->name);
+  QNIL_OR_STRING(xschema->name)
 }
 
 static VALUE rxml_schema_version(VALUE self)
@@ -130,7 +130,7 @@ static VALUE rxml_schema_version(VALUE self)
 
   Data_Get_Struct(self, xmlSchemaPtr, xschema);
 
-  return rb_str_new2(xschema->version);
+  QNIL_OR_STRING(xschema->version)
 }
 
 static VALUE rxml_schema_id(VALUE self)
@@ -139,7 +139,7 @@ static VALUE rxml_schema_id(VALUE self)
 
   Data_Get_Struct(self, xmlSchemaPtr, xschema);
 
-  return rb_str_new2(xschema->id);
+  QNIL_OR_STRING(xschema->id)
 }
 
 

@@ -20,7 +20,7 @@ static VALUE rxml_schema_element_namespace(VALUE self)
 
   Data_Get_Struct(self, xmlSchemaElementPtr, xelem);
 
-  return rb_str_new2(xelem->targetNamespace);
+  QNIL_OR_STRING(xelem->targetNamespace)
 }
 
 static VALUE rxml_schema_element_name(VALUE self)
@@ -29,7 +29,7 @@ static VALUE rxml_schema_element_name(VALUE self)
 
   Data_Get_Struct(self, xmlSchemaElementPtr, xelem);
 
-  return rb_str_new2(xelem->name);
+  QNIL_OR_STRING(xelem->name)
 }
 
 static VALUE rxml_schema_element_type(VALUE self)
@@ -59,7 +59,7 @@ static VALUE rxml_schema_element_value(VALUE self)
 
   Data_Get_Struct(self, xmlSchemaElementPtr, xelem);
 
-  return rb_str_new2(xelem->value);
+  QNIL_OR_STRING(xelem->value)
 }
 
 static VALUE rxml_schema_element_scope(VALUE self)
@@ -68,7 +68,7 @@ static VALUE rxml_schema_element_scope(VALUE self)
 
   Data_Get_Struct(self, xmlSchemaElementPtr, xelem);
 
-  return rb_str_new2(xelem->scope);
+  QNIL_OR_STRING(xelem->scope)
 }
 
 static VALUE rxml_schema_element_subst_group(VALUE self)
@@ -77,7 +77,7 @@ static VALUE rxml_schema_element_subst_group(VALUE self)
 
   Data_Get_Struct(self, xmlSchemaElementPtr, xelem);
 
-  return rb_str_new2(xelem->substGroup);
+  QNIL_OR_STRING(xelem->substGroup)
 }
 
 void rxml_init_schema_element(void)

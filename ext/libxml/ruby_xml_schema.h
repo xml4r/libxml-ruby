@@ -12,6 +12,11 @@ extern VALUE cXMLSchema;
 
 void rxml_init_schema(void);
 
+#define QNIL_OR_STRING(slot)			\
+    if (slot == NULL) \
+      return Qnil; \
+    else \
+	    return rb_str_new2(slot);
 
 #define SUBSET_RESTRICTION  1<<0
 #define SUBSET_EXTENSION    1<<1
