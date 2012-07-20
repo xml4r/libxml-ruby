@@ -74,7 +74,10 @@ static VALUE rxml_schema_type_node(VALUE self)
 
   Data_Get_Struct(self, xmlSchemaTypePtr, xtype);
 
-  return rxml_node_wrap(xtype->node);
+  if(xtype->node != NULL)
+    return rxml_node_wrap(xtype->node);
+  else
+    return Qnil;
 }
 
 static VALUE rxml_schema_type_kind(VALUE self)
@@ -87,6 +90,26 @@ static VALUE rxml_schema_type_kind(VALUE self)
     return Qnil;
   else
     return INT2NUM(xtype->type);
+}
+
+static VALUE get_annotation(xmlSchemaAnnotPtr annot)
+{
+  if(annot != NULL && annot->content != NULL && annot->content->content != NULL)
+    return rb_str_new2(annot->content->content);
+  else
+    return Qnil;
+}
+
+static VALUE rxml_schema_type_annot(VALUE self)
+{
+  xmlSchemaTypePtr xtype;
+
+  Data_Get_Struct(self, xmlSchemaTypePtr, xtype);
+
+  if(xtype != NULL && xtype->annot != NULL)
+    return get_annotation(xtype->annot);
+  else
+    return Qnil;
 }
 
 static void rxmlSchemaCollectElements(xmlSchemaParticlePtr particle, FILE *output, VALUE self)
@@ -175,4 +198,5 @@ void rxml_init_schema_type(void)
   rb_define_method(cXMLSchemaType, "kind", rxml_schema_type_kind, 0);
   rb_define_method(cXMLSchemaType, "node", rxml_schema_type_node, 0);
   rb_define_method(cXMLSchemaType, "facets", rxml_schema_type_facets, 0);
+  rb_define_method(cXMLSchemaType, "annotation", rxml_schema_type_annot, 0);
 }

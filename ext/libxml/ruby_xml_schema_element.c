@@ -80,6 +80,26 @@ static VALUE rxml_schema_element_subst_group(VALUE self)
   QNIL_OR_STRING(xelem->substGroup)
 }
 
+static VALUE get_annotation(xmlSchemaAnnotPtr annot)
+{
+  if(annot != NULL && annot->content != NULL && annot->content->content != NULL)
+    return rb_str_new2(annot->content->content);
+  else
+    return Qnil;
+}
+
+static VALUE rxml_schema_element_annot(VALUE self)
+{
+  xmlSchemaTypePtr xelem;
+
+  Data_Get_Struct(self, xmlSchemaElementPtr, xelem);
+
+  if(xelem != NULL && xelem->annot != NULL)
+    return get_annotation(xelem->annot);
+  else
+    return Qnil;
+}
+
 void rxml_init_schema_element(void)
 {
   cXMLSchemaElement = rb_define_class_under(cXMLSchema, "Element", rb_cObject);

@@ -212,7 +212,8 @@ static VALUE rxml_schema_types(VALUE self)
     types = rb_hash_new();
     rb_iv_set(self, "@types", types);
     rxml_schema_collect_types(self);
-    xmlHashScan(xschema->typeDecl, (xmlHashScanner) storeType, self);
+    if(xschema != NULL && xschema->typeDecl != NULL)
+      xmlHashScan(xschema->typeDecl, (xmlHashScanner) storeType, self);
   }
 
   return rb_iv_get(self, "@types");
