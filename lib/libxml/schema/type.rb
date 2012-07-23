@@ -16,6 +16,17 @@ module LibXML
           annotation.children.map(&:content).join("\n")
         end.join("\n")
       end
+
+      def annonymus_subtypes
+        elements.select { |_, e| e.type.name.nil? }
+      end
+
+      def annonymus_subtypes_recursively(parent=nil)
+        annonymus_subtypes.map do |element_name, e|
+          [{[parent, element_name].compact.join('::') => e.type},
+           e.type.annonymus_subtypes_recursively(element_name)]
+        end.flatten
+      end
     end
   end
 end
