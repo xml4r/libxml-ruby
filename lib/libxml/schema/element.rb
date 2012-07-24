@@ -17,7 +17,7 @@ module LibXML
         annotations = node.children.select { |n| n.name == 'annotation' }
         annotations.map do |annotation|
           annotation.children.map(&:content).join("\n")
-        end.join("\n")
+        end.join("\n").split("\n").delete_if(&:blank?).join("\n")
       end
     end
   end
