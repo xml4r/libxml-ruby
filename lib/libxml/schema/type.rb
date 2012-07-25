@@ -27,6 +27,11 @@ module LibXML
            e.type.annonymus_subtypes_recursively(element_name)]
         end.flatten
       end
+
+      def namespace_prefix
+        return unless namespace
+        namespace.split('/').map { |s| s.gsub('xml','').gsub(/[\d\#\?]/,'')[0..3] }.delete_if(&:blank?).last
+      end
     end
   end
 end
