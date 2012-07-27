@@ -4,6 +4,34 @@ module LibXML
   module XML
     class Schema::Element
 
+      def max_occurs
+        case node['maxOccurs']
+        when 'unbounded'
+          Float::INFINITY
+        when /\d+/
+          node['maxOccurs'].to_i
+        else
+          1
+        end
+      end
+
+      def min_occurs
+        case node['minOccurs']
+        when /\d+/
+          node['minOccurs'].to_i
+        else
+          1
+        end
+      end
+
+      def required?
+        min_occurs.zero?
+      end
+
+      def array?
+        max_occurs > 1
+      end
+
       def elements
         type.elements
       end
