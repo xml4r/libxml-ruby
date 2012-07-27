@@ -80,14 +80,6 @@ static VALUE rxml_schema_element_subst_group(VALUE self)
   QNIL_OR_STRING(xelem->substGroup)
 }
 
-static VALUE get_annotation(xmlSchemaAnnotPtr annot)
-{
-  if(annot != NULL && annot->content != NULL && annot->content->content != NULL)
-    return rb_str_new2(annot->content->content);
-  else
-    return Qnil;
-}
-
 static VALUE rxml_schema_element_min_occurs(VALUE self)
 {
   xmlSchemaElementPtr xelem;
