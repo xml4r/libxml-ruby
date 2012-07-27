@@ -1,5 +1,6 @@
 #include "ruby_libxml.h"
 #include "ruby_xml_schema_element.h"
+#include "schemasInternals.h"
 
 VALUE cXMLSchemaElement;
 
@@ -88,6 +89,32 @@ static VALUE get_annotation(xmlSchemaAnnotPtr annot)
     return Qnil;
 }
 
+static VALUE rxml_schema_element_min_occurs(VALUE self)
+{
+  xmlSchemaElementPtr xelem;
+
+  Data_Get_Struct(self, xmlSchemaElementPtr, xelem);
+
+  QNIL_OR_STRING(xelem->minOccurs)
+}
+
+static VALUE rxml_schema_element_max_occurs(VALUE self)
+{
+  xmlSchemaElementPtr xelem;
+
+  Data_Get_Struct(self, xmlSchemaElementPtr, xelem);
+
+  QNIL_OR_STRING(xelem->maxOccurs)
+}
+
+static VALUE get_annotation(xmlSchemaAnnotPtr annot)
+{
+  if(annot != NULL && annot->content != NULL && annot->content->content != NULL)
+    return rb_str_new2(annot->content->content);
+  else
+    return Qnil;
+}
+
 static VALUE rxml_schema_element_annot(VALUE self)
 {
   xmlSchemaTypePtr xelem;
@@ -110,4 +137,6 @@ void rxml_init_schema_element(void)
   rb_define_method(cXMLSchemaElement, "value", rxml_schema_element_value, 0);
   rb_define_method(cXMLSchemaElement, "scope", rxml_schema_element_scope, 0);
   rb_define_method(cXMLSchemaElement, "subst_group", rxml_schema_element_subst_group, 0);
+  rb_define_method(cXMLSchemaElement, "min_occurs", rxml_schema_element_min_occurs, 0);
+  rb_define_method(cXMLSchemaElement, "max_occurs", rxml_schema_element_max_occurs, 0);
 }
