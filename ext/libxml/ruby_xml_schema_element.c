@@ -86,7 +86,10 @@ static VALUE rxml_schema_element_min_occurs(VALUE self)
 
   Data_Get_Struct(self, xmlSchemaElementPtr, xelem);
 
-  QNIL_OR_STRING(xelem->minOccurs)
+  if (xelem->minOccurs == NULL)
+      return Qnil;
+    else
+	    return INT2NUM(xelem->minOccurs);
 }
 
 static VALUE rxml_schema_element_max_occurs(VALUE self)
@@ -95,7 +98,10 @@ static VALUE rxml_schema_element_max_occurs(VALUE self)
 
   Data_Get_Struct(self, xmlSchemaElementPtr, xelem);
 
-  QNIL_OR_STRING(xelem->maxOccurs)
+  if (xelem->maxOccurs == NULL)
+    return Qnil;
+  else
+    return INT2NUM(xelem->maxOccurs);
 }
 
 static VALUE get_annotation(xmlSchemaAnnotPtr annot)
