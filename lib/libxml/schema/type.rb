@@ -5,16 +5,12 @@ module LibXML
         Schema::Types.constants.find { |k| Schema::Types.const_get(k) == kind }
       end
 
-      def facet
-        @facet ||= Schema::Facet.create(facets)
-      end
-
       def annotation
         return if node.nil?
         annotations = node.children.select { |n| n.name == 'annotation' }
         annotations.map do |annotation|
           annotation.children.map(&:content).join("\n")
-        end.join("\n").split("\n").delete_if(&:blank?).join("\n")
+        end.join("\n")
       end
 
       def annonymus_subtypes
@@ -28,10 +24,6 @@ module LibXML
         end.flatten
       end
 
-      def namespace_prefix
-        return unless namespace
-        namespace.split('/').map { |s| s.gsub('xml','').gsub(/[\d\#\?]/,'')[0..3] }.delete_if(&:blank?).last
-      end
     end
   end
 end

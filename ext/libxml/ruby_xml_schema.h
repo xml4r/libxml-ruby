@@ -6,6 +6,7 @@
 #include <libxml/xmlschemastypes.h>
 #include "ruby_xml_schema_type.h"
 #include "ruby_xml_schema_element.h"
+#include "ruby_xml_schema_attribute.h"
 #include "ruby_xml_schema_facet.h"
 
 extern VALUE cXMLSchema;
@@ -16,7 +17,7 @@ void rxml_init_schema(void);
     if (slot == NULL) \
       return Qnil; \
     else \
-	    return rb_str_new2(slot);
+	    return rb_str_new2((const char *)slot);
 
 #define SUBSET_RESTRICTION  1<<0
 #define SUBSET_EXTENSION    1<<1

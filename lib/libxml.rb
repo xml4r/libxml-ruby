@@ -29,6 +29,7 @@ require 'libxml/xpath_object'
 require 'libxml/schema'
 require 'libxml/schema/type'
 require 'libxml/schema/element'
+require 'libxml/schema/attribute'
 
 # Deprecated
 require 'libxml/properties'

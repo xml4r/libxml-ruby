@@ -1,4 +1,6 @@
 #include "ruby_libxml.h"
+#define LIBXML_OUTPUT_ENABLED
+#define DUMP_CONTENT_MODEL
 #include "ruby_xml_schema.h"
 
 /*
@@ -110,7 +112,7 @@ static VALUE rxml_schema_target_namespace(VALUE self)
 {
   xmlSchemaPtr xschema;
 
-  Data_Get_Struct(self, xmlSchemaPtr, xschema);
+  Data_Get_Struct(self, xmlSchema, xschema);
 
   QNIL_OR_STRING(xschema->targetNamespace)
 }
@@ -119,7 +121,7 @@ static VALUE rxml_schema_name(VALUE self)
 {
   xmlSchemaPtr xschema;
 
-  Data_Get_Struct(self, xmlSchemaPtr, xschema);
+  Data_Get_Struct(self, xmlSchema, xschema);
 
   QNIL_OR_STRING(xschema->name)
 }
@@ -128,7 +130,7 @@ static VALUE rxml_schema_version(VALUE self)
 {
   xmlSchemaPtr xschema;
 
-  Data_Get_Struct(self, xmlSchemaPtr, xschema);
+  Data_Get_Struct(self, xmlSchema, xschema);
 
   QNIL_OR_STRING(xschema->version)
 }
@@ -137,7 +139,7 @@ static VALUE rxml_schema_id(VALUE self)
 {
   xmlSchemaPtr xschema;
 
-  Data_Get_Struct(self, xmlSchemaPtr, xschema);
+  Data_Get_Struct(self, xmlSchema, xschema);
 
   QNIL_OR_STRING(xschema->id)
 }
@@ -147,7 +149,7 @@ static VALUE rxml_schema_document(VALUE self)
 {
   xmlSchemaPtr xschema;
 
-  Data_Get_Struct(self, xmlSchemaPtr, xschema);
+  Data_Get_Struct(self, xmlSchema, xschema);
 
   return rxml_node_wrap(xmlDocGetRootElement(xschema->doc));
 }
@@ -177,12 +179,12 @@ static VALUE rxml_schema_namespaces(VALUE self)
   VALUE schemas;
   xmlSchemaPtr xschema;
 
-  Data_Get_Struct(self, xmlSchemaPtr, xschema);
+  Data_Get_Struct(self, xmlSchema, xschema);
 
   if (rb_iv_get(self, "@namespaces") == Qnil) {
     schemas = rb_ary_new();
     rb_iv_set(self, "@namespaces", schemas);
-    xmlHashScan(xschema->schemasImports, (xmlHashScanner) storeNs, self);
+    xmlHashScan(xschema->schemasImports, (xmlHashScanner) storeNs, (void *)self);
   }
 
   return rb_iv_get(self, "@namespaces");
@@ -206,14 +208,14 @@ static VALUE rxml_schema_types(VALUE self)
   VALUE types;
   xmlSchemaPtr xschema;
 
-  Data_Get_Struct(self, xmlSchemaPtr, xschema);
+  Data_Get_Struct(self, xmlSchema, xschema);
 
   if (rb_iv_get(self, "@types") == Qnil) {
     types = rb_hash_new();
     rb_iv_set(self, "@types", types);
     rxml_schema_collect_types(self);
     if(xschema != NULL && xschema->typeDecl != NULL)
-      xmlHashScan(xschema->typeDecl, (xmlHashScanner) storeType, self);
+      xmlHashScan(xschema->typeDecl, (xmlHashScanner) storeType, (void *)self);
   }
 
   return rb_iv_get(self, "@types");
@@ -234,12 +236,12 @@ static VALUE rxml_schema_elements(VALUE self)
   VALUE elements;
   xmlSchemaPtr xschema;
 
-  Data_Get_Struct(self, xmlSchemaPtr, xschema);
+  Data_Get_Struct(self, xmlSchema, xschema);
 
   if (rb_iv_get(self, "@elements") == Qnil) {
     elements = rb_hash_new();
     rb_iv_set(self, "@elements", elements);
-    xmlHashScan(xschema->elemDecl, (xmlHashScanner) storeElement, self);
+    xmlHashScan(xschema->elemDecl, (xmlHashScanner) storeElement, (void *)self);
   }
 
   return rb_iv_get(self, "@elements");
@@ -250,7 +252,7 @@ static void collectSchemaTypes(xmlSchemaImportPtr import, VALUE self)
   xmlSchemaPtr xschema;
 
   if (import->imported && import->schema) {
-    xmlHashScan(import->schema->typeDecl, (xmlHashScanner) storeType, self);
+    xmlHashScan(import->schema->typeDecl, (xmlHashScanner) storeType, (void *)self);
   }
 }
 
@@ -258,10 +260,10 @@ static void rxml_schema_collect_types(VALUE self)
 {
   xmlSchemaPtr xschema;
 
-  Data_Get_Struct(self, xmlSchemaPtr, xschema);
+  Data_Get_Struct(self, xmlSchema, xschema);
 
   if(xschema){
-    xmlHashScan(xschema->schemasImports, (xmlHashScanner) collectSchemaTypes, self);
+    xmlHashScan(xschema->schemasImports, (xmlHashScanner) collectSchemaTypes, (void *)self);
   }
 }
 
@@ -286,5 +288,6 @@ void rxml_init_schema(void)
 
   rxml_init_schema_facet();
   rxml_init_schema_element();
+  rxml_init_schema_attribute();
   rxml_init_schema_type();
 }
