@@ -206,4 +206,11 @@ class TestNode < Test::Unit::TestCase
     text_node = node.first
     assert(text_node.empty?)
   end
+
+  def test_set_content
+    node = XML::Node.new('test')
+    node.content = "unescaped & string"
+    assert_equal("unescaped & string", node.content)
+    assert_equal("<test>unescaped &amp; string</test>", node.to_s)
+  end
 end
