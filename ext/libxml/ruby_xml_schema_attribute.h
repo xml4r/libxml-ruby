@@ -8,10 +8,7 @@
 
 extern VALUE cXMLSchemaAttribute;
 
-typedef struct _xmlSchemaAttributeUse xmlSchemaAttributeUse;
-typedef xmlSchemaAttributeUse *xmlSchemaAttributeUsePtr;
 
-VALUE rxml_wrap_schema_attribute(xmlSchemaAttributeUsePtr attr);
 void rxml_init_schema_attribute(void);
 
 #endif

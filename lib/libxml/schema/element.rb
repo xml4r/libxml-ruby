@@ -4,7 +4,7 @@ module LibXML
   module XML
     class Schema::Element
       def required?
-        min_occurs.zero?
+        !min_occurs.zero?
       end
 
       def array?
