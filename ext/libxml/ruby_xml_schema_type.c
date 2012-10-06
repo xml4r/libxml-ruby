@@ -112,7 +112,7 @@ static VALUE rxml_schema_type_annot(VALUE self)
     return Qnil;
 }
 
-static void rxmlSchemaCollectElements(xmlSchemaParticlePtr particle, VALUE self)
+static void rxmlSchemaCollectElements(xmlSchemaParticlePtr particle, const int container_type, const int container_id, VALUE self)
 {
   VALUE elements;
   VALUE relement;
@@ -131,6 +131,8 @@ static void rxmlSchemaCollectElements(xmlSchemaParticlePtr particle, VALUE self)
         relement = rxml_wrap_schema_element((xmlSchemaElementPtr) term);
 
 
+        rb_iv_set(relement, "@container_type", INT2NUM(container_type));
+        rb_iv_set(relement, "@container_id", INT2NUM(container_id));
         rb_iv_set(relement, "@min", INT2NUM(particle->minOccurs));
 
         if (particle->maxOccurs >= UNBOUNDED)
@@ -156,34 +158,32 @@ static void rxmlSchemaCollectElements(xmlSchemaParticlePtr particle, VALUE self)
         break;
 
       case XML_SCHEMA_TYPE_SEQUENCE:
+        if(term->children != NULL)
+          rxmlSchemaCollectElements((xmlSchemaParticlePtr) term->children, 6, container_id + 1, self);
         break;
 
       case XML_SCHEMA_TYPE_CHOICE:
+        if(term->children != NULL)
+          rxmlSchemaCollectElements((xmlSchemaParticlePtr) term->children, 7, container_id + 1, self);
         break;
 
       case XML_SCHEMA_TYPE_ALL:
+        if(term->children != NULL)
+          rxmlSchemaCollectElements((xmlSchemaParticlePtr) term->children, 8, container_id + 1, self);
         break;
 
       case XML_SCHEMA_TYPE_ANY:
+        if(term->children != NULL)
+          rxmlSchemaCollectElements((xmlSchemaParticlePtr) term->children, 2, container_id + 1, self);
         break;
 
       default:
-
         return;
     }
   }
 
-  if (term &&
-      ((term->type == XML_SCHEMA_TYPE_SEQUENCE) ||
-          (term->type == XML_SCHEMA_TYPE_CHOICE) ||
-          (term->type == XML_SCHEMA_TYPE_ALL)) &&
-      (term->children != NULL)) {
-
-    rxmlSchemaCollectElements((xmlSchemaParticlePtr) term->children, self);
-  }
-
   if (particle->next != NULL)
-    rxmlSchemaCollectElements((xmlSchemaParticlePtr) particle->next, self);
+    rxmlSchemaCollectElements((xmlSchemaParticlePtr) particle->next, container_type, container_id, self);
 }
 
 static VALUE
@@ -197,7 +197,7 @@ rxml_schema_type_elements(VALUE self)
   if (rb_iv_get(self, "@elements") == Qnil) {
     elements = rb_hash_new();
     rb_iv_set(self, "@elements", elements);
-    rxmlSchemaCollectElements((xmlSchemaParticlePtr) xtype->subtypes, self);
+    rxmlSchemaCollectElements((xmlSchemaParticlePtr) xtype->subtypes, 0, 0, self);
   }
 
   return rb_iv_get(self, "@elements");

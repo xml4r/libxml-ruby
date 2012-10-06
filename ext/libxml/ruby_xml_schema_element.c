@@ -78,6 +78,16 @@ static VALUE rxml_schema_element_annot(VALUE self)
   return rb_iv_get(self, "@annotation");
 }
 
+static VALUE rxml_schema_element_container_type(VALUE self)
+{
+  return rb_iv_get(self, "@container_type");
+}
+
+static VALUE rxml_schema_element_container_id(VALUE self)
+{
+  return rb_iv_get(self, "@container_id");
+}
+
 
 void rxml_init_schema_element(void)
 {
@@ -90,4 +100,6 @@ void rxml_init_schema_element(void)
   rb_define_method(cXMLSchemaElement, "min_occurs", rxml_schema_element_min_occurs, 0);
   rb_define_method(cXMLSchemaElement, "max_occurs", rxml_schema_element_max_occurs, 0);
   rb_define_method(cXMLSchemaElement, "annotation", rxml_schema_element_annot, 0);
+  rb_define_method(cXMLSchemaElement, "container_type", rxml_schema_element_container_type, 0);
+  rb_define_method(cXMLSchemaElement, "container_id", rxml_schema_element_container_id, 0);
 }
