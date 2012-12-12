@@ -1,5 +1,6 @@
 #include "ruby_libxml.h"
 #include "ruby_xml_schema_attribute.h"
+#include "ruby_xml_schema_type.h"
 
 VALUE cXMLSchemaAttribute;
 

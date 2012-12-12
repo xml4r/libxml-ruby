@@ -4,10 +4,6 @@
 #include <libxml/schemasInternals.h>
 #include <libxml/xmlschemas.h>
 #include <libxml/xmlschemastypes.h>
-#include "ruby_xml_schema_type.h"
-#include "ruby_xml_schema_element.h"
-#include "ruby_xml_schema_attribute.h"
-#include "ruby_xml_schema_facet.h"
 
 extern VALUE cXMLSchema;
 
@@ -803,10 +799,10 @@ struct _xmlSchemaSubstGroup {
     xmlSchemaItemListPtr members;
 };
 
-static xmlSchemaQNameRefPtr
+/*static xmlSchemaQNameRefPtr
         xmlSchemaParseAttributeGroupRef(xmlSchemaParserCtxtPtr pctxt,
         xmlSchemaPtr schema,
-        xmlNodePtr node);
+        xmlNodePtr node);*/
 
 
 #endif

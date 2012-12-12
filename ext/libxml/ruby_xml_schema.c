@@ -3,6 +3,12 @@
 #define DUMP_CONTENT_MODEL
 #include "ruby_xml_schema.h"
 
+#include "ruby_xml_schema_type.h"
+#include "ruby_xml_schema_element.h"
+#include "ruby_xml_schema_attribute.h"
+#include "ruby_xml_schema_facet.h"
+
+
 /*
  * Document-class: LibXML::XML::Schema
  *
@@ -201,7 +207,7 @@ static void storeType(xmlSchemaTypePtr type, VALUE self, xmlChar *name)
   rb_hash_aset(types, rb_str_new2(name), rtype);
 }
 
-static void rxml_schema_collect_types(VALUE self);
+static VALUE rxml_schema_collect_types(VALUE self);
 
 static VALUE rxml_schema_types(VALUE self)
 {
@@ -249,14 +255,12 @@ static VALUE rxml_schema_elements(VALUE self)
 
 static void collectSchemaTypes(xmlSchemaImportPtr import, VALUE self)
 {
-  xmlSchemaPtr xschema;
-
   if (import->imported && import->schema) {
     xmlHashScan(import->schema->typeDecl, (xmlHashScanner) storeType, (void *)self);
   }
 }
 
-static void rxml_schema_collect_types(VALUE self)
+static VALUE rxml_schema_collect_types(VALUE self)
 {
   xmlSchemaPtr xschema;
 
@@ -265,6 +269,8 @@ static void rxml_schema_collect_types(VALUE self)
   if(xschema){
     xmlHashScan(xschema->schemasImports, (xmlHashScanner) collectSchemaTypes, (void *)self);
   }
+
+  return Qnil;
 }
 
 void rxml_init_schema(void)
@@ -284,7 +290,6 @@ void rxml_init_schema(void)
   rb_define_method(cXMLSchema, "_collect_types", rxml_schema_collect_types, 0);
   rb_define_method(cXMLSchema, "types", rxml_schema_types, 0);
   rb_define_method(cXMLSchema, "elements", rxml_schema_elements, 0);
-
 
   rxml_init_schema_facet();
   rxml_init_schema_element();

@@ -10,5 +10,6 @@ extern VALUE cXMLSchemaAttribute;
 
 
 void rxml_init_schema_attribute(void);
+VALUE rxml_wrap_schema_attribute(xmlSchemaAttributeUsePtr attr);
 
 #endif

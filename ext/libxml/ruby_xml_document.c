@@ -229,8 +229,7 @@ rxml_document_canonicalize(int argc, VALUE *argv, VALUE self)
 	VALUE o_comments = Qnil;
 	VALUE o_mode = Qnil;
 	VALUE o_i_ns_prefixes = Qnil;
-	VALUE * list_in = NULL;
-	
+		
     Check_Type(option_hash, T_HASH);
 
     o_comments = rb_hash_aref(option_hash, ID2SYM(rb_intern("comments")));
@@ -328,7 +327,7 @@ rxml_document_canonicalize(int argc, VALUE *argv, VALUE self)
     xdoc,
     (nodeset.nodeNr == 0 ? NULL : &nodeset),
     c14n_mode,
-    &inc_ns_prefixes_ptr,
+    inc_ns_prefixes_ptr,
     comments,
     &buffer
   );

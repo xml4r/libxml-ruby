@@ -118,6 +118,10 @@
     <ClCompile Include="..\..\libxml\ruby_xml_sax2_handler.c" />
     <ClCompile Include="..\..\libxml\ruby_xml_sax_parser.c" />
     <ClCompile Include="..\..\libxml\ruby_xml_schema.c" />
+    <ClCompile Include="..\..\libxml\ruby_xml_schema_attribute.c" />
+    <ClCompile Include="..\..\libxml\ruby_xml_schema_element.c" />
+    <ClCompile Include="..\..\libxml\ruby_xml_schema_facet.c" />
+    <ClCompile Include="..\..\libxml\ruby_xml_schema_type.c" />
     <ClCompile Include="..\..\libxml\ruby_xml_xinclude.c" />
     <ClCompile Include="..\..\libxml\ruby_xml_xpath.c" />
     <ClCompile Include="..\..\libxml\ruby_xml_xpath_context.c" />
@@ -151,6 +155,10 @@
     <ClInclude Include="..\..\libxml\ruby_xml_sax2_handler.h" />
     <ClInclude Include="..\..\libxml\ruby_xml_sax_parser.h" />
     <ClInclude Include="..\..\libxml\ruby_xml_schema.h" />
+    <ClInclude Include="..\..\libxml\ruby_xml_schema_attribute.h" />
+    <ClInclude Include="..\..\libxml\ruby_xml_schema_element.h" />
+    <ClInclude Include="..\..\libxml\ruby_xml_schema_facet.h" />
+    <ClInclude Include="..\..\libxml\ruby_xml_schema_type.h" />
     <ClInclude Include="..\..\libxml\ruby_xml_version.h" />
     <ClInclude Include="..\..\libxml\ruby_xml_xinclude.h" />
     <ClInclude Include="..\..\libxml\ruby_xml_xpath.h" />

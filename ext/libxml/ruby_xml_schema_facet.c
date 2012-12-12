@@ -15,7 +15,7 @@ static VALUE rxml_schema_facet_node(VALUE self)
 {
   xmlSchemaFacetPtr facet;
 
-  Data_Get_Struct(self, xmlSchemaFacetPtr, facet);
+  Data_Get_Struct(self, xmlSchemaFacet, facet);
 
   return rxml_node_wrap(facet->node);
 }
@@ -24,7 +24,7 @@ static VALUE rxml_schema_facet_value(VALUE self)
 {
   xmlSchemaFacetPtr facet;
 
-  Data_Get_Struct(self, xmlSchemaFacetPtr, facet);
+  Data_Get_Struct(self, xmlSchemaFacet, facet);
 
   QNIL_OR_STRING(facet->value)
 }
@@ -33,7 +33,7 @@ static VALUE rxml_schema_facet_kind(VALUE self)
 {
   xmlSchemaFacetPtr facet;
 
-  Data_Get_Struct(self, xmlSchemaFacetPtr, facet);
+  Data_Get_Struct(self, xmlSchemaFacet, facet);
 
   return INT2NUM(facet->type);
 }

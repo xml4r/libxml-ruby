@@ -1,5 +1,8 @@
 #include "ruby_libxml.h"
 #include "ruby_xml_schema_type.h"
+#include "ruby_xml_schema_element.h"
+#include "ruby_xml_schema_attribute.h"
+#include "ruby_xml_schema_facet.h"
 
 #define UNBOUNDED 1 << 30
 #define FREE_AND_NULL(str) if ((str) != NULL) { xmlFree((xmlChar *) (str)); str = NULL; }
@@ -206,7 +209,7 @@ rxml_schema_type_elements(VALUE self)
 static VALUE
 rxml_schema_type_attributes(VALUE self)
 {
-  VALUE attributes, attr;
+  VALUE attributes;
   xmlSchemaTypePtr xtype;
   xmlSchemaAttributeUsePtr use;
   xmlSchemaItemListPtr uses;
