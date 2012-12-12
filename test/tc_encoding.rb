@@ -118,4 +118,9 @@ class TestEncoding < Test::Unit::TestCase
     assert_equal("109 246 116 108 101 121 95 99 114 252 101",
                  name.bytes.to_a.join(" "))
   end
+
+  def test_encoding_conversions
+    assert_equal("UTF-8", XML::Encoding.to_s(XML::Encoding::UTF_8))
+    assert_equal(XML::Encoding::UTF_8, XML::Encoding.from_s("UTF-8"))
+  end
 end
