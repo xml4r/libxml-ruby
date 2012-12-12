@@ -397,11 +397,12 @@ static VALUE rxml_node_content_get(VALUE self)
 static VALUE rxml_node_content_set(VALUE self, VALUE content)
 {
   xmlNodePtr xnode;
+  xmlChar* encoded_content;
 
   Check_Type(content, T_STRING);
   xnode = rxml_get_xnode(self);
-  // XXX docs indicate need for escaping entites, need to be done? danj
-  xmlNodeSetContent(xnode, (xmlChar*) StringValuePtr(content));
+  encoded_content = xmlEncodeSpecialChars(xnode->doc, (xmlChar*) StringValuePtr(content));
+  xmlNodeSetContent(xnode, encoded_content);
   return (Qtrue);
 }
 
