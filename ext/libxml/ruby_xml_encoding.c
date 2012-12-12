@@ -41,7 +41,7 @@ VALUE mXMLEncoding;
 
 /*
  * call-seq:
- *    Input.s_to_encoding("UTF_8") -> XML::Encoding::UTF_8
+ *    Encoding.from_s("UTF_8") -> XML::Encoding::UTF_8
  *
  * Converts an encoding string to an encoding constant
  * defined on the XML::Encoding class.
@@ -49,17 +49,17 @@ VALUE mXMLEncoding;
 static VALUE rxml_encoding_from_s(VALUE klass, VALUE encoding)
 {
   xmlCharEncoding xencoding;
-  
+
   if (encoding == Qnil)
     return Qnil;
 
   xencoding = xmlParseCharEncoding(StringValuePtr(encoding));
-  return NUM2INT(xencoding);
+  return INT2NUM(xencoding);
 }
 
 /*
  * call-seq:
- *    Input.encoding_to_s(Input::ENCODING) -> "encoding"
+ *    Encoding.to_s(XML::Encoding::UTF_8) -> "UTF-8"
  *
  * Converts an encoding constant defined on the XML::Encoding
  * class to its text representation.
