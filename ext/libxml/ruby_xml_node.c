@@ -619,10 +619,17 @@ static VALUE rxml_node_to_s(int argc, VALUE *argv, VALUE self)
   xmlNodeDumpOutput(output, xnode->doc, xnode, level, indent, xencoding);
   xmlOutputBufferFlush(output);
 
+#ifdef LIBXML2_NEW_BUFFER
+  if (output->conv)
+    result = rxml_new_cstr((const char*) xmlBufContent(output->conv), xencoding);
+  else
+    result = rxml_new_cstr((const char*) xmlBufContent(output->buffer), xencoding);
+#else
   if (output->conv)
     result = rxml_new_cstr((const char*) output->conv->content, xencoding);
   else
     result = rxml_new_cstr((const char*) output->buffer->content, xencoding);
+#endif
 
   xmlOutputBufferClose(output);
   
