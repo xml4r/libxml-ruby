@@ -26,7 +26,6 @@ class TestSchema < Test::Unit::TestCase
     assert_equal(XML::Error::SCHEMAV_ELEMENT_CONTENT, error.code)
     assert_equal(XML::Error::ERROR, error.level)
     assert(error.file.match(/shiporder.xml/)) if error.file
-    assert_nil(error.line)
     assert_nil(error.str1)
     assert_nil(error.str2)
     assert_nil(error.str3)
@@ -51,6 +50,7 @@ class TestSchema < Test::Unit::TestCase
     end
 
     check_error(error)
+    assert_nil(error.line)
     assert_not_nil(error.node)
     assert_equal('invalid', error.node.name)
   end
@@ -84,6 +84,7 @@ class TestSchema < Test::Unit::TestCase
 
     error = errors.first
     check_error(error)
+    assert_equal(21, error.line)
   ensure
     XML::Error.set_handler(&LibXML::XML::Error::VERBOSE_HANDLER)
   end

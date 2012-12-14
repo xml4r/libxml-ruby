@@ -99,7 +99,7 @@ class HTMLParserTest < Test::Unit::TestCase
         <body>Hello<br>World</html>
    EOS
 
-    parser = XML::HTMLParser.string(html)
+    parser = XML::HTMLParser.string(html, :options => XML::HTMLParser::Options::NOBLANKS)
     doc = parser.parse
     assert_instance_of XML::Document, doc
 
