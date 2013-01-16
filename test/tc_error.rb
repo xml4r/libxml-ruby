@@ -159,4 +159,20 @@ class TestError < Test::Unit::TestCase
     end
     assert_equal('Must specify a string with one or more characters', error.to_s)
   end
+
+  def test_error_code_to_s
+    exception = assert_raise(XML::Error) do
+      XML::Parser.string('<foo href="http://example.org/cgi?k1=v1&k2=v2"></foo>').parse
+    end
+
+    assert_instance_of(XML::Error, exception)
+    assert_equal("Fatal error: EntityRef: expecting ';' at :1.", exception.message)
+    assert_equal(XML::Error::PARSER, exception.domain)
+    assert_equal(XML::Error::ENTITYREF_SEMICOL_MISSING, exception.code)
+    assert_equal(XML::Error::FATAL, exception.level)
+    assert_equal("ENTITYREF_SEMICOL_MISSING",exception.code_to_s)
+    assert_nil(exception.file)
+    assert_equal(1, exception.line)
+  end
+
 end

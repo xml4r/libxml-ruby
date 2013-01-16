@@ -58,18 +58,18 @@ module LibXML
       end
 
       def code_to_s
-        const_map = Hash.new
-        codes = self.class.constants - 
-                self.class.constants.grep(/XML_FROM/) -
-                ["XML_ERR_NONE", "XML_ERR_WARNING", "XML_ERR_ERROR", "XML_ERR_FATAL"]
-
-        
-        codes.each do |code|
-          human_name = code.gsub(/XML_ERR_/, '')
-          const_map[self.class.const_get(code)] = human_name
+        unless defined?(@@error_map)
+          puts "POPULATING"
+          @@error_map = Hash.new
+          codes = self.class.constants -
+            [:NO_ERROR, :PARSER, :TREE, :NAMESPACE, :DTD, :HTML, :MEMORY, :OUTPUT, :IO, :FTP, :HTTP, :XINCLUDE, :XPATH, :XPOINTER, :REGEXP, :DATATYPE, :SCHEMASP, :SCHEMASV, :RELAXNGP, :RELAXNGV, :CATALOG, :C14N, :XSLT, :VALID, :CHECK, :WRITER, :MODULE, :I18N, :SCHEMATRONV] - #Domains
+            [:NONE, :WARNING, :ERROR, :FATAL] # Levels
+          codes.each do |code|
+            human_name = code.to_s.gsub(/XML_ERR_/, '')
+            @@error_map[self.class.const_get(code)] = human_name
+          end
         end
-
-        const_map[self.code]
+        @@error_map[self.code]
       end
 
       def to_s
