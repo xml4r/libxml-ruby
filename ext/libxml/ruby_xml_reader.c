@@ -287,28 +287,57 @@ static VALUE rxml_reader_close(VALUE self)
 
 /*
  * call-seq:
- *   reader.move_to_attribute(val) -> code
+ *   reader.move_to_attribute(localName) -> code
  *
  * Move the position of the current instance to the attribute with the
- * specified index (if +val+ is an integer) or name (if +val+ is a string)
- * relative to the containing element.
+ * specified name relative to the containing element.
  */
 static VALUE rxml_reader_move_to_attr(VALUE self, VALUE val)
 {
-  xmlTextReaderPtr xreader;
   int ret;
+  xmlTextReaderPtr xreader;
 
   xreader = rxml_text_reader_get(self);
+  ret = xmlTextReaderMoveToAttribute(xreader,
+      (const xmlChar *) StringValueCStr(val));
 
-  if (TYPE(val) == T_FIXNUM)
-  {
-    ret = xmlTextReaderMoveToAttributeNo(xreader, FIX2INT(val));
-  }
-  else
-  {
-    ret = xmlTextReaderMoveToAttribute(xreader,
-        (const xmlChar *) StringValueCStr(val));
-  }
+  return INT2FIX(ret);
+}
+
+/*
+ * call-seq:
+ *   reader.move_to_attribute_no(index) -> code
+ *
+ * Move the position of the current instance to the attribute with the
+ * specified index relative to the containing element.
+ */
+static VALUE rxml_reader_move_to_attr_no(VALUE self, VALUE index)
+{
+  int ret;
+  xmlTextReaderPtr xreader;
+
+  xreader = rxml_text_reader_get(self);
+  ret = xmlTextReaderMoveToAttributeNo(xreader, FIX2INT(index));
+
+  return INT2FIX(ret);
+}
+
+/*
+ * call-seq:
+ *   reader.move_to_attribute_ns(localName, namespaceURI) -> code
+ *
+ * Move the position of the current instance to the attribute with the
+ * specified name and namespace relative to the containing element.
+ */
+static VALUE rxml_reader_move_to_attr_ns(VALUE self, VALUE name, VALUE ns)
+{
+  int ret;
+  xmlTextReaderPtr xreader;
+
+  xreader = rxml_text_reader_get(self);
+  ret = xmlTextReaderMoveToAttributeNs(xreader,
+      (const xmlChar *) StringValueCStr(name),
+      (const xmlChar *) StringValueCStr(ns));
 
   return INT2FIX(ret);
 }
@@ -864,6 +893,71 @@ static VALUE rxml_reader_attribute(VALUE self, VALUE key)
 
 /*
  * call-seq:
+ *    reader.get_attribute(localName) -> value
+ *
+ * Provide the value of the attribute with the specified name
+ * relative to the containing element.
+ */
+static VALUE rxml_reader_get_attribute(VALUE self, VALUE name)
+{
+  VALUE result = Qnil;
+  xmlChar *xattr;
+  xmlTextReaderPtr xReader = rxml_text_reader_get(self);
+  const xmlChar *xencoding = xmlTextReaderConstEncoding(xReader);
+
+  xattr = xmlTextReaderGetAttribute(xReader,
+    (const xmlChar *) StringValueCStr(name));
+  if (xattr)
+  {
+    result = rxml_new_cstr(xattr, xencoding);
+    xmlFree(xattr);
+  }
+  return result;
+}
+
+/*
+ * call-seq:
+ *    reader.get_attribute_no(index) -> value
+ *
+ * Provide the value of the attribute with the specified index
+ * relative to the containing element.
+ */
+static VALUE rxml_reader_get_attribute_no(VALUE self, VALUE index)
+{
+  VALUE result = Qnil;
+  xmlChar *xattr;
+  xmlTextReaderPtr xReader = rxml_text_reader_get(self);
+  const xmlChar *xencoding = xmlTextReaderConstEncoding(xReader);
+
+  xattr = xmlTextReaderGetAttributeNo(xReader, FIX2INT(index));
+  if (xattr)
+  {
+    result = rxml_new_cstr(xattr, xencoding);
+    xmlFree(xattr);
+  }
+  return result;
+}
+
+static VALUE rxml_reader_get_attribute_ns(VALUE self, VALUE name, VALUE ns)
+{
+  VALUE result = Qnil;
+  xmlChar *xattr;
+  xmlTextReaderPtr xReader = rxml_text_reader_get(self);
+  const xmlChar *xencoding = xmlTextReaderConstEncoding(xReader);
+
+  xattr = xmlTextReaderGetAttributeNs(xReader,
+    (const xmlChar *) StringValueCStr(name),
+    (const xmlChar *) StringValueCStr(ns));
+  if (xattr)
+  {
+    result = rxml_new_cstr(xattr, xencoding);
+    xmlFree(xattr);
+  }
+  return result;
+}
+
+/*
+ * call-seq:
  *    reader.lookup_namespace(prefix) -> value
  *
  * Resolve a namespace prefix in the scope of the current element.
@@ -1040,6 +1134,9 @@ void rxml_init_reader(void)
   rb_define_method(cXMLReader, "depth", rxml_reader_depth, 0);
   rb_define_method(cXMLReader, "encoding", rxml_reader_encoding, 0);
   rb_define_method(cXMLReader, "expand", rxml_reader_expand, 0);
+  rb_define_method(cXMLReader, "get_attribute", rxml_reader_get_attribute, 1);
+  rb_define_method(cXMLReader, "get_attribute_no", rxml_reader_get_attribute_no, 1);
+  rb_define_method(cXMLReader, "get_attribute_ns", rxml_reader_get_attribute_ns, 2);
   rb_define_method(cXMLReader, "has_attributes?", rxml_reader_has_attributes, 0);
   rb_define_method(cXMLReader, "has_value?", rxml_reader_has_value, 0);
 #if LIBXML_VERSION >= 20617
@@ -1048,6 +1145,8 @@ void rxml_init_reader(void)
   rb_define_method(cXMLReader, "local_name", rxml_reader_local_name, 0);
   rb_define_method(cXMLReader, "lookup_namespace",       rxml_reader_lookup_namespace, 1);
   rb_define_method(cXMLReader, "move_to_attribute", rxml_reader_move_to_attr, 1);
+  rb_define_method(cXMLReader, "move_to_attribute_no", rxml_reader_move_to_attr_no, 1);
+  rb_define_method(cXMLReader, "move_to_attribute_ns", rxml_reader_move_to_attr_ns, 2);
   rb_define_method(cXMLReader, "move_to_first_attribute",       rxml_reader_move_to_first_attr, 0);
   rb_define_method(cXMLReader, "move_to_next_attribute",       rxml_reader_move_to_next_attr, 0);
   rb_define_method(cXMLReader, "move_to_element", rxml_reader_move_to_element,       0);
