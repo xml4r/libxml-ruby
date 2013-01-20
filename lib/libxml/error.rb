@@ -3,6 +3,18 @@
 module LibXML
   module XML
     class Error
+
+      # This must be defined before other class constants, so only the
+      # constants in the native C-interface is defined.
+      ERROR_CODE_MAP = Hash.new.tap do |map|
+        (constants -
+         [:NO_ERROR, :PARSER, :TREE, :NAMESPACE, :DTD, :HTML, :MEMORY, :OUTPUT, :IO, :FTP, :HTTP, :XINCLUDE, :XPATH, :XPOINTER, :REGEXP, :DATATYPE, :SCHEMASP, :SCHEMASV, :RELAXNGP, :RELAXNGV, :CATALOG, :C14N, :XSLT, :VALID, :CHECK, :WRITER, :MODULE, :I18N, :SCHEMATRONV] - #Domains
+         [:NONE, :WARNING, :ERROR, :FATAL] # Levels
+         ).each do |code|
+          map[const_get(code)] = code.to_s.gsub(/XML_ERR_/, '')
+        end
+      end
+      
       # Verbose error handler
       VERBOSE_HANDLER = lambda do |error|
         STDERR << error.to_s << "\n"
@@ -58,18 +70,7 @@ module LibXML
       end
 
       def code_to_s
-        unless defined?(@@error_map)
-          puts "POPULATING"
-          @@error_map = Hash.new
-          codes = self.class.constants -
-            [:NO_ERROR, :PARSER, :TREE, :NAMESPACE, :DTD, :HTML, :MEMORY, :OUTPUT, :IO, :FTP, :HTTP, :XINCLUDE, :XPATH, :XPOINTER, :REGEXP, :DATATYPE, :SCHEMASP, :SCHEMASV, :RELAXNGP, :RELAXNGV, :CATALOG, :C14N, :XSLT, :VALID, :CHECK, :WRITER, :MODULE, :I18N, :SCHEMATRONV] - #Domains
-            [:NONE, :WARNING, :ERROR, :FATAL] # Levels
-          codes.each do |code|
-            human_name = code.to_s.gsub(/XML_ERR_/, '')
-            @@error_map[self.class.const_get(code)] = human_name
-          end
-        end
-        @@error_map[self.code]
+        ERROR_CODE_MAP[self.code]
       end
 
       def to_s
