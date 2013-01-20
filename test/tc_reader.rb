@@ -145,6 +145,16 @@ class TestReader < Test::Unit::TestCase
     assert_equal(nil, parser[2])
   end
 
+  def test_move_to_attribute_depreciation
+    previous_stderr, $stderr = $stderr, StringIO.new
+    reader = XML::Reader.string("<foo x='1' y='2'/>")
+    assert(reader.read)
+    assert(reader.move_to_attribute 1)
+    assert($stderr.string =~ /deprecated/)
+  ensure
+    $stderr = previous_stderr
+  end
+
   def test_move_attr
       reader = XML::Reader.string('<root xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xhtml="http://www.w3.org/1999/xhtml"><link xml:id="abc" xlink:href="def" xhtml:class="ghi" bar="jkl" /></root>')
       assert(reader.read) # <root/>
