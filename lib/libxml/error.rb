@@ -4,11 +4,16 @@ module LibXML
   module XML
     class Error
 
-      # This must be defined before other class constants, so only the
-      # constants in the native C-interface is defined.
+      DOMAIN_CODE_MAP =Hash.new.tap do |map|
+        ([:NO_ERROR, :PARSER, :TREE, :NAMESPACE, :DTD, :HTML, :MEMORY, :OUTPUT, :IO, :FTP, :HTTP, :XINCLUDE, :XPATH, :XPOINTER, :REGEXP, :DATATYPE, :SCHEMASP, :SCHEMASV, :RELAXNGP, :RELAXNGV, :CATALOG, :C14N, :XSLT, :VALID, :CHECK, :WRITER, :MODULE, :I18N, :SCHEMATRONV]
+         ).each do |code|
+          map[const_get(code)] = code.to_s.gsub(/XML_ERR_/, '')
+        end
+      end
+
       ERROR_CODE_MAP = Hash.new.tap do |map|
         (constants -
-         [:NO_ERROR, :PARSER, :TREE, :NAMESPACE, :DTD, :HTML, :MEMORY, :OUTPUT, :IO, :FTP, :HTTP, :XINCLUDE, :XPATH, :XPOINTER, :REGEXP, :DATATYPE, :SCHEMASP, :SCHEMASV, :RELAXNGP, :RELAXNGV, :CATALOG, :C14N, :XSLT, :VALID, :CHECK, :WRITER, :MODULE, :I18N, :SCHEMATRONV] - #Domains
+         DOMAIN_CODE_MAP.values - #Domains
          [:NONE, :WARNING, :ERROR, :FATAL] # Levels
          ).each do |code|
           map[const_get(code)] = code.to_s.gsub(/XML_ERR_/, '')
@@ -59,14 +64,7 @@ module LibXML
       end
 
       def domain_to_s
-        const_map = Hash.new
-        domains = self.class.constants.grep(/XML_FROM/)
-        domains.each do |domain|
-          human_name = domain.gsub(/XML_FROM_/, '')
-          const_map[self.class.const_get(domain)] = human_name
-        end
-
-        const_map[self.domain]
+        DOMAIN_CODE_MAP[self.domain]
       end
 
       def code_to_s
