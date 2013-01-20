@@ -9,7 +9,7 @@ class TestReader < Test::Unit::TestCase
 
   def verify_simple(reader)
     node_types = []
-    
+
     # Read each node
     26.times do
       assert(reader.read)
@@ -143,6 +143,38 @@ class TestReader < Test::Unit::TestCase
     assert_equal('2', parser[1])
     assert_equal(nil, parser['z'])
     assert_equal(nil, parser[2])
+  end
+
+  def test_move_attr
+      reader = XML::Reader.string('<root xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xhtml="http://www.w3.org/1999/xhtml"><link xml:id="abc" xlink:href="def" xhtml:class="ghi" bar="jkl" /></root>')
+      assert(reader.read) # <root/>
+      assert(reader.read) # <link/>
+
+      assert(reader.move_to_attribute_no(1))
+      assert_equal(reader.value, 'def')
+      assert(reader.move_to_attribute_ns('id', 'http://www.w3.org/XML/1998/namespace'))
+      assert_equal(reader.value, 'abc')
+      assert(reader.move_to_attribute('bar'))
+      assert_equal(reader.value, 'jkl')
+
+      # 1 in case of success, -1 in case of error, 0 if not found
+      assert_equal(reader.move_to_attribute_no(12), 0)
+      assert_equal(reader.move_to_attribute('baz'), 0)
+      assert_equal(reader.move_to_attribute_ns('baz', 'http://ruby/namespace'), 0)
+  end
+
+  def test_get_attr
+      reader = XML::Reader.string('<root xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xhtml="http://www.w3.org/1999/xhtml"><link xml:id="abc" xlink:href="def" xhtml:class="ghi" bar="jkl" /></root>')
+      assert(reader.read) # <root/>
+      assert(reader.read) # <link/>
+
+      assert_equal(reader.get_attribute_no(1), 'def')
+      assert_equal(reader.get_attribute_ns('id', 'http://www.w3.org/XML/1998/namespace'), 'abc')
+      assert_equal(reader.get_attribute('bar'), 'jkl')
+
+      assert_equal(reader.get_attribute_no(12), nil)
+      assert_equal(reader.get_attribute('baz'), nil)
+      assert_equal(reader.get_attribute_ns('baz', 'http://ruby/namespace'), nil)
   end
 
   def test_value
