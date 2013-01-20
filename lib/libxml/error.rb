@@ -3,6 +3,23 @@
 module LibXML
   module XML
     class Error
+
+      DOMAIN_CODE_MAP =Hash.new.tap do |map|
+        ([:NO_ERROR, :PARSER, :TREE, :NAMESPACE, :DTD, :HTML, :MEMORY, :OUTPUT, :IO, :FTP, :HTTP, :XINCLUDE, :XPATH, :XPOINTER, :REGEXP, :DATATYPE, :SCHEMASP, :SCHEMASV, :RELAXNGP, :RELAXNGV, :CATALOG, :C14N, :XSLT, :VALID, :CHECK, :WRITER, :MODULE, :I18N, :SCHEMATRONV]
+         ).each do |code|
+          map[const_get(code)] = code.to_s.gsub(/XML_ERR_/, '')
+        end
+      end
+
+      ERROR_CODE_MAP = Hash.new.tap do |map|
+        (constants -
+         DOMAIN_CODE_MAP.values - #Domains
+         [:NONE, :WARNING, :ERROR, :FATAL] # Levels
+         ).each do |code|
+          map[const_get(code)] = code.to_s.gsub(/XML_ERR_/, '')
+        end
+      end
+      
       # Verbose error handler
       VERBOSE_HANDLER = lambda do |error|
         STDERR << error.to_s << "\n"
@@ -47,29 +64,11 @@ module LibXML
       end
 
       def domain_to_s
-        const_map = Hash.new
-        domains = self.class.constants.grep(/XML_FROM/)
-        domains.each do |domain|
-          human_name = domain.gsub(/XML_FROM_/, '')
-          const_map[self.class.const_get(domain)] = human_name
-        end
-
-        const_map[self.domain]
+        DOMAIN_CODE_MAP[self.domain]
       end
 
       def code_to_s
-        const_map = Hash.new
-        codes = self.class.constants - 
-                self.class.constants.grep(/XML_FROM/) -
-                ["XML_ERR_NONE", "XML_ERR_WARNING", "XML_ERR_ERROR", "XML_ERR_FATAL"]
-
-        
-        codes.each do |code|
-          human_name = code.gsub(/XML_ERR_/, '')
-          const_map[self.class.const_get(code)] = human_name
-        end
-
-        const_map[self.code]
+        ERROR_CODE_MAP[self.code]
       end
 
       def to_s
