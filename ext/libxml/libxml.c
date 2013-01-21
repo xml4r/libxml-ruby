@@ -72,4 +72,5 @@ void Init_libxml_ruby(void)
   rxml_init_schema();
   rxml_init_relaxng();
   rxml_init_reader();
+  rxml_init_writer();
 }
