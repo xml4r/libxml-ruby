@@ -2,6 +2,16 @@
 
 #ifdef LIBXML_WRITER_ENABLED
 
+/*
+ * Document-class: LibXML::XML::Writer
+ *
+ * The XML::Writer class provides a simpler, alternative way to build a valid
+ * XML document from scratch (forward-only) compared to a DOM approach (based
+ * on XML::Document class).
+ *
+ * For a more in depth tutorial, albeit in C, see http://xmlsoft.org/xmlwriter.html
+ */
+
 # include <libxml/xmlwriter.h>
 
 # include "ruby_libxml.h"
@@ -93,7 +103,7 @@ static rxml_writer_object *rxml_textwriter_get(VALUE obj)
 /* call-seq:
  *    XML::Writer::io(io) -> XML::Writer
  *
- * Create a XML::Writer which will write XML directly into an IO object.
+ * Creates a XML::Writer which will write XML directly into an IO object.
  */
 static VALUE rxml_writer_io(VALUE klass, VALUE io)
 {
@@ -128,7 +138,7 @@ xmlCharEncodingHandlerPtr xmlFindCharEncodingHandler(const char * name);
 /* call-seq:
  *    XML::Writer::file(path) -> XML::Writer
  *
- * Create a XML::Writer object which will write XML into the file with
+ * Creates a XML::Writer object which will write XML into the file with
  * the given name.
  */
 static VALUE rxml_writer_file(VALUE klass, VALUE filename)
@@ -149,7 +159,7 @@ static VALUE rxml_writer_file(VALUE klass, VALUE filename)
 /* call-seq:
  *    XML::Writer::string -> XML::Writer
  *
- * Create a XML::Writer which will write XML into memory, as string.
+ * Creates a XML::Writer which will write XML into memory, as string.
  */
 static VALUE rxml_writer_string(VALUE klass)
 {
@@ -172,7 +182,7 @@ static VALUE rxml_writer_string(VALUE klass)
 /* call-seq:
  *    XML::Writer::document -> XML::Writer
  *
- * Create a XML::Writer which will write into an in memory XML::Document
+ * Creates a XML::Writer which will write into an in memory XML::Document
  */
 static VALUE rxml_writer_doc(VALUE klass)
 {
@@ -194,7 +204,7 @@ static VALUE rxml_writer_doc(VALUE klass)
 /* ===== public instance methods ===== */
 
 /* call-seq:
- *    XML::Writer.flush -> (true|false)
+ *    writer.flush -> (true|false)
  *
  * Flushes the output buffer.
  */
@@ -210,7 +220,7 @@ static VALUE rxml_writer_flush(VALUE self)
 }
 
 /* call-seq:
- *    XML::Writer.result -> (XML::Document|"string"|nil)
+ *    writer.result -> (XML::Document|"string"|nil)
  *
  * Returns the associated result object to the XML::Writer creation.
  * A String for a XML::Writer object created with XML::Writer::string,
@@ -338,7 +348,7 @@ static VALUE numeric_rxml_writer_va_strings(VALUE obj, VALUE pe, size_t strings_
     } else {
         int xpe;
 
-        xpe = R_TEST(pe);
+        xpe = RTEST(pe);
         switch (strings_count) { /* strings_count doesn't include pe */
             case 0:
                 ret = fn(rwo->writer, xpe);
@@ -377,9 +387,11 @@ static VALUE numeric_rxml_writer_va_strings(VALUE obj, VALUE pe, size_t strings_
 
 # if LIBXML_VERSION > 20604
 /* call-seq:
- *    XML::Writer.set_indent(indentation) -> (true|false)
+ *    writer.set_indent(indentation) -> (true|false)
  *
- * Toggles indentation on or off.
+ * Toggles indentation on or off. Returns +false+ on failure.
+ *
+ * Availability: libxml2 >= 2.6.4
  */
 static VALUE rxml_writer_set_indent(VALUE self, VALUE indentation)
 {
@@ -393,10 +405,13 @@ static VALUE rxml_writer_set_indent(VALUE self, VALUE indentation)
 }
 
 /* call-seq:
- *    XML::Writer.set_indent_string(string) -> (true|false)
+ *    writer.set_indent_string(string) -> (true|false)
  *
  * Sets the string to use to indent each element of the document.
- * Don't forget to enable indentation with set_indent.
+ * Don't forget to enable indentation with set_indent. Returns
+ * +false+ on failure.
+ *
+ * Availability: libxml2 >= 2.6.4
  */
 static VALUE rxml_writer_set_indent_string(VALUE self, VALUE indentation)
 {
@@ -409,9 +424,9 @@ static VALUE rxml_writer_set_indent_string(VALUE self, VALUE indentation)
 /* write_<X> = start_<X> + write_string + end_<X> */
 
 /* call-seq:
- *    XML::Writer.write_comment(content) -> (true|false)
+ *    writer.write_comment(content) -> (true|false)
  *
- * Writes a full comment tag, all at once. Returns false on failure.
+ * Writes a full comment tag, all at once. Returns +false+ on failure.
  * This is equivalent to start_comment + write_string(content) + end_comment.
  */
 static VALUE rxml_writer_write_comment(VALUE self, VALUE content)
@@ -420,9 +435,9 @@ static VALUE rxml_writer_write_comment(VALUE self, VALUE content)
 }
 
 /* call-seq:
- *    XML::Writer.write_cdata(content) -> (true|false)
+ *    writer.write_cdata(content) -> (true|false)
  *
- * Writes a full CDATA section, all at once. Returns false on failure.
+ * Writes a full CDATA section, all at once. Returns +false+ on failure.
  * This is equivalent to start_cdata + write_string(content) + end_cdata.
  */
 static VALUE rxml_writer_write_cdata(VALUE self, VALUE content)
@@ -435,9 +450,9 @@ static VALUE rxml_writer_start_element_ns(int, VALUE *, VALUE);
 static VALUE rxml_writer_end_element(VALUE);
 
 /* call-seq:
- *    XML::Writer.write_element(name, content) -> (true|false)
+ *    writer.write_element(name, content) -> (true|false)
  *
- * Writes a full element tag, all at once. Returns false on failure.
+ * Writes a full element tag, all at once. Returns +false+ on failure.
  * This is equivalent to start_element(name) + write_string(content) +
  * end_element.
  */
@@ -461,9 +476,9 @@ static VALUE rxml_writer_write_element(int argc, VALUE *argv, VALUE self)
     (sizeof(array) / sizeof((array)[0]))
 
 /* call-seq:
- *    XML::Writer.write_element_ns(prefix, name, namespaceURI, content) -> (true|false)
+ *    writer.write_element_ns(prefix, name, namespaceURI, content) -> (true|false)
  *
- * Writes a full namespaced element tag, all at once. Returns false on failure.
+ * Writes a full namespaced element tag, all at once. Returns +false+ on failure.
  * This is a shortcut for start_element_ns(prefix, name, namespaceURI) +
  * write_string(content) + end_element.
  *
@@ -493,9 +508,9 @@ static VALUE rxml_writer_write_element_ns(int argc, VALUE *argv, VALUE self)
 }
 
 /* call-seq:
- *    XML::Writer.write_attribute(name, content) -> (true|false)
+ *    writer.write_attribute(name, content) -> (true|false)
  *
- * Writes a full attribute, all at once. Returns false on failure.
+ * Writes a full attribute, all at once. Returns +false+ on failure.
  * Same as start_attribute(name) + write_string(content) + end_attribute.
  */
 static VALUE rxml_writer_write_attribute(VALUE self, VALUE name, VALUE content)
@@ -504,9 +519,9 @@ static VALUE rxml_writer_write_attribute(VALUE self, VALUE name, VALUE content)
 }
 
 /* call-seq:
- *    XML::Writer.write_attribute_ns(prefix, name, namespaceURI, content) -> (true|false)
+ *    writer.write_attribute_ns(prefix, name, namespaceURI, content) -> (true|false)
  *
- * Writes a full namespaced attribute, all at once. Returns false on failure.
+ * Writes a full namespaced attribute, all at once. Returns +false+ on failure.
  * Same as start_attribute_ns(prefix, name, namespaceURI) +
  * write_string(content) + end_attribute.
  *
@@ -528,9 +543,9 @@ static VALUE rxml_writer_write_attribute_ns(int argc, VALUE *argv, VALUE self)
 }
 
 /* call-seq:
- *    XML::Writer.write_pi(target, content) -> (true|false)
+ *    writer.write_pi(target, content) -> (true|false)
  *
- * Writes a full CDATA tag, all at once. Returns false on failure.
+ * Writes a full CDATA tag, all at once. Returns +false+ on failure.
  * This is a shortcut for start_pi(target) + write_string(content) + end_pi.
  */
 static VALUE rxml_writer_write_pi(VALUE self, VALUE target, VALUE content)
@@ -541,11 +556,11 @@ static VALUE rxml_writer_write_pi(VALUE self, VALUE target, VALUE content)
 /* ===== public start/end interface ===== */
 
 /* call-seq:
- *    XML::Writer.write_string(content) -> (true|false)
+ *    writer.write_string(content) -> (true|false)
  *
  * Safely (problematic characters are internally translated to their
  * associated named entities) writes a string into the current node
- * (attribute, element, comment, ...). Returns false on failure.
+ * (attribute, element, comment, ...). Returns +false+ on failure.
  */
 static VALUE rxml_writer_write_string(VALUE self, VALUE content)
 {
@@ -553,10 +568,10 @@ static VALUE rxml_writer_write_string(VALUE self, VALUE content)
 }
 
 /* call-seq:
- *    XML::Writer.write_raw(content) -> (true|false)
+ *    writer.write_raw(content) -> (true|false)
  *
  * Writes the string +content+ as is, reserved characters are not
- * translated to their associated entities. Returns false on failure.
+ * translated to their associated entities. Returns +false+ on failure.
  * Consider write_string to handle them.
  */
 static VALUE rxml_writer_write_raw(VALUE self, VALUE content)
@@ -565,9 +580,9 @@ static VALUE rxml_writer_write_raw(VALUE self, VALUE content)
 }
 
 /* call-seq:
- *    XML::Writer.start_attribute(name) -> (true|false)
+ *    writer.start_attribute(name) -> (true|false)
  *
- * Starts an attribute. Returns false on failure.
+ * Starts an attribute. Returns +false+ on failure.
  */
 static VALUE rxml_writer_start_attribute(VALUE self, VALUE name)
 {
@@ -575,9 +590,9 @@ static VALUE rxml_writer_start_attribute(VALUE self, VALUE name)
 }
 
 /* call-seq:
- *    XML::Writer.start_attribute_ns(prefix, name, namespaceURI) -> (true|false)
+ *    writer.start_attribute_ns(prefix, name, namespaceURI) -> (true|false)
  *
- * Starts a namespaced attribute. Returns false on failure.
+ * Starts a namespaced attribute. Returns +false+ on failure.
  *
  * Note: by default, the xmlns: definition is repeated on every element. If
  * you want the prefix, but don't want the xmlns: declaration repeated, set
@@ -595,9 +610,9 @@ static VALUE rxml_writer_start_attribute_ns(int argc, VALUE *argv, VALUE self)
 }
 
 /* call-seq:
- *    XML::Writer.end_attribute -> (true|false)
+ *    writer.end_attribute -> (true|false)
  *
- * Ends an attribute, namespaced or not. Returns false on failure.
+ * Ends an attribute, namespaced or not. Returns +false+ on failure.
  */
 static VALUE rxml_writer_end_attribute(VALUE self)
 {
@@ -606,9 +621,9 @@ static VALUE rxml_writer_end_attribute(VALUE self)
 
 # if LIBXML_VERSION >= 20607
 /* call-seq:
- *    XML::Writer.start_comment -> (true|false)
+ *    writer.start_comment -> (true|false)
  *
- * Starts a comment. Returns false on failure.
+ * Starts a comment. Returns +false+ on failure.
  * Note: libxml2 >= 2.6.7 required
  */
 static VALUE rxml_writer_start_comment(VALUE self)
@@ -617,9 +632,9 @@ static VALUE rxml_writer_start_comment(VALUE self)
 }
 
 /* call-seq:
- *    XML::Writer.end_comment -> (true|false)
+ *    writer.end_comment -> (true|false)
  *
- * Ends current comment, returns false on failure.
+ * Ends current comment, returns +false+ on failure.
  * Note: libxml2 >= 2.6.7 required
  */
 static VALUE rxml_writer_end_comment(VALUE self)
@@ -629,9 +644,9 @@ static VALUE rxml_writer_end_comment(VALUE self)
 # endif /* LIBXML_VERSION >= 20607 */
 
 /* call-seq:
- *    XML::Writer.start_element(name) -> (true|false)
+ *    writer.start_element(name) -> (true|false)
  *
- * Starts a new element. Returns false on failure.
+ * Starts a new element. Returns +false+ on failure.
  */
 static VALUE rxml_writer_start_element(VALUE self, VALUE name)
 {
@@ -639,9 +654,9 @@ static VALUE rxml_writer_start_element(VALUE self, VALUE name)
 }
 
 /* call-seq:
- *    XML::Writer.start_element_ns(prefix, name, namespaceURI) -> (true|false)
+ *    writer.start_element_ns(prefix, name, namespaceURI) -> (true|false)
  *
- * Starts a new namespaced element. Returns false on failure.
+ * Starts a new namespaced element. Returns +false+ on failure.
  *
  * Note: by default, the xmlns: definition is repeated on every element. If
  * you want the prefix, but don't want the xmlns: declaration repeated, set
@@ -659,9 +674,9 @@ static VALUE rxml_writer_start_element_ns(int argc, VALUE *argv, VALUE self)
 }
 
 /* call-seq:
- *    XML::Writer.end_element -> (true|false)
+ *    writer.end_element -> (true|false)
  *
- * Ends current element, namespaced or not. Returns false on failure.
+ * Ends current element, namespaced or not. Returns +false+ on failure.
  */
 static VALUE rxml_writer_end_element(VALUE self)
 {
@@ -669,9 +684,9 @@ static VALUE rxml_writer_end_element(VALUE self)
 }
 
 /* call-seq:
- *    XML::Writer.write_full_end_element -> (true|false)
+ *    writer.write_full_end_element -> (true|false)
  *
- * Ends current element, namespaced or not. Returns false on failure.
+ * Ends current element, namespaced or not. Returns +false+ on failure.
  * This method writes an end tag even if the element is empty (<foo></foo>),
  * end_element does not (<foo/>).
  */
@@ -681,9 +696,9 @@ static VALUE rxml_writer_full_end_element(VALUE self)
 }
 
 /* call-seq:
- *    XML::Writer.start_cdata -> (true|false)
+ *    writer.start_cdata -> (true|false)
  *
- * Starts a new CDATA section. Returns false on failure.
+ * Starts a new CDATA section. Returns +false+ on failure.
  */
 static VALUE rxml_writer_start_cdata(VALUE self)
 {
@@ -691,9 +706,9 @@ static VALUE rxml_writer_start_cdata(VALUE self)
 }
 
 /* call-seq:
- *    XML::Writer.end_cdata -> (true|false)
+ *    writer.end_cdata -> (true|false)
  *
- * Ends current CDATA section. Returns false on failure.
+ * Ends current CDATA section. Returns +false+ on failure.
  */
 static VALUE rxml_writer_end_cdata(VALUE self)
 {
@@ -701,19 +716,19 @@ static VALUE rxml_writer_end_cdata(VALUE self)
 }
 
 /* call-seq:
- *    XML::Writer.start_document -> (true|false)
- *    XML::Writer.start_document(:encoding => XML::Encoding::UTF_8,
- *      :standalone => true) -> (true|false)
+ *    writer.start_document -> (true|false)
+ *    writer.start_document(:encoding => XML::Encoding::UTF_8,
+ *    :standalone => true) -> (true|false)
  *
- * Starts a new document. Returns false on failure.
+ * Starts a new document. Returns +false+ on failure.
  *
  * You may provide an optional hash table to control XML header that will be
  * generated. Valid options are:
  *
  * - encoding: the output document encoding, defaults to nil (= UTF-8). Valid
- *             values are the encoding constants defined on XML::Encoding
+ * values are the encoding constants defined on XML::Encoding
  * - standalone: nil (default) or a boolean to indicate if the document is
- *               standalone or not
+ * standalone or not
  */
 static VALUE rxml_writer_start_document(int argc, VALUE *argv, VALUE self)
 {
@@ -746,9 +761,9 @@ static VALUE rxml_writer_start_document(int argc, VALUE *argv, VALUE self)
 }
 
 /* call-seq:
- *    XML::Writer.end_document -> (true|false)
+ *    writer.end_document -> (true|false)
  *
- * Ends current document. Returns false on failure.
+ * Ends current document. Returns +false+ on failure.
  */
 static VALUE rxml_writer_end_document(VALUE self)
 {
@@ -756,9 +771,9 @@ static VALUE rxml_writer_end_document(VALUE self)
 }
 
 /* call-seq:
- *    XML::Writer.start_pi(target) -> (true|false)
+ *    writer.start_pi(target) -> (true|false)
  *
- * Starts a new processing instruction. Returns false on failure.
+ * Starts a new processing instruction. Returns +false+ on failure.
  */
 static VALUE rxml_writer_start_pi(VALUE self, VALUE target)
 {
@@ -766,9 +781,9 @@ static VALUE rxml_writer_start_pi(VALUE self, VALUE target)
 }
 
 /* call-seq:
- *    XML::Writer.end_pi -> (true|false)
+ *    writer.end_pi -> (true|false)
  *
- * Ends current processing instruction. Returns false on failure.
+ * Ends current processing instruction. Returns +false+ on failure.
  */
 static VALUE rxml_writer_end_pi(VALUE self)
 {
@@ -776,9 +791,9 @@ static VALUE rxml_writer_end_pi(VALUE self)
 }
 
 /* call-seq:
- *    XML::Writer.start_dtd(qualifiedName, publicId, systemId) -> (true|false)
+ *    writer.start_dtd(qualifiedName, publicId, systemId) -> (true|false)
  *
- * Starts a DTD. Returns false on failure.
+ * Starts a DTD. Returns +false+ on failure.
  *   writer.start_dtd 'html' # => <!DOCTYPE html>
  */
 static VALUE rxml_writer_start_dtd(int argc, VALUE *argv, VALUE self)
@@ -792,9 +807,9 @@ static VALUE rxml_writer_start_dtd(int argc, VALUE *argv, VALUE self)
 }
 
 /* call-seq:
- *    XML::Writer.start_dtd_element(qualifiedName) -> (true|false)
+ *    writer.start_dtd_element(qualifiedName) -> (true|false)
  *
- * Starts a DTD element (<!ELEMENT ... >). Returns false on failure.
+ * Starts a DTD element (<!ELEMENT ... >). Returns +false+ on failure.
  */
 static VALUE rxml_writer_start_dtd_element(VALUE self, VALUE name)
 {
@@ -802,19 +817,24 @@ static VALUE rxml_writer_start_dtd_element(VALUE self, VALUE name)
 }
 
 /* call-seq:
- *    XML::Writer.start_dtd_entity(pe, name) -> (true|false)
+ *    writer.start_dtd_entity(name, pe) -> (true|false)
  *
- * Starts a DTD entity (<!ENTITY ... >). Returns false on failure.
+ * Starts a DTD entity (<!ENTITY ... >). Returns +false+ on failure.
  */
-static VALUE rxml_writer_start_dtd_entity(VALUE self, VALUE pe, VALUE name)
+static VALUE rxml_writer_start_dtd_entity(int argc, VALUE *argv, VALUE self)
 {
-    return numeric_rxml_writer_va_strings(self, Qnil, 1, xmlTextWriterStartDTDEntity, name);
+    VALUE name, pe;
+
+    pe = Qfalse;
+    rb_scan_args(argc, argv, "11", &name, &pe);
+
+    return numeric_rxml_writer_va_strings(self, pe, 1, xmlTextWriterStartDTDEntity, name);
 }
 
 /* call-seq:
- *    XML::Writer.start_dtd_attlist(name) -> (true|false)
+ *    writer.start_dtd_attlist(name) -> (true|false)
  *
- * Starts a DTD attribute list (<!ATTLIST ... >). Returns false on failure.
+ * Starts a DTD attribute list (<!ATTLIST ... >). Returns +false+ on failure.
  */
 static VALUE rxml_writer_start_dtd_attlist(VALUE self, VALUE name)
 {
@@ -822,9 +842,9 @@ static VALUE rxml_writer_start_dtd_attlist(VALUE self, VALUE name)
 }
 
 /* call-seq:
- *    XML::Writer.end_dtd -> (true|false)
+ *    writer.end_dtd -> (true|false)
  *
- * Ends of DTD, returns false on failure.
+ * Ends current DTD, returns +false+ on failure.
  */
 static VALUE rxml_writer_end_dtd(VALUE self)
 {
@@ -832,9 +852,9 @@ static VALUE rxml_writer_end_dtd(VALUE self)
 }
 
 /* call-seq:
- *    XML::Writer.end_dtd_entity -> (true|false)
+ *    writer.end_dtd_entity -> (true|false)
  *
- * Ends of current DTD entity, returns false on failure.
+ * Ends current DTD entity, returns +false+ on failure.
  */
 static VALUE rxml_writer_end_dtd_entity(VALUE self)
 {
@@ -842,7 +862,9 @@ static VALUE rxml_writer_end_dtd_entity(VALUE self)
 }
 
 /* call-seq:
- *    XML::Writer.end_dtd_attlist -> (true|false)
+ *    writer.end_dtd_attlist -> (true|false)
+ *
+ * Ends current DTD attribute list, returns +false+ on failure.
  */
 static VALUE rxml_writer_end_dtd_attlist(VALUE self)
 {
@@ -850,7 +872,9 @@ static VALUE rxml_writer_end_dtd_attlist(VALUE self)
 }
 
 /* call-seq:
- *    XML::Writer.end_dtd_element -> (true|false)
+ *    writer.end_dtd_element -> (true|false)
+ *
+ * Ends current DTD element, returns +false+ on failure.
  */
 static VALUE rxml_writer_end_dtd_element(VALUE self)
 {
@@ -858,7 +882,23 @@ static VALUE rxml_writer_end_dtd_element(VALUE self)
 }
 
 /* call-seq:
- *    XML::Writer.write_dtd(...) -> (true|false)
+ *    writer.write_dtd(name [ [ [, publicId ], systemId ], subset ]) -> (true|false)
+ *
+ * Writes a DTD, all at once. Returns +false+ on failure.
+ * - name: dtd name
+ * - publicId: external subset public identifier, use nil for a SYSTEM doctype
+ * - systemId: external subset system identifier
+ * - subset: content
+ *
+ * Examples:
+ *   writer.write_dtd 'html'
+ *     # => <!DOCTYPE html>
+ *   writer.write_dtd 'docbook', nil, 'http://www.docbook.org/xml/5.0/dtd/docbook.dtd'
+ *     # => <!DOCTYPE docbook SYSTEM "http://www.docbook.org/xml/5.0/dtd/docbook.dtd">
+ *   writer.write_dtd 'html', '-//W3C//DTD XHTML 1.1//EN', 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'
+ *     # => <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+ *   writer.write_dtd 'person', nil, nil, '<!ELEMENT person (firstname,lastname)><!ELEMENT firstname (#PCDATA)><!ELEMENT lastname (#PCDATA)>'
+ *     # => <!DOCTYPE person [<!ELEMENT person (firstname,lastname)><!ELEMENT firstname (#PCDATA)><!ELEMENT lastname (#PCDATA)>]>
  */
 static VALUE rxml_writer_write_dtd(int argc, VALUE *argv, VALUE self)
 {
@@ -871,7 +911,10 @@ static VALUE rxml_writer_write_dtd(int argc, VALUE *argv, VALUE self)
 }
 
 /* call-seq:
- *    XML::Writer.write_dtd...(...) -> (true|false)
+ *    writer.write_dtd_attlist(name, content) -> (true|false)
+ *
+ * Writes a DTD attribute list, all at once. Returns +false+ on failure.
+ *   writer.write_dtd_attlist 'id', 'ID #IMPLIED' # => <!ATTLIST id ID #IMPLIED>
  */
 static VALUE rxml_writer_write_dtd_attlist(VALUE self, VALUE name, VALUE content)
 {
@@ -879,7 +922,10 @@ static VALUE rxml_writer_write_dtd_attlist(VALUE self, VALUE name, VALUE content
 }
 
 /* call-seq:
- *    XML::Writer.write_dtd...(...) -> (true|false)
+ *    writer.write_dtd_element(name, content) -> (true|false)
+ *
+ * Writes a full DTD element, all at once. Returns +false+ on failure.
+ *   writer.write_dtd_element 'person', '(firstname,lastname)' # => <!ELEMENT person (firstname,lastname)>
  */
 static VALUE rxml_writer_write_dtd_element(VALUE self, VALUE name, VALUE content)
 {
@@ -887,7 +933,9 @@ static VALUE rxml_writer_write_dtd_element(VALUE self, VALUE name, VALUE content
 }
 
 /* call-seq:
- *    XML::Writer.write_dtd...(...) -> (true|false)
+ *    writer.write_dtd_entity(pe, name, publicId, systemId, ndataid, content) -> (true|false)
+ *
+ * Writes a DTD entity, all at once. Returns +false+ on failure.
  */
 static VALUE rxml_writer_write_dtd_entity(VALUE self, VALUE pe, VALUE name, VALUE pubid, VALUE sysid, VALUE ndataid, VALUE content)
 {
@@ -895,15 +943,25 @@ static VALUE rxml_writer_write_dtd_entity(VALUE self, VALUE pe, VALUE name, VALU
 }
 
 /* call-seq:
- *    XML::Writer.write_dtd...(...) -> (true|false)
+ *    writer.write_dtd_external_entity(pe, name, publicId, systemId, ndataid) -> (true|false)
+ *
+ * Writes a DTD external entity. The entity must have been started with start_dtd_entity.
+ * Returns +false+ on failure.
+ * - pe: +true+ if this is a parameter entity, +false+ if not
+ * - name: TODO
+ * - publicId: TODO
+ * - systemId: TODO
+ * - ndataid: TODO
  */
-static VALUE rxml_writer_write_dtd_enternal_entity(VALUE self, VALUE pe, VALUE name, VALUE pubid, VALUE sysid, VALUE ndataid)
+static VALUE rxml_writer_write_dtd_external_entity(VALUE self, VALUE pe, VALUE name, VALUE pubid, VALUE sysid, VALUE ndataid)
 {
     return numeric_rxml_writer_va_strings(self, pe, 4, xmlTextWriterWriteDTDExternalEntity, name, pubid, sysid, ndataid);
 }
 
 /* call-seq:
- *    XML::Writer.write_dtd...(...) -> (true|false)
+ *    writer.write_dtd_external_entity_contents(publicId, systemId, ndataid) -> (true|false)
+ *
+ * Writes the contents of a DTD external entity, all at once. Returns +false+ on failure.
  */
 static VALUE rxml_writer_write_dtd_external_entity_contents(VALUE self, VALUE pubid, VALUE sysid, VALUE ndataid)
 {
@@ -911,7 +969,9 @@ static VALUE rxml_writer_write_dtd_external_entity_contents(VALUE self, VALUE pu
 }
 
 /* call-seq:
- *    XML::Writer.write_dtd...(...) -> (true|false)
+ *    writer.write_dtd_internal_entity(pe, name, content) -> (true|false)
+ *
+ * Writes a DTD internal entity, all at once. Returns +false+ on failure.
  */
 static VALUE rxml_writer_write_dtd_internal_entity(VALUE self, VALUE pe, VALUE name, VALUE content)
 {
@@ -919,7 +979,9 @@ static VALUE rxml_writer_write_dtd_internal_entity(VALUE self, VALUE pe, VALUE n
 }
 
 /* call-seq:
- *    XML::Writer.write_dtd...(...) -> (true|false)
+ *    writer.write_dtd_notation(name, publicId, systemId) -> (true|false)
+ *
+ * Writes a DTD entity, all at once. Returns +false+ on failure.
  */
 static VALUE rxml_writer_write_dtd_notation(VALUE self, VALUE name, VALUE pubid, VALUE sysid)
 {
@@ -928,12 +990,13 @@ static VALUE rxml_writer_write_dtd_notation(VALUE self, VALUE name, VALUE pubid,
 
 # if LIBXML_VERSION > 20900
 /* call-seq:
- *    XML::Writer.set_quote_char(...) -> (true|false)
+ *    writer.set_quote_char(...) -> (true|false)
  *
- * Sets the character used for quoting attributes. Returns false on failure.
+ * Sets the character used for quoting attributes. Returns +false+ on failure.
+ *
  * Notes:
- * - only " (default) and ' are valid
- * - implies libxml2 >= 2.9.0
+ * - only " (default) and ' characters are valid
+ * - availability: libxml2 >= 2.9.0
  */
 static VALUE rxml_writer_set_quote_char(VALUE self, VALUE quotechar)
 {
@@ -948,9 +1011,6 @@ static VALUE rxml_writer_set_quote_char(VALUE self, VALUE quotechar)
     return (-1 == ret ? Qfalse : Qtrue);
 }
 # endif
-
-# define RXMLW_IM(numargs, method, cfunc) \
-    rb_define_method(cXMLWriter, method, cfunc, numargs)
 
 /* grep -P 'xmlTextWriter(Start|End|Write)(?!DTD|V?Format)[^(]+' /usr/include/libxml2/libxml/xmlwriter.h */
 void rxml_init_writer(void)
@@ -967,62 +1027,62 @@ void rxml_init_writer(void)
 
     /* misc */
 # if LIBXML_VERSION > 20604
-    RXMLW_IM(1, "set_indent", rxml_writer_set_indent);
-    RXMLW_IM(1, "set_indent_string", rxml_writer_set_indent_string);
+    rb_define_method(cXMLWriter, "set_indent", rxml_writer_set_indent, 1);
+    rb_define_method(cXMLWriter, "set_indent_string", rxml_writer_set_indent_string, 1);
 # endif /* LIBXML_VERSION >= 20604 */
 # if LIBXML_VERSION > 20900
-    RXMLW_IM(1, "set_quote_char", rxml_writer_set_quote_char);
+    rb_define_method(cXMLWriter, "set_quote_char", rxml_writer_set_quote_char, 1);
 # endif  /* LIBXML_VERSION >= 20900 */
-    RXMLW_IM(0, "flush", rxml_writer_flush);
-    RXMLW_IM(-1, "start_dtd", rxml_writer_start_dtd);
-    RXMLW_IM(2, "start_dtd_entity", rxml_writer_start_dtd_entity);
-    RXMLW_IM(1, "start_dtd_attlist", rxml_writer_start_dtd_attlist);
-    RXMLW_IM(1, "start_dtd_element", rxml_writer_start_dtd_element);
-    RXMLW_IM(-1, "write_dtd", rxml_writer_write_dtd);
-    RXMLW_IM(2, "write_dtd_attlist", rxml_writer_write_dtd_attlist);
-    RXMLW_IM(2, "write_dtd_element", rxml_writer_write_dtd_element);
-    RXMLW_IM(6, "write_dtd_entity", rxml_writer_write_dtd_entity);
-    RXMLW_IM(5, "write_dtd_external_entity", rxml_writer_write_dtd_enternal_entity);
-    RXMLW_IM(3, "write_dtd_external_entity_contents", rxml_writer_write_dtd_external_entity_contents);
-    RXMLW_IM(2, "write_dtd_internal_entity", rxml_writer_write_dtd_internal_entity);
-    RXMLW_IM(3, "write_dtd_notation", rxml_writer_write_dtd_notation);
-    RXMLW_IM(0, "end_dtd", rxml_writer_end_dtd);
-    RXMLW_IM(0, "end_dtd_entity", rxml_writer_end_dtd_entity);
-    RXMLW_IM(0, "end_dtd_attlist", rxml_writer_end_dtd_attlist);
-    RXMLW_IM(0, "end_dtd_element", rxml_writer_end_dtd_element);
+    rb_define_method(cXMLWriter, "flush", rxml_writer_flush, 0);
+    rb_define_method(cXMLWriter, "start_dtd", rxml_writer_start_dtd, -1);
+    rb_define_method(cXMLWriter, "start_dtd_entity", rxml_writer_start_dtd_entity, -1);
+    rb_define_method(cXMLWriter, "start_dtd_attlist", rxml_writer_start_dtd_attlist, 1);
+    rb_define_method(cXMLWriter, "start_dtd_element", rxml_writer_start_dtd_element, 1);
+    rb_define_method(cXMLWriter, "write_dtd", rxml_writer_write_dtd, -1);
+    rb_define_method(cXMLWriter, "write_dtd_attlist", rxml_writer_write_dtd_attlist, 2);
+    rb_define_method(cXMLWriter, "write_dtd_element", rxml_writer_write_dtd_element, 2);
+    rb_define_method(cXMLWriter, "write_dtd_entity", rxml_writer_write_dtd_entity, 6);
+    rb_define_method(cXMLWriter, "write_dtd_external_entity", rxml_writer_write_dtd_external_entity, 5);
+    rb_define_method(cXMLWriter, "write_dtd_external_entity_contents", rxml_writer_write_dtd_external_entity_contents, 3);
+    rb_define_method(cXMLWriter, "write_dtd_internal_entity", rxml_writer_write_dtd_internal_entity, 3);
+    rb_define_method(cXMLWriter, "write_dtd_notation", rxml_writer_write_dtd_notation, 3);
+    rb_define_method(cXMLWriter, "end_dtd", rxml_writer_end_dtd, 0);
+    rb_define_method(cXMLWriter, "end_dtd_entity", rxml_writer_end_dtd_entity, 0);
+    rb_define_method(cXMLWriter, "end_dtd_attlist", rxml_writer_end_dtd_attlist, 0);
+    rb_define_method(cXMLWriter, "end_dtd_element", rxml_writer_end_dtd_element, 0);
 
     /* tag by parts */
-    RXMLW_IM(1, "write_raw", rxml_writer_write_raw);
-    RXMLW_IM(1, "write_string", rxml_writer_write_string);
+    rb_define_method(cXMLWriter, "write_raw", rxml_writer_write_raw, 1);
+    rb_define_method(cXMLWriter, "write_string", rxml_writer_write_string, 1);
 
-    RXMLW_IM(0, "start_cdata", rxml_writer_start_cdata);
-    RXMLW_IM(0, "end_cdata", rxml_writer_end_cdata);
-    RXMLW_IM(1, "start_attribute", rxml_writer_start_attribute);
-    RXMLW_IM(-1, "start_attribute_ns", rxml_writer_start_attribute_ns);
-    RXMLW_IM(0, "end_attribute", rxml_writer_end_attribute);
-    RXMLW_IM(1, "start_element", rxml_writer_start_element);
-    RXMLW_IM(-1, "start_element_ns", rxml_writer_start_element_ns);
-    RXMLW_IM(0, "end_element", rxml_writer_end_element);
-    RXMLW_IM(0, "full_end_element", rxml_writer_full_end_element);
-    RXMLW_IM(-1, "start_document", rxml_writer_start_document);
-    RXMLW_IM(0, "end_document", rxml_writer_end_document);
+    rb_define_method(cXMLWriter, "start_cdata", rxml_writer_start_cdata, 0);
+    rb_define_method(cXMLWriter, "end_cdata", rxml_writer_end_cdata, 0);
+    rb_define_method(cXMLWriter, "start_attribute", rxml_writer_start_attribute, 1);
+    rb_define_method(cXMLWriter, "start_attribute_ns", rxml_writer_start_attribute_ns, -1);
+    rb_define_method(cXMLWriter, "end_attribute", rxml_writer_end_attribute, 0);
+    rb_define_method(cXMLWriter, "start_element", rxml_writer_start_element, 1);
+    rb_define_method(cXMLWriter, "start_element_ns", rxml_writer_start_element_ns, -1);
+    rb_define_method(cXMLWriter, "end_element", rxml_writer_end_element, 0);
+    rb_define_method(cXMLWriter, "full_end_element", rxml_writer_full_end_element, 0);
+    rb_define_method(cXMLWriter, "start_document", rxml_writer_start_document, -1);
+    rb_define_method(cXMLWriter, "end_document", rxml_writer_end_document, 0);
 # if LIBXML_VERSION > 20606
-    RXMLW_IM(0, "start_comment", rxml_writer_start_comment);
-    RXMLW_IM(0, "end_comment", rxml_writer_end_comment);
+    rb_define_method(cXMLWriter, "start_comment", rxml_writer_start_comment, 0);
+    rb_define_method(cXMLWriter, "end_comment", rxml_writer_end_comment, 0);
 # endif /* LIBXML_VERSION > 20606 */
-    RXMLW_IM(1, "start_pi", rxml_writer_start_pi);
-    RXMLW_IM(0, "end_pi", rxml_writer_end_pi);
+    rb_define_method(cXMLWriter, "start_pi", rxml_writer_start_pi, 1);
+    rb_define_method(cXMLWriter, "end_pi", rxml_writer_end_pi, 0);
 
     /* full tag at once */
-    RXMLW_IM(2, "write_attribute", rxml_writer_write_attribute);
-    RXMLW_IM(-1, "write_attribute_ns", rxml_writer_write_attribute_ns);
-    RXMLW_IM(1, "write_comment", rxml_writer_write_comment);
-    RXMLW_IM(1, "write_cdata", rxml_writer_write_cdata);
-    RXMLW_IM(-1, "write_element", rxml_writer_write_element);
-    RXMLW_IM(-1, "write_element_ns", rxml_writer_write_element_ns);
-    RXMLW_IM(2, "write_pi", rxml_writer_write_pi);
+    rb_define_method(cXMLWriter, "write_attribute", rxml_writer_write_attribute, 2);
+    rb_define_method(cXMLWriter, "write_attribute_ns", rxml_writer_write_attribute_ns, -1);
+    rb_define_method(cXMLWriter, "write_comment", rxml_writer_write_comment, 1);
+    rb_define_method(cXMLWriter, "write_cdata", rxml_writer_write_cdata, 1);
+    rb_define_method(cXMLWriter, "write_element", rxml_writer_write_element, -1);
+    rb_define_method(cXMLWriter, "write_element_ns", rxml_writer_write_element_ns, -1);
+    rb_define_method(cXMLWriter, "write_pi", rxml_writer_write_pi, 2);
 
-    RXMLW_IM(0, "result", rxml_writer_result);
+    rb_define_method(cXMLWriter, "result", rxml_writer_result, 0);
 }
 
 #endif /* LIBXML_WRITER_ENABLED */

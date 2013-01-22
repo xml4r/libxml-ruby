@@ -292,16 +292,86 @@ class TestWriter < Test::Unit::TestCase
 
     def test_dtd_declaration
         writer = XML::Writer.string
-        writer.start_dtd 'html'
-        writer.end_dtd
-        writer.flush
+        dtd writer, 'html'
         assert_equal(writer.result, '<!DOCTYPE html>')
 
         writer = XML::Writer.string
-        writer.start_dtd 'html', '-//W3C//DTD XHTML 1.0 Strict//EN', 'http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd'
-        writer.end_dtd
-        writer.flush
+        dtd writer, 'html', '-//W3C//DTD XHTML 1.0 Strict//EN', 'http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd'
         assert_equal(writer.result, '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">')
+    end
+
+    def test_dtd_attlist
+        expected = '<!DOCTYPE http [<!ATTLIST method (get|post) "get">]>'
+
+        writer = XML::Writer.string
+        dtd writer, 'http' do
+            assert(writer.start_dtd_attlist 'method')
+                assert(writer.write_string '(get|post) "get"')
+            assert(writer.end_dtd_attlist)
+        end
+        assert_equal(writer.result, expected)
+
+        writer = XML::Writer.string
+        dtd writer, 'http' do
+            assert(writer.write_dtd_attlist 'method', '(get|post) "get"')
+        end
+        assert_equal(writer.result, expected)
+    end
+
+    def test_dtd_element
+        expected = '<!DOCTYPE html [<!ELEMENT dl (dt|dd)+>]>'
+
+        writer = XML::Writer.string
+        dtd writer, 'html' do
+            assert(writer.start_dtd_element 'dl')
+                assert(writer.write_string '(dt|dd)+')
+            assert(writer.end_dtd_element)
+        end
+        assert_equal(writer.result, expected)
+
+        writer = XML::Writer.string
+        dtd writer, 'html' do
+            assert(writer.write_dtd_element 'dl', '(dt|dd)+')
+        end
+        assert_equal(writer.result, expected)
+    end
+
+    def test_dtd_entity
+        expected = '<!DOCTYPE html [<!ENTITY % special.pre "br | span | bdo | map"><!ENTITY % special "%special.pre; | object | img">]>'
+
+        writer = XML::Writer.string
+        dtd writer, 'html' do
+            assert(writer.start_dtd_entity 'special.pre')
+                assert(writer.write_string 'br | span | bdo | map')
+            assert(writer.end_dtd_entity)
+            assert(writer.start_dtd_entity 'special')
+                assert(writer.write_string '%special.pre; | object | img')
+            assert(writer.end_dtd_entity)
+        end
+        assert_equal(writer.result, expected)
+
+        writer = XML::Writer.string
+        dtd writer, 'html' do
+            assert(writer.write_dtd_internal_entity true, 'special.pre', 'br | span | bdo | map')
+            assert(writer.write_dtd_internal_entity true, 'special', '%special.pre; | object | img')
+        end
+        assert_equal(writer.result, expected)
+    end
+
+    def test_dtd_notation
+        #
+    end
+
+    def test_encoding
+        if defined?(Encoding)
+            iso = 'éloïse'.encode 'ISO-8859-1'
+
+            writer = XML::Writer.string
+            document writer do
+                assert(writer.write_element iso)
+            end
+            assert_equal(writer.result.strip!, "<?xml version=\"1.0\"?>\n<éloïse/>")
+        end
     end
 
 private
@@ -310,6 +380,13 @@ private
         assert(writer.start_document options)
         yield if block_given?
         assert(writer.end_document)
+    end
+
+    def dtd(writer, name, pubid = nil, sysid = nil)
+        assert(writer.start_dtd name, pubid, sysid)
+        yield if block_given?
+        assert(writer.end_dtd)
+        writer.flush
     end
 
     def element(writer, localname)
