@@ -369,13 +369,13 @@ static VALUE numeric_rxml_writer_va_strings(VALUE obj, VALUE pe, size_t strings_
 
 /* ===== public instance methods ===== */
 
-# if LIBXML_VERSION > 20604
+# if LIBXML_VERSION >= 20605
 /* call-seq:
  *    writer.set_indent(indentation) -> (true|false)
  *
  * Toggles indentation on or off. Returns +false+ on failure.
  *
- * Availability: libxml2 >= 2.6.4
+ * Availability: libxml2 >= 2.6.5
  */
 static VALUE rxml_writer_set_indent(VALUE self, VALUE indentation)
 {
@@ -395,13 +395,13 @@ static VALUE rxml_writer_set_indent(VALUE self, VALUE indentation)
  * Don't forget to enable indentation with set_indent. Returns
  * +false+ on failure.
  *
- * Availability: libxml2 >= 2.6.4
+ * Availability: libxml2 >= 2.6.5
  */
 static VALUE rxml_writer_set_indent_string(VALUE self, VALUE indentation)
 {
     return numeric_rxml_writer_string(self, indentation, xmlTextWriterSetIndentString);
 }
-# endif /* LIBXML_VERSION > 20604 */
+# endif /* LIBXML_VERSION >= 20605 */
 
 /* ===== public full tag interface ===== */
 
@@ -974,7 +974,7 @@ static VALUE rxml_writer_write_dtd_notation(VALUE self, VALUE name, VALUE pubid,
     return numeric_rxml_writer_va_strings(self, Qnil, 3, xmlTextWriterWriteDTDNotation, name, pubid, sysid);
 }
 
-# if LIBXML_VERSION > 20900
+# if LIBXML_VERSION >= 20900
 /* call-seq:
  *    writer.set_quote_char(...) -> (true|false)
  *
@@ -996,7 +996,7 @@ static VALUE rxml_writer_set_quote_char(VALUE self, VALUE quotechar)
 
     return (-1 == ret ? Qfalse : Qtrue);
 }
-# endif
+# endif /* LIBXML_VERSION >= 20900 */
 
 /* grep -P 'xmlTextWriter(Start|End|Write)(?!DTD|V?Format)[^(]+' /usr/include/libxml2/libxml/xmlwriter.h */
 void rxml_init_writer(void)
@@ -1012,11 +1012,11 @@ void rxml_init_writer(void)
     rb_define_singleton_method(cXMLWriter, "string", rxml_writer_string, 0);
 
     /* misc */
-# if LIBXML_VERSION > 20604
+# if LIBXML_VERSION >= 20605
     rb_define_method(cXMLWriter, "set_indent", rxml_writer_set_indent, 1);
     rb_define_method(cXMLWriter, "set_indent_string", rxml_writer_set_indent_string, 1);
-# endif /* LIBXML_VERSION >= 20604 */
-# if LIBXML_VERSION > 20900
+# endif /* LIBXML_VERSION >= 20605 */
+# if LIBXML_VERSION >= 20900
     rb_define_method(cXMLWriter, "set_quote_char", rxml_writer_set_quote_char, 1);
 # endif  /* LIBXML_VERSION >= 20900 */
     rb_define_method(cXMLWriter, "flush", rxml_writer_flush, 0);
@@ -1052,10 +1052,10 @@ void rxml_init_writer(void)
     rb_define_method(cXMLWriter, "full_end_element", rxml_writer_full_end_element, 0);
     rb_define_method(cXMLWriter, "start_document", rxml_writer_start_document, -1);
     rb_define_method(cXMLWriter, "end_document", rxml_writer_end_document, 0);
-# if LIBXML_VERSION > 20606
+# if LIBXML_VERSION >= 20607
     rb_define_method(cXMLWriter, "start_comment", rxml_writer_start_comment, 0);
     rb_define_method(cXMLWriter, "end_comment", rxml_writer_end_comment, 0);
-# endif /* LIBXML_VERSION > 20606 */
+# endif /* LIBXML_VERSION >= 20607 */
     rb_define_method(cXMLWriter, "start_pi", rxml_writer_start_pi, 1);
     rb_define_method(cXMLWriter, "end_pi", rxml_writer_end_pi, 0);
 
