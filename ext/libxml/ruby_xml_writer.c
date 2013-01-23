@@ -264,24 +264,8 @@ static VALUE numeric_rxml_writer_void(VALUE obj, int (*fn)(xmlTextWriterPtr))
     return (-1 == ret ? Qfalse : Qtrue);
 }
 
-#if 0
-static VALUE numeric_rxml_writer_string(VALUE obj, VALUE name_or_content, int (*fn)(xmlTextWriterPtr, const xmlChar *))
-{
-    int ret;
-    VALUE utf8;
-    rxml_writer_object *rwo;
-
-    rwo = rxml_textwriter_get(obj);
-    utf8 = rxml_writer_ruby_string_to_utf8(name_or_content);
-    ret = fn(rwo->writer, (const xmlChar *) StringValueCStr(utf8));
-    rxml_writer_free_utf8_string(name_or_content, utf8);
-
-    return (-1 == ret ? Qfalse : Qtrue);
-}
-#else
 # define numeric_rxml_writer_string(/*VALUE*/ obj, /*VALUE*/ name_or_content, /*int (**/fn/*)(xmlTextWriterPtr, const xmlChar *)*/) \
     numeric_rxml_writer_va_strings(obj, Qnil, 1, fn, name_or_content)
-#endif
 
 /**
  * This is quite ugly but thanks to libxml2 coding style, all xmlTextWriter*
@@ -460,7 +444,6 @@ static VALUE rxml_writer_write_element(int argc, VALUE *argv, VALUE self)
 {
     VALUE name, content;
 
-    content = Qnil;
     rb_scan_args(argc, argv, "11", &name, &content);
     if (Qnil == content) {
         if (Qfalse == rxml_writer_start_element(self, name)) {
@@ -487,13 +470,12 @@ static VALUE rxml_writer_write_element(int argc, VALUE *argv, VALUE self)
  * the prefix, but don't want the xmlns: declaration repeated, set +namespaceURI+
  * to nil or omit it. Don't forget to declare the namespace prefix somewhere
  * earlier.
- * - +content+ can be omitted too for an empty tag
+ * - +content+ can be omitted for an empty tag
  */
 static VALUE rxml_writer_write_element_ns(int argc, VALUE *argv, VALUE self)
 {
     VALUE prefix, name, namespaceURI, content;
 
-    namespaceURI = content = Qnil;
     rb_scan_args(argc, argv, "22", &prefix, &name, &namespaceURI, &content);
     if (Qnil == content) {
         VALUE argv[3] = { prefix, name, namespaceURI };
@@ -536,7 +518,6 @@ static VALUE rxml_writer_write_attribute_ns(int argc, VALUE *argv, VALUE self)
 {
     VALUE prefix, name, namespaceURI, content;
 
-    content = namespaceURI = Qnil; // does empty content makes sense here?
     rb_scan_args(argc, argv, "22", &prefix, &name, &namespaceURI, &content);
 
     return numeric_rxml_writer_va_strings(self, Qnil, 4, xmlTextWriterWriteAttributeNS, prefix, name, namespaceURI, content);
@@ -603,7 +584,6 @@ static VALUE rxml_writer_start_attribute_ns(int argc, VALUE *argv, VALUE self)
 {
     VALUE prefix, name, namespaceURI;
 
-    namespaceURI = Qnil;
     rb_scan_args(argc, argv, "21", &prefix, &name, &namespaceURI);
 
     return numeric_rxml_writer_va_strings(self, Qnil, 3, xmlTextWriterStartAttributeNS, prefix, name, namespaceURI);
@@ -667,7 +647,6 @@ static VALUE rxml_writer_start_element_ns(int argc, VALUE *argv, VALUE self)
 {
     VALUE prefix, name, namespaceURI;
 
-    namespaceURI = Qnil;
     rb_scan_args(argc, argv, "21", &prefix, &name, &namespaceURI);
 
     return numeric_rxml_writer_va_strings(self, Qnil, 3, xmlTextWriterStartElementNS, prefix, name, namespaceURI);
@@ -724,7 +703,6 @@ static VALUE rxml_writer_end_cdata(VALUE self)
  *
  * You may provide an optional hash table to control XML header that will be
  * generated. Valid options are:
- *
  * - encoding: the output document encoding, defaults to nil (= UTF-8). Valid
  * values are the encoding constants defined on XML::Encoding
  * - standalone: nil (default) or a boolean to indicate if the document is
@@ -794,13 +772,11 @@ static VALUE rxml_writer_end_pi(VALUE self)
  *    writer.start_dtd(qualifiedName, publicId, systemId) -> (true|false)
  *
  * Starts a DTD. Returns +false+ on failure.
- *   writer.start_dtd 'html' # => <!DOCTYPE html>
  */
 static VALUE rxml_writer_start_dtd(int argc, VALUE *argv, VALUE self)
 {
     VALUE name, pubid, sysid;
 
-    pubid = sysid = Qnil;
     rb_scan_args(argc, argv, "12", &name, &pubid, &sysid);
 
     return numeric_rxml_writer_va_strings(self, Qnil, 3, xmlTextWriterStartDTD, name, pubid, sysid);
@@ -817,7 +793,7 @@ static VALUE rxml_writer_start_dtd_element(VALUE self, VALUE name)
 }
 
 /* call-seq:
- *    writer.start_dtd_entity(name, pe) -> (true|false)
+ *    writer.start_dtd_entity(name, pe = false) -> (true|false)
  *
  * Starts a DTD entity (<!ENTITY ... >). Returns +false+ on failure.
  */
@@ -825,8 +801,10 @@ static VALUE rxml_writer_start_dtd_entity(int argc, VALUE *argv, VALUE self)
 {
     VALUE name, pe;
 
-    pe = Qfalse;
     rb_scan_args(argc, argv, "11", &name, &pe);
+    if (NIL_P(pe)) {
+        pe = Qfalse;
+    }
 
     return numeric_rxml_writer_va_strings(self, pe, 1, xmlTextWriterStartDTDEntity, name);
 }
@@ -904,7 +882,6 @@ static VALUE rxml_writer_write_dtd(int argc, VALUE *argv, VALUE self)
 {
     VALUE name, pubid, sysid, subset;
 
-    pubid = sysid = subset = Qnil;
     rb_scan_args(argc, argv, "13", &name, &pubid, &sysid, &subset);
 
     return numeric_rxml_writer_va_strings(self, Qnil, 4, xmlTextWriterWriteDTD, name, pubid, sysid, subset);
@@ -914,7 +891,8 @@ static VALUE rxml_writer_write_dtd(int argc, VALUE *argv, VALUE self)
  *    writer.write_dtd_attlist(name, content) -> (true|false)
  *
  * Writes a DTD attribute list, all at once. Returns +false+ on failure.
- *   writer.write_dtd_attlist 'id', 'ID #IMPLIED' # => <!ATTLIST id ID #IMPLIED>
+ *   writer.write_dtd_attlist 'id', 'ID #IMPLIED'
+ *     # => <!ATTLIST id ID #IMPLIED>
  */
 static VALUE rxml_writer_write_dtd_attlist(VALUE self, VALUE name, VALUE content)
 {
@@ -925,7 +903,8 @@ static VALUE rxml_writer_write_dtd_attlist(VALUE self, VALUE name, VALUE content
  *    writer.write_dtd_element(name, content) -> (true|false)
  *
  * Writes a full DTD element, all at once. Returns +false+ on failure.
- *   writer.write_dtd_element 'person', '(firstname,lastname)' # => <!ELEMENT person (firstname,lastname)>
+ *   writer.write_dtd_element 'person', '(firstname,lastname)'
+ *     # => <!ELEMENT person (firstname,lastname)>
  */
 static VALUE rxml_writer_write_dtd_element(VALUE self, VALUE name, VALUE content)
 {
@@ -933,27 +912,28 @@ static VALUE rxml_writer_write_dtd_element(VALUE self, VALUE name, VALUE content
 }
 
 /* call-seq:
- *    writer.write_dtd_entity(pe, name, publicId, systemId, ndataid, content) -> (true|false)
+ *    writer.write_dtd_entity(name, publicId, systemId, ndataid, content, pe) -> (true|false)
  *
  * Writes a DTD entity, all at once. Returns +false+ on failure.
  */
-static VALUE rxml_writer_write_dtd_entity(VALUE self, VALUE pe, VALUE name, VALUE pubid, VALUE sysid, VALUE ndataid, VALUE content)
+static VALUE rxml_writer_write_dtd_entity(VALUE self, VALUE name, VALUE pubid, VALUE sysid, VALUE ndataid, VALUE content, VALUE pe)
 {
     return numeric_rxml_writer_va_strings(self, pe, 5, xmlTextWriterWriteDTDEntity, name, pubid, sysid, ndataid, content);
 }
 
 /* call-seq:
- *    writer.write_dtd_external_entity(pe, name, publicId, systemId, ndataid) -> (true|false)
+ *    writer.write_dtd_external_entity(name, publicId, systemId, ndataid, pe) -> (true|false)
  *
- * Writes a DTD external entity. The entity must have been started with start_dtd_entity.
- * Returns +false+ on failure.
- * - pe: +true+ if this is a parameter entity, +false+ if not
- * - name: TODO
- * - publicId: TODO
- * - systemId: TODO
- * - ndataid: TODO
+ * Writes a DTD external entity. The entity must have been started
+ * with start_dtd_entity. Returns +false+ on failure.
+ * - name: the name of the DTD entity
+ * - publicId: the public identifier, which is an alternative to the system identifier
+ * - systemId: the system identifier, which is the URI of the DTD
+ * - ndataid: the xml notation name
+ * - pe: +true+ if this is a parameter entity (to be used only in the DTD
+ * itself), +false+ if not
  */
-static VALUE rxml_writer_write_dtd_external_entity(VALUE self, VALUE pe, VALUE name, VALUE pubid, VALUE sysid, VALUE ndataid)
+static VALUE rxml_writer_write_dtd_external_entity(VALUE self, VALUE name, VALUE pubid, VALUE sysid, VALUE ndataid, VALUE pe)
 {
     return numeric_rxml_writer_va_strings(self, pe, 4, xmlTextWriterWriteDTDExternalEntity, name, pubid, sysid, ndataid);
 }
@@ -969,11 +949,17 @@ static VALUE rxml_writer_write_dtd_external_entity_contents(VALUE self, VALUE pu
 }
 
 /* call-seq:
- *    writer.write_dtd_internal_entity(pe, name, content) -> (true|false)
+ *    writer.write_dtd_internal_entity(name, content, pe) -> (true|false)
  *
  * Writes a DTD internal entity, all at once. Returns +false+ on failure.
+ *
+ * Examples:
+ *   writer.write_dtd_entity 'Shape', '(rect|circle|poly|default)', true
+ *     # => <!ENTITY % Shape "(rect|circle|poly|default)">
+ *   writer.write_dtd_entity 'delta', '&#948;', false
+ *     # => <!ENTITY delta "&#948;">
  */
-static VALUE rxml_writer_write_dtd_internal_entity(VALUE self, VALUE pe, VALUE name, VALUE content)
+static VALUE rxml_writer_write_dtd_internal_entity(VALUE self, VALUE name, VALUE content, VALUE pe)
 {
     return numeric_rxml_writer_va_strings(self, pe, 2, xmlTextWriterWriteDTDInternalEntity, name, content);
 }
@@ -992,7 +978,7 @@ static VALUE rxml_writer_write_dtd_notation(VALUE self, VALUE name, VALUE pubid,
 /* call-seq:
  *    writer.set_quote_char(...) -> (true|false)
  *
- * Sets the character used for quoting attributes. Returns +false+ on failure.
+ * Sets the character used to quote attributes. Returns +false+ on failure.
  *
  * Notes:
  * - only " (default) and ' characters are valid

@@ -337,14 +337,15 @@ class TestWriter < Test::Unit::TestCase
     end
 
     def test_dtd_entity
+        # parameterized entity
         expected = '<!DOCTYPE html [<!ENTITY % special.pre "br | span | bdo | map"><!ENTITY % special "%special.pre; | object | img">]>'
 
         writer = XML::Writer.string
         dtd writer, 'html' do
-            assert(writer.start_dtd_entity 'special.pre')
+            assert(writer.start_dtd_entity 'special.pre', true)
                 assert(writer.write_string 'br | span | bdo | map')
             assert(writer.end_dtd_entity)
-            assert(writer.start_dtd_entity 'special')
+            assert(writer.start_dtd_entity 'special', true)
                 assert(writer.write_string '%special.pre; | object | img')
             assert(writer.end_dtd_entity)
         end
@@ -352,14 +353,44 @@ class TestWriter < Test::Unit::TestCase
 
         writer = XML::Writer.string
         dtd writer, 'html' do
-            assert(writer.write_dtd_internal_entity true, 'special.pre', 'br | span | bdo | map')
-            assert(writer.write_dtd_internal_entity true, 'special', '%special.pre; | object | img')
+            assert(writer.write_dtd_internal_entity 'special.pre', 'br | span | bdo | map', true)
+            assert(writer.write_dtd_internal_entity 'special', '%special.pre; | object | img', true)
+        end
+        assert_equal(writer.result, expected)
+
+        # non parameterized entity
+        expected = '<!DOCTYPE html [<!ENTITY Alpha "&#913;">]>'
+
+        writer = XML::Writer.string
+        dtd writer, 'html' do
+            assert(writer.start_dtd_entity 'Alpha')
+                assert(writer.write_string '&#913;')
+            assert(writer.end_dtd_entity)
+        end
+        assert_equal(writer.result, expected)
+
+        writer = XML::Writer.string
+        dtd writer, 'html' do
+            assert(writer.start_dtd_entity 'Alpha', false)
+                assert(writer.write_string '&#913;')
+            assert(writer.end_dtd_entity)
+        end
+        assert_equal(writer.result, expected)
+
+        writer = XML::Writer.string
+        dtd writer, 'html' do
+            assert(writer.write_dtd_internal_entity 'Alpha', '&#913;', false)
         end
         assert_equal(writer.result, expected)
     end
 
     def test_dtd_notation
-        #
+        writer = XML::Writer.string
+        dtd writer, 'pictures' do
+            assert(writer.write_dtd_notation 'GIF89a', '-//Compuserve//NOTATION Graphics Interchange Format 89a//EN', nil)
+            assert(writer.write_dtd_external_entity 'pictures', nil, 'images/plage.gif', 'GIF89a', false)
+        end
+        assert_equal(writer.result, '<!DOCTYPE pictures [<!NOTATION GIF89a PUBLIC "-//Compuserve//NOTATION Graphics Interchange Format 89a//EN"><!ENTITY pictures SYSTEM "images/plage.gif" NDATA GIF89a>]>')
     end
 
     def test_encoding
