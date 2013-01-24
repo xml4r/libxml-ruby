@@ -103,6 +103,8 @@ need libxml2.
 EOL
 end
 
+have_func('rb_io_bufwrite', 'ruby/io.h')
+
 # For FreeBSD add /usr/local/include
 $INCFLAGS << " -I/usr/local/include"
 
