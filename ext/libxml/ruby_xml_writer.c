@@ -15,13 +15,12 @@
 # include <libxml/xmlwriter.h>
 
 # include "ruby_libxml.h"
+# include "ruby_xml_io.h"
 # include "ruby_xml_document.h"
 # include "ruby_xml_writer.h"
 
-# include <ruby/io.h>
-
 VALUE cXMLWriter;
-static ID sEncoding, sStandalone;
+static VALUE sEncoding, sStandalone;
 
 typedef enum {
     RXMLW_OUTPUT_NONE,
@@ -124,7 +123,7 @@ xmlCharEncodingHandlerPtr xmlFindCharEncodingHandler(const char * name);
     rwo->output = io;
     rwo->buffer = NULL;
     rwo->output_type = RXMLW_OUTPUT_IO;
-    if (NULL == (out = xmlOutputBufferCreateIO((xmlOutputWriteCallback) rb_io_bufwrite, NULL, (void *) io, NULL))) {
+    if (NULL == (out = xmlOutputBufferCreateIO(rxml_write_callback, NULL, (void *) io, NULL))) {
         rxml_raise(&xmlLastError);
     }
     if (NULL == (rwo->writer = xmlNewTextWriter(out))) {
