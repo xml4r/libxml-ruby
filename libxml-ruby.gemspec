@@ -40,4 +40,5 @@ Gem::Specification.new do |spec|
   spec.test_files = Dir.glob("test/tc_*.rb")
   spec.required_ruby_version = '>= 1.8.6'
   spec.date = DateTime.now
+  spec.add_development_dependency('hanna_guado')
 end

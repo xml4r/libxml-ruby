@@ -30,14 +30,15 @@ The easiest way to install libxml-ruby is via Ruby Gems.  To install:
 <tt>gem install libxml-ruby</tt>
 
 If you are running Windows, make sure to install the Win32 RubyGem
-which includes prebuilt extensions for Ruby 1.8 and Ruby 1.9.  These
-extensions are built with MinGW32 against libxml2 version 2.7.8,
+which includes prebuilt extensions for Ruby 1.8, 1.9 and 2.0 preview.  These
+extensions are built with MinGW32 against libxml2 version 2.9.0,
 iconv version 1.13 and zlib version 1.2.5.  Note these binaries
 are available in the lib\libs directory.  To use them, put them
 someplace on your path.
 
-The gem also includes a Microsoft VC++ 2010
-solution (useful for debugging).
+The gem also includes a Microsoft VC++ 2012 solution (useful for debugging).
+
+libxml-ruby's source codes lives on Github at https://github.com/xml4r/libxml-ruby.
 
 == Getting Started
 Using libxml is easy. First decide what parser you want to use:
@@ -72,11 +73,11 @@ This can be done using libxml's powerful set of validators:
 
 Finally, if you'd like to use XSL Transformations to process data,
 then install the libxslt gem which is available at
-http://rubyforge.org/projects/libxsl/.
+https://github.com/xml4r/libxslt-ruby.
 
 == Usage
 For information about using libxml-ruby please refer to its documentation at
-http://xml4r.github.com/libxml-ruby/rdoc/index.html Some tutorials are also
+http://xml4r.github.com/libxml-ruby/rdoc/index.html. Some tutorials are also
 available at https://github.com/xml4r/libxml-ruby/wiki.
 
 All libxml classes are in the LibXML::XML module. The easiest
@@ -165,25 +166,19 @@ From https://svn.concord.org/svn/projects/trunk/common/ruby/xml_benchmarks/
 Documentation is available via rdoc, and is installed automatically with the
 gem.
 
-libxml-ruby's online documentation is generated using Hanna.  To generate
-documentation from source:
-
-  gem install hanna
-  rake rdoc
+libxml-ruby's online documentation is generated using Hanna, which is a
+development gem dependency.
 
 Note that older versions of Rdoc, which ship with Ruby 1.8.x, will report
-a number of errors.  To avoid them, install Rdoc 2.1 or higher from
-RubyForge (http://rdoc.rubyforge.org/).  Once you have installed the gem,
-you'll have to disable the version of Rdoc that Ruby 1.8.x includes.  An
-easy way to do that is rename the directory uby/lib/ruby/1.8/rdoc to
+a number of errors.  To avoid them, install Rdoc 2.1 or higher.  Once you have
+installed the gem, you'll have to disable the version of Rdoc that Ruby 1.8.x
+includes.  An easy way to do that is rename the directory uby/lib/ruby/1.8/rdoc to
 ruby/lib/ruby/1.8/rdoc_old.
 
 == Support
 
-If you have any questions about using libxml-ruby, please send them to
-libxml-devel@rubyforge.org.  If you have found any bugs in libxml-devel,
-or have developed new patches, please submit them to Git Hub at
-https://github.com/xml4r/libxml-ruby/issues.
+If you have any questions about using libxml-ruby, please repor them to
+Git Hub at https://github.com/xml4r/libxml-ruby/issues.
 
 == License
 See LICENSE for license information.

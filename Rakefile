@@ -56,7 +56,7 @@ RDoc::Task.new("rdoc") do |rdoc|
   rdoc.rdoc_dir = 'doc/libxml-ruby/rdoc'
   rdoc.title    = "LibXML"
   # Show source inline with line numbers
-  rdoc.options << "--line-numbers"
+  rdoc.options << "--line-numbers -f hanna"
   # Make the readme file the start page for the generated html
   rdoc.main = 'README.rdoc'
   rdoc.rdoc_files.include('doc/*.rdoc',
