@@ -3,44 +3,187 @@ layout: post
 title: Libxml - Introduction
 ---
 
-## Welcome to LibXml Ruby
-The <span style="color: red;">Libxml-Ruby</span> project provides Ruby
-language bindings for the <a href="http://xmlsoft.org">GNOME Libxml2 XML toolkit</a>.
-It is free software, released under the <a href="license.xml">MIT License</a>.
+# LibXML Ruby
 
-Libxml-ruby's primary advantage over REXML is performance - if speed is your need,
-these are good libraries to consider, as demonstrated by the informal benchmark below.
+## Overview
+The libxml gem provides Ruby language bindings for GNOME's Libxml2
+XML toolkit. It is free software, released under the MIT License.
 
-<table border="1" style="border: 1px solid red; margin: 30px;">
-    <tr><td colspan="3"><b>Speed Comparison libxml vs. rexml</b></td></tr>
-    <tr><th> in seconds    </th><th> libxml   </th><th> rexml    </th></tr>
-    <tr><td> opening       </td><td> 0.003954 </td><td> 0.104750 </td></tr>
-    <tr><td> attribute_add </td><td> 0.001895 </td><td> 0.011114 </td></tr>
-    <tr><td> subelems      </td><td> 0.000585 </td><td> 0.004729 </td></tr>
-    <tr><td> xpath         </td><td> 0.013269 </td><td> 2.981499 </td></tr>
-</table>
+We think libxml-ruby is the best XML library for Ruby because:
+
+* Speed - Its much faster than REXML and Hpricot
+* Features - It provides an amazing number of featues
+* Conformance - It passes all 1800+ tests from the OASIS XML Tests Suite
+
+## Requirements
+libxml-ruby requires Ruby 1.8.4 or higher.  It is dependent on
+the following libraries to function properly:
+
+* libm      (math routines: very standard)
+* libz      (zlib)
+* libiconv
+* libxml2
+
+If you are running Linux or Unix you'll need a C compiler so the
+extension can be compiled when it is installed.  If you are running
+Windows, then install the Windows specific RubyGem which
+includes an already built extension.
+
+## INSTALLATION
+The easiest way to install libxml-ruby is via Ruby Gems.  To install:
+
+<tt>gem install libxml-ruby</tt>
+
+If you are running Windows, make sure to install the Win32 RubyGem
+which includes prebuilt extensions for Ruby 1.8, 1.9 and 2.0 preview.  These
+extensions are built with MinGW32 against libxml2 version 2.9.0,
+iconv version 1.13 and zlib version 1.2.5.  Note these binaries
+are available in the lib\libs directory.  To use them, put them
+someplace on your path.
+
+The gem also includes a Microsoft VC++ 2012 solution (useful for debugging).
+
+libxml-ruby's source codes lives on Github at [https://github.com/xml4r/libxml-ruby](https://github.com/xml4r/libxml-ruby).
+
+## Getting Started
+Using libxml is easy. First decide what parser you want to use:
+
+* Generally you'll want to use the LibXML::XML::Parser which provides a tree based API.
+* For larger documents that don't fit into memory, or if you prefer an input based API, use the LibXML::XML::Reader.
+* To parse HTML files use LibXML::XML::HTMLParser.
+* If you are masochistic, then use the LibXML::XML::SaxParser, which provides a callback API.
+
+Once you have chosen a parser, choose a datasource.  Libxml can parse files, strings, URIs
+and IO streams.  For each data source you can specify an LibXML::XML::Encoding, a base uri and
+various parser options.  For more information, refer the LibXML::XML::Parser.document,
+LibXML::XML::Parser.file, LibXML::XML::Parser.io or LibXML:::XML::Parser.string methods (the
+same methods are defined on all four parser classes).
+
+## Advanced Functionality
+Beyond the basics of parsing and processing XML and HTML documents,
+libxml provides a wealth of additional functionality.
+
+Most commonly, you'll want to use its LibXML::XML::XPath support, which makes
+it easy to find data inside a XML document.  Although not as popular,
+LibXML::XML::XPointer provides another API for finding data inside an XML document.
+
+Often times you'll need to validate data before processing it. For example,
+if you accept user generated content submitted over the Web, you'll
+want to verify that it does not contain malicious code such as embedded scripts.
+This can be done using libxml's powerful set of validators:
+
+* DTDs (LibXML::XML::Dtd)
+* Relax Schemas (LibXML::XML::RelaxNG)
+* XML Schema (LibXML::XML::Schema)
+
+Finally, if you'd like to use XSL Transformations to process data,
+then install the libxslt gem which is available at
+[https://github.com/xml4r/libxslt-ruby](https://github.com/xml4r/libxslt-ruby).
+
+## Usage
+For information about using libxml-ruby please refer to its documentation at
+[http://xml4r.github.com/libxml-ruby/rdoc/index.html](http://xml4r.github.com/libxml-ruby/rdoc/index.html). Some tutorials are also
+available at [https://github.com/xml4r/libxml-ruby/wiki](https://github.com/xml4r/libxml-ruby/wiki).
+
+All libxml classes are in the LibXML::XML module. The easiest
+way to use libxml is to require 'xml'.  This will mixin
+the LibXML module into the global namespace, allowing you to
+write code like this:
+
+  require 'xml'
+  document # XML::Document.new
+
+However, when creating an application or library you plan to
+redistribute, it is best to not add the LibXML module to the global
+namespace, in which case you can either write your code like this:
+
+  require 'libxml'
+  document # LibXML::XML::Document.new
+
+Or you can utilize a namespace for your own work and include LibXML into it.
+For example:
+
+  require 'libxml'
+
+  module MyApplication
+    include LibXML
+
+    class MyClass
+      def some_method
+        document # XML::Document.new
+      end
+    end
+  end
+
+For simplicity's sake, the documentation uses the xml module in its examples.
+
+## Memory Management
+libxml-ruby automatically manages memory associated with the
+underlying libxml2 library.  There is however one corner case that
+your code must handle.  If a node is imported into a document, but not
+added to the document, a segmentation fault may occur on program termination.
+
+  # Do NOT do this
+  require 'xml'
+  doc1 # XML::Document.string("test1")
+  doc2 # XML::Document.string("test2")
+  node # doc2.import(doc1.root)
+
+If doc2 is freed before node2 a segmentatin fault will occur since
+node2 references the document.  To avoid this, simply make sure to add the
+node to the document:
+
+  # DO this instead
+  doc1 # XML::Document.string("test1")
+  doc2 # XML::Document.string("test2")
+  doc2.root << doc2.import(doc1.root)
+
+Alternatively, you can call node2.remove! to disassociate node2 from doc2.
+
+## Threading
+libxml-ruby fully supports native, background Ruby threads.  This of course
+only applies to Ruby 1.9.x and higher since earlier versions of Ruby do not
+support native threads.
+
+## Performance
+In addition to being feature rich and conformation, the main reason
+people use libxml-ruby is for performance.  Here are the results
+of a couple simple benchmarks recently blogged about on the
+Web (you can find them in the benchmark directory of the
+libxml distribution).
+
+From [http://depixelate.com/2008/4/23/ruby-xml-parsing-benchmarks](http://depixelate.com/2008/4/23/ruby-xml-parsing-benchmarks).
+
+               user     system      total        real
+ libxml    0.032000   0.000000   0.032000 (  0.031000)
+ Hpricot   0.640000   0.031000   0.671000 (  0.890000)
+ REXML     1.813000   0.047000   1.860000 (  2.031000)
+
+From [https://svn.concord.org/svn/projects/trunk/common/ruby/xml_benchmarks/](https://svn.concord.org/svn/projects/trunk/common/ruby/xml_benchmarks/)
+
+               user     system      total        real
+ libxml    0.641000   0.031000   0.672000 (  0.672000)
+ hpricot   5.359000   0.062000   5.421000 (  5.516000)
+ rexml    22.859000   0.047000  22.906000 ( 23.203000)
 
 
-## Installation
-Installation is very simple - just issue the appropriate command, e.g:
+## Documentation
+Documentation is available via rdoc, and is installed automatically with the
+gem.
 
-      gem install -r libxml-ruby
+libxml-ruby's online documentation is generated using Hanna, which is a
+development gem dependency.
 
-Note that depending on your setup you may need to run this as root:
+Note that older versions of Rdoc, which ship with Ruby 1.8.x, will report
+a number of errors.  To avoid them, install Rdoc 2.1 or higher.  Once you have
+installed the gem, you'll have to disable the version of Rdoc that Ruby 1.8.x
+includes.  An easy way to do that is rename the directory ruby/lib/ruby/1.8/rdoc to
+ruby/lib/ruby/1.8/rdoc_old.
 
-      su -c 'gem install -r libxml-ruby'
+## Support
 
-During installation Gems should build and install the extension to the correct location.
+If you have any questions about using libxml-ruby, please report them to
+Git Hub at [https://github.com/xml4r/libxml-ruby/issues](https://github.com/xml4r/libxml-ruby/issues)
 
-## Windows Support
-libxml-ruby comes with prebuilt Windows binaries for both Ruby 1.8 and 1.9.
-
-
-## Prerequisites
-libxml requires a few other libraries to be installed in order to build and function properly.
-
-	  * libm      (math routines: very standard)
-	  * libz      (zlib)
-	  * libiconv
-	  * libxml2
-	
+## License
+See LICENSE for license information.

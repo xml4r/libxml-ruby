@@ -53,7 +53,7 @@ end
 # RDoc Task
 desc "Generate rdoc documentation"
 RDoc::Task.new("rdoc") do |rdoc|
-  rdoc.rdoc_dir = 'doc/libxml-ruby/rdoc'
+  rdoc.rdoc_dir = 'website/_site/rdoc'
   rdoc.title    = "LibXML"
   # Show source inline with line numbers
   rdoc.options << "--line-numbers"

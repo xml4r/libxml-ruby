@@ -172,12 +172,12 @@ development gem dependency.
 Note that older versions of Rdoc, which ship with Ruby 1.8.x, will report
 a number of errors.  To avoid them, install Rdoc 2.1 or higher.  Once you have
 installed the gem, you'll have to disable the version of Rdoc that Ruby 1.8.x
-includes.  An easy way to do that is rename the directory uby/lib/ruby/1.8/rdoc to
+includes.  An easy way to do that is rename the directory ruby/lib/ruby/1.8/rdoc to
 ruby/lib/ruby/1.8/rdoc_old.
 
 == Support
 
-If you have any questions about using libxml-ruby, please repor them to
+If you have any questions about using libxml-ruby, please report them to
 Git Hub at https://github.com/xml4r/libxml-ruby/issues
 
 == License

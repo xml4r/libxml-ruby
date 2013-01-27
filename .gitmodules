@@ -1,0 +1,3 @@
+[submodule "website/_site"]
+	path = website/_site
+	url = git@github.com:xml4r/libxml-ruby.git
