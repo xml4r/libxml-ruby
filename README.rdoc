@@ -178,7 +178,7 @@ ruby/lib/ruby/1.8/rdoc_old.
 == Support
 
 If you have any questions about using libxml-ruby, please repor them to
-Git Hub at https://github.com/xml4r/libxml-ruby/issues.
+Git Hub at https://github.com/xml4r/libxml-ruby/issues
 
 == License
 See LICENSE for license information.
