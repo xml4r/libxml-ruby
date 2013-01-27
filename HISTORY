@@ -1,5 +1,19 @@
 = Release History
 
+== 2.5.0 / 2013-01-27 Charlie Savage
+
+* Compatibility with older versions for IO::write (rb_io_bufwrite is specific to ruby >= 1.9.3?)
+  and symbols are VALUE not ID (julp).
+* Fix version for xmlTextWriterSetQuoteChar, it appeared in libxml2 2.9.0, last version (julp)
+* Update use of LIBXML_VERSION (julp).
+* Fix misuse of rb_scan_args (julp).
+* Update documentation, including DTD docs and added XML Writer (julp).
+* Added a new XML::Writer class (julp).
+* Improved xml reader api and add namespace support.  Note that passing a numeric value
+  to XML::Reader::move_to_attribute has been deprecated. Instead you should now
+  use #move_to_attribute_no.  (julp).
+* Improve error handling and messages (Jarl Friis)
+
 == 2.4.0 / 2012-12-14 Charlie Savage
 
 * Support libxml 2.9.0 (Daniel Veillard)

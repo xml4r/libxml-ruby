@@ -279,7 +279,6 @@ static VALUE numeric_rxml_writer_va_strings(VALUE obj, VALUE pe, size_t strings_
 {
     va_list ap;
     int argc, ret;
-    const char *p;
     rxml_writer_object *rwo;
     const xmlChar *argv[XMLWRITER_MAX_STRING_ARGS];
     VALUE utf8[XMLWRITER_MAX_STRING_ARGS], orig[XMLWRITER_MAX_STRING_ARGS];

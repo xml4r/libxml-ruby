@@ -4,8 +4,7 @@ require 'test/unit'
 
 class SaxEncodingCallbacks
   attr_reader :encoding
-  #include Test::Unit::Assertions
-  include MiniTest::Assertions
+  include Test::Unit::Assertions
 
   def initialize
     @encoding = Encoding::UTF_8

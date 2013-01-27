@@ -15,7 +15,7 @@
  * The XML::Schema class is used to prepare XML Schemas for validation of xml
  * documents.
  *
- * Schemas can be created from XML documents, strings or URIs using the
+ * Schemas can be created from XML documents, strinings or URIs using the
  * corresponding methods (new for URIs).
  *
  * Once a schema is prepared, an XML document can be validated by the
