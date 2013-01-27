@@ -76,6 +76,3 @@ Rake::TestTask.new do |t|
   t.libs << "test"
   t.verbose = true
 end
-
-desc "Build docs, and publish the website"
-task :publish_with_docs => [:rdoc, :publish]
