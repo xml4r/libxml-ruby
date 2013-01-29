@@ -1067,6 +1067,8 @@ void rxml_init_writer(void)
     rb_define_method(cXMLWriter, "write_pi", rxml_writer_write_pi, 2);
 
     rb_define_method(cXMLWriter, "result", rxml_writer_result, 0);
+
+    rb_undef_method(CLASS_OF(cXMLWriter), "new");
 }
 
 #endif /* LIBXML_WRITER_ENABLED */
