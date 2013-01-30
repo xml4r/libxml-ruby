@@ -415,6 +415,17 @@ class TestWriter < Test::Unit::TestCase
     assert_equal(writer.result.strip, '<foo/>')
   end
 
+  def test_nil_pe_issue
+    expected = '<!DOCTYPE html [<!ENTITY special.pre "br | span | bdo | map"><!ENTITY special "%special.pre; | object | img">]>'
+
+    writer = XML::Writer.string
+    dtd writer, 'html' do
+      assert(writer.write_dtd_internal_entity 'special.pre', 'br | span | bdo | map', nil)
+      assert(writer.write_dtd_internal_entity 'special', '%special.pre; | object | img', nil)
+    end
+    assert_equal(writer.result, expected)
+  end
+
   private
 
   def document(writer, options = {})

@@ -302,7 +302,7 @@ static VALUE numeric_rxml_writer_void(VALUE obj, int (*fn)(xmlTextWriterPtr))
 }
 
 # define numeric_rxml_writer_string(/*VALUE*/ obj, /*VALUE*/ name_or_content, /*int (**/fn/*)(xmlTextWriterPtr, const xmlChar *)*/) \
-    numeric_rxml_writer_va_strings(obj, Qnil, 1, fn, name_or_content)
+    numeric_rxml_writer_va_strings(obj, Qundef, 1, fn, name_or_content)
 
 /**
  * This is quite ugly but thanks to libxml2 coding style, all xmlTextWriter*
@@ -342,7 +342,7 @@ static VALUE numeric_rxml_writer_va_strings(VALUE obj, VALUE pe, size_t strings_
     }
     va_end(ap);
 
-    if (NIL_P(pe)) {
+    if (Qundef == pe) {
         switch (strings_count) {
             case 0:
                 ret = fn(rwo->writer);
@@ -487,7 +487,7 @@ static VALUE rxml_writer_write_element(int argc, VALUE *argv, VALUE self)
         }
         return rxml_writer_end_element(self);
     } else {
-        return numeric_rxml_writer_va_strings(self, Qnil, 2, xmlTextWriterWriteElement, name, content);
+        return numeric_rxml_writer_va_strings(self, Qundef, 2, xmlTextWriterWriteElement, name, content);
     }
 }
 
@@ -521,7 +521,7 @@ static VALUE rxml_writer_write_element_ns(int argc, VALUE *argv, VALUE self)
         }
         return rxml_writer_end_element(self);
     } else {
-        return numeric_rxml_writer_va_strings(self, Qnil, 4, xmlTextWriterWriteElementNS, prefix, name, namespaceURI, content);
+        return numeric_rxml_writer_va_strings(self, Qundef, 4, xmlTextWriterWriteElementNS, prefix, name, namespaceURI, content);
     }
 }
 
@@ -533,7 +533,7 @@ static VALUE rxml_writer_write_element_ns(int argc, VALUE *argv, VALUE self)
  */
 static VALUE rxml_writer_write_attribute(VALUE self, VALUE name, VALUE content)
 {
-    return numeric_rxml_writer_va_strings(self, Qnil, 2, xmlTextWriterWriteAttribute, name, content);
+    return numeric_rxml_writer_va_strings(self, Qundef, 2, xmlTextWriterWriteAttribute, name, content);
 }
 
 /* call-seq:
@@ -556,7 +556,7 @@ static VALUE rxml_writer_write_attribute_ns(int argc, VALUE *argv, VALUE self)
 
     rb_scan_args(argc, argv, "22", &prefix, &name, &namespaceURI, &content);
 
-    return numeric_rxml_writer_va_strings(self, Qnil, 4, xmlTextWriterWriteAttributeNS, prefix, name, namespaceURI, content);
+    return numeric_rxml_writer_va_strings(self, Qundef, 4, xmlTextWriterWriteAttributeNS, prefix, name, namespaceURI, content);
 }
 
 /* call-seq:
@@ -567,7 +567,7 @@ static VALUE rxml_writer_write_attribute_ns(int argc, VALUE *argv, VALUE self)
  */
 static VALUE rxml_writer_write_pi(VALUE self, VALUE target, VALUE content)
 {
-    return numeric_rxml_writer_va_strings(self, Qnil, 2, xmlTextWriterWritePI, target, content);
+    return numeric_rxml_writer_va_strings(self, Qundef, 2, xmlTextWriterWritePI, target, content);
 }
 
 /* ===== public start/end interface ===== */
@@ -622,7 +622,7 @@ static VALUE rxml_writer_start_attribute_ns(int argc, VALUE *argv, VALUE self)
 
     rb_scan_args(argc, argv, "21", &prefix, &name, &namespaceURI);
 
-    return numeric_rxml_writer_va_strings(self, Qnil, 3, xmlTextWriterStartAttributeNS, prefix, name, namespaceURI);
+    return numeric_rxml_writer_va_strings(self, Qundef, 3, xmlTextWriterStartAttributeNS, prefix, name, namespaceURI);
 }
 
 /* call-seq:
@@ -685,7 +685,7 @@ static VALUE rxml_writer_start_element_ns(int argc, VALUE *argv, VALUE self)
 
     rb_scan_args(argc, argv, "21", &prefix, &name, &namespaceURI);
 
-    return numeric_rxml_writer_va_strings(self, Qnil, 3, xmlTextWriterStartElementNS, prefix, name, namespaceURI);
+    return numeric_rxml_writer_va_strings(self, Qundef, 3, xmlTextWriterStartElementNS, prefix, name, namespaceURI);
 }
 
 /* call-seq:
@@ -818,7 +818,7 @@ static VALUE rxml_writer_start_dtd(int argc, VALUE *argv, VALUE self)
 
     rb_scan_args(argc, argv, "12", &name, &pubid, &sysid);
 
-    return numeric_rxml_writer_va_strings(self, Qnil, 3, xmlTextWriterStartDTD, name, pubid, sysid);
+    return numeric_rxml_writer_va_strings(self, Qundef, 3, xmlTextWriterStartDTD, name, pubid, sysid);
 }
 
 /* call-seq:
@@ -923,7 +923,7 @@ static VALUE rxml_writer_write_dtd(int argc, VALUE *argv, VALUE self)
 
     rb_scan_args(argc, argv, "13", &name, &pubid, &sysid, &subset);
 
-    return numeric_rxml_writer_va_strings(self, Qnil, 4, xmlTextWriterWriteDTD, name, pubid, sysid, subset);
+    return numeric_rxml_writer_va_strings(self, Qundef, 4, xmlTextWriterWriteDTD, name, pubid, sysid, subset);
 }
 
 /* call-seq:
@@ -935,7 +935,7 @@ static VALUE rxml_writer_write_dtd(int argc, VALUE *argv, VALUE self)
  */
 static VALUE rxml_writer_write_dtd_attlist(VALUE self, VALUE name, VALUE content)
 {
-    return numeric_rxml_writer_va_strings(self, Qnil, 2, xmlTextWriterWriteDTDAttlist, name, content);
+    return numeric_rxml_writer_va_strings(self, Qundef, 2, xmlTextWriterWriteDTDAttlist, name, content);
 }
 
 /* call-seq:
@@ -947,7 +947,7 @@ static VALUE rxml_writer_write_dtd_attlist(VALUE self, VALUE name, VALUE content
  */
 static VALUE rxml_writer_write_dtd_element(VALUE self, VALUE name, VALUE content)
 {
-    return numeric_rxml_writer_va_strings(self, Qnil, 2, xmlTextWriterWriteDTDElement, name, content);
+    return numeric_rxml_writer_va_strings(self, Qundef, 2, xmlTextWriterWriteDTDElement, name, content);
 }
 
 /* call-seq:
@@ -984,7 +984,7 @@ static VALUE rxml_writer_write_dtd_external_entity(VALUE self, VALUE name, VALUE
  */
 static VALUE rxml_writer_write_dtd_external_entity_contents(VALUE self, VALUE pubid, VALUE sysid, VALUE ndataid)
 {
-    return numeric_rxml_writer_va_strings(self, Qnil, 3, xmlTextWriterWriteDTDExternalEntityContents, pubid, sysid, ndataid);
+    return numeric_rxml_writer_va_strings(self, Qundef, 3, xmlTextWriterWriteDTDExternalEntityContents, pubid, sysid, ndataid);
 }
 
 /* call-seq:
@@ -1010,7 +1010,7 @@ static VALUE rxml_writer_write_dtd_internal_entity(VALUE self, VALUE name, VALUE
  */
 static VALUE rxml_writer_write_dtd_notation(VALUE self, VALUE name, VALUE pubid, VALUE sysid)
 {
-    return numeric_rxml_writer_va_strings(self, Qnil, 3, xmlTextWriterWriteDTDNotation, name, pubid, sysid);
+    return numeric_rxml_writer_va_strings(self, Qundef, 3, xmlTextWriterWriteDTDNotation, name, pubid, sysid);
 }
 
 # if LIBXML_VERSION >= 20900
