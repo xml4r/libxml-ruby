@@ -15,8 +15,6 @@
 # include <libxml/xmlwriter.h>
 
 # include "ruby_libxml.h"
-# include "ruby_xml_io.h"
-# include "ruby_xml_document.h"
 # include "ruby_xml_writer.h"
 
 VALUE cXMLWriter;
@@ -31,6 +29,9 @@ typedef enum {
 
 typedef struct {
     VALUE output;
+# ifdef HAVE_RUBY_ENCODING_H
+    rb_encoding *encoding;
+# endif /* HAVE_RUBY_ENCODING_H */
     xmlBufferPtr buffer;
     xmlTextWriterPtr writer;
     rxmlw_output_type output_type;
@@ -122,6 +123,9 @@ xmlCharEncodingHandlerPtr xmlFindCharEncodingHandler(const char * name);
     rwo = ALLOC(rxml_writer_object);
     rwo->output = io;
     rwo->buffer = NULL;
+# ifdef HAVE_RUBY_ENCODING_H
+    rwo->encoding = NULL;
+# endif /* HAVE_RUBY_ENCODING_H */
     rwo->output_type = RXMLW_OUTPUT_IO;
     if (NULL == (out = xmlOutputBufferCreateIO(rxml_write_callback, NULL, (void *) io, NULL))) {
         rxml_raise(&xmlLastError);
@@ -147,6 +151,9 @@ static VALUE rxml_writer_file(VALUE klass, VALUE filename)
     rwo = ALLOC(rxml_writer_object);
     rwo->output = Qnil;
     rwo->buffer = NULL;
+# ifdef HAVE_RUBY_ENCODING_H
+    rwo->encoding = NULL;
+# endif /* HAVE_RUBY_ENCODING_H */
     rwo->output_type = RXMLW_OUTPUT_NONE;
     if (NULL == (rwo->writer = xmlNewTextWriterFilename(StringValueCStr(filename), 0))) {
         rxml_raise(&xmlLastError);
@@ -166,6 +173,9 @@ static VALUE rxml_writer_string(VALUE klass)
 
     rwo = ALLOC(rxml_writer_object);
     rwo->output = Qnil;
+# ifdef HAVE_RUBY_ENCODING_H
+    rwo->encoding = NULL;
+# endif /* HAVE_RUBY_ENCODING_H */
     rwo->output_type = RXMLW_OUTPUT_STRING;
     if (NULL == (rwo->buffer = xmlBufferCreate())) {
         rxml_raise(&xmlLastError);
@@ -191,6 +201,9 @@ static VALUE rxml_writer_doc(VALUE klass)
     rwo = ALLOC(rxml_writer_object);
     rwo->buffer = NULL;
     rwo->output = Qnil;
+# ifdef HAVE_RUBY_ENCODING_H
+    rwo->encoding = NULL;
+# endif /* HAVE_RUBY_ENCODING_H */
     rwo->output_type = RXMLW_OUTPUT_DOC;
     if (NULL == (rwo->writer = xmlNewTextWriterDoc(&doc, 0))) {
         rxml_raise(&xmlLastError);
@@ -203,19 +216,41 @@ static VALUE rxml_writer_doc(VALUE klass)
 /* ===== public instance methods ===== */
 
 /* call-seq:
- *    writer.flush -> (true|false)
+ *    writer.flush(empty? = true) -> (num|string)
  *
- * Flushes the output buffer.
+ * Flushes the output buffer. Returns the number of written bytes or
+ * the current content of the internal buffer for a in memory XML::Writer.
+ * If +empty?+ is +true+, and for a in memory XML::Writer, this internel
+ * buffer is empty.
  */
-static VALUE rxml_writer_flush(VALUE self)
+static VALUE rxml_writer_flush(int argc, VALUE *argv, VALUE self)
 {
     int ret;
+    VALUE empty;
     rxml_writer_object *rwo;
 
-    rwo = rxml_textwriter_get(self);
-    ret = xmlTextWriterFlush(rwo->writer);
+    rb_scan_args(argc, argv, "01", &empty);
 
-    return (-1 == ret ? Qfalse : Qtrue);
+    rwo = rxml_textwriter_get(self);
+    if (-1 == (ret = xmlTextWriterFlush(rwo->writer))) {
+        rxml_raise(&xmlLastError);
+    }
+    if (NULL != rwo->buffer) {
+        VALUE content;
+
+# ifdef HAVE_RUBY_ENCODING_H
+        content = rb_external_str_new_with_enc(rwo->buffer->content, rwo->buffer->use, rwo->encoding);
+# else
+        content = rb_str_new(rwo->buffer->content, rwo->buffer->use);
+# endif /* HAVE_RUBY_ENCODING_H */
+        if (NIL_P(empty) || RTEST(empty)) { /* nil = default value = true */
+            xmlBufferEmpty(rwo->buffer);
+        }
+
+        return content;
+    } else {
+        return INT2NUM(ret);
+    }
 }
 
 /* call-seq:
@@ -232,6 +267,9 @@ static VALUE rxml_writer_result(VALUE self)
 
     ret = Qnil;
     rwo = rxml_textwriter_get(self);
+    if (-1 == (ret = xmlTextWriterFlush(rwo->writer))) {
+        rxml_raise(&xmlLastError);
+    }
     switch (rwo->output_type) {
         case RXMLW_OUTPUT_DOC:
             ret = rwo->output;
@@ -731,6 +769,9 @@ static VALUE rxml_writer_start_document(int argc, VALUE *argv, VALUE self)
         }
     }
     rwo = rxml_textwriter_get(self);
+# ifdef HAVE_RUBY_ENCODING_H
+    rwo->encoding = rxml_figure_encoding(xencoding);
+# endif /* !HAVE_RUBY_ENCODING_H */
     ret = xmlTextWriterStartDocument(rwo->writer, NULL, xencoding, xstandalone);
 
     return (-1 == ret ? Qfalse : Qtrue);
@@ -1017,7 +1058,7 @@ void rxml_init_writer(void)
 # if LIBXML_VERSION >= 20900
     rb_define_method(cXMLWriter, "set_quote_char", rxml_writer_set_quote_char, 1);
 # endif  /* LIBXML_VERSION >= 20900 */
-    rb_define_method(cXMLWriter, "flush", rxml_writer_flush, 0);
+    rb_define_method(cXMLWriter, "flush", rxml_writer_flush, -1);
     rb_define_method(cXMLWriter, "start_dtd", rxml_writer_start_dtd, -1);
     rb_define_method(cXMLWriter, "start_dtd_entity", rxml_writer_start_dtd_entity, -1);
     rb_define_method(cXMLWriter, "start_dtd_attlist", rxml_writer_start_dtd_attlist, 1);

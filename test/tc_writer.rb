@@ -404,6 +404,17 @@ class TestWriter < Test::Unit::TestCase
     end
   end
 
+  def test_flush
+    writer = XML::Writer.string
+    assert(writer.start_document)
+    assert_equal(writer.flush.strip!, '<?xml version="1.0"?>')
+    assert(writer.start_element 'foo')
+    assert(writer.end_element)
+    assert(writer.end_document)
+    writer.flush false
+    assert_equal(writer.result.strip, '<foo/>')
+  end
+
   private
 
   def document(writer, options = {})
@@ -416,7 +427,6 @@ class TestWriter < Test::Unit::TestCase
     assert(writer.start_dtd name, pubid, sysid)
     yield if block_given?
     assert(writer.end_dtd)
-    writer.flush
   end
 
   def element(writer, localname)

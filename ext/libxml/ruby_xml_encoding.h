@@ -13,6 +13,7 @@ VALUE rxml_new_cstr_len(const char* xstr, const int length, const char* xencodin
 
 #ifdef HAVE_RUBY_ENCODING_H
 rb_encoding* rxml_xml_encoding_to_rb_encoding(VALUE klass, xmlCharEncoding xmlEncoding);
+rb_encoding* rxml_figure_encoding(const char* xencoding);
 #endif
 
 #endif
