@@ -1,5 +1,10 @@
 = Release History
 
+== 2.6.0 / 2013-02-16 Charlie Savage
+
+* Fix uninitialized constant LibXML::XML::Error::I18N (NameError) that occurred
+  with older versions of libxml.
+
 == 2.5.0 / 2013-01-27 Charlie Savage
 
 * Compatibility with older versions for IO::write (rb_io_bufwrite is specific to ruby >= 1.9.3?)
