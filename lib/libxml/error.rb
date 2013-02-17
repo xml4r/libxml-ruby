@@ -3,20 +3,24 @@
 module LibXML
   module XML
     class Error
-
-      DOMAIN_CODE_MAP =Hash.new.tap do |map|
-        ([:NO_ERROR, :PARSER, :TREE, :NAMESPACE, :DTD, :HTML, :MEMORY, :OUTPUT, :IO, :FTP, :HTTP, :XINCLUDE, :XPATH, :XPOINTER, :REGEXP, :DATATYPE, :SCHEMASP, :SCHEMASV, :RELAXNGP, :RELAXNGV, :CATALOG, :C14N, :XSLT, :VALID, :CHECK, :WRITER, :MODULE, :I18N, :SCHEMATRONV]
-         ).each do |code|
-          map[const_get(code)] = code.to_s.gsub(/XML_ERR_/, '')
+      # Create mapping from domain constant value to keys
+      DOMAIN_CODE_MAP = [:NO_ERROR, :PARSER, :TREE, :NAMESPACE, :DTD, :HTML, :MEMORY,
+                         :OUTPUT, :IO, :FTP, :HTTP, :XINCLUDE, :XPATH, :XPOINTER, :REGEXP,
+                         :DATATYPE, :SCHEMASP, :SCHEMASV, :RELAXNGP, :RELAXNGV, :CATALOG,
+                         :C14N, :XSLT, :VALID, :CHECK, :WRITER, :MODULE, :I18N, :SCHEMATRONV].inject(Hash.new) do |hash, code|
+        if const_defined?(code)
+          hash[const_get(code)] = code.to_s
         end
+        hash
       end
 
+      # Create mapping from domain constant value to keys
       ERROR_CODE_MAP = Hash.new.tap do |map|
         (constants -
          DOMAIN_CODE_MAP.values - #Domains
          [:NONE, :WARNING, :ERROR, :FATAL] # Levels
          ).each do |code|
-          map[const_get(code)] = code.to_s.gsub(/XML_ERR_/, '')
+          map[const_get(code)] = code.to_s
         end
       end
       
