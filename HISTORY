@@ -4,6 +4,7 @@
 
 * Fix uninitialized constant LibXML::XML::Error::I18N (NameError) that occurred
   with older versions of libxml.
+* Various updates/fixes to new XML::Writer class and update how flushing works (julp)
 
 == 2.5.0 / 2013-01-27 Charlie Savage
 
