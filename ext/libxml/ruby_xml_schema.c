@@ -89,6 +89,9 @@ static VALUE rxml_schema_init_from_document(VALUE class, VALUE document)
   xschema = xmlSchemaParse(xparser);
   xmlSchemaFreeParserCtxt(xparser);
 
+  if (xschema == NULL)
+    return Qnil;
+
   return Data_Wrap_Struct(cXMLSchema, NULL, rxml_schema_free, xschema);
 }
 
