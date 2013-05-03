@@ -59,9 +59,10 @@ VALUE rxml_xpath_object_wrap(xmlDocPtr xdoc, xmlXPathObjectPtr xpop)
 {
   int i;
   rxml_xpath_object *rxpop = ALLOC(rxml_xpath_object);
+  /* Make sure Ruby's GC can find the array in the stack */
+  VALUE nsnodes = rb_ary_new();
   rxpop->xdoc =xdoc;
   rxpop->xpop = xpop;
-  rxpop->nsnodes = rb_ary_new();
 
   /* Find all the extra namespace nodes and wrap them. */
   if (xpop->nodesetval && xpop->nodesetval->nodeNr)
@@ -83,11 +84,12 @@ VALUE rxml_xpath_object_wrap(xmlDocPtr xdoc, xmlXPathObjectPtr xpop)
            namespace nodes will not be freed */
         ns = rxml_namespace_wrap((xmlNsPtr)xnode);
         RDATA(ns)->dfree = (RUBY_DATA_FUNC)rxml_xpath_namespace_free;
-        rb_ary_push(rxpop->nsnodes, ns);
+        rb_ary_push(nsnodes, ns);
       }
     }
   }
 
+  rxpop->nsnodes = nsnodes;
   return Data_Wrap_Struct(cXMLXPathObject, rxml_xpath_object_mark, rxml_xpath_object_free, rxpop);
 }
 

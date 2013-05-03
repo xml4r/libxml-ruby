@@ -30,6 +30,18 @@ class TestXPath < Test::Unit::TestCase
     assert_equal(3, nodes.length)
   end
 
+  def test_ns_gc
+    _stress = GC.stress
+    GC.stress = true
+
+    doc = XML::Document.string('<foo xmlns="http://bar.com" />')
+    node = doc.root
+    # This line segfaults on prior versions of libxml-ruby
+    node.find("namespace::*")
+
+    GC.stress = _stress
+  end
+
   def test_ns_array
     nodes = @doc.find('//ns1:IdAndName', ['ns1:http://domain.somewhere.com'])
     assert_equal(3, nodes.length)
