@@ -250,7 +250,7 @@ class TestWriter < Test::Unit::TestCase
           assert(writer.end_attribute)
         end
       end
-      assert_equal(writer.result.strip!, "<?xml version=\"1.0\"?>\n<root><child abc='def'>ghi</child></root>")
+      assert(writer.result.strip!.end_with? "<root abc='def'/>")
     end
   end
 
