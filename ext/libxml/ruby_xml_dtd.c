@@ -123,11 +123,23 @@ static VALUE rxml_dtd_uri_get(VALUE self)
   xmlDtdPtr xdtd;
   Data_Get_Struct(self, xmlDtd, xdtd);
 
-
   if (xdtd->SystemID == NULL)
     return (Qnil);
   else
     return (rxml_new_cstr((const char*) xdtd->SystemID, NULL));
+}
+
+/*
+ * call-seq:
+ *    node.type -> num
+ *
+ * Obtain this node's type identifier.
+ */
+static VALUE rxml_dtd_type(VALUE self)
+{
+  xmlDtdPtr xdtd;
+  Data_Get_Struct(self, xmlDtd, xdtd);
+  return (INT2NUM(xdtd->type));
 }
 
 /*
@@ -251,7 +263,7 @@ void rxml_init_dtd()
   rb_define_method(cXMLDtd, "external_id", rxml_dtd_external_id_get, 0);
   rb_define_method(cXMLDtd, "name", rxml_dtd_name_get, 0);
   rb_define_method(cXMLDtd, "uri", rxml_dtd_uri_get, 0);
-
+  rb_define_method(cXMLDtd, "node_type", rxml_dtd_type, 0);
   rb_define_alias(cXMLDtd, "system_id", "uri");
 }
 

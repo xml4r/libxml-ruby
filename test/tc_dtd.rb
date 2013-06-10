@@ -63,6 +63,10 @@ class TestDtd < Test::Unit::TestCase
     assert(@doc.validate(dtd))
   end
 
+  def test_node_type
+    assert_equal(XML::Node::DTD_NODE, dtd.node_type)
+  end
+
   def test_invalid
     new_node = XML::Node.new('invalid', 'this will mess up validation')
     @doc.root << new_node
