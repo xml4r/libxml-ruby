@@ -52,6 +52,8 @@ module LibXML
         self.int2 == other.int2 and
         self.ctxt == other.ctxt and
         self.node == other.node
+      rescue
+        false
       end
 
       def level_to_s
