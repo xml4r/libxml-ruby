@@ -46,7 +46,7 @@ static void rxml_node_deregisterNode(xmlNodePtr xnode)
   if (xnode->_private)
   {
     /* Node was wrapped.  Set the _private member to free and
-      then dislabe the dfree function so that Ruby will not
+      then disable the dfree function so that Ruby will not
       try to free the node a second time. */
     VALUE node = (VALUE) xnode->_private;
     RDATA(node)->data = NULL;
@@ -1144,8 +1144,14 @@ static VALUE rxml_node_remove_ex(VALUE self)
      namespaces, etc.  For a node to live on its own, it
      needs to get its own copies of this information.*/
   xresult = xmlDocCopyNode(xnode, NULL, 1);
-  
-  /* Now free the original node. */
+
+  /* This ruby node object no longer points at the node.*/
+  xnode->_private = NULL;
+  RDATA(self)->data = NULL;
+
+  /* Now free the original node.  This will call the deregister node
+    callback which would reset the mark and free function except for 
+	the fact we set the _private field to null above*/
   xmlFreeNode(xnode);
 
   /* Now wrap the new node */
