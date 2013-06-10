@@ -58,6 +58,7 @@
 #include "ruby_xml_writer.h"
 #include "ruby_xml_sax2_handler.h"
 #include "ruby_xml_sax_parser.h"
+#include "ruby_xml_writer.h"
 #include "ruby_xml_xinclude.h"
 #include "ruby_xml_xpath.h"
 #include "ruby_xml_xpath_expression.h"

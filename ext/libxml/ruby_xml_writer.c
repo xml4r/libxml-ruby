@@ -1,4 +1,8 @@
-#include <libxml/xmlversion.h>
+#include "ruby_libxml.h"
+#include "ruby_xml_writer.h"
+
+VALUE cXMLWriter;
+static VALUE sEncoding, sStandalone;
 
 #ifdef LIBXML_WRITER_ENABLED
 
@@ -12,13 +16,8 @@
  * For a more in depth tutorial, albeit in C, see http://xmlsoft.org/xmlwriter.html
  */
 
-# include <libxml/xmlwriter.h>
+#include <libxml/xmlwriter.h>
 
-# include "ruby_libxml.h"
-# include "ruby_xml_writer.h"
-
-VALUE cXMLWriter;
-static VALUE sEncoding, sStandalone;
 
 typedef enum {
     RXMLW_OUTPUT_NONE,
@@ -29,42 +28,42 @@ typedef enum {
 
 typedef struct {
     VALUE output;
-# ifdef HAVE_RUBY_ENCODING_H
+#ifdef HAVE_RUBY_ENCODING_H
     rb_encoding *encoding;
-# endif /* HAVE_RUBY_ENCODING_H */
+#endif /* HAVE_RUBY_ENCODING_H */
     xmlBufferPtr buffer;
     xmlTextWriterPtr writer;
     rxmlw_output_type output_type;
 } rxml_writer_object;
 
-# ifdef HAVE_RUBY_ENCODING_H
+#ifdef HAVE_RUBY_ENCODING_H
 
-#  define /*VALUE*/ rxml_writer_c_to_ruby_string(/*const xmlChar **/ string, /*long*/ string_len) \
+#define /*VALUE*/ rxml_writer_c_to_ruby_string(/*const xmlChar **/ string, /*long*/ string_len) \
     rb_external_str_new_with_enc(string, string_len, rb_utf8_encoding())
 
-#  define /*VALUE*/ rxml_writer_ruby_string_to_utf8(/*VALUE*/ string) \
+#define /*VALUE*/ rxml_writer_ruby_string_to_utf8(/*VALUE*/ string) \
     rb_str_conv_enc(string, rb_enc_get(string), rb_utf8_encoding())
 // rb_str_export_to_enc(string, rb_utf8_encoding())
 
-#  define /*void*/ rxml_writer_free_utf8_string(/*VALUE*/ orig, /*VALUE*/ utf8) \
+#define /*void*/ rxml_writer_free_utf8_string(/*VALUE*/ orig, /*VALUE*/ utf8) \
     do {                       \
         if (orig != utf8) {    \
             rb_str_free(utf8); \
         }                      \
     } while (0);
 
-# else
+#else
 
-#  define /*VALUE*/ rxml_writer_c_to_ruby_string(/*const xmlChar **/ string, /*long*/ string_len) \
+#define /*VALUE*/ rxml_writer_c_to_ruby_string(/*const xmlChar **/ string, /*long*/ string_len) \
     rb_str_new(string, string_len)
 
-#  define /*VALUE*/ rxml_writer_ruby_string_to_utf8(/*VALUE*/ string) \
+#define /*VALUE*/ rxml_writer_ruby_string_to_utf8(/*VALUE*/ string) \
     string
 
-#  define /*void*/ rxml_writer_free_utf8_string(/*VALUE*/ orig, /*VALUE*/ utf8) \
+#define /*void*/ rxml_writer_free_utf8_string(/*VALUE*/ orig, /*VALUE*/ utf8) \
     /* NOP */
 
-# endif /* HAVE_RUBY_ENCODING_H */
+#endif /* HAVE_RUBY_ENCODING_H */
 
 static void rxml_writer_free(rxml_writer_object *rwo)
 {
@@ -123,9 +122,9 @@ xmlCharEncodingHandlerPtr xmlFindCharEncodingHandler(const char * name);
     rwo = ALLOC(rxml_writer_object);
     rwo->output = io;
     rwo->buffer = NULL;
-# ifdef HAVE_RUBY_ENCODING_H
+#ifdef HAVE_RUBY_ENCODING_H
     rwo->encoding = NULL;
-# endif /* HAVE_RUBY_ENCODING_H */
+#endif /* HAVE_RUBY_ENCODING_H */
     rwo->output_type = RXMLW_OUTPUT_IO;
     if (NULL == (out = xmlOutputBufferCreateIO(rxml_write_callback, NULL, (void *) io, NULL))) {
         rxml_raise(&xmlLastError);
@@ -151,9 +150,9 @@ static VALUE rxml_writer_file(VALUE klass, VALUE filename)
     rwo = ALLOC(rxml_writer_object);
     rwo->output = Qnil;
     rwo->buffer = NULL;
-# ifdef HAVE_RUBY_ENCODING_H
+#ifdef HAVE_RUBY_ENCODING_H
     rwo->encoding = NULL;
-# endif /* HAVE_RUBY_ENCODING_H */
+#endif /* HAVE_RUBY_ENCODING_H */
     rwo->output_type = RXMLW_OUTPUT_NONE;
     if (NULL == (rwo->writer = xmlNewTextWriterFilename(StringValueCStr(filename), 0))) {
         rxml_raise(&xmlLastError);
@@ -173,9 +172,9 @@ static VALUE rxml_writer_string(VALUE klass)
 
     rwo = ALLOC(rxml_writer_object);
     rwo->output = Qnil;
-# ifdef HAVE_RUBY_ENCODING_H
+#ifdef HAVE_RUBY_ENCODING_H
     rwo->encoding = NULL;
-# endif /* HAVE_RUBY_ENCODING_H */
+#endif /* HAVE_RUBY_ENCODING_H */
     rwo->output_type = RXMLW_OUTPUT_STRING;
     if (NULL == (rwo->buffer = xmlBufferCreate())) {
         rxml_raise(&xmlLastError);
@@ -201,9 +200,9 @@ static VALUE rxml_writer_doc(VALUE klass)
     rwo = ALLOC(rxml_writer_object);
     rwo->buffer = NULL;
     rwo->output = Qnil;
-# ifdef HAVE_RUBY_ENCODING_H
+#ifdef HAVE_RUBY_ENCODING_H
     rwo->encoding = NULL;
-# endif /* HAVE_RUBY_ENCODING_H */
+#endif /* HAVE_RUBY_ENCODING_H */
     rwo->output_type = RXMLW_OUTPUT_DOC;
     if (NULL == (rwo->writer = xmlNewTextWriterDoc(&doc, 0))) {
         rxml_raise(&xmlLastError);
@@ -238,11 +237,11 @@ static VALUE rxml_writer_flush(int argc, VALUE *argv, VALUE self)
     if (NULL != rwo->buffer) {
         VALUE content;
 
-# ifdef HAVE_RUBY_ENCODING_H
+#ifdef HAVE_RUBY_ENCODING_H
         content = rb_external_str_new_with_enc(rwo->buffer->content, rwo->buffer->use, rwo->encoding);
-# else
+#else
         content = rb_str_new(rwo->buffer->content, rwo->buffer->use);
-# endif /* HAVE_RUBY_ENCODING_H */
+#endif /* HAVE_RUBY_ENCODING_H */
         if (NIL_P(empty) || RTEST(empty)) { /* nil = default value = true */
             xmlBufferEmpty(rwo->buffer);
         }
@@ -301,7 +300,7 @@ static VALUE numeric_rxml_writer_void(VALUE obj, int (*fn)(xmlTextWriterPtr))
     return (-1 == ret ? Qfalse : Qtrue);
 }
 
-# define numeric_rxml_writer_string(/*VALUE*/ obj, /*VALUE*/ name_or_content, /*int (**/fn/*)(xmlTextWriterPtr, const xmlChar *)*/) \
+#define numeric_rxml_writer_string(/*VALUE*/ obj, /*VALUE*/ name_or_content, /*int (**/fn/*)(xmlTextWriterPtr, const xmlChar *)*/) \
     numeric_rxml_writer_va_strings(obj, Qundef, 1, fn, name_or_content)
 
 /**
@@ -312,7 +311,7 @@ static VALUE numeric_rxml_writer_void(VALUE obj, int (*fn)(xmlTextWriterPtr))
  * - validate names
  * and so on
  **/
-# define XMLWRITER_MAX_STRING_ARGS 5
+#define XMLWRITER_MAX_STRING_ARGS 5
 static VALUE numeric_rxml_writer_va_strings(VALUE obj, VALUE pe, size_t strings_count, int (*fn)(ANYARGS), ...)
 {
     va_list ap;
@@ -392,20 +391,20 @@ static VALUE numeric_rxml_writer_va_strings(VALUE obj, VALUE pe, size_t strings_
                 break;
         }
     }
-# ifdef HAVE_RUBY_ENCODING_H
+#ifdef HAVE_RUBY_ENCODING_H
     while (--strings_count > 0) {
         if (!NIL_P(orig[strings_count])) {
             rxml_writer_free_utf8_string(orig[strings_count], utf8[strings_count]);
         }
     }
-# endif /* HAVE_RUBY_ENCODING_H */
+#endif /* HAVE_RUBY_ENCODING_H */
 
     return (-1 == ret ? Qfalse : Qtrue);
 }
 
 /* ===== public instance methods ===== */
 
-# if LIBXML_VERSION >= 20605
+#if LIBXML_VERSION >= 20605
 /* call-seq:
  *    writer.set_indent(indentation) -> (true|false)
  *
@@ -437,7 +436,7 @@ static VALUE rxml_writer_set_indent_string(VALUE self, VALUE indentation)
 {
     return numeric_rxml_writer_string(self, indentation, xmlTextWriterSetIndentString);
 }
-# endif /* LIBXML_VERSION >= 20605 */
+#endif /* LIBXML_VERSION >= 20605 */
 
 /* ===== public full tag interface ===== */
 
@@ -491,7 +490,7 @@ static VALUE rxml_writer_write_element(int argc, VALUE *argv, VALUE self)
     }
 }
 
-# define ARRAY_SIZE(array) \
+#define ARRAY_SIZE(array) \
     (sizeof(array) / sizeof((array)[0]))
 
 /* call-seq:
@@ -635,7 +634,7 @@ static VALUE rxml_writer_end_attribute(VALUE self)
     return numeric_rxml_writer_void(self, xmlTextWriterEndAttribute);
 }
 
-# if LIBXML_VERSION >= 20607
+#if LIBXML_VERSION >= 20607
 /* call-seq:
  *    writer.start_comment -> (true|false)
  *
@@ -657,7 +656,7 @@ static VALUE rxml_writer_end_comment(VALUE self)
 {
     return numeric_rxml_writer_void(self, xmlTextWriterEndComment);
 }
-# endif /* LIBXML_VERSION >= 20607 */
+#endif /* LIBXML_VERSION >= 20607 */
 
 /* call-seq:
  *    writer.start_element(name) -> (true|false)
@@ -769,9 +768,9 @@ static VALUE rxml_writer_start_document(int argc, VALUE *argv, VALUE self)
         }
     }
     rwo = rxml_textwriter_get(self);
-# ifdef HAVE_RUBY_ENCODING_H
+#ifdef HAVE_RUBY_ENCODING_H
     rwo->encoding = rxml_figure_encoding(xencoding);
-# endif /* !HAVE_RUBY_ENCODING_H */
+#endif /* !HAVE_RUBY_ENCODING_H */
     ret = xmlTextWriterStartDocument(rwo->writer, NULL, xencoding, xstandalone);
 
     return (-1 == ret ? Qfalse : Qtrue);
@@ -909,13 +908,13 @@ static VALUE rxml_writer_end_dtd_element(VALUE self)
  *
  * Examples:
  *   writer.write_dtd 'html'
- *     # => <!DOCTYPE html>
+ *     #=> <!DOCTYPE html>
  *   writer.write_dtd 'docbook', nil, 'http://www.docbook.org/xml/5.0/dtd/docbook.dtd'
- *     # => <!DOCTYPE docbook SYSTEM "http://www.docbook.org/xml/5.0/dtd/docbook.dtd">
+ *     #=> <!DOCTYPE docbook SYSTEM "http://www.docbook.org/xml/5.0/dtd/docbook.dtd">
  *   writer.write_dtd 'html', '-//W3C//DTD XHTML 1.1//EN', 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'
- *     # => <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+ *     #=> <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
  *   writer.write_dtd 'person', nil, nil, '<!ELEMENT person (firstname,lastname)><!ELEMENT firstname (#PCDATA)><!ELEMENT lastname (#PCDATA)>'
- *     # => <!DOCTYPE person [<!ELEMENT person (firstname,lastname)><!ELEMENT firstname (#PCDATA)><!ELEMENT lastname (#PCDATA)>]>
+ *     #=> <!DOCTYPE person [<!ELEMENT person (firstname,lastname)><!ELEMENT firstname (#PCDATA)><!ELEMENT lastname (#PCDATA)>]>
  */
 static VALUE rxml_writer_write_dtd(int argc, VALUE *argv, VALUE self)
 {
@@ -931,7 +930,7 @@ static VALUE rxml_writer_write_dtd(int argc, VALUE *argv, VALUE self)
  *
  * Writes a DTD attribute list, all at once. Returns +false+ on failure.
  *   writer.write_dtd_attlist 'id', 'ID #IMPLIED'
- *     # => <!ATTLIST id ID #IMPLIED>
+ *     #=> <!ATTLIST id ID #IMPLIED>
  */
 static VALUE rxml_writer_write_dtd_attlist(VALUE self, VALUE name, VALUE content)
 {
@@ -943,7 +942,7 @@ static VALUE rxml_writer_write_dtd_attlist(VALUE self, VALUE name, VALUE content
  *
  * Writes a full DTD element, all at once. Returns +false+ on failure.
  *   writer.write_dtd_element 'person', '(firstname,lastname)'
- *     # => <!ELEMENT person (firstname,lastname)>
+ *     #=> <!ELEMENT person (firstname,lastname)>
  */
 static VALUE rxml_writer_write_dtd_element(VALUE self, VALUE name, VALUE content)
 {
@@ -994,9 +993,9 @@ static VALUE rxml_writer_write_dtd_external_entity_contents(VALUE self, VALUE pu
  *
  * Examples:
  *   writer.write_dtd_entity 'Shape', '(rect|circle|poly|default)', true
- *     # => <!ENTITY % Shape "(rect|circle|poly|default)">
+ *     #=> <!ENTITY % Shape "(rect|circle|poly|default)">
  *   writer.write_dtd_entity 'delta', '&#948;', false
- *     # => <!ENTITY delta "&#948;">
+ *     #=> <!ENTITY delta "&#948;">
  */
 static VALUE rxml_writer_write_dtd_internal_entity(VALUE self, VALUE name, VALUE content, VALUE pe)
 {
@@ -1013,7 +1012,7 @@ static VALUE rxml_writer_write_dtd_notation(VALUE self, VALUE name, VALUE pubid,
     return numeric_rxml_writer_va_strings(self, Qundef, 3, xmlTextWriterWriteDTDNotation, name, pubid, sysid);
 }
 
-# if LIBXML_VERSION >= 20900
+#if LIBXML_VERSION >= 20900
 /* call-seq:
  *    writer.set_quote_char(...) -> (true|false)
  *
@@ -1035,7 +1034,10 @@ static VALUE rxml_writer_set_quote_char(VALUE self, VALUE quotechar)
 
     return (-1 == ret ? Qfalse : Qtrue);
 }
-# endif /* LIBXML_VERSION >= 20900 */
+#endif /* LIBXML_VERSION >= 20900 */
+
+#endif /* LIBXML_WRITER_ENABLED */
+
 
 /* grep -P 'xmlTextWriter(Start|End|Write)(?!DTD|V?Format)[^(]+' /usr/include/libxml2/libxml/xmlwriter.h */
 void rxml_init_writer(void)
@@ -1045,19 +1047,20 @@ void rxml_init_writer(void)
 
     cXMLWriter = rb_define_class_under(mXML, "Writer", rb_cObject);
 
+#ifdef LIBXML_WRITER_ENABLED
     rb_define_singleton_method(cXMLWriter, "io", rxml_writer_io, 1);
     rb_define_singleton_method(cXMLWriter, "file", rxml_writer_file, 1);
     rb_define_singleton_method(cXMLWriter, "document", rxml_writer_doc, 0);
     rb_define_singleton_method(cXMLWriter, "string", rxml_writer_string, 0);
 
     /* misc */
-# if LIBXML_VERSION >= 20605
+#if LIBXML_VERSION >= 20605
     rb_define_method(cXMLWriter, "set_indent", rxml_writer_set_indent, 1);
     rb_define_method(cXMLWriter, "set_indent_string", rxml_writer_set_indent_string, 1);
-# endif /* LIBXML_VERSION >= 20605 */
-# if LIBXML_VERSION >= 20900
+#endif /* LIBXML_VERSION >= 20605 */
+#if LIBXML_VERSION >= 20900
     rb_define_method(cXMLWriter, "set_quote_char", rxml_writer_set_quote_char, 1);
-# endif  /* LIBXML_VERSION >= 20900 */
+#endif  /* LIBXML_VERSION >= 20900 */
     rb_define_method(cXMLWriter, "flush", rxml_writer_flush, -1);
     rb_define_method(cXMLWriter, "start_dtd", rxml_writer_start_dtd, -1);
     rb_define_method(cXMLWriter, "start_dtd_entity", rxml_writer_start_dtd_entity, -1);
@@ -1091,10 +1094,10 @@ void rxml_init_writer(void)
     rb_define_method(cXMLWriter, "full_end_element", rxml_writer_full_end_element, 0);
     rb_define_method(cXMLWriter, "start_document", rxml_writer_start_document, -1);
     rb_define_method(cXMLWriter, "end_document", rxml_writer_end_document, 0);
-# if LIBXML_VERSION >= 20607
+#if LIBXML_VERSION >= 20607
     rb_define_method(cXMLWriter, "start_comment", rxml_writer_start_comment, 0);
     rb_define_method(cXMLWriter, "end_comment", rxml_writer_end_comment, 0);
-# endif /* LIBXML_VERSION >= 20607 */
+#endif /* LIBXML_VERSION >= 20607 */
     rb_define_method(cXMLWriter, "start_pi", rxml_writer_start_pi, 1);
     rb_define_method(cXMLWriter, "end_pi", rxml_writer_end_pi, 0);
 
@@ -1110,6 +1113,6 @@ void rxml_init_writer(void)
     rb_define_method(cXMLWriter, "result", rxml_writer_result, 0);
 
     rb_undef_method(CLASS_OF(cXMLWriter), "new");
+#endif
 }
 
-#endif /* LIBXML_WRITER_ENABLED */
