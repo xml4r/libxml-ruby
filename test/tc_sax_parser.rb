@@ -144,7 +144,7 @@ class TestSaxParser < Test::Unit::TestCase
       XML::SaxParser.file(nil)
     end
 
-    assert_equal("can't convert nil into String", error.to_s)
+    assert_match(/nil into String/, error.to_s)
   end
 
   def test_io

@@ -59,7 +59,7 @@ class TestParser < Test::Unit::TestCase
       XML::Parser.file(nil)
     end
 
-    assert_equal("can't convert nil into String", error.to_s)
+    assert_match(/nil into String/, error.to_s)
   end
 
   def test_file_encoding
