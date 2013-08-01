@@ -47,7 +47,6 @@ void rxml_dtd_mark(xmlDtdPtr xdtd)
 
   if (xdtd->_private == NULL)
   {
-    rb_warning("XmlNode is not bound! (%s:%d)", __FILE__, __LINE__);
     return;
   }
 
