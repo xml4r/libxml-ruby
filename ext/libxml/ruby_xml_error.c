@@ -37,15 +37,6 @@ static ID ERROR_HANDLER_ID;
  *   XML::Error.reset_handler
  */
 
-static void rxml_set_handler(VALUE self, VALUE block)
-{
-#ifdef RB_CVAR_SET_4ARGS
-  rb_cvar_set(self, ERROR_HANDLER_ID, block, 0);
-#else
-  rb_cvar_set(self, ERROR_HANDLER_ID, block);
-#endif
-}
-
 /*
  * call-seq:
  *    Error.get_error_handler
@@ -57,41 +48,6 @@ static VALUE rxml_error_get_handler()
 {
   VALUE block = rb_cvar_get(eXMLError, ERROR_HANDLER_ID);
   return block;
-}
-
-/*
- * call-seq:
- *    Error.set_error_handler {|error| ... }
- *
- * Registers a block that will be called with an instance of
- * XML::Error when libxml generates warning, error or fatal
- * error messages.
- */
-static VALUE rxml_error_set_handler(VALUE self)
-{
-  VALUE block;
-
-  if (rb_block_given_p() == Qfalse)
-    rb_raise(rb_eRuntimeError, "No block given");
-
-  block = rb_block_proc();
-
-  /* Embed the block within the Error class to avoid it to be collected.
-   Previous handler will be overwritten if it exists. */
-  rxml_set_handler(self, block);
-
-  return self;
-}
-
-/*
- * call-seq:
- *    Error.reset_error_handler
- *
- * Removes the current error handler. */
-static VALUE rxml_error_reset_handler(VALUE self)
-{
-  rxml_set_handler(self, Qnil);
-  return self;
 }
 
 VALUE rxml_error_wrap(xmlErrorPtr xerror)
@@ -155,6 +111,53 @@ static void structuredErrorFunc(void *userData, xmlErrorPtr xerror)
   }
 }
 
+static void rxml_set_handler(VALUE self, VALUE block)
+{
+#ifdef RB_CVAR_SET_4ARGS
+  rb_cvar_set(self, ERROR_HANDLER_ID, block, 0);
+#else
+  rb_cvar_set(self, ERROR_HANDLER_ID, block);
+#endif
+
+  /* Intercept libxml error handlers */
+  xmlSetStructuredErrorFunc(NULL, structuredErrorFunc);
+}
+
+/*
+ * call-seq:
+ *    Error.set_error_handler {|error| ... }
+ *
+ * Registers a block that will be called with an instance of
+ * XML::Error when libxml generates warning, error or fatal
+ * error messages.
+ */
+static VALUE rxml_error_set_handler(VALUE self)
+{
+  VALUE block;
+
+  if (rb_block_given_p() == Qfalse)
+    rb_raise(rb_eRuntimeError, "No block given");
+
+  block = rb_block_proc();
+
+  /* Embed the block within the Error class to avoid it to be collected.
+   Previous handler will be overwritten if it exists. */
+  rxml_set_handler(self, block);
+
+  return self;
+}
+
+/*
+ * call-seq:
+ *    Error.reset_error_handler
+ *
+ * Removes the current error handler. */
+static VALUE rxml_error_reset_handler(VALUE self)
+{
+  rxml_set_handler(self, Qnil);
+  return self;
+}
+
 void rxml_raise(xmlErrorPtr xerror)
 {
   /* Wrap error up as Ruby object and send it off to ruby */
@@ -166,9 +169,6 @@ void rxml_init_error()
 {
   CALL_METHOD = rb_intern("call");
   ERROR_HANDLER_ID = rb_intern("@@__error_handler_callback__");
-
-  /* Intercept libxml error handlers */
-  xmlSetStructuredErrorFunc(NULL, structuredErrorFunc);
 
   /* Error class */
   eXMLError = rb_define_class_under(mXML, "Error", rb_eStandardError);
