@@ -353,4 +353,29 @@ class TestParser < Test::Unit::TestCase
     assert_instance_of(XML::Document, doc)
     assert_instance_of(XML::Parser::Context, parser.context)
   end
+
+  def test_errors_from_background_thread
+    errors = []
+    background_errors = []
+
+    begin
+      XML::Error.set_handler do |error|
+        errors << error
+      end
+      parser = XML::Parser.string("<moo>")
+
+      thread = Thread.new do
+        XML::Error.set_handler do |error|
+          background_errors << error
+        end
+        parser.parse rescue nil
+      end
+      thread.join
+    ensure
+      XML::Error.set_handler(&XML::Error::QUIET_HANDLER)
+    end
+
+    assert_equal(errors.size, 0)
+    assert_equal(background_errors.size, 1)
+  end
 end
