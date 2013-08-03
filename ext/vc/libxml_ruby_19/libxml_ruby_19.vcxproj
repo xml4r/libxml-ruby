@@ -51,7 +51,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>C:\MinGW\local\include;C:\MinGW\local\include\libxml2;C:\MinGW\local\ruby193vc\include\ruby-1.9.1;C:\MinGW\local\ruby193vc\include\ruby-1.9.1\i386-mswin32_100;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\MinGW\local\include;C:\MinGW\local\include\libxml2;C:\MinGW\local\ruby193vc\include\ruby-1.9.1;C:\MinGW\local\ruby193vc\include\ruby-1.9.1\i386-mswin32_110;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;LIBXML_RUBY_19_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -64,7 +64,7 @@
       <BrowseInformation>true</BrowseInformation>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>msvcr100-ruby191.lib;libxml2.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>msvcr110-ruby191.lib;libxml2.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <AdditionalLibraryDirectories>C:\MinGW\local\lib;C:\MinGW\local\ruby193vc\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -124,6 +124,7 @@
     <ClCompile Include="..\..\libxml\ruby_xml_schema_element.c" />
     <ClCompile Include="..\..\libxml\ruby_xml_schema_facet.c" />
     <ClCompile Include="..\..\libxml\ruby_xml_schema_type.c" />
+    <ClCompile Include="..\..\libxml\ruby_xml_writer.c" />
     <ClCompile Include="..\..\libxml\ruby_xml_xinclude.c" />
     <ClCompile Include="..\..\libxml\ruby_xml_xpath.c" />
     <ClCompile Include="..\..\libxml\ruby_xml_xpath_context.c" />
@@ -162,6 +163,7 @@
     <ClInclude Include="..\..\libxml\ruby_xml_schema_facet.h" />
     <ClInclude Include="..\..\libxml\ruby_xml_schema_type.h" />
     <ClInclude Include="..\..\libxml\ruby_xml_version.h" />
+    <ClInclude Include="..\..\libxml\ruby_xml_writer.h" />
     <ClInclude Include="..\..\libxml\ruby_xml_xinclude.h" />
     <ClInclude Include="..\..\libxml\ruby_xml_xpath.h" />
     <ClInclude Include="..\..\libxml\ruby_xml_xpath_context.h" />
