@@ -13,14 +13,9 @@
 
 VALUE cXMLAttrDecl;
 
-void rxml_attr_decl_mark(xmlAttributePtr xattr)
-{
-  rxml_node_mark((xmlNodePtr) xattr);
-}
-
 VALUE rxml_attr_decl_wrap(xmlAttributePtr xattr)
 {
-  return Data_Wrap_Struct(cXMLAttrDecl, rxml_attr_decl_mark, NULL, xattr);
+  return Data_Wrap_Struct(cXMLAttrDecl, NULL, NULL, xattr);
 }
 
 /*

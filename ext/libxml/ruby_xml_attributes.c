@@ -32,17 +32,12 @@
 
 VALUE cXMLAttributes;
 
-void rxml_attributes_mark(xmlNodePtr xnode)
-{
-  rxml_node_mark(xnode);
-}
-
 /*
  * Creates a  new attributes instance.  Not exposed to ruby.
  */
 VALUE rxml_attributes_new(xmlNodePtr xnode)
 {
-  return Data_Wrap_Struct(cXMLAttributes, rxml_attributes_mark, NULL, xnode);
+  return Data_Wrap_Struct(cXMLAttributes, NULL, NULL, xnode);
 }
 
 /*
