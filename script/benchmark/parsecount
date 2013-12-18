@@ -86,7 +86,7 @@ if RUBY_PLATFORM =~ /java/
     gem 'nokogiri', '>= 1.0.6'
     require 'nokogiri'
 
-    gem 'libxml-ruby', '>= 0.9.2'
+    gem 'libxml', '>= 0.9.2'
     require 'libxml'
     @xml_parser = LibXML::XML::Parser.new
 end
