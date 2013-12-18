@@ -7,7 +7,7 @@ require "rubygems/package_task"
 require "rdoc/task"
 require "yaml"
 
-GEM_NAME = "libxml-ruby"
+GEM_NAME = "libxml"
 SO_NAME  = "libxml_ruby"
 
 # Read the spec file

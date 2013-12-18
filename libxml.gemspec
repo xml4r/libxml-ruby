@@ -4,7 +4,7 @@
 version = File.read('ext/libxml/ruby_xml_version.h').match(/\s*RUBY_LIBXML_VERSION\s*['"](\d.+)['"]/)[1]
 
 Gem::Specification.new do |spec|
-  spec.name        = 'libxml-ruby'
+  spec.name        = 'libxml'
   spec.version     = version
   spec.homepage    = 'http://xml4r.github.com/libxml-ruby'
   spec.summary     = 'Ruby Bindings for LibXML2'
@@ -23,7 +23,7 @@ Gem::Specification.new do |spec|
   spec.extensions = ["ext/libxml/extconf.rb"]
   spec.files = Dir.glob(['HISTORY',
                          'LICENSE',
-                         'libxml-ruby.gemspec',
+                         'libxml.gemspec',
                          'MANIFEST',
                          'Rakefile',
                          'README.rdoc',

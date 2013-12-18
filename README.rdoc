@@ -27,7 +27,7 @@ includes an already built extension.
 == INSTALLATION
 The easiest way to install libxml-ruby is via Ruby Gems.  To install:
 
-<tt>gem install libxml-ruby</tt>
+<tt>gem install libxml</tt>
 
 If you are running Windows, make sure to install the Win32 RubyGem
 which includes prebuilt extensions for Ruby 1.8, 1.9 and 2.0 preview.  These
