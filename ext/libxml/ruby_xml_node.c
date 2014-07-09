@@ -450,7 +450,7 @@ static VALUE rxml_node_debug(VALUE self)
   xmlDebugDumpNode(NULL, xnode, 2);
   return Qtrue;
 #else
-  rb_warn("libxml was compiled without debugging support.")
+  rb_warn("libxml was compiled without debugging support.");
   return Qfalse;
 #endif
 }
