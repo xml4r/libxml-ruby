@@ -475,7 +475,7 @@ static VALUE rxml_document_debug(VALUE self)
   xmlDebugDumpDocument(NULL, xdoc);
   return Qtrue;
 #else
-  rb_warn("libxml was compiled without debugging support.")
+  rb_warn("libxml was compiled without debugging support.");
   return Qfalse;
 #endif
 }

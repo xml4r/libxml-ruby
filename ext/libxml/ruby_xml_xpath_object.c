@@ -312,7 +312,7 @@ static VALUE rxml_xpath_object_debug(VALUE self)
   xmlXPathDebugDumpObject(stdout, rxpop->xpop, 0);
   return Qtrue;
 #else
-  rb_warn("libxml was compiled without debugging support.")
+  rb_warn("libxml was compiled without debugging support.");
   return Qfalse;
 #endif
 }
