@@ -50,6 +50,7 @@
  *          <ns1:IdAndName xmlns:ns1="http://domain.somewhere.com"/>
  *        </IDAndNameList>
  *      </getManufacturerNamesResponse>
+ *    </soap:Body>
  *  </soap:Envelope>
  *
  *  # Since the soap namespace is defined on the root
