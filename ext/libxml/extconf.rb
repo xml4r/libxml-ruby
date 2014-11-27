@@ -14,7 +14,7 @@ else
   $CFLAGS = CONFIG['CFLAGS']
 end
 $LDFLAGS = CONFIG['LDFLAGS']
-$LIBPATH.push(Config::CONFIG['libdir'])
+$LIBPATH.push(RbConfig::CONFIG['libdir'])
 
 def crash(str)
   printf(" extconf failure: %s\n", str)
