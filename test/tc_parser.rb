@@ -14,7 +14,7 @@ class TestParser < Test::Unit::TestCase
     GC.start
     GC.start
   end
-      
+
   # -----  Sources  -------
   def test_document
     file = File.expand_path(File.join(File.dirname(__FILE__), 'model/bands.utf-8.xml'))
@@ -142,7 +142,7 @@ class TestParser < Test::Unit::TestCase
     thread.join
     assert(true)
   end
-  
+
   def test_string
     str = '<ruby_array uga="booga" foo="bar"><fixnum>one</fixnum><fixnum>two</fixnum></ruby_array>'
 
@@ -246,7 +246,7 @@ class TestParser < Test::Unit::TestCase
     max_fd = if RUBY_PLATFORM.match(/mswin32|mingw/i)
       500
     else
-      (`ulimit -n`.chomp.to_i) + 1
+      Process.getrlimit(Process::RLIMIT_NOFILE)[0] + 1
     end
 
     file = File.join(File.dirname(__FILE__), 'model/rubynet.xml')
