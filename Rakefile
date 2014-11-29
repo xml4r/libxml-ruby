@@ -13,6 +13,8 @@ SO_NAME  = "libxml_ruby"
 # Read the spec file
 spec = Gem::Specification.load("#{GEM_NAME}.gemspec")
 
+task :default => [:test]
+
 # Setup compile tasks
 Rake::ExtensionTask.new do |ext|
   ext.gem_spec = spec
