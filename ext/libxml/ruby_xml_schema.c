@@ -97,7 +97,7 @@ static VALUE rxml_schema_init_from_document(VALUE class, VALUE document)
 
 /*
  * call-seq:
- *    XML::Schema.string("schema_data") -> "value"
+ *    XML::Schema.from_string("schema_data") -> "value"
  *
  * Create a new schema using the specified string.
  */
