@@ -1,5 +1,26 @@
 = Release History
 
+== 2.8.0 / 2015-01-09 Charlie Savage
+
+* Use RbConfig instead of Config in extconf.rb (Robert Haines)
+* Correct xpath documentation XML (Bill Mill)
+* Correct from_string method documentation (Bill Mill)
+* Fix compile error with debug not enabled in libxml (Patrick Ziegler)
+* Update gemspec to include license (Charlie Savage)
+* In XML::Writer prevent writing to io while being GCed (Brett Gibson)
+
+== 2.7.0 / 2013-08-13 Charlie Savage
+
+* Don't call rb_warning in GC mark function (Dirkjan Bussink)
+* Set libxml error handler when a libxml-ruby error handler is set (Geoffrey Giesemann)
+* Fix tests for nil TypeErrors for ruby 2.0=< (Geoffrey Giesemann)
+* Fix segmentation fault for issue #62 (Charlie Savage)
+* Add #node_type method to dtd (Charlie Savage)
+* Fixing equality check of LibXML::XML::Error against other objects (Michał Szajbe)
+* Fix #63, XML::Writer.set_quote_char UT, wrong expected string (julp)
+* Fix potential segfault when GC occurs while creating ns from xpath (Timothy Elliott)
+* Fix for #59, segmentation fault after failure to load external schema (Clifford Heath)
+
 == 2.6.0 / 2013-02-16 Charlie Savage
 
 * Fix uninitialized constant LibXML::XML::Error::I18N (NameError) that occurred
