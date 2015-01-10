@@ -51,14 +51,15 @@ if RUBY_PLATFORM.match(/win32|mingw32/)
 end
 
 # RDoc Task
-desc "Generate rdoc documentation"
+desc 'Generate rdoc documentation'
 RDoc::Task.new("rdoc") do |rdoc|
   rdoc.rdoc_dir = 'website/_site/rdoc'
-  rdoc.title    = "LibXML"
+  rdoc.title    = 'LibXML'
+  rdoc.generator = 'hanna'
+
   # Show source inline with line numbers
-  rdoc.options << "--line-numbers"
-  rdoc.options << "--charset=utf-8"
-  rdoc.options << "--format=hanna"
+  rdoc.options << '--line-numbers'
+  rdoc.options << '--charset=utf-8'
   # Make the readme file the start page for the generated html
   rdoc.main = 'README.rdoc'
   rdoc.rdoc_files.include('doc/*.rdoc',
