@@ -85,10 +85,15 @@ end
 
 unless (have_library('xml2', 'xmlParseDoc') or
 				have_library('libxml2', 'xmlParseDoc') or
-				find_library('xml2', 'xmlParseDoc', '/opt/lib', '/usr/local/lib', '/usr/lib')) and 
+				find_library('xml2', 'xmlParseDoc',
+                     '/opt/lib',
+                     '/opt/local/lib',
+                     '/usr/local/lib',
+                     '/usr/lib')) and
 			 (have_header('libxml/xmlversion.h') or
 			  find_header('libxml/xmlversion.h',
-										'/opt/include/libxml2', 
+										'/opt/include/libxml2',
+                    '/opt/local/include/libxml2',
 										'/usr/local/include/libxml2',
 										'/usr/include/libxml2'))
 		crash(<<EOL)
