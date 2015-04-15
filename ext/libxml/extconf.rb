@@ -69,34 +69,34 @@ if (xc = with_config('xml2-config')) or RUBY_PLATFORM.match(/darwin/i) then
   xc = 'xml2-config' if xc == true or xc.nil?
   cflags = `#{xc} --cflags`.chomp
   if $? != 0
-		cflags = nil
-	else
-  	libs = `#{xc} --libs`.chomp
-  	if $? != 0
-			libs = nil
-		else
-  		$CFLAGS += ' ' + cflags
-  		$libs = libs + " " + $libs
-		end
-	end
+    cflags = nil
+  else
+    libs = `#{xc} --libs`.chomp
+    if $? != 0
+      libs = nil
+    else
+      $CFLAGS += ' ' + cflags
+      $libs = libs + " " + $libs
+    end
+  end
 else
-	dir_config('xml2')
+  dir_config('xml2')
 end
 
 unless (have_library('xml2', 'xmlParseDoc') or
-				have_library('libxml2', 'xmlParseDoc') or
-				find_library('xml2', 'xmlParseDoc',
+        have_library('libxml2', 'xmlParseDoc') or
+        find_library('xml2', 'xmlParseDoc',
                      '/opt/lib',
                      '/opt/local/lib',
                      '/usr/local/lib',
                      '/usr/lib')) and
-			 (have_header('libxml/xmlversion.h') or
-			  find_header('libxml/xmlversion.h',
-										'/opt/include/libxml2',
+       (have_header('libxml/xmlversion.h') or
+        find_header('libxml/xmlversion.h',
+                    '/opt/include/libxml2',
                     '/opt/local/include/libxml2',
-										'/usr/local/include/libxml2',
-										'/usr/include/libxml2'))
-		crash(<<EOL)
+                    '/usr/local/include/libxml2',
+                    '/usr/include/libxml2'))
+    crash(<<EOL)
 need libxml2.
 
     Install the library or try one of the following options to extconf.rb:
