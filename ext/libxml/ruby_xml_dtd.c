@@ -34,7 +34,7 @@ void rxml_dtd_free(xmlDtdPtr xdtd)
 {
   /* Set _private to NULL so that we won't reuse the
    same, freed, Ruby wrapper object later.*/
-  xdtd->_private = NULL;
+  CLEAR_PRIV(xdtd);
 
   if (xdtd->doc == NULL && xdtd->parent == NULL)
     xmlFreeDtd(xdtd);
@@ -69,7 +69,7 @@ VALUE rxml_dtd_wrap(xmlDtdPtr xdtd)
 
   result = Data_Wrap_Struct(cXMLDtd, NULL, NULL, xdtd);
 
-  xdtd->_private = (void*) result;
+  SET_PRIV(xdtd, result);
 
   return result;
 }

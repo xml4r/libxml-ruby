@@ -45,6 +45,10 @@ static void rxml_node_deregisterNode(xmlNodePtr xnode)
   /* Has the node been wrapped and exposed to Ruby? */
   if (xnode->_private)
   {
+    /* Does it belong to another libxml user? */
+    if (!OWNED(xnode))
+      return;
+
     /* Node was wrapped.  Set the _private member to free and
       then disable the dfree function so that Ruby will not
       try to free the node a second time. */
@@ -52,6 +56,7 @@ static void rxml_node_deregisterNode(xmlNodePtr xnode)
     RDATA(node)->data = NULL;
     RDATA(node)->dfree = NULL;
     RDATA(node)->dmark = NULL;
+    CLEAR_PRIV(xnode);
   }
 }
 
@@ -64,7 +69,7 @@ static void rxml_node_free(xmlNodePtr xnode)
     return;
 
   /* The ruby object wrapping the xml object no longer exists. */
-  xnode->_private = NULL;
+  CLEAR_PRIV(xnode);
 
   /* Ruby is responsible for freeing this node if it does not
      have a parent and is not owned by a document.  Note a corner
@@ -103,7 +108,7 @@ VALUE rxml_node_wrap(xmlNodePtr xnode)
   else
   {
     result = Data_Wrap_Struct(cXMLNode, rxml_node_mark, rxml_node_free, xnode);
-    xnode->_private = (void*) result;
+    SET_PRIV(xnode, result);
   }
   return result;
 }
@@ -276,7 +281,7 @@ static VALUE rxml_node_initialize(int argc, VALUE *argv, VALUE self)
     rxml_raise(&xmlLastError);
 
   /* Link the Ruby object to the libxml object and vice-versa. */
-  xnode->_private = (void*) self;
+  SET_PRIV(xnode, self);
   DATA_PTR(self) = xnode;
 
   if (!NIL_P(content))
@@ -311,7 +316,7 @@ static VALUE rxml_node_modify_dom(VALUE self, VALUE target,
   if (xresult != xtarget)
   {
     RDATA(target)->data = xresult;
-    xresult->_private = (void*) target;
+    SET_PRIV(xresult, target);
   }
 
   return target;
@@ -1146,7 +1151,7 @@ static VALUE rxml_node_remove_ex(VALUE self)
   xresult = xmlDocCopyNode(xnode, NULL, 1);
 
   /* This ruby node object no longer points at the node.*/
-  xnode->_private = NULL;
+  CLEAR_PRIV(xnode);
   RDATA(self)->data = NULL;
 
   /* Now free the original node.  This will call the deregister node
@@ -1156,7 +1161,7 @@ static VALUE rxml_node_remove_ex(VALUE self)
 
   /* Now wrap the new node */
   RDATA(self)->data = xresult;
-  xresult->_private = (void*) self;
+  SET_PRIV(xresult, self);
 
   /* Now return the removed node so the user can
      do something with it.*/

@@ -76,7 +76,7 @@ void rxml_document_mark(xmlDocPtr xdoc)
 
 void rxml_document_free(xmlDocPtr xdoc)
 {
-  xdoc->_private = NULL;
+  CLEAR_PRIV(xdoc);
   xmlFreeDoc(xdoc);
 }
 
@@ -92,7 +92,7 @@ VALUE rxml_document_wrap(xmlDocPtr xdoc)
   else
   {
     result = Data_Wrap_Struct(cXMLDocument, rxml_document_mark, rxml_document_free, xdoc);
-    xdoc->_private = (void*) result;
+    SET_PRIV(xdoc, result);
   }
 
   return result;
@@ -136,7 +136,7 @@ static VALUE rxml_document_initialize(int argc, VALUE *argv, VALUE self)
 
   Check_Type(xmlver, T_STRING);
   xdoc = xmlNewDoc((xmlChar*) StringValuePtr(xmlver));
-  xdoc->_private = (void*) self;
+  SET_PRIV(xdoc, self);
   DATA_PTR(self) = xdoc;
 
   return self;

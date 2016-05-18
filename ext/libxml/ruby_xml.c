@@ -1,6 +1,24 @@
 #include "ruby_libxml.h"
 #include "ruby_xml.h"
 
+static struct st_table *owned_pointers;
+
+static int num_owned = 0;   // For tracing leaks.
+
+void rxml_owned_add(void *private) {
+  if (!st_insert(owned_pointers, (st_data_t)private, 0))
+    num_owned++;
+}
+
+void rxml_owned_del(void *private) {
+  if (st_delete(owned_pointers, (st_data_t*)&private, NULL))
+    num_owned--;
+}
+
+int rxml_owned_p(void *private) {
+  return st_lookup(owned_pointers, (st_data_t)private, NULL);
+}
+
 VALUE mXML;
 
 /*
@@ -834,6 +852,9 @@ static VALUE rxml_memory_used(VALUE self)
 
 void rxml_init_xml(void)
 {
+  /* Create a hashtable suitable for pointer keys */
+  owned_pointers = st_init_numtable();
+
   mXML = rb_define_module_under(mLibXML, "XML");
 
   /* Constants */
