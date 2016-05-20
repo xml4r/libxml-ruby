@@ -42,22 +42,18 @@ VALUE cXMLNode;
 
 static void rxml_node_deregisterNode(xmlNodePtr xnode)
 {
-  /* Has the node been wrapped and exposed to Ruby? */
-  if (xnode->_private)
-  {
-    /* Does it belong to another libxml user? */
-    if (!OWNED(xnode))
-      return;
+  /* Does it belong to another libxml user? */
+  if (!OWNED(xnode))
+    return;
 
-    /* Node was wrapped.  Set the _private member to free and
-      then disable the dfree function so that Ruby will not
-      try to free the node a second time. */
-    VALUE node = (VALUE) xnode->_private;
-    RDATA(node)->data = NULL;
-    RDATA(node)->dfree = NULL;
-    RDATA(node)->dmark = NULL;
-    CLEAR_PRIV(xnode);
-  }
+  /* Node was wrapped.  Set the _private member to free and
+    then disable the dfree function so that Ruby will not
+    try to free the node a second time. */
+  VALUE node = (VALUE) xnode->_private;
+  RDATA(node)->data = NULL;
+  RDATA(node)->dfree = NULL;
+  RDATA(node)->dmark = NULL;
+  CLEAR_PRIV(xnode);
 }
 
 static void rxml_node_free(xmlNodePtr xnode)

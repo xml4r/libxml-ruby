@@ -16,7 +16,7 @@ void rxml_owned_del(void *private) {
 }
 
 int rxml_owned_p(void *private) {
-  return st_lookup(owned_pointers, (st_data_t)private, NULL);
+  return private && st_lookup(owned_pointers, (st_data_t)private, NULL);
 }
 
 VALUE mXML;
