@@ -18,8 +18,8 @@ VALUE cXMLNode;
 /* Memory management:
  *
  * The bindings create a one-to-one mapping between libxml nodes
- * and Ruby nodes.  If a libxml node is wraped, its _private member
- * is set with a reference to the Ruby object.
+ * and Ruby nodes.  If a libxml node is wrapped, the mapping is stored in the
+ * private_pointers hashtable.
  *
  * When a libxml document or top level node is freed, it will free
  * all its children.  Thus Ruby is responsible for:
@@ -30,8 +30,8 @@ VALUE cXMLNode;
  *    standing nodes Ruby is referencing via the node or its children.
  *
  * In general use, this will cause Ruby nodes to be freed before
- * a libxml document.  When a Ruby node is freed, the _private
- * field is set back to null.  
+ * a libxml document.  When a Ruby node is freed, the hashtable entry is
+ * removed.
  *
  * In the sweep phase in Ruby 1.9.*, the document tends to be
  * freed before the nodes.  To support this, the bindings register
@@ -43,16 +43,18 @@ VALUE cXMLNode;
 static void rxml_node_deregisterNode(xmlNodePtr xnode)
 {
   /* Has the node been wrapped and exposed to Ruby? */
-  if (xnode->_private)
-  {
-    /* Node was wrapped.  Set the _private member to free and
-      then disable the dfree function so that Ruby will not
-      try to free the node a second time. */
-    VALUE node = (VALUE) xnode->_private;
-    RDATA(node)->data = NULL;
-    RDATA(node)->dfree = NULL;
-    RDATA(node)->dmark = NULL;
-  }
+  VALUE node = rxml_private_get(xnode);
+  if (node == 0)
+      return;
+
+  /* Node was wrapped.  Remove the hashtable entry and
+    then disable the dfree function so that Ruby will not
+    try to free the node a second time. */
+  rxml_private_del(xnode);
+
+  RDATA(node)->data = NULL;
+  RDATA(node)->dfree = NULL;
+  RDATA(node)->dmark = NULL;
 }
 
 static void rxml_node_free(xmlNodePtr xnode)
@@ -64,7 +66,7 @@ static void rxml_node_free(xmlNodePtr xnode)
     return;
 
   /* The ruby object wrapping the xml object no longer exists. */
-  xnode->_private = NULL;
+  rxml_private_del(xnode);
 
   /* Ruby is responsible for freeing this node if it does not
      have a parent and is not owned by a document.  Note a corner
@@ -84,27 +86,20 @@ static void rxml_node_free(xmlNodePtr xnode)
   if (xnode == NULL)
     return;
 
-  if (xnode->doc && xnode->doc->_private)
-    rb_gc_mark((VALUE) xnode->doc->_private);
-  
-  if (xnode->parent && xnode->parent->_private)
-    rb_gc_mark((VALUE) xnode->_private);
+  rxml_private_mark(xnode->doc);
+  rxml_private_mark(xnode->parent);
 }
 
 VALUE rxml_node_wrap(xmlNodePtr xnode)
 {
-  VALUE result;
+  VALUE result = rxml_private_get(xnode);
 
-  /* Is the node already wrapped? */
-  if (xnode->_private != NULL)
-  {
-    result = (VALUE) xnode->_private;
-  }
-  else
-  {
-    result = Data_Wrap_Struct(cXMLNode, rxml_node_mark, rxml_node_free, xnode);
-    xnode->_private = (void*) result;
-  }
+  // This node is already wrapped
+  if (result)
+      return result;
+
+  result = Data_Wrap_Struct(cXMLNode, rxml_node_mark, rxml_node_free, xnode);
+  rxml_private_set(xnode, result);
   return result;
 }
 
@@ -276,7 +271,7 @@ static VALUE rxml_node_initialize(int argc, VALUE *argv, VALUE self)
     rxml_raise(&xmlLastError);
 
   /* Link the Ruby object to the libxml object and vice-versa. */
-  xnode->_private = (void*) self;
+  rxml_private_set(xnode, self);
   DATA_PTR(self) = xnode;
 
   if (!NIL_P(content))
@@ -311,7 +306,7 @@ static VALUE rxml_node_modify_dom(VALUE self, VALUE target,
   if (xresult != xtarget)
   {
     RDATA(target)->data = xresult;
-    xresult->_private = (void*) target;
+    rxml_private_set(xresult, target);
   }
 
   return target;
@@ -543,10 +538,12 @@ static VALUE rxml_node_doc(VALUE self)
 
   if (xdoc == NULL)
     return (Qnil);
-  else if (xdoc->_private)
-    return (VALUE) xdoc->_private;
+
+  VALUE result = rxml_private_get(xdoc);
+  if (result)
+    return result;
   else
-    return (Qnil);
+    return Qnil;
 }
 
 /*
@@ -1146,17 +1143,17 @@ static VALUE rxml_node_remove_ex(VALUE self)
   xresult = xmlDocCopyNode(xnode, NULL, 1);
 
   /* This ruby node object no longer points at the node.*/
-  xnode->_private = NULL;
+  rxml_private_del(xnode);
   RDATA(self)->data = NULL;
 
   /* Now free the original node.  This will call the deregister node
-    callback which would reset the mark and free function except for 
-	the fact we set the _private field to null above*/
+    callback which would reset the mark and free function except for
+	the fact we already removed it from the private hashtable above */
   xmlFreeNode(xnode);
 
   /* Now wrap the new node */
   RDATA(self)->data = xresult;
-  xresult->_private = (void*) self;
+  rxml_private_set(xresult, self);
 
   /* Now return the removed node so the user can
      do something with it.*/

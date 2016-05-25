@@ -51,8 +51,7 @@ static void rxml_xpath_namespace_free(xmlNsPtr xns)
 static void rxml_xpath_object_mark(rxml_xpath_object *rxpop)
 {
   rb_gc_mark(rxpop->nsnodes);
-  if (rxpop->xdoc->_private)
-    rb_gc_mark((VALUE)rxpop->xdoc->_private);
+  rxml_private_mark(rxpop->xdoc);
 }
 
 VALUE rxml_xpath_object_wrap(xmlDocPtr xdoc, xmlXPathObjectPtr xpop)

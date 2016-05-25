@@ -19,13 +19,13 @@
 /* Attributes are owned and freed by their nodes.  Thus, its easier for the
    ruby bindings to not manage attribute memory management.  This does mean
    that accessing a particular attribute multiple times will return multiple
-   different ruby objects.  Since we are not using free or xnode->_private
-   this works out fine.  Previous versions of the bindings had a one to
-   one mapping between ruby object and xml attribute, but that could 
-   result in segfaults because the ruby object could be gc'ed.  In theory
-   the mark method on the parent node could prevent that, but if an 
-   attribute is returned using an xpath statement then the node would
-   never by surfaced to ruby and the mark method never called. */
+   different ruby objects.  Since we are not using free this works out fine.
+   Previous versions of the bindings had a one to one mapping between ruby
+   object and xml attribute, but that could result in segfaults because the
+   ruby object could be gc'ed.  In theory the mark method on the parent node
+   could prevent that, but if an attribute is returned using an xpath statement
+   then the node would never by surfaced to ruby and the mark method never
+   called. */
 
 #include "ruby_libxml.h"
 #include "ruby_xml_attr.h"

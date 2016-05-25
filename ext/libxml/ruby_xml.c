@@ -1,6 +1,42 @@
 #include "ruby_libxml.h"
 #include "ruby_xml.h"
 
+static struct st_table *private_pointers;
+
+static int num_private = 0;   // For tracing leaks.
+
+void rxml_private_set(void *node, VALUE private) {
+  if (!st_insert(private_pointers, (st_data_t)node, (st_data_t)private))
+    num_private++;
+}
+
+void rxml_private_del(void *node) {
+  if (st_delete(private_pointers, (st_data_t*)&node, NULL))
+    num_private--;
+}
+
+VALUE rxml_private_get(void *node) {
+  if (!node)
+    return 0;
+
+  st_data_t result = 0;
+  int ret = st_lookup(private_pointers, (st_data_t)node, &result);
+
+  if (ret)
+      return (VALUE)result;
+  else
+      return 0;
+}
+
+void rxml_private_mark(void *node) {
+  VALUE private = rxml_private_get(node);
+
+  if (!private)
+    return;
+
+  rb_gc_mark(private);
+}
+
 VALUE mXML;
 
 /*
@@ -834,6 +870,9 @@ static VALUE rxml_memory_used(VALUE self)
 
 void rxml_init_xml(void)
 {
+  /* Create a hashtable suitable for pointer keys */
+  private_pointers = st_init_numtable();
+
   mXML = rb_define_module_under(mLibXML, "XML");
 
   /* Constants */
