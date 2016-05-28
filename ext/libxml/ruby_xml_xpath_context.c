@@ -285,7 +285,7 @@ static VALUE rxml_xpath_context_find(VALUE self, VALUE xpath_expr)
   else
   {
     rb_raise(rb_eTypeError,
-        "Argument should be an intance of a String or XPath::Expression");
+        "Argument should be an instance of a String or XPath::Expression");
   }
 
   return rxml_xpath_to_value(xctxt, xobject);
