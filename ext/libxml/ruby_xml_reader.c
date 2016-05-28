@@ -62,9 +62,7 @@ static void rxml_reader_free(xmlTextReaderPtr xreader)
 static void rxml_reader_mark(xmlTextReaderPtr xreader)
 {
   xmlDocPtr xdoc = xmlTextReaderCurrentDoc(xreader);
-
-  if (xdoc && xdoc->_private)
-    rb_gc_mark((VALUE) xdoc->_private);
+  rxml_private_mark(xdoc);
 }
 
 static VALUE rxml_reader_wrap(xmlTextReaderPtr xreader)

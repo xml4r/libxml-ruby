@@ -62,8 +62,7 @@ void rxml_document_mark_node_list(xmlNodePtr xnode)
   while (xnode != NULL)
   {
     rxml_document_mark_node_list(xnode->children);
-    if (xnode->_private)
-      rb_gc_mark((VALUE) xnode->_private);
+    rxml_private_mark(xnode);
     xnode = xnode->next;
   }
 }
@@ -76,25 +75,20 @@ void rxml_document_mark(xmlDocPtr xdoc)
 
 void rxml_document_free(xmlDocPtr xdoc)
 {
-  xdoc->_private = NULL;
+  rxml_private_del(xdoc);
   xmlFreeDoc(xdoc);
 }
 
 VALUE rxml_document_wrap(xmlDocPtr xdoc)
 {
-  VALUE result;
+  VALUE result = rxml_private_get(xdoc);
 
   // This node is already wrapped
-  if (xdoc->_private != NULL)
-  {
-    result = (VALUE) xdoc->_private;
-  }
-  else
-  {
-    result = Data_Wrap_Struct(cXMLDocument, rxml_document_mark, rxml_document_free, xdoc);
-    xdoc->_private = (void*) result;
-  }
+  if (result)
+    return result;
 
+  result = Data_Wrap_Struct(cXMLDocument, rxml_document_mark, rxml_document_free, xdoc);
+  rxml_private_set(xdoc, result);
   return result;
 }
 
@@ -136,7 +130,7 @@ static VALUE rxml_document_initialize(int argc, VALUE *argv, VALUE self)
 
   Check_Type(xmlver, T_STRING);
   xdoc = xmlNewDoc((xmlChar*) StringValuePtr(xmlver));
-  xdoc->_private = (void*) self;
+  rxml_private_set(xdoc, self);
   DATA_PTR(self) = xdoc;
 
   return self;
