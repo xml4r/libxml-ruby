@@ -618,14 +618,14 @@ static VALUE rxml_node_to_s(int argc, VALUE *argv, VALUE self)
 
 #ifdef LIBXML2_NEW_BUFFER
   if (output->conv)
-    result = rxml_new_cstr((const xmlChar*)xmlBufContent(output->conv), xencoding);
+    result = rxml_new_cstr(xmlBufContent(output->conv), xencoding);
   else
-    result = rxml_new_cstr((const xmlChar*)xmlBufContent(output->buffer), xencoding);
+    result = rxml_new_cstr(xmlBufContent(output->buffer), xencoding);
 #else
   if (output->conv)
-    result = rxml_new_cstr( output->conv->content, xencoding);
+    result = rxml_new_cstr(xmlBufferContent(output->conv), xencoding);
   else
-    result = rxml_new_cstr( output->buffer->content, xencoding);
+    result = rxml_new_cstr(xmlBufferContent(output->buffer), xencoding);
 #endif
 
   xmlOutputBufferClose(output);
