@@ -114,8 +114,8 @@ For simplicity's sake, the documentation uses the xml module in its examples.
 
 == Memory Management
 libxml-ruby automatically manages memory associated with the
-underlying libxml2 library.  There is however one corner case that
-your code must handle.  If a node is imported into a document, but not
+underlying libxml2 library. There is however one corner case that
+your code must handle. If a node is imported into a document, but not
 added to the document, a segmentation fault may occur on program termination.
 
   # Do NOT do this
@@ -124,8 +124,8 @@ added to the document, a segmentation fault may occur on program termination.
   doc2 = XML::Document.string("test2")
   node = doc2.import(doc1.root)
 
-If doc2 is freed before node2 a segmentatin fault will occur since
-node2 references the document.  To avoid this, simply make sure to add the
+If doc2 is freed before the node a segmentation fault will occur since
+the node references the document.  To avoid this, simply make sure to add the
 node to the document:
 
   # DO this instead
@@ -133,7 +133,7 @@ node to the document:
   doc2 = XML::Document.string("test2")
   doc2.root << doc2.import(doc1.root)
 
-Alternatively, you can call node2.remove! to disassociate node2 from doc2.
+Alternatively, you can call node.remove! to disassociate the node from doc2.
 
 == Threading
 libxml-ruby fully supports native, background Ruby threads.  This of course
