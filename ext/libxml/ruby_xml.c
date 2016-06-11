@@ -389,10 +389,10 @@ static VALUE rxml_debug_entities_get(VALUE klass)
  * Enable or disable included-entity debugging.
  * (Requires Libxml to be compiled with debugging support)
  */
-static VALUE rxml_debug_entities_set(VALUE klass, VALUE bool)
+static VALUE rxml_debug_entities_set(VALUE klass, VALUE value)
 {
 #ifdef LIBXML_DEBUG_ENABLED
-  if (TYPE(bool) == T_FALSE)
+  if (value == Qfalse)
   {
     xmlParserDebugEntities = 0;
     return(Qfalse);
@@ -427,14 +427,14 @@ static VALUE rxml_default_keep_blanks_get(VALUE klass)
  *
  * Controls whether parsers retain whitespace by default.
  */
-static VALUE rxml_default_keep_blanks_set(VALUE klass, VALUE bool)
+static VALUE rxml_default_keep_blanks_set(VALUE klass, VALUE value)
 {
-  if (TYPE(bool) == T_FALSE)
+  if (value == Qfalse)
   {
     xmlKeepBlanksDefaultValue = 0;
     return (Qfalse);
   }
-  else if (TYPE(bool) == T_TRUE)
+  else if (value == Qtrue)
   {
     xmlKeepBlanksDefaultValue = 1;
     return (Qtrue);
@@ -465,9 +465,9 @@ static VALUE rxml_default_load_external_dtd_get(VALUE klass)
  *
  * Controls whether parsers load external DTDs by default.
  */
-static VALUE rxml_default_load_external_dtd_set(VALUE klass, VALUE bool)
+static VALUE rxml_default_load_external_dtd_set(VALUE klass, VALUE value)
 {
-  if (bool == Qfalse)
+  if (value == Qfalse)
   {
     xmlLoadExtDtdDefaultValue = 0;
     return (Qfalse);
@@ -499,9 +499,9 @@ static VALUE rxml_default_line_numbers_get(VALUE klass)
  *
  * Controls whether parsers retain line-numbers by default.
  */
-static VALUE rxml_default_line_numbers_set(VALUE klass, VALUE bool)
+static VALUE rxml_default_line_numbers_set(VALUE klass, VALUE value)
 {
-  if (TYPE(bool) == T_FALSE)
+  if (value == Qfalse)
   {
     xmlLineNumbersDefault(0);
     return (Qfalse);
@@ -570,9 +570,9 @@ static VALUE rxml_default_pedantic_parser_get(VALUE klass)
  *
  * Controls whether parsers are pedantic by default.
  */
-static VALUE rxml_default_pedantic_parser_set(VALUE klass, VALUE bool)
+static VALUE rxml_default_pedantic_parser_set(VALUE klass, VALUE value)
 {
-  if (TYPE(bool) == T_FALSE)
+  if (value == Qfalse)
   {
     xmlPedanticParserDefault(0);
     return (Qfalse);
@@ -606,9 +606,9 @@ static VALUE rxml_default_substitute_entities_get(VALUE klass)
  * Controls whether parsers perform inline entity substitution
  * (for external entities) by default.
  */
-static VALUE rxml_default_substitute_entities_set(VALUE klass, VALUE bool)
+static VALUE rxml_default_substitute_entities_set(VALUE klass, VALUE value)
 {
-  if (bool == Qfalse)
+  if (value == Qfalse)
   {
     xmlSubstituteEntitiesDefault(0);
     return (Qfalse);
@@ -669,9 +669,9 @@ static VALUE rxml_default_validity_checking_get(VALUE klass)
  *
  * Controls whether parsers perform XML validation by default.
  */
-static VALUE rxml_default_validity_checking_set(VALUE klass, VALUE bool)
+static VALUE rxml_default_validity_checking_set(VALUE klass, VALUE value)
 {
-  if (TYPE(bool) == T_FALSE)
+  if (value == Qfalse)
   {
     xmlDoValidityCheckingDefaultValue = 0;
     return (Qfalse);
@@ -703,9 +703,9 @@ static VALUE rxml_default_warnings_get(VALUE klass)
  *
  * Controls whether parsers output warnings by default.
  */
-static VALUE rxml_default_warnings_set(VALUE klass, VALUE bool)
+static VALUE rxml_default_warnings_set(VALUE klass, VALUE value)
 {
-  if (TYPE(bool) == T_FALSE)
+  if (value == Qfalse)
   {
     xmlGetWarningsDefaultValue = 0;
     return (Qfalse);
@@ -810,14 +810,14 @@ static VALUE rxml_indent_tree_output_get(VALUE klass)
  * Controls whether XML output will be indented
  * (using the string supplied to +default_indent_tree_string+)
  */
-static VALUE rxml_indent_tree_output_set(VALUE klass, VALUE bool)
+static VALUE rxml_indent_tree_output_set(VALUE klass, VALUE value)
 {
-  if (TYPE(bool) == T_TRUE)
+  if (value == Qtrue)
   {
     xmlIndentTreeOutput = 1;
     return (Qtrue);
   }
-  else if (TYPE(bool) == T_FALSE)
+  else if (value == Qfalse)
   {
     xmlIndentTreeOutput = 0;
     return (Qfalse);

@@ -276,7 +276,7 @@ static VALUE rxml_html_parser_context_close(VALUE self)
  *
  * Control whether the CDATA nodes will be created in this context.
  */
-static VALUE rxml_html_parser_context_disable_cdata_set(VALUE self, VALUE bool)
+static VALUE rxml_html_parser_context_disable_cdata_set(VALUE self, VALUE value)
 {
   htmlParserCtxtPtr ctxt;
   Data_Get_Struct(self, htmlParserCtxt, ctxt);
@@ -285,12 +285,12 @@ static VALUE rxml_html_parser_context_disable_cdata_set(VALUE self, VALUE bool)
     rb_raise(rb_eRuntimeError, "Sax handler is not yet set");
 
   /* LibXML controls this internally with the default SAX handler. */ 
-  if (bool)
+  if (value)
     ctxt->sax->cdataBlock = NULL;
   else
     ctxt->sax->cdataBlock = htmlDefaultSAXHandler.cdataBlock;
 
-  return bool;
+  return value;
 }
 
 /*

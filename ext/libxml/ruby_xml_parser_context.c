@@ -290,7 +290,7 @@ static VALUE rxml_parser_context_disable_cdata_q(VALUE self)
  *
  * Control whether CDATA nodes will be created in this context.
  */
-static VALUE rxml_parser_context_disable_cdata_set(VALUE self, VALUE bool)
+static VALUE rxml_parser_context_disable_cdata_set(VALUE self, VALUE value)
 {
   xmlParserCtxtPtr ctxt;
   Data_Get_Struct(self, xmlParserCtxt, ctxt);
@@ -299,12 +299,12 @@ static VALUE rxml_parser_context_disable_cdata_set(VALUE self, VALUE bool)
     rb_raise(rb_eRuntimeError, "Sax handler is not yet set");
 
   /* LibXML controls this internally with the default SAX handler. */ 
-  if (bool)
+  if (value)
     ctxt->sax->cdataBlock = NULL;
   else
     ctxt->sax->cdataBlock = xmlDefaultSAXHandler.cdataBlock;
 
-  return bool;
+  return value;
 }
 
 /*
@@ -661,12 +661,12 @@ static VALUE rxml_parser_context_recovery_q(VALUE self)
  * Control whether recovery mode is enabled in this
  * context.
  */
-static VALUE rxml_parser_context_recovery_set(VALUE self, VALUE bool)
+static VALUE rxml_parser_context_recovery_set(VALUE self, VALUE value)
 {
   xmlParserCtxtPtr ctxt;
   Data_Get_Struct(self, xmlParserCtxt, ctxt);
 
-  if (TYPE(bool) == T_FALSE)
+  if (value == Qfalse)
   {
     ctxt->recovery = 0;
     return (Qfalse);
@@ -703,12 +703,12 @@ static VALUE rxml_parser_context_replace_entities_q(VALUE self)
  * Control whether external entity replacement is enabled in this
  * context.
  */
-static VALUE rxml_parser_context_replace_entities_set(VALUE self, VALUE bool)
+static VALUE rxml_parser_context_replace_entities_set(VALUE self, VALUE value)
 {
   xmlParserCtxtPtr ctxt;
   Data_Get_Struct(self, xmlParserCtxt, ctxt);
 
-  if (TYPE(bool) == T_FALSE)
+  if (value == Qfalse)
   {
     ctxt->replaceEntities = 0;
     return (Qfalse);

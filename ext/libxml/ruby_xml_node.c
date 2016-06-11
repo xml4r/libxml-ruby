@@ -1239,19 +1239,19 @@ static VALUE rxml_node_output_escaping_q(VALUE self)
  * Text nodes which are added to an element or attribute node will be affected
  * by any previous setting of this property.
  */
-static VALUE rxml_node_output_escaping_set(VALUE self, VALUE bool)
+static VALUE rxml_node_output_escaping_set(VALUE self, VALUE value)
 {
   xmlNodePtr xnode;
   xnode = rxml_get_xnode(self);
 
   switch (xnode->type) {
   case XML_TEXT_NODE:
-    xnode->name = (bool!=Qfalse && bool!=Qnil) ? xmlStringText : xmlStringTextNoenc;
+    xnode->name = (value != Qfalse && value != Qnil) ? xmlStringText : xmlStringTextNoenc;
     break;
   case XML_ELEMENT_NODE:
   case XML_ATTRIBUTE_NODE:
     {
-      const xmlChar *name = (bool!=Qfalse && bool!=Qnil) ? xmlStringText : xmlStringTextNoenc;
+      const xmlChar *name = (value != Qfalse && value != Qnil) ? xmlStringText : xmlStringTextNoenc;
       xmlNodePtr tmp;
       for (tmp = xnode->children; tmp; tmp = tmp->next)
         if (tmp->type == XML_TEXT_NODE)
@@ -1262,7 +1262,7 @@ static VALUE rxml_node_output_escaping_set(VALUE self, VALUE bool)
     return Qnil;
   }
 
-  return (bool!=Qfalse && bool!=Qnil) ? Qtrue : Qfalse;
+  return (value!=Qfalse && value!=Qnil) ? Qtrue : Qfalse;
 }
 
 /*
@@ -1285,12 +1285,12 @@ static VALUE rxml_node_space_preserve_get(VALUE self)
  *
  * Control whether this node preserves whitespace.
  */
-static VALUE rxml_node_space_preserve_set(VALUE self, VALUE bool)
+static VALUE rxml_node_space_preserve_set(VALUE self, VALUE value)
 {
   xmlNodePtr xnode;
   xnode = rxml_get_xnode(self);
 
-  if (TYPE(bool) == T_FALSE)
+  if (value == Qfalse)
     xmlNodeSetSpacePreserve(xnode, 0);
   else
     xmlNodeSetSpacePreserve(xnode, 1);
