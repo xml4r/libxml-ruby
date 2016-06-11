@@ -134,6 +134,7 @@ class TestParser < Minitest::Test
 
     thread.join
     assert(true)
+    puts 'Thread completed'
   end
 
   def test_string
