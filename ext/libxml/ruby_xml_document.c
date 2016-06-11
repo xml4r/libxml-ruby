@@ -859,7 +859,7 @@ static VALUE rxml_document_to_s(int argc, VALUE *argv, VALUE self)
   xmlDocPtr xdoc;
   int indent = 1;
   const xmlChar *xencoding = (const xmlChar*) "UTF-8";
-  const xmlChar *buffer;
+  xmlChar *buffer;
   int length;
 
   rb_scan_args(argc, argv, "01", &options);
@@ -883,10 +883,10 @@ static VALUE rxml_document_to_s(int argc, VALUE *argv, VALUE self)
   }
 
   Data_Get_Struct(self, xmlDoc, xdoc);
-  xmlDocDumpFormatMemoryEnc(xdoc, &buffer, &length, xencoding, indent);
+  xmlDocDumpFormatMemoryEnc(xdoc, &buffer, &length, (const char*)xencoding, indent);
 
   result = rxml_new_cstr(buffer, xencoding);
-  xmlFree((xmlChar*)buffer);
+  xmlFree(buffer);
   return result;
 }
 

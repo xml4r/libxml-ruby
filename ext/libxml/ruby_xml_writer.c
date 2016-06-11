@@ -280,14 +280,14 @@ static VALUE rxml_writer_flush(int argc, VALUE *argv, VALUE self)
  */
 static VALUE rxml_writer_result(VALUE self)
 {
-    VALUE ret;
-    rxml_writer_object *rwo;
+    VALUE ret = Qnil;
+    rxml_writer_object *rwo = rxml_textwriter_get(self);
+    int bytesWritten = xmlTextWriterFlush(rwo->writer);
 
-    ret = Qnil;
-    rwo = rxml_textwriter_get(self);
-    if (-1 == (ret = xmlTextWriterFlush(rwo->writer))) {
+    if (bytesWritten == -1) {
         rxml_raise(&xmlLastError);
     }
+
     switch (rwo->output_type) {
         case RXMLW_OUTPUT_DOC:
             ret = rwo->output;
@@ -334,7 +334,8 @@ static VALUE numeric_rxml_writer_void(VALUE obj, int (*fn)(xmlTextWriterPtr))
 static VALUE numeric_rxml_writer_va_strings(VALUE obj, VALUE pe, size_t strings_count, int (*fn)(ANYARGS), ...)
 {
     va_list ap;
-    int argc, ret;
+    size_t argc;
+	int ret = -1;
     rxml_writer_object *rwo;
     const xmlChar *argv[XMLWRITER_MAX_STRING_ARGS];
     VALUE utf8[XMLWRITER_MAX_STRING_ARGS], orig[XMLWRITER_MAX_STRING_ARGS];
@@ -342,7 +343,6 @@ static VALUE numeric_rxml_writer_va_strings(VALUE obj, VALUE pe, size_t strings_
     if (strings_count > XMLWRITER_MAX_STRING_ARGS) {
         rb_bug("more arguments than expected");
     }
-    ret = -1;
     va_start(ap, fn);
     rwo = rxml_textwriter_get(obj);
     for (argc = 0; argc < strings_count; argc++) {
@@ -765,12 +765,11 @@ static VALUE rxml_writer_end_cdata(VALUE self)
 static VALUE rxml_writer_start_document(int argc, VALUE *argv, VALUE self)
 {
     int ret;
-    VALUE options;
+    VALUE options = Qnil;
     rxml_writer_object *rwo;
-    const xmlChar *xencoding, *xstandalone;
+    const xmlChar *xencoding = NULL;
+    const char *xstandalone = NULL;
 
-    options = Qnil;
-    xstandalone = xencoding = NULL;
     rb_scan_args(argc, argv, "01", &options);
     if (!NIL_P(options)) {
         VALUE encoding, standalone;
@@ -778,7 +777,7 @@ static VALUE rxml_writer_start_document(int argc, VALUE *argv, VALUE self)
         encoding = standalone = Qnil;
         Check_Type(options, T_HASH);
         encoding = rb_hash_aref(options, sEncoding);
-        xencoding = NIL_P(encoding) ? NULL : xmlGetCharEncodingName(NUM2INT(encoding));
+        xencoding = NIL_P(encoding) ? NULL : (const xmlChar*)xmlGetCharEncodingName(NUM2INT(encoding));
         standalone = rb_hash_aref(options, sStandalone);
         if (NIL_P(standalone)) {
             xstandalone = NULL;
@@ -790,7 +789,7 @@ static VALUE rxml_writer_start_document(int argc, VALUE *argv, VALUE self)
 #ifdef HAVE_RUBY_ENCODING_H
     rwo->encoding = rxml_figure_encoding(xencoding);
 #endif /* !HAVE_RUBY_ENCODING_H */
-    ret = xmlTextWriterStartDocument(rwo->writer, NULL, xencoding, xstandalone);
+    ret = xmlTextWriterStartDocument(rwo->writer, NULL, (const char*)xencoding, xstandalone);
 
     return (-1 == ret ? Qfalse : Qtrue);
 }

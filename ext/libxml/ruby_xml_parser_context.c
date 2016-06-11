@@ -209,7 +209,7 @@ static VALUE rxml_parser_context_base_uri_set(VALUE self, VALUE url)
   if (ctxt->input && !ctxt->input->filename)
   {
     const char* xurl = StringValuePtr(url);
-    ctxt->input->filename = xmlStrdup(xurl);
+    ctxt->input->filename = (const char*)xmlStrdup((const xmlChar*)xurl);
   }
   return self;
 }

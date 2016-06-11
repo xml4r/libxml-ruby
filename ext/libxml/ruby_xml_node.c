@@ -517,6 +517,7 @@ static VALUE rxml_node_content_add(VALUE self, VALUE obj)
  */
 static VALUE rxml_node_doc(VALUE self)
 {
+  VALUE result = Qnil;
   xmlDocPtr xdoc = NULL;
   xmlNodePtr xnode = rxml_get_xnode(self);
 
@@ -539,7 +540,7 @@ static VALUE rxml_node_doc(VALUE self)
   if (xdoc == NULL)
     return (Qnil);
 
-  VALUE result = rxml_private_get(xdoc);
+  result = rxml_private_get(xdoc);
   if (result)
     return result;
   else
