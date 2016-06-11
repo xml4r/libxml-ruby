@@ -2,9 +2,8 @@
 
 require './test_helper'
 
-require 'test/unit'
 
-class TestNamespaces < Test::Unit::TestCase
+class TestNamespaces < Minitest::Test
   def setup
     file = File.join(File.dirname(__FILE__), 'model/soap.xml')
     @doc = XML::Document.file(file)
@@ -38,7 +37,7 @@ class TestNamespaces < Test::Unit::TestCase
 
     # Now put the node in the soap namespace
     node.namespaces.namespace = ns
-    assert_not_nil(node.namespaces.namespace)
+    refute_nil(node.namespaces.namespace)
     assert_equal("<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"/>", node.to_s)
   end
 
@@ -60,13 +59,13 @@ class TestNamespaces < Test::Unit::TestCase
 
     # Now put the node in the soap namespace
     node.namespaces.namespace = ns
-    assert_not_nil(node.namespaces.namespace)
+    refute_nil(node.namespaces.namespace)
     assert_equal('<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" encodingStyle="http://www.w3.org/2001/12/soap-encoding"/>',
                   node.to_s)
 
     # Now put the attribute in the soap namespace
     attr.namespaces.namespace = ns
-    assert_not_nil(node.namespaces.namespace)
+    refute_nil(node.namespaces.namespace)
     assert_equal('<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" soap:encodingStyle="http://www.w3.org/2001/12/soap-encoding"/>',
                   node.to_s)
   end
@@ -205,6 +204,6 @@ class TestNamespaces < Test::Unit::TestCase
     doc.root.namespaces.default_prefix = 'soap'
 
     node = doc.root.find_first('/soap:Envelope')
-    assert_not_nil(node)
+    refute_nil(node)
   end
 end

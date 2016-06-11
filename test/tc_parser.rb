@@ -1,10 +1,9 @@
 # encoding: UTF-8
 
 require './test_helper'
-require 'test/unit'
 require 'stringio'
 
-class TestParser < Test::Unit::TestCase
+class TestParser < Minitest::Test
   def setup
     XML::Error.set_handler(&XML::Error::QUIET_HANDLER)
   end
@@ -30,7 +29,7 @@ class TestParser < Test::Unit::TestCase
   end
 
   def test_nil_document
-    error = assert_raise(TypeError) do
+    error = assert_raises(TypeError) do
       XML::Parser.document(nil)
     end
 
@@ -47,7 +46,7 @@ class TestParser < Test::Unit::TestCase
   end
 
   def test_noexistent_file
-    error = assert_raise(XML::Error) do
+    error = assert_raises(XML::Error) do
       XML::Parser.file('i_dont_exist.xml')
     end
 
@@ -55,7 +54,7 @@ class TestParser < Test::Unit::TestCase
   end
 
   def test_nil_file
-    error = assert_raise(TypeError) do
+    error = assert_raises(TypeError) do
       XML::Parser.file(nil)
     end
 
@@ -66,7 +65,7 @@ class TestParser < Test::Unit::TestCase
     file = File.expand_path(File.join(File.dirname(__FILE__), 'model/bands.utf-8.xml'))
     parser = XML::Parser.file(file, :encoding => XML::Encoding::ISO_8859_1)
 
-    error = assert_raise(XML::Error) do
+    error = assert_raises(XML::Error) do
       doc = parser.parse
     end
 
@@ -74,7 +73,7 @@ class TestParser < Test::Unit::TestCase
 
     parser = XML::Parser.file(file, :encoding => XML::Encoding::UTF_8)
     doc = parser.parse
-    assert_not_nil(doc)
+    refute_nil(doc)
   end
 
   def test_file_base_uri
@@ -111,7 +110,7 @@ class TestParser < Test::Unit::TestCase
   end
 
   def test_nil_io
-    error = assert_raise(TypeError) do
+    error = assert_raises(TypeError) do
       XML::Parser.io(nil)
     end
 
@@ -155,7 +154,7 @@ class TestParser < Test::Unit::TestCase
   end
 
   def test_nil_string
-    error = assert_raise(TypeError) do
+    error = assert_raises(TypeError) do
       XML::Parser.string(nil)
     end
 
@@ -215,7 +214,7 @@ class TestParser < Test::Unit::TestCase
     # Parse as UTF_8
     parser = XML::Parser.string(xml, :encoding => XML::Encoding::UTF_8)
 
-    error = assert_raise(XML::Error) do
+    error = assert_raises(XML::Error) do
       doc = parser.parse
     end
 
@@ -264,11 +263,11 @@ class TestParser < Test::Unit::TestCase
 
   # -----  Errors  ------
   def test_error
-    error = assert_raise(XML::Error) do
+    error = assert_raises(XML::Error) do
       XML::Parser.string('<foo><bar/></foz>').parse
     end
 
-    assert_not_nil(error)
+    refute_nil(error)
     assert_kind_of(XML::Error, error)
     assert_equal("Fatal error: Opening and ending tag mismatch: foo line 1 and foz at :1.", error.message)
     assert_equal(XML::Error::PARSER, error.domain)
@@ -286,11 +285,11 @@ class TestParser < Test::Unit::TestCase
 
   def test_bad_xml
     parser = XML::Parser.string('<ruby_array uga="booga" foo="bar"<fixnum>one</fixnum><fixnum>two</fixnum></ruby_array>')
-    error = assert_raise(XML::Error) do
-      assert_not_nil(parser.parse)
+    error = assert_raises(XML::Error) do
+      refute_nil(parser.parse)
     end
 
-    assert_not_nil(error)
+    refute_nil(error)
     assert_kind_of(XML::Error, error)
     assert_equal("Fatal error: Extra content at the end of the document at :1.", error.message)
     assert_equal(XML::Error::PARSER, error.domain)
@@ -302,7 +301,7 @@ class TestParser < Test::Unit::TestCase
     assert_nil(error.str2)
     assert_nil(error.str3)
     assert_equal(0, error.int1)
-    assert_equal(20, error.int2)
+    assert_equal(34, error.int2)
     assert_nil(error.node)
   end
 

@@ -2,7 +2,6 @@
 
 require './test_helper'
 require 'stringio'
-require 'test/unit'
 
 class DocTypeCallback
   include XML::SaxParser::Callbacks
@@ -68,7 +67,7 @@ class TestCaseCallbacks
   end
 end
 
-class TestSaxParser < Test::Unit::TestCase
+class TestSaxParser < Minitest::Test
   def saxtest_file
     File.join(File.dirname(__FILE__), 'model/atom.xml')
   end
@@ -132,7 +131,7 @@ class TestSaxParser < Test::Unit::TestCase
   end
 
   def test_noexistent_file
-    error = assert_raise(XML::Error) do
+    error = assert_raises(XML::Error) do
       XML::SaxParser.file('i_dont_exist.xml')
     end
 
@@ -140,7 +139,7 @@ class TestSaxParser < Test::Unit::TestCase
   end
 
   def test_nil_file
-    error = assert_raise(TypeError) do
+    error = assert_raises(TypeError) do
       XML::SaxParser.file(nil)
     end
 
@@ -157,7 +156,7 @@ class TestSaxParser < Test::Unit::TestCase
   end
 
   def test_nil_io
-    error = assert_raise(TypeError) do
+    error = assert_raises(TypeError) do
       XML::HTMLParser.io(nil)
     end
 
@@ -189,7 +188,7 @@ class TestSaxParser < Test::Unit::TestCase
   end
 
   def test_nil_string
-    error = assert_raise(TypeError) do
+    error = assert_raises(TypeError) do
       XML::SaxParser.string(nil)
     end
 
@@ -207,7 +206,7 @@ EOS
     parser = XML::SaxParser.string(xml)
     parser.callbacks = DocTypeCallback.new
     doc = parser.parse
-    assert_not_nil(doc)
+    refute_nil(doc)
   end
 
   def test_parse_warning
@@ -243,7 +242,7 @@ EOS
     parser = XML::SaxParser.string(xml)
     parser.callbacks = TestCaseCallbacks.new
 
-    error = assert_raise(XML::Error) do
+    error = assert_raises(XML::Error) do
       doc = parser.parse
     end
 
@@ -258,7 +257,7 @@ EOS
     assert_equal("error: Fatal error: Premature end of data in tag Results line 1 at :2.", result[i+=1])
     assert_equal("end_document", result[i+=1])
 
-    assert_not_nil(error)
+    refute_nil(error)
     assert_kind_of(XML::Error, error)
     assert_equal("Fatal error: Premature end of data in tag Results line 1 at :2.", error.message)
     assert_equal(XML::Error::PARSER, error.domain)
@@ -309,7 +308,7 @@ EOS
     parser = XML::SaxParser.string(xml)
     parser.callbacks = TestCaseCallbacks.new
 
-    error = assert_raise(XML::Error) do
+    error = assert_raises(XML::Error) do
       parser.parse
     end
     assert_equal("Fatal error: xmlParseEntityRef: no name at :5.", error.to_s)

@@ -2,9 +2,8 @@
 
 require './test_helper'
 
-require 'test/unit'
 
-class NodeCommentTest < Test::Unit::TestCase
+class NodeCommentTest < Minitest::Test
   def setup
     xp = XML::Parser.string('<root></root>')
     @doc = xp.parse

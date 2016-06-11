@@ -1,9 +1,8 @@
 # encoding: UTF-8
 
 require './test_helper'
-require 'test/unit'
 
-class AttrNodeTest < Test::Unit::TestCase
+class AttrNodeTest < Minitest::Test
   def setup
     xp = XML::Parser.string(<<-EOS)
     <CityModel
@@ -35,7 +34,7 @@ class AttrNodeTest < Test::Unit::TestCase
   end
 
   def test_doc
-    assert_not_nil(@doc)
+    refute_nil(@doc)
     assert_equal(XML::Encoding::NONE, @doc.encoding)
   end
 
@@ -84,7 +83,7 @@ class AttrNodeTest < Test::Unit::TestCase
 
   def test_set_nil
     attribute = city_member.attributes.get_attribute('name')
-    assert_raise(TypeError) do
+    assert_raises(TypeError) do
       attribute.value = nil
     end
   end
@@ -134,7 +133,7 @@ class AttrNodeTest < Test::Unit::TestCase
     assert_equal(5, attributes.length)
 
     attribute = attributes.get_attribute('name')
-    assert_not_nil(attribute.parent)
+    refute_nil(attribute.parent)
     assert(attribute.parent?)
 
     attribute.remove!
@@ -177,7 +176,7 @@ class AttrNodeTest < Test::Unit::TestCase
   def test_no_attributes
     element = @doc.find('/city:CityModel/city:type').first
 
-    assert_not_nil(element.attributes)
+    refute_nil(element.attributes)
     assert_equal(0, element.attributes.length)
   end
 end

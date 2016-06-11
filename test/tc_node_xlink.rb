@@ -3,9 +3,8 @@
 # $Id$
 require './test_helper'
 
-require 'test/unit'
 
-class TC_XML_Node_XLink < Test::Unit::TestCase
+class TC_XML_Node_XLink < Minitest::Test
   def setup()
     xp = XML::Parser.string('<ruby_array xmlns:xlink="http://www.w3.org/1999/xlink/namespace/"><fixnum xlink:type="simple">one</fixnum></ruby_array>')
     doc = xp.parse

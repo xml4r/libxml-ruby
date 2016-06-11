@@ -2,12 +2,11 @@
 
 require './test_helper'
 
-require 'test/unit'
 
 # attributes is deprecated - use attributes instead.
 # Tests for backwards compatibility
 
-class Testattributes < Test::Unit::TestCase
+class Testattributes < Minitest::Test
   def setup()
     xp = XML::Parser.string('<ruby_array uga="booga" foo="bar"><fixnum>one</fixnum><fixnum>two</fixnum></ruby_array>')
     @doc = xp.parse

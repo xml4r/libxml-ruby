@@ -2,9 +2,8 @@
 
 require './test_helper'
 
-require 'test/unit'
 
-class TestDtd < Test::Unit::TestCase
+class TestDtd < Minitest::Test
   def setup
     xp = XML::Parser.string(<<-EOS)
       <root>
@@ -71,12 +70,12 @@ class TestDtd < Test::Unit::TestCase
     new_node = XML::Node.new('invalid', 'this will mess up validation')
     @doc.root << new_node
 
-    error = assert_raise(XML::Error) do
+    error = assert_raises(XML::Error) do
       @doc.validate(dtd)
     end
 
     # Check the error worked
-    assert_not_nil(error)
+    refute_nil(error)
     assert_kind_of(XML::Error, error)
     assert_equal("Error: No declaration for element invalid.", error.message)
     assert_equal(XML::Error::VALID, error.domain)
@@ -89,7 +88,7 @@ class TestDtd < Test::Unit::TestCase
     assert_nil(error.str3)
     assert_equal(0, error.int1)
     assert_equal(0, error.int2)
-    assert_not_nil(error.node)
+    refute_nil(error.node)
     assert_equal('invalid', error.node.name)
   end
 

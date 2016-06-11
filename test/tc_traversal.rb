@@ -1,9 +1,8 @@
 # encoding: UTF-8
 
 require './test_helper'
-require 'test/unit'
 
-class TestTranversal < Test::Unit::TestCase
+class TestTranversal < Minitest::Test
   ROOT_NODES_LENGTH = 27
   ROOT_ELEMENTS_LENGTH = 13
   

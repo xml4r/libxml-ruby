@@ -1,9 +1,8 @@
 # encoding: UTF-8
 
 require './test_helper'
-require 'test/unit'
 
-class TestSchema < Test::Unit::TestCase
+class TestSchema < Minitest::Test
   def setup
     file = File.join(File.dirname(__FILE__), 'model/shiporder.xml')
     @doc = XML::Document.file(file)
@@ -19,7 +18,7 @@ class TestSchema < Test::Unit::TestCase
   end
 
   def check_error(error)
-    assert_not_nil(error)
+    refute_nil(error)
     assert(error.message.match(/Error: Element 'invalid': This element is not expected. Expected is \( item \)/))
     assert_kind_of(XML::Error, error)
     assert_equal(XML::Error::SCHEMASV, error.domain)
@@ -45,13 +44,13 @@ class TestSchema < Test::Unit::TestCase
     new_node = XML::Node.new('invalid', 'this will mess up validation')
     @doc.root << new_node
 
-    error = assert_raise(XML::Error) do
+    error = assert_raises(XML::Error) do
       @doc.validate_schema(schema)
     end
 
     check_error(error)
     assert_nil(error.line)
-    assert_not_nil(error.node)
+    refute_nil(error.node)
     assert_equal('invalid', error.node.name)
   end
 

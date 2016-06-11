@@ -1,9 +1,8 @@
 # encoding: UTF-8
 
 require './test_helper'
-require 'test/unit'
 
-class TestXInclude < Test::Unit::TestCase
+class TestXInclude < Minitest::Test
   def setup
     @doc = XML::Document.file(File.join(File.dirname(__FILE__), 'model/xinclude.xml'))
     assert_instance_of(XML::Document, @doc)

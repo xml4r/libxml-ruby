@@ -2,9 +2,8 @@
 
 require './test_helper'
 
-require 'test/unit'
 
-class TestHtmlParserContext < Test::Unit::TestCase
+class TestHtmlParserContext < Minitest::Test
   def test_default_options
     context = XML::HTMLParser::Context.new
     assert_equal(0, context.options)

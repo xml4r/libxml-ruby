@@ -2,9 +2,8 @@
 
 require './test_helper'
 
-require 'test/unit'
 
-class TestXPathExpression < Test::Unit::TestCase
+class TestXPathExpression < Minitest::Test
   def setup
     xp = XML::Parser.string('<ruby_array uga="booga" foo="bar"><fixnum>one</fixnum><fixnum>two</fixnum></ruby_array>')
     @doc = xp.parse
@@ -29,10 +28,10 @@ class TestXPathExpression < Test::Unit::TestCase
   end
 
   def test_find_invalid
-    error = assert_raise(TypeError) do
+    error = assert_raises(TypeError) do
       set = @doc.find(999)
     end
-    assert_equal('Argument should be an intance of a String or XPath::Expression',
+    assert_equal('Argument should be an instance of a String or XPath::Expression',
                  error.to_s)
   end
 end

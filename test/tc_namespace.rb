@@ -2,9 +2,8 @@
 
 require './test_helper'
 
-require 'test/unit'
 
-class TestNS < Test::Unit::TestCase
+class TestNS < Minitest::Test
   def setup
     file = File.join(File.dirname(__FILE__), 'model/soap.xml')
     @doc = XML::Document.file(file)
@@ -29,7 +28,7 @@ class TestNS < Test::Unit::TestCase
   end
 
   def test_create_unbound_ns
-    error = assert_raise(TypeError) do
+    error = assert_raises(TypeError) do
       XML::Namespace.new(nil, 'my_namepace', 'http://www.mynamespace.com')
     end
     assert_equal('wrong argument type nil (expected Data)', error.to_s)

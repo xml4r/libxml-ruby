@@ -1,8 +1,7 @@
 # encoding: UTF-8
 require './test_helper'
-require 'test/unit'
 
-class TestDocument < Test::Unit::TestCase
+class TestDocument < Minitest::Test
   def setup
     xp = XML::Parser.string('<ruby_array uga="booga" foo="bar"><fixnum>one</fixnum><fixnum>two</fixnum></ruby_array>')
     assert_instance_of(XML::Parser, xp)
@@ -26,7 +25,7 @@ class TestDocument < Test::Unit::TestCase
   def test_find
     set = @doc.find('/ruby_array/fixnum')
     assert_instance_of(XML::XPath::Object, set)
-    assert_raise(NoMethodError) {
+    assert_raises(NoMethodError) {
       xpt = set.xpath
     }
   end
@@ -91,7 +90,7 @@ class TestDocument < Test::Unit::TestCase
     doc1 = LibXML::XML::Document.string("<one/>")
     doc2 = LibXML::XML::Document.string("<two/>")
 
-    error = assert_raise(XML::Error) do
+    error = assert_raises(XML::Error) do
       doc1.root = doc2.root
     end
     assert_equal(" Nodes belong to different documents.  You must first import the node by calling XML::Document.import.",
@@ -111,7 +110,7 @@ class TestDocument < Test::Unit::TestCase
 
     node = doc1.root.child
 
-    error = assert_raise(XML::Error) do
+    error = assert_raises(XML::Error) do
       doc2.root << node
     end
 

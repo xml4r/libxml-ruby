@@ -1,9 +1,8 @@
 # encoding: UTF-8
 
 require './test_helper'
-require 'test/unit'
 
-class AttributesTest < Test::Unit::TestCase
+class AttributesTest < Minitest::Test
   def setup
     xp = XML::Parser.string(<<-EOS)
     <CityModel name="value"

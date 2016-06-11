@@ -40,7 +40,6 @@ require './tc_xpath_context'
 require './tc_xpath_expression'
 require './tc_xpointer'
 
-
 if defined?(Encoding)
   require './tc_encoding'
   require './tc_encoding_sax'

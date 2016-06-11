@@ -42,5 +42,6 @@ Gem::Specification.new do |spec|
   spec.date = DateTime.now
   spec.add_development_dependency('hanna_guado')
   spec.add_development_dependency('rake-compiler')
+  spec.add_development_dependency('minitest')
   spec.license = 'MIT'
 end

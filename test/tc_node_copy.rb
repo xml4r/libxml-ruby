@@ -1,13 +1,12 @@
 # encoding: UTF-8
 
 require './test_helper'
-require 'test/unit'
 
 # see mailing list archive
 # [libxml-devel] Segmentation fault when add the cloned/copied node
 # 2007/11/27 20:51
 
-class TestNodeCopy < Test::Unit::TestCase
+class TestNodeCopy < Minitest::Test
   def setup
     str = <<-STR
       <html><body>

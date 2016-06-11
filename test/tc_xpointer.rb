@@ -1,9 +1,7 @@
 # encoding: UTF-8
-
 require './test_helper'
-require "test/unit"
 
-class TC_XML_XPointer < Test::Unit::TestCase
+class TC_XML_XPointer < Minitest::Test
   def setup()
     xp = XML::Parser.string('<!DOCTYPE ra [<!ELEMENT ra (foo+)><!ATTLIST ra id ID #IMPLIED><!ELEMENT foo (#PCDATA)><!ATTLIST foo id ID #IMPLIED>]><ra id="start"><foo id="one">one</foo><foo id="two">two</foo><foo id="three">three</foo></ra>')
     @doc = xp.parse

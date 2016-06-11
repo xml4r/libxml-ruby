@@ -1,8 +1,7 @@
 # encoding: UTF-8
 require './test_helper'
-require 'test/unit'
 
-class TestCanonicalize < Test::Unit::TestCase
+class TestCanonicalize < Minitest::Test
   # (www.w3.org) 3.1 PIs, Comments, and Outside of Document Element
   # http://www.w3.org/TR/xml-c14n#Example-OutsideDoc
   def test_canonicalize_with_w3c_c14n_3_1

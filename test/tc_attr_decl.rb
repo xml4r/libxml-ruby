@@ -1,9 +1,8 @@
 # encoding: UTF-8
 
 require './test_helper'
-require 'test/unit'
 
-class AttrDeclTest < Test::Unit::TestCase
+class AttrDeclTest < Minitest::Test
   def setup
     xp = XML::Parser.string(<<-EOS)
 	<!DOCTYPE test [
@@ -28,7 +27,7 @@ class AttrDeclTest < Test::Unit::TestCase
     # Get a element with an access attribute
     elem = @doc.find_first('/root/property[@name="readonly"]')
     assert_equal(2, elem.attributes.length)
-    assert_not_nil(elem['access'])
+    refute_nil(elem['access'])
 
     # Get a element node without a access attribute
     elem = @doc.find_first('/root/property[@name="readwrite"]')
@@ -42,7 +41,7 @@ class AttrDeclTest < Test::Unit::TestCase
 
     # Get the attr_decl
     attr = elem.attributes.get_attribute('access')
-    assert_not_nil(attr)
+    refute_nil(attr)
     assert_equal(XML::Node::ATTRIBUTE_NODE, attr.node_type)
     assert_equal('attribute', attr.node_type_name)
 
@@ -56,7 +55,7 @@ class AttrDeclTest < Test::Unit::TestCase
 
     # Get the attr_decl
     attr_decl = elem.attributes.get_attribute('access')
-    assert_not_nil(attr_decl)
+    refute_nil(attr_decl)
     assert_equal(XML::Node::ATTRIBUTE_DECL, attr_decl.node_type)
     assert_equal('attribute declaration', attr_decl.node_type_name)
 
@@ -69,7 +68,7 @@ class AttrDeclTest < Test::Unit::TestCase
     elem = @doc.find_first('/root/property[@name="readwrite"]')
     attr_decl = elem.attributes.get_attribute('access')
 
-    assert_not_nil(attr_decl)
+    refute_nil(attr_decl)
     assert_equal(XML::Node::ATTRIBUTE_DECL, attr_decl.node_type)
     assert_equal('attribute declaration', attr_decl.node_type_name)
   end
