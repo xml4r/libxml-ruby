@@ -66,7 +66,7 @@ static VALUE rxml_encoding_from_s(VALUE klass, VALUE encoding)
  */
 static VALUE rxml_encoding_to_s(VALUE klass, VALUE encoding)
 {
-  const char* xencoding = xmlGetCharEncodingName(NUM2INT(encoding));
+  const xmlChar* xencoding = xmlGetCharEncodingName(NUM2INT(encoding));
 
   if (!xencoding)
     return Qnil;
@@ -170,7 +170,7 @@ rb_encoding* rxml_figure_encoding(const xmlChar* xencoding)
   rb_encoding* result;
   if (xencoding)
   {
-    xmlCharEncoding xmlEncoding = xmlParseCharEncoding(xencoding);
+    xmlCharEncoding xmlEncoding = xmlParseCharEncoding((const char*)xencoding);
     result = rxml_xml_encoding_to_rb_encoding(mXMLEncoding, xmlEncoding);
   }
   else
@@ -185,7 +185,7 @@ VALUE rxml_new_cstr(const xmlChar* xstr, const xmlChar* xencoding)
 {
 #ifdef HAVE_RUBY_ENCODING_H
   rb_encoding *rbencoding = rxml_figure_encoding(xencoding);
-  return rb_external_str_new_with_enc(xstr, strlen(xstr), rbencoding);
+  return rb_external_str_new_with_enc((const char*)xstr, strlen(xstr), rbencoding);
 #endif
   return rb_str_new2((const char*)xstr);
 }
