@@ -144,6 +144,15 @@ class HTMLParserTest < Minitest::Test
     assert_equal("<p>#{html}</p>", doc.root.to_s)
   end
 
+  def test_comment
+    doc = LibXML::XML::HTMLParser.string('<!-- stuff -->', :options => LibXML::XML::HTMLParser::Options::NOIMPLIED |
+                                                                       LibXML::XML::HTMLParser::Options::NOERROR |
+                                                                       LibXML::XML::HTMLParser::Options::NOWARNING |
+                                                                       LibXML::XML::HTMLParser::Options::RECOVER |
+                                                                       LibXML::XML::HTMLParser::Options::NONET)
+    assert(doc)
+  end
+
   def test_open_many_files
     1000.times do
       doc = XML::HTMLParser.file('model/ruby-lang.html').parse
