@@ -804,7 +804,7 @@ static VALUE rxml_document_save(int argc, VALUE *argv, VALUE self)
 
     if (rencoding != Qnil)
     {
-      xencoding = xmlGetCharEncodingName((xmlCharEncoding)NUM2INT(rencoding));
+      xencoding = (const xmlChar*)xmlGetCharEncodingName((xmlCharEncoding)NUM2INT(rencoding));
       if (!xencoding)
         rb_raise(rb_eArgError, "Unknown encoding value: %d", NUM2INT(rencoding));
     }
@@ -858,7 +858,7 @@ static VALUE rxml_document_to_s(int argc, VALUE *argv, VALUE self)
   VALUE options = Qnil;
   xmlDocPtr xdoc;
   int indent = 1;
-  const xmlChar *xencoding = "UTF-8";
+  const xmlChar *xencoding = (const xmlChar*) "UTF-8";
   const xmlChar *buffer;
   int length;
 
@@ -876,14 +876,14 @@ static VALUE rxml_document_to_s(int argc, VALUE *argv, VALUE self)
 
     if (rencoding != Qnil)
     {
-      xencoding = xmlGetCharEncodingName((xmlCharEncoding)NUM2INT(rencoding));
+      xencoding = (const xmlChar*)xmlGetCharEncodingName((xmlCharEncoding)NUM2INT(rencoding));
       if (!xencoding)
         rb_raise(rb_eArgError, "Unknown encoding value: %d", NUM2INT(rencoding));
     }
   }
 
   Data_Get_Struct(self, xmlDoc, xdoc);
-  xmlDocDumpFormatMemoryEnc(xdoc, &buffer, &length, (const char*)xencoding, indent);
+  xmlDocDumpFormatMemoryEnc(xdoc, &buffer, &length, xencoding, indent);
 
   result = rxml_new_cstr(buffer, xencoding);
   xmlFree((xmlChar*)buffer);

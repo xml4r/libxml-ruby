@@ -16,11 +16,13 @@ void rxml_private_del(void *node) {
 }
 
 VALUE rxml_private_get(void *node) {
+  st_data_t result = 0;
+  int ret;
+
   if (!node)
     return Qfalse;
 
-  st_data_t result = 0;
-  int ret = st_lookup(private_pointers, (st_data_t)node, &result);
+  ret = st_lookup(private_pointers, (st_data_t)node, &result);
 
   if (ret)
       return (VALUE)result;
