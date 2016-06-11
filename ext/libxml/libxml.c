@@ -39,6 +39,10 @@ void Init_libxml_ruby(void)
  * Refer to the README file to get started and the LICENSE file for
  * copyright and distribution information.
  */
+
+  // Seutp for threading. http://xmlsoft.org/threads.html
+  xmlInitParser();
+
   mLibXML = rb_define_module("LibXML");
 
   rxml_init_memory();
