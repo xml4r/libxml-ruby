@@ -1,7 +1,6 @@
 # encoding: UTF-8
 
 require './test_helper'
-require 'test/unit'
 
 # Code  UTF8        Latin1      Hex
 # m      109          109        6D
@@ -20,7 +19,7 @@ require 'test/unit'
 #  http://en.wikipedia.org/wiki/ISO/IEC_8859-1
 #  http://en.wikipedia.org/wiki/List_of_Unicode_characters
 
-class TestEncoding < Test::Unit::TestCase
+class TestEncoding < Minitest::Test
   def setup
     Encoding.default_internal = nil
   end

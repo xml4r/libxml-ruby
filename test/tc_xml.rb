@@ -1,10 +1,9 @@
 # encoding: UTF-8
 
 require './test_helper'
-require 'test/unit'
 require 'stringio'
 
-class TestXml < Test::Unit::TestCase
+class TestXml < Minitest::Test
   # -----  Constants  ------
   def test_lib_versions
     assert(XML.check_lib_versions)

@@ -1,10 +1,9 @@
 # encoding: UTF-8
 require './test_helper'
-require 'test/unit'
 
 class SaxEncodingCallbacks
   attr_reader :encoding
-  include Test::Unit::Assertions
+  include Minitest::Assertions
 
   def initialize
     @encoding = Encoding::UTF_8
@@ -90,7 +89,7 @@ class SaxEncodingCallbacks
   end
 end
 
-class TestEncodingSax < Test::Unit::TestCase
+class TestEncodingSax < Minitest::Test
   def setup
     Encoding.default_internal = nil
   end

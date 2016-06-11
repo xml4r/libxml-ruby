@@ -1,9 +1,8 @@
 # encoding: UTF-8
 
 require './test_helper'
-require 'test/unit'
 
-class TestNodeWrite < Test::Unit::TestCase
+class TestNodeWrite < Minitest::Test
   def setup
     load_encoding("utf-8")
   end
@@ -81,7 +80,7 @@ class TestNodeWrite < Test::Unit::TestCase
     end
 
     # Invalid encoding
-    error = assert_raise(ArgumentError) do
+    error = assert_raises(ArgumentError) do
       node.to_s(:encoding => -9999)
     end
     assert_equal('Unknown encoding value: -9999', error.to_s)

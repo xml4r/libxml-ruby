@@ -1,9 +1,8 @@
 # encoding: UTF-8
 
 require './test_helper'
-require 'test/unit'
 
-class CDataCommentTest < Test::Unit::TestCase
+class CDataCommentTest < Minitest::Test
   def setup
     xp = XML::Parser.string('<root></root>')
     @doc = xp.parse
@@ -44,7 +43,7 @@ class CDataCommentTest < Test::Unit::TestCase
     cnode = XML::Node.new_cdata('test cdata')
     
     # Can't create attributes on non-element nodes
-    assert_raise(ArgumentError) do
+    assert_raises(ArgumentError) do
       cnode['attr'] = '123'
     end
   end

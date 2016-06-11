@@ -1,9 +1,8 @@
 # encoding: UTF-8
 
 require './test_helper'
-require 'test/unit'
 
-class TestNode < Test::Unit::TestCase
+class TestNode < Minitest::Test
   def setup
     @file_name = "model/bands.utf-8.xml"
 
@@ -112,7 +111,7 @@ class TestNode < Test::Unit::TestCase
   def test_equality_wrong_type
     node = @doc.root
 
-    assert_raise(TypeError) do
+    assert_raises(TypeError) do
       assert(node != 'abc')
     end
   end

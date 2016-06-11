@@ -2,9 +2,8 @@
 
 require './test_helper'
 
-require 'test/unit'
 
-class TestParserContext < Test::Unit::TestCase
+class TestParserContext < Minitest::Test
   def test_string
     # UTF8
     xml = <<-EOS
@@ -44,7 +43,7 @@ class TestParserContext < Test::Unit::TestCase
 
     context = XML::Parser::Context.string(xml)
 
-    error = assert_raise(ArgumentError) do
+    error = assert_raises(ArgumentError) do
       context.encoding = -999
     end
     assert_equal("Unknown encoding: -999", error.to_s)
@@ -66,12 +65,12 @@ class TestParserContext < Test::Unit::TestCase
   end
 
   def test_string_empty
-    error = assert_raise(TypeError) do
+    error = assert_raises(TypeError) do
       XML::Parser::Context.string(nil)
     end
     assert_equal("wrong argument type nil (expected String)", error.to_s)
 
-    error = assert_raise(ArgumentError) do
+    error = assert_raises(ArgumentError) do
       XML::Parser::Context.string('')
     end
     assert_equal("Must specify a string with one or more characters", error.to_s)
@@ -85,7 +84,7 @@ class TestParserContext < Test::Unit::TestCase
 
   def test_not_well_formed
     parser = XML::Parser.string("<abc>")
-    assert_raise(XML::Error) do
+    assert_raises(XML::Error) do
       parser.parse
     end
     assert(!parser.context.well_formed?)
@@ -166,7 +165,7 @@ class TestParserContext < Test::Unit::TestCase
   def test_parse_error
     xp = XML::Parser.string('<foo><bar/></foz>')
 
-    assert_raise(XML::Error) do
+    assert_raises(XML::Error) do
       xp.parse
     end
 

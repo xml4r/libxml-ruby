@@ -2,9 +2,8 @@
 
 require './test_helper'
 require 'tmpdir'
-require 'test/unit'
 
-class TestDocumentWrite < Test::Unit::TestCase
+class TestDocumentWrite < Minitest::Test
   def setup
     @file_name = "model/bands.utf-8.xml"
 
@@ -91,7 +90,7 @@ class TestDocumentWrite < Test::Unit::TestCase
     end
 
     # Invalid encoding
-    error = assert_raise(ArgumentError) do
+    error = assert_raises(ArgumentError) do
       @doc.to_s(:encoding => -9999)
     end
     assert_equal('Unknown encoding value: -9999', error.to_s)

@@ -2,9 +2,8 @@
 
 require './test_helper'
 require 'stringio'
-require 'test/unit'
 
-class HTMLParserTest < Test::Unit::TestCase
+class HTMLParserTest < Minitest::Test
   def html_file
     File.expand_path(File.join(File.dirname(__FILE__), 'model/ruby-lang.html'))
   end
@@ -14,11 +13,11 @@ class HTMLParserTest < Test::Unit::TestCase
     xp = XML::HTMLParser.file(html_file)
     assert_instance_of(XML::HTMLParser, xp)
     doc = xp.parse
-    assert_not_nil(doc)
+    refute_nil(doc)
   end
 
   def test_noexistent_file
-    error = assert_raise(XML::Error) do
+    error = assert_raises(XML::Error) do
       XML::HTMLParser.file('i_dont_exist.xml')
     end
 
@@ -26,7 +25,7 @@ class HTMLParserTest < Test::Unit::TestCase
   end
 
   def test_nil_file
-    error = assert_raise(TypeError) do
+    error = assert_raises(TypeError) do
       XML::HTMLParser.file(nil)
     end
 
@@ -54,7 +53,7 @@ class HTMLParserTest < Test::Unit::TestCase
   end
 
   def test_nil_io
-    error = assert_raise(TypeError) do
+    error = assert_raises(TypeError) do
       XML::HTMLParser.io(nil)
     end
 
@@ -83,7 +82,7 @@ class HTMLParserTest < Test::Unit::TestCase
   end
 
   def test_nil_string
-    error = assert_raise(TypeError) do
+    error = assert_raises(TypeError) do
       XML::HTMLParser.string(nil)
     end
 

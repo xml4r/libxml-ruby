@@ -1,9 +1,8 @@
 # encoding: UTF-8
 
 require 'xml/libxml'
-require 'test/unit'
 
-class TestDeprecatedRequire < Test::Unit::TestCase
+class TestDeprecatedRequire < Minitest::Test
   def test_basic
     xp = XML::Parser.string('<ruby_array uga="booga" foo="bar"><fixnum>one</fixnum><fixnum>two</fixnum></ruby_array>')
     assert_instance_of(XML::Parser, xp)

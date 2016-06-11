@@ -2,9 +2,8 @@
 
 require './test_helper'
 
-require 'test/unit'
 
-class TestRelaxNG < Test::Unit::TestCase
+class TestRelaxNG < Minitest::Test
   def setup
     file = File.join(File.dirname(__FILE__), 'model/shiporder.xml')
     @doc = XML::Document.file(file)
@@ -31,11 +30,11 @@ class TestRelaxNG < Test::Unit::TestCase
     new_node = XML::Node.new('invalid', 'this will mess up validation')
     @doc.root << new_node
     
-    error = assert_raise(XML::Error) do
+    error = assert_raises(XML::Error) do
       @doc.validate_relaxng(relaxng)
     end
 
-    assert_not_nil(error)
+    refute_nil(error)
     assert_kind_of(XML::Error, error)
     assert(error.message.match(/Error: Did not expect element invalid there/))
     assert_equal(XML::Error::RELAXNGV, error.domain)
@@ -48,7 +47,7 @@ class TestRelaxNG < Test::Unit::TestCase
     assert_nil(error.str3)
     assert_equal(0, error.int1)
     assert_equal(0, error.int2)
-    assert_not_nil(error.node)
+    refute_nil(error.node)
     assert_equal('invalid', error.node.name)
   end
 end

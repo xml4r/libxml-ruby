@@ -2,9 +2,8 @@
 
 require './test_helper'
 require 'stringio'
-require 'test/unit'
 
-class TestWriter < Test::Unit::TestCase
+class TestWriter < Minitest::Test
   XSL_PREFIX = 'xsl'
   XSL_URI = 'http://www.w3.org/1999/XSL/Transform'
 

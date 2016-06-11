@@ -1,9 +1,8 @@
 # encoding: UTF-8
 
 require './test_helper'
-require 'test/unit'
 
-class TestTextNode < Test::Unit::TestCase
+class TestTextNode < Minitest::Test
   def test_content
     node = XML::Node.new_text('testdata')
     assert_instance_of(XML::Node, node)
@@ -11,7 +10,7 @@ class TestTextNode < Test::Unit::TestCase
   end
 
   def test_invalid_content
-    error = assert_raise(TypeError) do
+    error = assert_raises(TypeError) do
       node = XML::Node.new_text(nil)
     end
     assert_equal('wrong argument type nil (expected String)', error.to_s)

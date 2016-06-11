@@ -2,9 +2,8 @@
 
 require './test_helper'
 require 'tempfile'
-require 'test/unit'
 
-class TestXPath < Test::Unit::TestCase
+class TestXPath < Minitest::Test
   def setup
     @doc = XML::Document.file(File.join(File.dirname(__FILE__), 'model/soap.xml'))
   end
@@ -109,17 +108,17 @@ class TestXPath < Test::Unit::TestCase
     doc = XML::Document.file(File.join(File.dirname(__FILE__), 'model/atom.xml'))
 
     # No namespace has been yet defined
-    assert_raise(XML::Error) do
+    assert_raises(XML::Error) do
       node = doc.find("atom:title")
     end
 
     node = doc.find('atom:title', 'atom:http://www.w3.org/2005/Atom')
-    assert_not_nil(node)
+    refute_nil(node)
 
     # Register namespace
     doc.root.namespaces.default_prefix = 'atom'
     node = doc.find("atom:title")
-    assert_not_nil(node)
+    refute_nil(node)
   end
 
   def test_node_find
@@ -145,7 +144,7 @@ class TestXPath < Test::Unit::TestCase
 
   def test_node_no_doc
     node = XML::Node.new('header', 'some content')
-    assert_raise(TypeError) do
+    assert_raises(TypeError) do
       node = node.find_first('/header')
     end
   end
@@ -201,20 +200,20 @@ class TestXPath < Test::Unit::TestCase
 	def test_xpath_empty_result
     doc = XML::Document.string('<html><body><p>Welcome to XHTML land!</p></body></html>')
 		nodes = doc.find("//object/param[translate(@name, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'wmode']")
-		assert_not_nil nodes
+		refute_nil nodes
 	end
 
   def test_invalid_expression
     xml = LibXML::XML::Document.string('<a></a>')
 
     # Using the expression twice used to cause a Segmentation Fault
-    error = assert_raise(XML::Error) do
+    error = assert_raises(XML::Error) do
       xml.find('//a/')
     end
     assert_equal("Error: Invalid expression.", error.to_s)
 
     # Try again - this used to cause a Segmentation Fault
-    error = assert_raise(XML::Error) do
+    error = assert_raises(XML::Error) do
       xml.find('//a/')
     end
     assert_equal("Error: Invalid expression.", error.to_s)

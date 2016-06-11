@@ -1,9 +1,8 @@
 # encoding: UTF-8
 
 require './test_helper'
-require 'test/unit'
 
-class TestNodeEdit < Test::Unit::TestCase
+class TestNodeEdit < Minitest::Test
   def setup
     xp = XML::Parser.string('<test><num>one</num><num>two</num><num>three</num></test>')
     @doc = xp.parse
@@ -76,7 +75,7 @@ class TestNodeEdit < Test::Unit::TestCase
     a.parent.remove!
 
     # Node a has now been freed from under us
-    error = assert_raise(RuntimeError) do
+    error = assert_raises(RuntimeError) do
       a.to_s
     end
     assert_equal('This node has already been freed.', error.to_s)
@@ -88,7 +87,7 @@ class TestNodeEdit < Test::Unit::TestCase
     node = doc.root.child.remove!
     node = nil
     GC.start
-    assert_not_nil(doc)
+    refute_nil(doc)
   end
 
   def test_remove_node_iteration
@@ -105,7 +104,7 @@ class TestNodeEdit < Test::Unit::TestCase
   def test_reuse_removed_node
     # Remove the node
     node = @doc.root.first.remove!
-    assert_not_nil(node)
+    refute_nil(node)
 
     # Add it to the end of the document
     @doc.root.last.next = node
@@ -130,7 +129,7 @@ class TestNodeEdit < Test::Unit::TestCase
 
     node = doc1.root.child
 
-    error = assert_raise(XML::Error) do
+    error = assert_raises(XML::Error) do
       doc2.root << node
     end
 

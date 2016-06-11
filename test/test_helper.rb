@@ -11,4 +11,4 @@ $LOAD_PATH << lib
 $LOAD_PATH << ext
 
 require 'xml'
-
+require 'minitest/autorun'

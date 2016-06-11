@@ -2,9 +2,8 @@
 
 require './test_helper'
 require 'stringio'
-require 'test/unit'
 
-class TestReader < Test::Unit::TestCase
+class TestReader < Minitest::Test
   XML_FILE = File.join(File.dirname(__FILE__), 'model/atom.xml')
 
   def verify_simple(reader)
@@ -61,7 +60,7 @@ class TestReader < Test::Unit::TestCase
   end
 
   def test_invalid_file
-    assert_raise(XML::Error) do
+    assert_raises(XML::Error) do
       XML::Reader.file('/does/not/exist')
     end
   end
@@ -98,7 +97,7 @@ class TestReader < Test::Unit::TestCase
   def test_error
     reader = XML::Reader.string('<foo blah')
 
-    error = assert_raise(XML::Error) do
+    error = assert_raises(XML::Error) do
       reader.read
     end
     assert_equal("Fatal error: Couldn't find end of Start Tag foo at :1.", error.to_s)
@@ -111,7 +110,7 @@ class TestReader < Test::Unit::TestCase
       called = true
     end
 
-    assert_raise(XML::Error) do
+    assert_raises(XML::Error) do
       reader.read
     end
 
@@ -126,7 +125,7 @@ class TestReader < Test::Unit::TestCase
     end
     reader.reset_error_handler
 
-    assert_raise(XML::Error) do
+    assert_raises(XML::Error) do
       reader.read
     end
 
@@ -224,7 +223,7 @@ class TestReader < Test::Unit::TestCase
     node = reader.expand
 
     # Try to access the document
-    assert_not_nil(node.doc)
+    refute_nil(node.doc)
   end
 
   def test_expand_find
@@ -246,7 +245,7 @@ class TestReader < Test::Unit::TestCase
     reader = XML::Reader.file(XML_FILE)
 
     # Expand a node before one has been read
-    error = assert_raise(RuntimeError) do
+    error = assert_raises(RuntimeError) do
       reader.expand
     end
     assert_equal("The reader does not have a document.  Did you forget to call read?", error.to_s)
@@ -267,7 +266,7 @@ class TestReader < Test::Unit::TestCase
     reader.next
 
     # The previous node is now invalid
-    error = assert_raise(RuntimeError) do
+    error = assert_raises(RuntimeError) do
       assert_equal('feed', node.name)
     end
     assert_equal("This node has already been freed.", error.to_s)
@@ -370,7 +369,7 @@ class TestReader < Test::Unit::TestCase
     xml = "<bands genre=\"metal\">\n  <m\366tley_cr\374e country=\"us\">An American heavy metal band formed in Los Angeles, California in 1981.</m\366tley_cr\374e>\n  <iron_maiden country=\"uk\">British heavy metal band formed in 1975.</iron_maiden>\n</bands>"
 
     reader = XML::Reader.string(xml)
-    error = assert_raise(XML::Error) do
+    error = assert_raises(XML::Error) do
       node = reader.read
     end
 

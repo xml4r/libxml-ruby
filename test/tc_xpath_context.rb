@@ -2,9 +2,8 @@
 
 require './test_helper'
 require "tempfile"
-require "test/unit"
 
-class TestXPathContext < Test::Unit::TestCase
+class TestXPathContext < Minitest::Test
   SOAP_PREFIX = 'soap'
   SOAP_URI = 'http://schemas.xmlsoap.org/soap/envelope/'
   
@@ -21,7 +20,7 @@ class TestXPathContext < Test::Unit::TestCase
   end
   
   def test_no_ns
-    error = assert_raise(LibXML::XML::Error) do
+    error = assert_raises(LibXML::XML::Error) do
       @context.find('/soap:Envelope')
     end
     assert_equal("Error: Undefined namespace prefix.", error.to_s)
@@ -81,7 +80,7 @@ class TestXPathContext < Test::Unit::TestCase
 
   def test_require_doc
     doc = XML::Document.file(File.join(File.dirname(__FILE__), 'model/soap.xml'))
-    error = assert_raise(TypeError) do
+    error = assert_raises(TypeError) do
       @context = XML::XPath::Context.new(doc.root)
     end
     assert_equal("Supplied argument must be a document or node.", error.to_s)
