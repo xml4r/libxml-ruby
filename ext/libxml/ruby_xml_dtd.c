@@ -85,7 +85,7 @@ static VALUE rxml_dtd_external_id_get(VALUE self)
   if (xdtd->ExternalID == NULL)
     return (Qnil);
   else
-    return (rxml_new_cstr((const char*) xdtd->ExternalID, NULL));
+    return (rxml_new_cstr( xdtd->ExternalID, NULL));
 }
 
 /*
@@ -103,7 +103,7 @@ static VALUE rxml_dtd_name_get(VALUE self)
   if (xdtd->name == NULL)
     return (Qnil);
   else
-    return (rxml_new_cstr((const char*) xdtd->name, NULL));
+    return (rxml_new_cstr( xdtd->name, NULL));
 }
 
 
@@ -121,7 +121,7 @@ static VALUE rxml_dtd_uri_get(VALUE self)
   if (xdtd->SystemID == NULL)
     return (Qnil);
   else
-    return (rxml_new_cstr((const char*) xdtd->SystemID, NULL));
+    return (rxml_new_cstr( xdtd->SystemID, NULL));
 }
 
 /*

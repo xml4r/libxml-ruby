@@ -50,7 +50,7 @@ static VALUE rxml_parser_context_document(VALUE klass, VALUE document)
     rb_raise(rb_eTypeError, "Must pass an XML::Document object");
 
   Data_Get_Struct(document, xmlDoc, xdoc);
-  xmlDocDumpFormatMemoryEnc(xdoc, &buffer, &length, xdoc->encoding, 0);
+  xmlDocDumpFormatMemoryEnc(xdoc, &buffer, &length, (const char*)xdoc->encoding, 0);
 
   ctxt = xmlCreateDocParserCtxt(buffer);
 
@@ -188,7 +188,7 @@ static VALUE rxml_parser_context_base_uri_get(VALUE self)
   Data_Get_Struct(self, xmlParserCtxt, ctxt);
 
   if (ctxt->input && ctxt->input->filename)
-    return rxml_new_cstr(ctxt->input->filename, ctxt->encoding);
+    return rxml_new_cstr((const xmlChar*)ctxt->input->filename, ctxt->encoding);
   else
     return Qnil;
 }
@@ -208,8 +208,8 @@ static VALUE rxml_parser_context_base_uri_set(VALUE self, VALUE url)
 
   if (ctxt->input && !ctxt->input->filename)
   {
-    const xmlChar * xurl = StringValuePtr(url);
-    ctxt->input->filename = (char *) xmlStrdup(xurl);
+    const char* xurl = StringValuePtr(url);
+    ctxt->input->filename = xmlStrdup(xurl);
   }
   return self;
 }
@@ -249,7 +249,7 @@ static VALUE rxml_parser_context_data_directory_get(VALUE self)
   if (ctxt->directory == NULL)
     return (Qnil);
   else
-    return (rxml_new_cstr(ctxt->directory, ctxt->encoding));
+    return (rxml_new_cstr((const xmlChar*)ctxt->directory, ctxt->encoding));
 }
 
 /*
@@ -353,7 +353,7 @@ static VALUE rxml_parser_context_encoding_get(VALUE self)
 {
   xmlParserCtxtPtr ctxt;
   Data_Get_Struct(self, xmlParserCtxt, ctxt);
-  return INT2NUM(xmlParseCharEncoding(ctxt->encoding));
+  return INT2NUM(xmlParseCharEncoding((const char*)ctxt->encoding));
 }
 
 /*
@@ -507,7 +507,7 @@ static VALUE rxml_parser_context_name_node_get(VALUE self)
   if (ctxt->name == NULL)
     return (Qnil);
   else
-    return (rxml_new_cstr((const char*) ctxt->name, ctxt->encoding));
+    return (rxml_new_cstr( ctxt->name, ctxt->encoding));
 }
 
 /*
@@ -534,7 +534,7 @@ static VALUE rxml_parser_context_name_tab_get(VALUE self)
     if (ctxt->nameTab[i] == NULL)
       continue;
     else
-      rb_ary_push(tab_ary, rxml_new_cstr((const char*) ctxt->nameTab[i], ctxt->encoding));
+      rb_ary_push(tab_ary, rxml_new_cstr( ctxt->nameTab[i], ctxt->encoding));
   }
 
   return (tab_ary);
@@ -626,12 +626,11 @@ static VALUE rxml_parser_context_options_get(VALUE self)
  */
 static VALUE rxml_parser_context_options_set(VALUE self, VALUE options)
 {
-  int result;
   xmlParserCtxtPtr ctxt;
   Check_Type(options, T_FIXNUM);
 
   Data_Get_Struct(self, xmlParserCtxt, ctxt);
-  result = xmlCtxtUseOptions(ctxt, NUM2INT(options));
+  xmlCtxtUseOptions(ctxt, NUM2INT(options));
 
   return self;
 }
@@ -800,7 +799,7 @@ static VALUE rxml_parser_context_subset_name_get(VALUE self)
   if (ctxt->intSubName == NULL)
     return (Qnil);
   else
-    return (rxml_new_cstr((const char*) ctxt->intSubName, ctxt->encoding));
+    return (rxml_new_cstr(ctxt->intSubName, ctxt->encoding));
 }
 
 /*
@@ -819,7 +818,7 @@ static VALUE rxml_parser_context_subset_external_uri_get(VALUE self)
   if (ctxt->extSubURI == NULL)
     return (Qnil);
   else
-    return (rxml_new_cstr((const char*) ctxt->extSubURI, ctxt->encoding));
+    return (rxml_new_cstr( ctxt->extSubURI, ctxt->encoding));
 }
 
 /*
@@ -838,7 +837,7 @@ static VALUE rxml_parser_context_subset_external_system_id_get(VALUE self)
   if (ctxt->extSubSystem == NULL)
     return (Qnil);
   else
-    return (rxml_new_cstr((const char*) ctxt->extSubSystem, ctxt->encoding));
+    return (rxml_new_cstr( ctxt->extSubSystem, ctxt->encoding));
 }
 
 /*
@@ -923,7 +922,7 @@ static VALUE rxml_parser_context_version_get(VALUE self)
   if (ctxt->version == NULL)
     return (Qnil);
   else
-    return (rxml_new_cstr((const char*) ctxt->version, ctxt->encoding));
+    return (rxml_new_cstr( ctxt->version, ctxt->encoding));
 }
 
 /*

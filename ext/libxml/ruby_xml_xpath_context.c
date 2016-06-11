@@ -158,8 +158,8 @@ static VALUE rxml_xpath_context_register_namespaces_from_node(VALUE self,
        Skip it for now. */
       if (xns->prefix)
       {
-        VALUE prefix = rxml_new_cstr((const char*)xns->prefix, xctxt->doc->encoding);
-        VALUE uri = rxml_new_cstr((const char*)xns->href, xctxt->doc->encoding);
+        VALUE prefix = rxml_new_cstr(xns->prefix, xctxt->doc->encoding);
+        VALUE uri = rxml_new_cstr(xns->href, xctxt->doc->encoding);
         rxml_xpath_context_register_namespace(self, prefix, uri);
       }
       xns = xns->next;
@@ -212,8 +212,7 @@ static VALUE rxml_xpath_context_register_namespaces(VALUE self, VALUE nslist)
     }
     else
     {
-      rprefix = rb_str_new(StringValuePtr(nslist), (int) ((long) cp
-          - (long) StringValuePtr(nslist)));
+      rprefix = rb_str_new(StringValuePtr(nslist), (int) ((long) cp - (long)StringValuePtr(nslist)));
       ruri = rxml_new_cstr(&cp[1], xctxt->doc->encoding);
     }
     /* Should test the results of this */

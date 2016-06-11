@@ -165,7 +165,7 @@ VALUE rxml_encoding_to_rb_encoding(VALUE klass, VALUE encoding)
   return rb_enc_from_encoding(rbencoding);
 }
 
-rb_encoding* rxml_figure_encoding(const char* xencoding)
+rb_encoding* rxml_figure_encoding(const xmlChar* xencoding)
 {
   rb_encoding* result;
   if (xencoding)
@@ -181,20 +181,20 @@ rb_encoding* rxml_figure_encoding(const char* xencoding)
 }
 #endif
 
-VALUE rxml_new_cstr(const char* xstr, const char* xencoding)
+VALUE rxml_new_cstr(const xmlChar* xstr, const xmlChar* xencoding)
 {
 #ifdef HAVE_RUBY_ENCODING_H
   rb_encoding *rbencoding = rxml_figure_encoding(xencoding);
   return rb_external_str_new_with_enc(xstr, strlen(xstr), rbencoding);
 #endif
-  return rb_str_new2(xstr);
+  return rb_str_new2((const char*)xstr);
 }
 
-VALUE rxml_new_cstr_len(const char* xstr, const int length, const char* xencoding)
+VALUE rxml_new_cstr_len(const xmlChar* xstr, const int length, const xmlChar* xencoding)
 {
 #ifdef HAVE_RUBY_ENCODING_H
   rb_encoding *rbencoding = rxml_figure_encoding(xencoding);
-  return rb_external_str_new_with_enc(xstr, length, rbencoding);
+  return rb_external_str_new_with_enc((const char*)xstr, length, rbencoding);
 #endif
   return rb_str_new(xstr, length);
 }

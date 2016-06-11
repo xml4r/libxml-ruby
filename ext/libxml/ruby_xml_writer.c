@@ -257,7 +257,7 @@ static VALUE rxml_writer_flush(int argc, VALUE *argv, VALUE self)
         VALUE content;
 
 #ifdef HAVE_RUBY_ENCODING_H
-        content = rb_external_str_new_with_enc(rwo->buffer->content, rwo->buffer->use, rwo->encoding);
+        content = rb_external_str_new_with_enc((const char*)rwo->buffer->content, rwo->buffer->use, rwo->encoding);
 #else
         content = rb_str_new(rwo->buffer->content, rwo->buffer->use);
 #endif /* HAVE_RUBY_ENCODING_H */
@@ -293,7 +293,7 @@ static VALUE rxml_writer_result(VALUE self)
             ret = rwo->output;
             break;
         case RXMLW_OUTPUT_STRING:
-            ret = rxml_writer_c_to_ruby_string(rwo->buffer->content, rwo->buffer->use);
+            ret = rxml_writer_c_to_ruby_string((const char*)rwo->buffer->content, rwo->buffer->use);
             break;
         case RXMLW_OUTPUT_IO:
         case RXMLW_OUTPUT_NONE:
@@ -767,7 +767,7 @@ static VALUE rxml_writer_start_document(int argc, VALUE *argv, VALUE self)
     int ret;
     VALUE options;
     rxml_writer_object *rwo;
-    const char *xencoding, *xstandalone;
+    const xmlChar *xencoding, *xstandalone;
 
     options = Qnil;
     xstandalone = xencoding = NULL;

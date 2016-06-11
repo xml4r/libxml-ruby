@@ -23,8 +23,7 @@ VALUE cbidOnStartElementNs;
 VALUE cbidOnStartDocument;
 
 /* ======  Callbacks  =========== */
-static void cdata_block_callback(void *ctx,
-const char *value, int len)
+static void cdata_block_callback(void *ctx, const xmlChar *value, int len)
 {
   VALUE handler = (VALUE) ctx;
 
@@ -34,7 +33,7 @@ const char *value, int len)
   }
 }
 
-static void characters_callback(void *ctx, const char *chars, int len)
+static void characters_callback(void *ctx, const xmlChar *chars, int len)
 {
   VALUE handler = (VALUE) ctx;
 
@@ -45,13 +44,13 @@ static void characters_callback(void *ctx, const char *chars, int len)
   }
 }
 
-static void comment_callback(void *ctx, const char *msg)
+static void comment_callback(void *ctx, const xmlChar *msg)
 {
   VALUE handler = (VALUE) ctx;
 
   if (handler != Qnil)
   {
-    rb_funcall(handler, cbidOnComment,1,rxml_new_cstr(msg, NULL));
+    rb_funcall(handler, cbidOnComment, 1, rxml_new_cstr(msg, NULL));
   }
 }
 
@@ -65,8 +64,7 @@ static void end_document_callback(void *ctx)
   }
 }
 
-static void end_element_ns_callback(void *ctx,
-  					                        const xmlChar *xlocalname, const xmlChar *xprefix, const xmlChar *xURI)
+static void end_element_ns_callback(void *ctx, const xmlChar *xlocalname, const xmlChar *xprefix, const xmlChar *xURI)
 {
   VALUE handler = (VALUE) ctx;
 
@@ -81,7 +79,7 @@ static void end_element_ns_callback(void *ctx,
     {
       name = rxml_new_cstr(xprefix, NULL);
       rb_str_cat2(name, ":"); 
-      rb_str_cat2(name, xlocalname); 
+      rb_str_cat2(name, (const char*)xlocalname);
     }
     else
     {
@@ -96,7 +94,7 @@ static void end_element_ns_callback(void *ctx,
              xURI ? rxml_new_cstr(xURI, NULL) : Qnil);
 }
 
-static void external_subset_callback(void *ctx, const char *name, const char *extid, const char *sysid)
+static void external_subset_callback(void *ctx, const xmlChar *name, const xmlChar *extid, const xmlChar *sysid)
 {
   VALUE handler = (VALUE) ctx;
 
@@ -129,7 +127,7 @@ static void has_internal_subset_callback(void *ctx)
   }
 }
 
-static void internal_subset_callback(void *ctx, const char *name, const char *extid, const char *sysid)
+static void internal_subset_callback(void *ctx, const xmlChar *name, const xmlChar *extid, const xmlChar *sysid)
 {
   VALUE handler = (VALUE) ctx;
 
@@ -152,7 +150,7 @@ static void is_standalone_callback(void *ctx)
   }
 }
 
-static void processing_instruction_callback(void *ctx, const char *target, const char *data)
+static void processing_instruction_callback(void *ctx, const xmlChar *target, const xmlChar *data)
 {
   VALUE handler = (VALUE) ctx;
 
@@ -164,13 +162,13 @@ static void processing_instruction_callback(void *ctx, const char *target, const
   }
 }
 
-static void reference_callback(void *ctx, const char *name)
+static void reference_callback(void *ctx, const xmlChar *name)
 {
   VALUE handler = (VALUE) ctx;
 
   if (handler != Qnil)
   {
-    rb_funcall(handler, cbidOnReference,1,rxml_new_cstr(name, NULL));
+    rb_funcall(handler, cbidOnReference, 1, rxml_new_cstr(name, NULL));
   }
 }
 
@@ -227,8 +225,8 @@ static void start_element_ns_callback(void *ctx,
     if (xprefix)
     {
       name = rxml_new_cstr(xprefix, NULL);
-      rb_str_cat2(name, ":"); 
-      rb_str_cat2(name, xlocalname); 
+      rb_str_cat2(name, ":");
+      rb_str_cat2(name, (const char*)xlocalname);
     }
     else
     {

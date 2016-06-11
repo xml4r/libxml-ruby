@@ -81,7 +81,7 @@ static VALUE rxml_namespace_href_get(VALUE self)
   if (xns->href == NULL)
     return Qnil;
   else
-    return rxml_new_cstr((const char*) xns->href, NULL);
+    return rxml_new_cstr( xns->href, NULL);
 }
 
 /*
@@ -116,7 +116,7 @@ static VALUE rxml_namespace_prefix_get(VALUE self)
   if (xns->prefix == NULL)
     return Qnil;
   else
-    return rxml_new_cstr((const char*) xns->prefix, NULL);
+    return rxml_new_cstr( xns->prefix, NULL);
 }
 
 /*

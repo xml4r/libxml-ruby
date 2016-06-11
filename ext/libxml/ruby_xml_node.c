@@ -332,7 +332,7 @@ static VALUE rxml_node_base_uri_get(VALUE self)
   base_uri = xmlNodeGetBase(xnode->doc, xnode);
   if (base_uri)
   {
-    result = rxml_new_cstr((const char*) base_uri, NULL);
+    result = rxml_new_cstr( base_uri, NULL);
     xmlFree(base_uri);
   }
 
@@ -376,7 +376,7 @@ static VALUE rxml_node_content_get(VALUE self)
   content = xmlNodeGetContent(xnode);
   if (content)
   {
-    result = rxml_new_cstr((const char *) content, NULL);
+    result = rxml_new_cstr(content, NULL);
     xmlFree(content);
   }
 
@@ -424,7 +424,7 @@ static VALUE rxml_node_content_stripped_get(VALUE self)
   content = xmlNodeGetContent(xnode);
   if (content)
   {
-    result = rxml_new_cstr((const char*) content, NULL);
+    result = rxml_new_cstr( content, NULL);
     xmlFree(content);
   }
   return (result);
@@ -582,7 +582,7 @@ static VALUE rxml_node_to_s(int argc, VALUE *argv, VALUE self)
 
   int level = 0;
   int indent = 1;
-  const char *xencoding = "UTF-8";
+  const xmlChar *xencoding = (const xmlChar*)"UTF-8";
 
   rb_scan_args(argc, argv, "01", &options);
 
@@ -602,30 +602,30 @@ static VALUE rxml_node_to_s(int argc, VALUE *argv, VALUE self)
 
     if (rencoding != Qnil)
     {
-      xencoding = xmlGetCharEncodingName((xmlCharEncoding)NUM2INT(rencoding));
+      xencoding = (const xmlChar*)xmlGetCharEncodingName((xmlCharEncoding)NUM2INT(rencoding));
       if (!xencoding)
         rb_raise(rb_eArgError, "Unknown encoding value: %d", NUM2INT(rencoding));
     }
   }
 
-  encodingHandler = xmlFindCharEncodingHandler(xencoding);
+  encodingHandler = xmlFindCharEncodingHandler((const char*)xencoding);
   output = xmlAllocOutputBuffer(encodingHandler);
 
   xnode = rxml_get_xnode(self);
 
-  xmlNodeDumpOutput(output, xnode->doc, xnode, level, indent, xencoding);
+  xmlNodeDumpOutput(output, xnode->doc, xnode, level, indent, (const char*)xencoding);
   xmlOutputBufferFlush(output);
 
 #ifdef LIBXML2_NEW_BUFFER
   if (output->conv)
-    result = rxml_new_cstr((const char*) xmlBufContent(output->conv), xencoding);
+    result = rxml_new_cstr((const xmlChar*)xmlBufContent(output->conv), xencoding);
   else
-    result = rxml_new_cstr((const char*) xmlBufContent(output->buffer), xencoding);
+    result = rxml_new_cstr((const xmlChar*)xmlBufContent(output->buffer), xencoding);
 #else
   if (output->conv)
-    result = rxml_new_cstr((const char*) output->conv->content, xencoding);
+    result = rxml_new_cstr( output->conv->content, xencoding);
   else
-    result = rxml_new_cstr((const char*) output->buffer->content, xencoding);
+    result = rxml_new_cstr( output->buffer->content, xencoding);
 #endif
 
   xmlOutputBufferClose(output);
@@ -730,7 +730,7 @@ static VALUE rxml_node_lang_get(VALUE self)
 
   if (lang)
   {
-    result = rxml_new_cstr((const char*) lang, NULL);
+    result = rxml_new_cstr( lang, NULL);
     xmlFree(lang);
   }
 
@@ -863,11 +863,11 @@ static VALUE rxml_node_xlink_type_name(VALUE self)
   case XLINK_TYPE_NONE:
     return (Qnil);
   case XLINK_TYPE_SIMPLE:
-    return (rxml_new_cstr("simple", NULL));
+    return (rxml_new_cstr((const xmlChar*)"simple", NULL));
   case XLINK_TYPE_EXTENDED:
-    return (rxml_new_cstr("extended", NULL));
+    return (rxml_new_cstr((const xmlChar*)"extended", NULL));
   case XLINK_TYPE_EXTENDED_SET:
-    return (rxml_new_cstr("extended_set", NULL));
+    return (rxml_new_cstr((const xmlChar*)"extended_set", NULL));
   default:
     rb_fatal("Unknowng xlink type, %d", xlt);
   }
@@ -918,7 +918,7 @@ static VALUE rxml_node_name_get(VALUE self)
   if (xnode->name == NULL)
     return (Qnil);
   else
-    return (rxml_new_cstr((const char*) name, NULL));
+    return (rxml_new_cstr( name, NULL));
 }
 
 /*
@@ -1010,7 +1010,7 @@ static VALUE rxml_node_path(VALUE self)
   if (path == NULL)
     return (Qnil);
   else
-    return (rxml_new_cstr((const char*) path, NULL));
+    return (rxml_new_cstr( path, NULL));
 }
 
 /*

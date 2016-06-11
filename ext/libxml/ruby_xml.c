@@ -17,7 +17,7 @@ void rxml_private_del(void *node) {
 
 VALUE rxml_private_get(void *node) {
   if (!node)
-    return 0;
+    return Qfalse;
 
   st_data_t result = 0;
   int ret = st_lookup(private_pointers, (st_data_t)node, &result);
@@ -25,7 +25,7 @@ VALUE rxml_private_get(void *node) {
   if (ret)
       return (VALUE)result;
   else
-      return 0;
+      return Qfalse;
 }
 
 void rxml_private_mark(void *node) {
@@ -645,7 +645,7 @@ static VALUE rxml_default_tree_indent_string_get(VALUE klass)
 static VALUE rxml_default_tree_indent_string_set(VALUE klass, VALUE string)
 {
   Check_Type(string, T_STRING);
-  xmlTreeIndentString = xmlStrdup((xmlChar *)StringValuePtr(string));
+  xmlTreeIndentString = (const char *)xmlStrdup((xmlChar *)StringValuePtr(string));
   return (string);
 }
 

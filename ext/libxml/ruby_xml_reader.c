@@ -526,7 +526,7 @@ static VALUE rxml_reader_read_inner_xml(VALUE self)
   if (xml)
   {
     const xmlChar *xencoding = xmlTextReaderConstEncoding(xReader);
-    result = rxml_new_cstr((const char*) xml, xencoding);
+    result = rxml_new_cstr( xml, xencoding);
     xmlFree(xml);
   }
 
@@ -552,7 +552,7 @@ static VALUE rxml_reader_read_outer_xml(VALUE self)
   if (xml)
   {
     const xmlChar *xencoding = xmlTextReaderConstEncoding(xReader);
-    result = rxml_new_cstr((const char*) xml, xencoding);
+    result = rxml_new_cstr( xml, xencoding);
     xmlFree(xml);
   }
 
@@ -590,7 +590,7 @@ static VALUE rxml_reader_read_string(VALUE self)
   if (xml)
   {
     const xmlChar *xencoding = xmlTextReaderConstEncoding(xReader);
-    result = rxml_new_cstr((const char*) xml, xencoding);
+    result = rxml_new_cstr( xml, xencoding);
     xmlFree(xml);
   }
 
@@ -707,7 +707,7 @@ static VALUE rxml_reader_encoding(VALUE self)
   xmlTextReaderPtr xreader = rxml_text_reader_get(self);
   const xmlChar *xencoding = xmlTextReaderConstEncoding(xreader);
   if (xencoding)
-    return INT2NUM(xmlParseCharEncoding(xencoding));
+    return INT2NUM(xmlParseCharEncoding((const char*)xencoding));
   else
     return INT2NUM(XML_CHAR_ENCODING_NONE);
 }
@@ -913,8 +913,7 @@ static VALUE rxml_reader_get_attribute(VALUE self, VALUE name)
   xmlTextReaderPtr xReader = rxml_text_reader_get(self);
   const xmlChar *xencoding = xmlTextReaderConstEncoding(xReader);
 
-  xattr = xmlTextReaderGetAttribute(xReader,
-    (const xmlChar *) StringValueCStr(name));
+  xattr = xmlTextReaderGetAttribute(xReader, (const xmlChar *) StringValueCStr(name));
   if (xattr)
   {
     result = rxml_new_cstr(xattr, xencoding);
@@ -980,7 +979,7 @@ static VALUE rxml_reader_lookup_namespace(VALUE self, VALUE prefix)
 
   if (xnamespace)
   {
-    result = rxml_new_cstr((const char*)xnamespace, (const char*)xencoding);
+    result = rxml_new_cstr(xnamespace, xencoding);
     xmlFree((void *)xnamespace);
   }
   return result;

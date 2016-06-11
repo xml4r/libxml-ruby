@@ -190,7 +190,6 @@ static VALUE
 rxml_document_canonicalize(int argc, VALUE *argv, VALUE self)
 {
   VALUE result = Qnil;
-  int length;
   xmlDocPtr xdoc;
   xmlChar *buffer = NULL;
   VALUE option_hash = Qnil;
@@ -317,18 +316,16 @@ rxml_document_canonicalize(int argc, VALUE *argv, VALUE self)
   }//option_hash
 
   Data_Get_Struct(self, xmlDoc, xdoc);
-  length = xmlC14NDocDumpMemory(
-    xdoc,
-    (nodeset.nodeNr == 0 ? NULL : &nodeset),
-    c14n_mode,
-    inc_ns_prefixes_ptr,
-    comments,
-    &buffer
-  );
+  xmlC14NDocDumpMemory(xdoc,
+                       (nodeset.nodeNr == 0 ? NULL : &nodeset),
+                       c14n_mode,
+                       inc_ns_prefixes_ptr,
+                       comments,
+                       &buffer);
 
   if (buffer)
   {
-    result = rxml_new_cstr((const char*) buffer, NULL);
+    result = rxml_new_cstr( buffer, NULL);
     xmlFree(buffer);
   }
 
@@ -502,12 +499,10 @@ static VALUE rxml_document_encoding_get(VALUE self)
 static VALUE rxml_document_rb_encoding_get(VALUE self)
 {
   xmlDocPtr xdoc;
-  const char *xencoding;
   rb_encoding* rbencoding;
   Data_Get_Struct(self, xmlDoc, xdoc);
 
-  xencoding = (const char*)xdoc->encoding;
-  rbencoding = rxml_xml_encoding_to_rb_encoding(mXMLEncoding, xmlParseCharEncoding(xencoding));
+  rbencoding = rxml_xml_encoding_to_rb_encoding(mXMLEncoding, xmlParseCharEncoding((const char*)xdoc->encoding));
   return rb_enc_from_encoding(rbencoding);
 }
 #endif
@@ -747,7 +742,7 @@ static VALUE rxml_document_root_get(VALUE self)
 static VALUE rxml_document_root_set(VALUE self, VALUE node)
 {
   xmlDocPtr xdoc;
-  xmlNodePtr xroot, xnode;
+  xmlNodePtr xnode;
 
   if (rb_obj_is_kind_of(node, cXMLNode) == Qfalse)
     rb_raise(rb_eTypeError, "must pass an XML::Node type object");
@@ -758,7 +753,7 @@ static VALUE rxml_document_root_set(VALUE self, VALUE node)
   if (xnode->doc != NULL && xnode->doc != xdoc)
     rb_raise(eXMLError, "Nodes belong to different documents.  You must first import the node by calling XML::Document.import");
 
-  xroot = xmlDocSetRootElement(xdoc, xnode);
+  xmlDocSetRootElement(xdoc, xnode);
   return node;
 }
 
@@ -786,7 +781,7 @@ static VALUE rxml_document_save(int argc, VALUE *argv, VALUE self)
   xmlDocPtr xdoc;
   int indent = 1;
   const char *xfilename;
-  const char *xencoding;
+  const xmlChar *xencoding;
   int length;
 
   rb_scan_args(argc, argv, "11", &filename, &options);
@@ -815,7 +810,7 @@ static VALUE rxml_document_save(int argc, VALUE *argv, VALUE self)
     }
   }
 
-  length = xmlSaveFormatFileEnc(xfilename, xdoc, xencoding, indent);
+  length = xmlSaveFormatFileEnc(xfilename, xdoc, (const char*)xencoding, indent);
 
   if (length == -1)
     rxml_raise(&xmlLastError);
@@ -863,8 +858,8 @@ static VALUE rxml_document_to_s(int argc, VALUE *argv, VALUE self)
   VALUE options = Qnil;
   xmlDocPtr xdoc;
   int indent = 1;
-  const char *xencoding = "UTF-8";
-  xmlChar *buffer;
+  const xmlChar *xencoding = "UTF-8";
+  const xmlChar *buffer;
   int length;
 
   rb_scan_args(argc, argv, "01", &options);
@@ -888,10 +883,10 @@ static VALUE rxml_document_to_s(int argc, VALUE *argv, VALUE self)
   }
 
   Data_Get_Struct(self, xmlDoc, xdoc);
-  xmlDocDumpFormatMemoryEnc(xdoc, &buffer, &length, xencoding, indent);
+  xmlDocDumpFormatMemoryEnc(xdoc, &buffer, &length, (const char*)xencoding, indent);
 
-  result = rxml_new_cstr((const char*) buffer, xencoding);
-  xmlFree(buffer);
+  result = rxml_new_cstr(buffer, xencoding);
+  xmlFree((xmlChar*)buffer);
   return result;
 }
 
@@ -909,7 +904,7 @@ static VALUE rxml_document_url_get(VALUE self)
   if (xdoc->URL == NULL)
     return (Qnil);
   else
-    return (rxml_new_cstr((const char*) xdoc->URL, NULL));
+    return (rxml_new_cstr( xdoc->URL, NULL));
 }
 
 /*
@@ -926,7 +921,7 @@ static VALUE rxml_document_version_get(VALUE self)
   if (xdoc->version == NULL)
     return (Qnil);
   else
-    return (rxml_new_cstr((const char*) xdoc->version, NULL));
+    return (rxml_new_cstr( xdoc->version, NULL));
 }
 
 /*

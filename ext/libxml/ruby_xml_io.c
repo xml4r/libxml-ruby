@@ -4,7 +4,9 @@
 #include "ruby_libxml.h"
 
 static ID READ_METHOD;
-#ifndef HAVE_RB_IO_BUFWRITE
+#ifdef HAVE_RB_IO_BUFWRITE
+#include <ruby/io.h>
+#else
 static ID WRITE_METHOD;
 #endif /* !HAVE_RB_IO_BUFWRITE */
 

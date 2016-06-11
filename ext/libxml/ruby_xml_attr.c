@@ -166,7 +166,7 @@ static VALUE rxml_attr_name_get(VALUE self)
   if (xattr->name == NULL)
     return Qnil;
   else
-    return rxml_new_cstr((const char*) xattr->name, NULL);
+    return rxml_new_cstr( xattr->name, NULL);
 }
 
 /*
@@ -285,7 +285,7 @@ VALUE rxml_attr_value_get(VALUE self)
 
   if (value != NULL)
   {
-    result = rxml_new_cstr((const char*) value, NULL);
+    result = rxml_new_cstr( value, NULL);
     xmlFree(value);
   }
   return result;

@@ -207,7 +207,7 @@ static void storeType(xmlSchemaTypePtr type, VALUE self, xmlChar *name)
   types = rb_iv_get(self, "@types");
   rtype = rxml_wrap_schema_type(type);
 
-  rb_hash_aset(types, rb_str_new2(name), rtype);
+  rb_hash_aset(types, rb_str_new2((const char*)name), rtype);
 }
 
 static VALUE rxml_schema_collect_types(VALUE self);
@@ -237,7 +237,7 @@ static void storeElement(xmlSchemaElementPtr element, VALUE self, xmlChar *name)
 
   elements = rb_iv_get(self, "@elements");
   relement = rxml_wrap_schema_element(element);
-  rb_hash_aset(elements, rb_str_new2(name), relement);
+  rb_hash_aset(elements, rb_str_new2((const char*)name), relement);
 }
 
 static VALUE rxml_schema_elements(VALUE self)
