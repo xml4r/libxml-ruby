@@ -212,8 +212,8 @@ static VALUE rxml_xpath_context_register_namespaces(VALUE self, VALUE nslist)
     }
     else
     {
-      rprefix = rb_str_new(StringValuePtr(nslist), (int) ((long) cp - (long)StringValuePtr(nslist)));
-      ruri = rxml_new_cstr(&cp[1], xctxt->doc->encoding);
+      rprefix = rb_str_new(StringValuePtr(nslist), (long) ((intptr_t) cp - (intptr_t)StringValuePtr(nslist)));
+      ruri = rxml_new_cstr((const xmlChar*)&cp[1], xctxt->doc->encoding);
     }
     /* Should test the results of this */
     rxml_xpath_context_register_namespace(self, rprefix, ruri);
