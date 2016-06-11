@@ -8,12 +8,6 @@ class TestParser < Minitest::Test
     XML::Error.set_handler(&XML::Error::QUIET_HANDLER)
   end
 
-  def teardown
-    GC.start
-    GC.start
-    GC.start
-  end
-
   # -----  Sources  -------
   def test_document
     file = File.expand_path(File.join(File.dirname(__FILE__), 'model/bands.utf-8.xml'))

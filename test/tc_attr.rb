@@ -26,7 +26,6 @@ class AttrNodeTest < Minitest::Test
   
   def teardown
     @doc = nil
-    GC.start
   end
   
   def city_member
