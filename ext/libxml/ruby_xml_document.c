@@ -194,7 +194,7 @@ rxml_document_canonicalize(int argc, VALUE *argv, VALUE self)
   VALUE o_nodes = Qnil;
 
   // :comments option
-  VALUE comments = Qfalse;
+  int comments = 0;
   // :mode option
   int c14n_mode = XML_C14N_1_0;
   // :inclusive_ns_prefixes option (ARRAY)
@@ -242,7 +242,7 @@ rxml_document_canonicalize(int argc, VALUE *argv, VALUE self)
       int i;
       int p = 0; //pointer array index
       VALUE *list_in = NULL;
-      int list_size = 0;
+      long list_size = 0;
 
 	  Check_Type(o_i_ns_prefixes, T_ARRAY);
       list_in = RARRAY_PTR(o_i_ns_prefixes);
@@ -279,7 +279,7 @@ rxml_document_canonicalize(int argc, VALUE *argv, VALUE self)
       int i;
       int p = 0; // index of pointer array
       VALUE * list_in = NULL;
-      int node_list_size = 0;
+      long node_list_size = 0;
 
 	  if (CLASS_OF(o_nodes) == cXMLXPathObject)
 	  {
@@ -308,7 +308,7 @@ rxml_document_canonicalize(int argc, VALUE *argv, VALUE self)
       // Need to set values in nodeset struct
       nodeset.nodeNr = (node_list_size > C14N_NODESET_LIMIT ?
                         C14N_NODESET_LIMIT :
-                        node_list_size);
+                        (int)node_list_size);
       nodeset.nodeTab = node_ptr_array;
     }
   }//option_hash
