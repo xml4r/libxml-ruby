@@ -19,8 +19,8 @@ Gem::Specification.new do |spec|
                   'Dan Janwoski', 'Anurag Priyam', 'Charlie Savage',
                   'Ryan Johnson']
   spec.platform = Gem::Platform::RUBY
-  spec.bindir = "bin"
-  spec.extensions = ["ext/libxml/extconf.rb"]
+  spec.bindir = 'bin'
+  spec.extensions = ['ext/libxml/extconf.rb']
   spec.files = Dir.glob(['HISTORY',
                          'LICENSE',
                          'libxml-ruby.gemspec',
@@ -37,7 +37,7 @@ Gem::Specification.new do |spec|
                          'lib/**/*.rb',
                          'script/**/*',
                          'test/**/*'])
-  spec.test_files = Dir.glob("test/tc_*.rb")
+  spec.test_files = Dir.glob('test/tc_*.rb')
   spec.required_ruby_version = '>= 1.8.6'
   spec.date = DateTime.now
   spec.add_development_dependency('hanna_guado')
