@@ -262,7 +262,7 @@ static VALUE rxml_reader_string(int argc, VALUE *argv, VALUE klass)
     xoptions = NIL_P(parserOptions) ? 0 : NUM2INT(parserOptions);
   }
   
-  xreader = xmlReaderForMemory(StringValueCStr(string), RSTRING_LEN(string), 
+  xreader = xmlReaderForMemory(StringValueCStr(string), (int)RSTRING_LEN(string),
                                xbaseurl, xencoding, xoptions);
 
   if (xreader == NULL)

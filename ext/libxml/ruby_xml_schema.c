@@ -108,8 +108,7 @@ static VALUE rxml_schema_init_from_string(VALUE self, VALUE schema_str)
 
   Check_Type(schema_str, T_STRING);
 
-  xparser = xmlSchemaNewMemParserCtxt(StringValuePtr(schema_str), strlen(
-      StringValuePtr(schema_str)));
+  xparser = xmlSchemaNewMemParserCtxt(StringValuePtr(schema_str), (int)strlen(StringValuePtr(schema_str)));
   xschema = xmlSchemaParse(xparser);
   xmlSchemaFreeParserCtxt(xparser);
 

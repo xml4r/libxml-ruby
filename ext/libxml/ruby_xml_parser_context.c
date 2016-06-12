@@ -108,8 +108,7 @@ static VALUE rxml_parser_context_string(VALUE klass, VALUE string)
   if (RSTRING_LEN(string) == 0)
     rb_raise(rb_eArgError, "Must specify a string with one or more characters");
 
-  ctxt = xmlCreateMemoryParserCtxt(StringValuePtr(string),
-                                   RSTRING_LEN(string));
+  ctxt = xmlCreateMemoryParserCtxt(StringValuePtr(string), (int)RSTRING_LEN(string));
   
   if (!ctxt)
     rxml_raise(&xmlLastError);

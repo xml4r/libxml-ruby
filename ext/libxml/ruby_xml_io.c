@@ -17,7 +17,7 @@ int rxml_read_callback(void *context, char *buffer, int len)
 {
   VALUE io = (VALUE) context;
   VALUE string = rb_funcall(io, READ_METHOD, 1, INT2NUM(len));
-  int size;
+  size_t size;
 
   if (string == Qnil)
     return 0;
@@ -25,7 +25,7 @@ int rxml_read_callback(void *context, char *buffer, int len)
   size = RSTRING_LEN(string);
   memcpy(buffer, StringValuePtr(string), size);
 
-  return size;
+  return (int)size;
 }
 
 int rxml_write_callback(void *context, const char *buffer, int len)
@@ -39,7 +39,7 @@ int rxml_write_callback(void *context, const char *buffer, int len)
 
   return NUM2INT(written);
 #else
-  return rb_io_bufwrite((VALUE) context, buffer, (size_t) len);
+  return rb_io_bufwrite((VALUE) context, buffer, (size_t)len);
 #endif /* !HAVE_RB_IO_BUFWRITE */
 }
 

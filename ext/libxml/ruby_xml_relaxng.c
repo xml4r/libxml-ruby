@@ -91,8 +91,7 @@ static VALUE rxml_relaxng_init_from_string(VALUE self, VALUE relaxng_str)
 
   Check_Type(relaxng_str, T_STRING);
 
-  xparser = xmlRelaxNGNewMemParserCtxt(StringValuePtr(relaxng_str), strlen(
-      StringValuePtr(relaxng_str)));
+  xparser = xmlRelaxNGNewMemParserCtxt(StringValuePtr(relaxng_str), (int)strlen(StringValuePtr(relaxng_str)));
   xrelaxng = xmlRelaxNGParse(xparser);
   xmlRelaxNGFreeParserCtxt(xparser);
 

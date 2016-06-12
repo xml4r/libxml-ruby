@@ -138,7 +138,7 @@ rxml_xpath_from_value(VALUE value) {
       result = xmlXPathNewNodeSet(NULL);
       break;
     case T_ARRAY: {
-      int i, j;
+      long i, j;
       result = xmlXPathNewNodeSet(NULL);
 
       for (i = RARRAY_LEN(value); i > 0; i--) {

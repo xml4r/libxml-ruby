@@ -201,8 +201,8 @@ static void start_element_ns_callback(void *ctx,
     for (i = 0;i < nb_attributes * 5; i+=5) 
     {
       VALUE attrName = rxml_new_cstr(xattributes[i+0], NULL);
-      VALUE attrValue = rxml_new_cstr_len(xattributes[i+3], xattributes[i+4] - xattributes[i+3], NULL);
-
+      long attrLen = xattributes[i+4] - xattributes[i+3];
+      VALUE attrValue = rxml_new_cstr_len(xattributes[i+3], attrLen, NULL);
       rb_hash_aset(attributes, attrName, attrValue);
     }
   }

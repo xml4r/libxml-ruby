@@ -46,7 +46,7 @@ void* ic_open(char const *filename)
       ic_doc->buffer = strdup(StringValuePtr(res));
 
       ic_doc->bpos = ic_doc->buffer;
-      ic_doc->remaining = strlen(ic_doc->buffer);
+      ic_doc->remaining = (int)strlen(ic_doc->buffer);
       return ic_doc;
     }
     scheme = scheme->next_scheme;
@@ -110,7 +110,7 @@ static VALUE input_callbacks_add_scheme(VALUE self, VALUE scheme_name,
   scheme = (ic_scheme*) malloc(sizeof(ic_scheme));
   scheme->next_scheme = 0;
   scheme->scheme_name = strdup(StringValuePtr(scheme_name)); /* TODO alloc, dealloc */
-  scheme->name_len = strlen(scheme->scheme_name);
+  scheme->name_len = (int)strlen(scheme->scheme_name);
   scheme->class = class; /* TODO alloc, dealloc */
 
   //fprintf( stderr, "registered: %s, %d, %s\n", scheme->scheme_name, scheme->name_len, scheme->class );

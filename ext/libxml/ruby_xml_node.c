@@ -143,8 +143,7 @@ static VALUE rxml_node_new_cdata(int argc, VALUE *argv, VALUE klass)
   else
   {
     content = rb_obj_as_string(content);
-    xnode = xmlNewCDataBlock(NULL, (xmlChar*) StringValuePtr(content),
-        RSTRING_LEN(content));
+    xnode = xmlNewCDataBlock(NULL, (xmlChar*) StringValuePtr(content), (int)RSTRING_LEN(content));
   }
 
   if (xnode == NULL)
