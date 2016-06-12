@@ -47,7 +47,7 @@ void* deb_Open(char const *filename)
   //deb_doc->buffer = strdup("<serepes>serepes</serepes>");
 
   deb_doc->bpos = deb_doc->buffer;
-  deb_doc->remaining = strlen(deb_doc->buffer);
+  deb_doc->remaining = (int)strlen(deb_doc->buffer);
   return deb_doc;
 }
 
