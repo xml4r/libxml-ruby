@@ -1,5 +1,13 @@
 = Release History
 
+== 3.0.0 / 2016-05-28 Charlie Savage
+
+* Revamp libxml-ruby's memory management to not cause crashes when used with Nokogiri (James Laird-Wah)
+* Set a default task in the Rakefile - use "test" (Robert Haines)
+* Add "hanna_gudao" gem and add "rake-compiler" to develpoment dependencies (Robert Haines)
+* Use Process.getrlimit instead of `ulimit` in the tests (Robert Haines)
+* Build on smartos (Steven Williamson)
+
 == 2.8.0 / 2015-01-09 Charlie Savage
 
 * Use RbConfig instead of Config in extconf.rb (Robert Haines)
