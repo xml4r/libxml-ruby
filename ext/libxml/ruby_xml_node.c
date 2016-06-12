@@ -72,7 +72,7 @@ static void rxml_node_free(xmlNodePtr xnode)
      have a parent and is not owned by a document.  Note a corner
      case here - calling node2 = doc.import(node1) will cause node2
      to not have a parent but to have a document. */
-  if (xnode->parent == NULL)
+  if (xnode->doc == NULL && xnode->parent == NULL)
   {
     xmlFreeNode(xnode);
   }
