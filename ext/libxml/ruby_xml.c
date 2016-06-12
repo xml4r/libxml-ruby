@@ -3,40 +3,102 @@
 
 static struct st_table *private_pointers;
 
-static int num_private = 0;   // For tracing leaks.
+static int wrapped = 0;   // Constant to track what nodes have been wrapped
+static int removed = 0;   // Constant to track what nodes have been removed
 
-void rxml_private_set(void *node, VALUE private) {
-  if (!st_insert(private_pointers, (st_data_t)node, (st_data_t)private))
-    num_private++;
+void rxml_register(void *xnode, VALUE value) {
+  st_insert(private_pointers, (st_data_t)xnode, (st_data_t)value);
 }
 
-void rxml_private_del(void *node) {
-  if (st_delete(private_pointers, (st_data_t*)&node, NULL))
-    num_private--;
+void rxml_register_node(xmlNodePtr xnode, VALUE value) {
+  if (rxml_lookup_node(xnode) == Qnil) {
+    xnode->_private = &wrapped;
+    rxml_register(xnode, value);
+  }
 }
 
-VALUE rxml_private_get(void *node) {
+void rxml_register_doc(xmlDocPtr xdoc, VALUE value) {
+  if (rxml_lookup_doc(xdoc) == Qnil) {
+    xdoc->_private = &wrapped;
+    rxml_register(xdoc, value);
+  }
+}
+
+void rxml_register_dtd(xmlDtdPtr xdtd, VALUE value) {
+  if (rxml_lookup_dtd(xdtd) == Qnil) {
+    xdtd->_private = &wrapped;
+    rxml_register(xdtd, value);
+  }
+}
+
+void rxml_unregister(void *xnode) {
+  st_delete(private_pointers, (st_data_t*)&xnode, NULL);
+}
+
+void rxml_unregister_node(xmlNodePtr xnode) {
+  if (xnode->_private == &wrapped) {
+    xnode->_private = &removed;
+    rxml_unregister(xnode);
+  }
+}
+
+void rxml_unregister_doc(xmlDocPtr xdoc) {
+  if (xdoc->_private == &wrapped) {
+    xdoc->_private = &removed;
+    rxml_unregister(xdoc);
+  }
+}
+
+void rxml_unregister_dtd(xmlDtdPtr xdtd) {
+  if (xdtd->_private == &wrapped) {
+    xdtd->_private = &removed;
+    rxml_unregister(xdtd);
+  }
+}
+
+VALUE rxml_lookup(void *xnode) {
   st_data_t result = 0;
   int ret;
 
-  if (!node)
-    return Qfalse;
+  if (!xnode)
+    return Qnil;
 
-  ret = st_lookup(private_pointers, (st_data_t)node, &result);
+  ret = st_lookup(private_pointers, (st_data_t)xnode, &result);
 
   if (ret)
       return (VALUE)result;
   else
-      return Qfalse;
+      return Qnil;
 }
 
-void rxml_private_mark(void *node) {
-  VALUE private = rxml_private_get(node);
+VALUE rxml_lookup_node(xmlNodePtr xnode) {
+  if (!xnode)
+    return Qnil;
 
-  if (!private)
-    return;
+  if (xnode->_private != &wrapped)
+    return Qnil;
 
-  rb_gc_mark(private);
+  return rxml_lookup(xnode);
+}
+
+VALUE rxml_lookup_doc(xmlDocPtr xdoc) {
+  if (!xdoc)
+    return Qnil;
+
+  if (xdoc->_private != &wrapped)
+		return Qnil;
+
+  return rxml_lookup(xdoc);
+}
+
+VALUE rxml_lookup_dtd(xmlDtdPtr xdtd) {
+  if (!xdtd)
+    return Qnil;
+
+  if (xdtd->_private != &wrapped)
+    return Qnil;
+
+  return rxml_lookup(xdtd);
 }
 
 VALUE mXML;

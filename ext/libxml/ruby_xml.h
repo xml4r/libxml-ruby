@@ -7,9 +7,14 @@ extern VALUE mXML;
 int rxml_libxml_default_options();
 void rxml_init_xml(void);
 
-void rxml_private_set(void *node, VALUE private);
-void rxml_private_del(void *node);
-VALUE rxml_private_get(void *node);
-void rxml_private_mark(void *node);
+void rxml_register_node(xmlNodePtr node, VALUE value);
+void rxml_register_doc(xmlDocPtr doc, VALUE value);
+void rxml_register_dtd(xmlDtdPtr dtd, VALUE value);
+void rxml_unregister_node(xmlNodePtr node);
+void rxml_unregister_doc(xmlDocPtr doc);
+void rxml_unregister_dtd(xmlDtdPtr dtd);
+VALUE rxml_lookup_node(xmlNodePtr node);
+VALUE rxml_lookup_doc(xmlDocPtr doc);
+VALUE rxml_lookup_dtd(xmlDtdPtr dtd);
 
 #endif

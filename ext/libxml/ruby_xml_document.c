@@ -62,7 +62,7 @@ void rxml_document_mark_node_list(xmlNodePtr xnode)
   while (xnode != NULL)
   {
     rxml_document_mark_node_list(xnode->children);
-    rxml_private_mark(xnode);
+    rxml_node_mark(xnode);
     xnode = xnode->next;
   }
 }
@@ -75,20 +75,18 @@ void rxml_document_mark(xmlDocPtr xdoc)
 
 void rxml_document_free(xmlDocPtr xdoc)
 {
-  rxml_private_del(xdoc);
+  rxml_unregister_doc(xdoc);
   xmlFreeDoc(xdoc);
 }
 
 VALUE rxml_document_wrap(xmlDocPtr xdoc)
 {
-  VALUE result = rxml_private_get(xdoc);
+  VALUE result = rxml_lookup_doc(xdoc);
 
-  // This node is already wrapped
-  if (result)
-    return result;
-
-  result = Data_Wrap_Struct(cXMLDocument, rxml_document_mark, rxml_document_free, xdoc);
-  rxml_private_set(xdoc, result);
+  if (result == Qnil) {
+    result = Data_Wrap_Struct(cXMLDocument, rxml_document_mark, rxml_document_free, xdoc);
+    rxml_register_doc(xdoc, result);
+  }
   return result;
 }
 
@@ -130,7 +128,7 @@ static VALUE rxml_document_initialize(int argc, VALUE *argv, VALUE self)
 
   Check_Type(xmlver, T_STRING);
   xdoc = xmlNewDoc((xmlChar*) StringValuePtr(xmlver));
-  rxml_private_set(xdoc, self);
+  rxml_register_doc(xdoc, self);
   DATA_PTR(self) = xdoc;
 
   return self;
@@ -721,7 +719,6 @@ static VALUE rxml_document_prev_q(VALUE self)
 static VALUE rxml_document_root_get(VALUE self)
 {
   xmlDocPtr xdoc;
-
   xmlNodePtr root;
 
   Data_Get_Struct(self, xmlDoc, xdoc);

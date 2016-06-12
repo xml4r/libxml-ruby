@@ -43,14 +43,14 @@ VALUE cXMLNode;
 static void rxml_node_deregisterNode(xmlNodePtr xnode)
 {
   /* Has the node been wrapped and exposed to Ruby? */
-  VALUE node = rxml_private_get(xnode);
-  if (node == 0)
+  VALUE node = rxml_lookup_node(xnode);
+  if (node == Qnil)
       return;
 
   /* Node was wrapped.  Remove the hashtable entry and
     then disable the dfree function so that Ruby will not
     try to free the node a second time. */
-  rxml_private_del(xnode);
+  rxml_unregister_node(xnode);
 
   RDATA(node)->data = NULL;
   RDATA(node)->dfree = NULL;
@@ -66,7 +66,7 @@ static void rxml_node_free(xmlNodePtr xnode)
     return;
 
   /* The ruby object wrapping the xml object no longer exists. */
-  rxml_private_del(xnode);
+  rxml_unregister_node(xnode);
 
   /* Ruby is responsible for freeing this node if it does not
      have a parent and is not owned by a document.  Note a corner
@@ -80,26 +80,30 @@ static void rxml_node_free(xmlNodePtr xnode)
 
  void rxml_node_mark(xmlNodePtr xnode)
 {
-  /* Either the node has not been created yet in initialize
+   VALUE doc = Qnil;
+   VALUE parent = Qnil;
+
+   /* Either the node has not been created yet in initialize
      or it has been freed by libxml already in Ruby's 
      mark phase. */
   if (xnode == NULL)
     return;
 
-  rxml_private_mark(xnode->doc);
-  rxml_private_mark(xnode->parent);
+  doc = rxml_lookup_doc(xnode->doc);
+  rb_gc_mark(doc);
+
+  parent = rxml_lookup_node(xnode->parent);
+  rb_gc_mark(parent);
 }
 
 VALUE rxml_node_wrap(xmlNodePtr xnode)
 {
-  VALUE result = rxml_private_get(xnode);
+  VALUE result = rxml_lookup_node(xnode);
 
-  // This node is already wrapped
-  if (result)
-      return result;
-
-  result = Data_Wrap_Struct(cXMLNode, rxml_node_mark, rxml_node_free, xnode);
-  rxml_private_set(xnode, result);
+  if (result == Qnil) {
+    result = Data_Wrap_Struct(cXMLNode, rxml_node_mark, rxml_node_free, xnode);
+    rxml_register_node(xnode, result);
+  }
   return result;
 }
 
@@ -271,7 +275,7 @@ static VALUE rxml_node_initialize(int argc, VALUE *argv, VALUE self)
     rxml_raise(&xmlLastError);
 
   /* Link the Ruby object to the libxml object and vice-versa. */
-  rxml_private_set(xnode, self);
+  rxml_register_node(xnode, self);
   DATA_PTR(self) = xnode;
 
   if (!NIL_P(content))
@@ -306,7 +310,7 @@ static VALUE rxml_node_modify_dom(VALUE self, VALUE target,
   if (xresult != xtarget)
   {
     RDATA(target)->data = xresult;
-    rxml_private_set(xresult, target);
+    rxml_register_node(xresult, target);
   }
 
   return target;
@@ -517,7 +521,6 @@ static VALUE rxml_node_content_add(VALUE self, VALUE obj)
  */
 static VALUE rxml_node_doc(VALUE self)
 {
-  VALUE result = Qnil;
   xmlDocPtr xdoc = NULL;
   xmlNodePtr xnode = rxml_get_xnode(self);
 
@@ -540,11 +543,7 @@ static VALUE rxml_node_doc(VALUE self)
   if (xdoc == NULL)
     return (Qnil);
 
-  result = rxml_private_get(xdoc);
-  if (result)
-    return result;
-  else
-    return Qnil;
+  return rxml_lookup_doc(xdoc);
 }
 
 /*
@@ -1144,7 +1143,7 @@ static VALUE rxml_node_remove_ex(VALUE self)
   xresult = xmlDocCopyNode(xnode, NULL, 1);
 
   /* This ruby node object no longer points at the node.*/
-  rxml_private_del(xnode);
+  rxml_unregister_node(xnode);
   RDATA(self)->data = NULL;
 
   /* Now free the original node.  This will call the deregister node
@@ -1154,7 +1153,7 @@ static VALUE rxml_node_remove_ex(VALUE self)
 
   /* Now wrap the new node */
   RDATA(self)->data = xresult;
-  rxml_private_set(xresult, self);
+  rxml_register_node(xresult, self);
 
   /* Now return the removed node so the user can
      do something with it.*/

@@ -33,7 +33,8 @@ static void rxml_xpath_context_free(xmlXPathContextPtr ctxt)
 
 static void rxml_xpath_context_mark(xmlXPathContextPtr ctxt)
 {
-  rxml_private_mark(ctxt);
+  VALUE value = rxml_lookup_doc(ctxt->doc);
+  rb_gc_mark(value);
 }
 
 static VALUE rxml_xpath_context_alloc(VALUE klass)
