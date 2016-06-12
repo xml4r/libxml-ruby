@@ -36,6 +36,7 @@ class TestEncoding < Minitest::Test
     # Strip spaces to make testing easier
     XML.default_keep_blanks = false
     @doc = XML::Document.file(file)
+    XML.default_keep_blanks = true
   end
 
   def test_encoding
