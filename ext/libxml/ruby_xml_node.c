@@ -47,24 +47,19 @@ static void rxml_node_deregisterNode(xmlNodePtr xnode)
   if (node == Qnil)
       return;
 
-  /* Node was wrapped.  Remove the hashtable entry and
-    then disable the dfree function so that Ruby will not
-    try to free the node a second time. */
-  rxml_unregister_node(xnode);
+  /* Node was wrapped. Disassociate the ruby object from the xml node
+     and turn off the free function so Ruby will not call it when the
+     wrapping object is itself freed. Note we still MUST include 
+     the mark function.  Unsetting it breaks the Ruby GC. */
+   RDATA(node)->dfree = NULL;
+   RDATA(node)->data = NULL;
 
-  RDATA(node)->data = NULL;
-  RDATA(node)->dfree = NULL;
-  RDATA(node)->dmark = NULL;
+  // Remove the hashtable entry
+  rxml_unregister_node(xnode);
 }
 
 static void rxml_node_free(xmlNodePtr xnode)
 {
-  /* Either the node has been created yet in initialize
-     or it has been freed by libxml already in Ruby's 
-     mark phase. */
-  if (xnode == NULL)
-    return;
-
   /* The ruby object wrapping the xml object no longer exists. */
   rxml_unregister_node(xnode);
 
