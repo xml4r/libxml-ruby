@@ -43,16 +43,12 @@ void rxml_dtd_free(xmlDtdPtr xdtd)
 void rxml_dtd_mark(xmlDtdPtr xdtd)
 {
   VALUE doc = Qnil;
-  VALUE parent = Qnil;
 
   if (xdtd == NULL)
     return;
 
   doc = rxml_lookup_doc(xdtd->doc);
   rb_gc_mark(doc);
-
-  parent = rxml_lookup_node(xdtd->parent);
-  rb_gc_mark(parent);
 }
 
 static VALUE rxml_dtd_alloc(VALUE klass)
