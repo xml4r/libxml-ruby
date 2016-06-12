@@ -43,7 +43,6 @@ void rxml_dtd_free(xmlDtdPtr xdtd)
 void rxml_dtd_mark(xmlDtdPtr xdtd)
 {
   VALUE doc = Qnil;
-  VALUE parent = Qnil;
 
   if (xdtd == NULL)
     return;
