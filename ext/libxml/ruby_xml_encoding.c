@@ -191,7 +191,7 @@ VALUE rxml_new_cstr(const xmlChar* xstr, const xmlChar* xencoding)
 #endif
 }
 
-VALUE rxml_new_cstr_len(const xmlChar* xstr, const int length, const xmlChar* xencoding)
+VALUE rxml_new_cstr_len(const xmlChar* xstr, const long length, const xmlChar* xencoding)
 {
 #ifdef HAVE_RUBY_ENCODING_H
   rb_encoding *rbencoding = rxml_figure_encoding(xencoding);

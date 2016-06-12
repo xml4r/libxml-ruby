@@ -9,7 +9,7 @@ void rxml_init_encoding();
 
 // Ruby 1.8/1.9 encoding compatibility
 VALUE rxml_new_cstr(const xmlChar* xstr, const xmlChar* xencoding);
-VALUE rxml_new_cstr_len(const xmlChar* xstr, const int length, const xmlChar* xencoding);
+VALUE rxml_new_cstr_len(const xmlChar* xstr, const long length, const xmlChar* xencoding);
 
 #ifdef HAVE_RUBY_ENCODING_H
 rb_encoding* rxml_xml_encoding_to_rb_encoding(VALUE klass, xmlCharEncoding xmlEncoding);

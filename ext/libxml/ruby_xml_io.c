@@ -39,7 +39,7 @@ int rxml_write_callback(void *context, const char *buffer, int len)
 
   return NUM2INT(written);
 #else
-  return rb_io_bufwrite((VALUE) context, buffer, (size_t)len);
+  return (int)rb_io_bufwrite((VALUE) context, buffer, (size_t)len);
 #endif /* !HAVE_RB_IO_BUFWRITE */
 }
 
