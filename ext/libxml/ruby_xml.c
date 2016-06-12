@@ -3,8 +3,7 @@
 
 static struct st_table *private_pointers;
 
-static int wrapped = 0;   // Constant to track what nodes have been wrapped
-static int removed = 0;   // Constant to track what nodes have been removed
+static int registered = 0;   // Constant to track what nodes have been registered
 
 void rxml_register(void *xnode, VALUE value) {
   st_insert(private_pointers, (st_data_t)xnode, (st_data_t)value);
@@ -12,21 +11,21 @@ void rxml_register(void *xnode, VALUE value) {
 
 void rxml_register_node(xmlNodePtr xnode, VALUE value) {
   if (rxml_lookup_node(xnode) == Qnil) {
-    xnode->_private = &wrapped;
+    xnode->_private = &registered;
     rxml_register(xnode, value);
   }
 }
 
 void rxml_register_doc(xmlDocPtr xdoc, VALUE value) {
   if (rxml_lookup_doc(xdoc) == Qnil) {
-    xdoc->_private = &wrapped;
+    xdoc->_private = &registered;
     rxml_register(xdoc, value);
   }
 }
 
 void rxml_register_dtd(xmlDtdPtr xdtd, VALUE value) {
   if (rxml_lookup_dtd(xdtd) == Qnil) {
-    xdtd->_private = &wrapped;
+    xdtd->_private = &registered;
     rxml_register(xdtd, value);
   }
 }
@@ -36,66 +35,48 @@ void rxml_unregister(void *xnode) {
 }
 
 void rxml_unregister_node(xmlNodePtr xnode) {
-  if (xnode->_private == &wrapped) {
-    xnode->_private = &removed;
+  if (xnode->_private == &registered) {
+    xnode->_private = NULL;
     rxml_unregister(xnode);
   }
 }
 
 void rxml_unregister_doc(xmlDocPtr xdoc) {
-  if (xdoc->_private == &wrapped) {
-    xdoc->_private = &removed;
+  if (xdoc->_private == &registered) {
+    xdoc->_private = NULL;
     rxml_unregister(xdoc);
   }
 }
 
 void rxml_unregister_dtd(xmlDtdPtr xdtd) {
-  if (xdtd->_private == &wrapped) {
-    xdtd->_private = &removed;
+  if (xdtd->_private == &registered) {
+    xdtd->_private = NULL;
     rxml_unregister(xdtd);
   }
 }
 
-VALUE rxml_lookup(void *xnode) {
+VALUE rxml_lookup(void *pointer) {
   st_data_t result = 0;
-  int ret;
-
-  if (!xnode)
-    return Qnil;
-
-  ret = st_lookup(private_pointers, (st_data_t)xnode, &result);
-
-  if (ret)
-      return (VALUE)result;
-  else
-      return Qnil;
+  int ret = st_lookup(private_pointers, (st_data_t)pointer, &result);
+  return ret ? (VALUE)result : Qnil;
 }
 
 VALUE rxml_lookup_node(xmlNodePtr xnode) {
-  if (!xnode)
-    return Qnil;
-
-  if (xnode->_private != &wrapped)
+  if (!xnode || xnode->_private != &registered)
     return Qnil;
 
   return rxml_lookup(xnode);
 }
 
 VALUE rxml_lookup_doc(xmlDocPtr xdoc) {
-  if (!xdoc)
+  if (!xdoc || xdoc->_private != &registered)
     return Qnil;
-
-  if (xdoc->_private != &wrapped)
-		return Qnil;
 
   return rxml_lookup(xdoc);
 }
 
 VALUE rxml_lookup_dtd(xmlDtdPtr xdtd) {
-  if (!xdtd)
-    return Qnil;
-
-  if (xdtd->_private != &wrapped)
+  if (!xdtd || xdtd->_private != &registered)
     return Qnil;
 
   return rxml_lookup(xdtd);
