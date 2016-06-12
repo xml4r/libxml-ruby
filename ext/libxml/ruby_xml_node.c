@@ -402,6 +402,7 @@ static VALUE rxml_node_content_set(VALUE self, VALUE content)
   xnode = rxml_get_xnode(self);
   encoded_content = xmlEncodeSpecialChars(xnode->doc, (xmlChar*) StringValuePtr(content));
   xmlNodeSetContent(xnode, encoded_content);
+  xmlFree(encoded_content);
   return (Qtrue);
 }
 
