@@ -15,6 +15,5 @@ web/_site
 .config
 InstalledFiles
 ext/libxml/libxml_ruby.bundle
-libxml-ruby.xcodeproj/
 .DS_Store
 /ext/vc/*.suo
