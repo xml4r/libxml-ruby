@@ -123,7 +123,6 @@ class TestNodeEdit < Minitest::Test
   end
 
   def test_wrong_doc
-    puts 333333
     doc1 = XML::Parser.string('<nums><one></one></nums>').parse
     doc2 = XML::Parser.string('<nums><two></two></nums>').parse
 
