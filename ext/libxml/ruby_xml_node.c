@@ -85,10 +85,12 @@ static void rxml_node_free(xmlNodePtr xnode)
     return;
 
   doc = rxml_lookup_doc(xnode->doc);
-  rb_gc_mark(doc);
+  if (doc != Qnil)
+    rb_gc_mark(doc);
 
   parent = rxml_lookup_node(xnode->parent);
-  rb_gc_mark(parent);
+  if (parent != Qnil)
+     rb_gc_mark(parent);
 }
 
 VALUE rxml_node_wrap(xmlNodePtr xnode)
