@@ -1,6 +1,6 @@
 pkg
 nbproject
-web/_site
+website/_site
 *.swp
 *.swo
 
