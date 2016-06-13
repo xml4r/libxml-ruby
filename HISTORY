@@ -1,12 +1,19 @@
 = Release History
 
-== 3.0.0 / 2016-05-28 Charlie Savage
+== 2.9.0 / 2016-06-13 Charlie Savage
 
 * Revamp libxml-ruby's memory management to not cause crashes when used with Nokogiri (James Laird-Wah)
+* Fix garbage collection issue that sometimes caused the library to hang (Charlie Savage)
+* Improved multi-threading support (Charlie Savage)
+* Fix crash sometimes caused by a xml node being being freed twice (Charlie Savage)
+* Fix memory leak when setting the text content of a node (Charlie Savage)
 * Set a default task in the Rakefile - use "test" (Robert Haines)
 * Add "hanna_gudao" gem and add "rake-compiler" to develpoment dependencies (Robert Haines)
 * Use Process.getrlimit instead of `ulimit` in the tests (Robert Haines)
 * Build on smartos (Steven Williamson)
+* Fix compiler warnings (Charlie Savage)
+* Add Xcode project for easier debugging on OSX (Charlie Savage)
+* Switch from unit test to minitest (Charlie Savage)
 
 == 2.8.0 / 2015-01-09 Charlie Savage
 
