@@ -11,32 +11,33 @@ We think libxml-ruby is the best XML library for Ruby because:
 * Conformance - It passes all 1800+ tests from the OASIS XML Tests Suite
 
 == Requirements
-libxml-ruby requires Ruby 1.8.4 or higher.  It is dependent on 
-the following libraries to function properly:
+libxml-ruby requires Ruby 1.8.4 or higher.  It depends on libxml2 to
+function propoerly.  lixml2, in turn, depends on:
 
 * libm      (math routines: very standard)
 * libz      (zlib)
 * libiconv
-* libxml2
 
 If you are running Linux or Unix you'll need a C compiler so the
 extension can be compiled when it is installed.  If you are running
-Windows, then install the Windows specific RubyGem which
-includes an already built extension.
+Windows, then install the x64-mingw32 gem or build it yourself using
+Devkit (http://rubyinstaller.org/add-ons/devkit/) or
+msys2 (https://msys2.github.io/).
 
 == INSTALLATION
 The easiest way to install libxml-ruby is via Ruby Gems.  To install:
 
 <tt>gem install libxml-ruby</tt>
 
-If you are running Windows, make sure to install the Win32 RubyGem
-which includes prebuilt extensions for Ruby 1.8, 1.9 and 2.0 preview.  These
+If you are running Windows, then install the libxml-ruby-x64-mingw32 gem.
+THe gem inncludes prebuilt extensions for Ruby 2.3.  These
 extensions are built using MinGW64 and libxml2 version 2.9.3,
-iconv version 1.14 and zlib version 1.2.8.  Note these binaries
+iconv version 1.14 and zlib version 1.2.8. Note these binaries
 are available in the lib\libs directory.  To use them, put them
 someplace on your path.
 
-The gem also includes a Microsoft VC++ 2012 solution (useful for debugging).
+The gem also includes a Microsoft VC++ 2012 solution and XCode 5 project - these
+are very useful for debugging.
 
 libxml-ruby's source codes lives on Github at https://github.com/xml4r/libxml-ruby.
 
