@@ -12,7 +12,7 @@ We think libxml-ruby is the best XML library for Ruby because:
 
 == Requirements
 libxml-ruby requires Ruby 1.8.4 or higher.  It depends on libxml2 to
-function propoerly.  lixml2, in turn, depends on:
+function propoerly.  libxml2, in turn, depends on:
 
 * libm      (math routines: very standard)
 * libz      (zlib)
