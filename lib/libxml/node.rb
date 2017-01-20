@@ -20,7 +20,7 @@ module LibXML
       #    node.inner_xml -> "string"
       #    node.inner_xml(:indent => true, :encoding => 'UTF-8', :level => 0) -> "string"
       #
-      # Converts a node's children, to a string representation.  To include
+      # Converts a node's children to a string representation.  To include
       # the node, use XML::Node#to_s.  For more information about
       # the supported options, see XML::Node#to_s.
       def inner_xml(options = Hash.new)
