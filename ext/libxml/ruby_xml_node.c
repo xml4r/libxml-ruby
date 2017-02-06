@@ -47,13 +47,11 @@ static void rxml_node_deregisterNode(xmlNodePtr xnode)
   if (node == Qnil)
       return;
 
-  /* Node was wrapped. Disassociate the ruby object from the xml node
-     and turn off the free function so Ruby will not call it when the
-     wrapping object is itself freed. Note we still MUST include 
-     the mark function.  Unsetting it breaks the Ruby GC. */
-   RDATA(node)->dfree = NULL;
-   RDATA(node)->data = NULL;
-
+  // Node was wrapped. Disassociate the ruby object from the xml node
+  RDATA(node)->dfree = NULL;
+  RDATA(node)->data = NULL;
+  RDATA(node)->dmark = NULL;
+   
   // Remove the hashtable entry
   rxml_unregister_node(xnode);
 }
@@ -77,6 +75,7 @@ static void rxml_node_free(xmlNodePtr xnode)
 {
    VALUE doc = Qnil;
    VALUE parent = Qnil;
+   xmlNodePtr xcurrent = xnode->children;
 
    /* Either the node has not been created yet in initialize
      or it has been freed by libxml already in Ruby's 
@@ -91,6 +90,18 @@ static void rxml_node_free(xmlNodePtr xnode)
   parent = rxml_lookup_node(xnode->parent);
   if (parent != Qnil)
      rb_gc_mark(parent);
+
+  /* If any children have been mapped into Ruby then tell Ruby to 
+     keep them around. Otherwise they become zombies and calling
+     each on a node results in segmentation faults. */
+  while (xcurrent)
+  {
+    VALUE current = rxml_lookup_node(xcurrent);
+    if (current != Qnil)
+      rb_gc_mark(current);
+
+    xcurrent = xcurrent->next;
+  }
 }
 
 VALUE rxml_node_wrap(xmlNodePtr xnode)
