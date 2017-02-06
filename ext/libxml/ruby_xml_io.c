@@ -1,6 +1,5 @@
 /* Please see the LICENSE file for copyright and distribution information */
 
-#include "extconf.h"
 #include "ruby_libxml.h"
 
 static ID READ_METHOD;
