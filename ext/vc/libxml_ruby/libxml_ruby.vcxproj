@@ -1,0 +1,268 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{0B65CD1D-EEB9-41AE-93BB-75496E504152}</ProjectGuid>
+    <RootNamespace>libxml</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\lib\1.8</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Configuration)\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Configuration)\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.so</TargetExt>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.so</TargetExt>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>..\..\..\lib\2.4\</OutDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>C:\msys64\local\ruby240vc\include\ruby-2.4.0;C:\msys64\local\ruby240vc\include\ruby-2.4.0\x64-mswin64_140;C:\msys64\mingw64\include\libxml2;C:\msys64\mingw64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;LIBXML_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <DisableSpecificWarnings>4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <ShowIncludes>false</ShowIncludes>
+      <UndefinePreprocessorDefinitions>
+      </UndefinePreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>msvcr100-ruby18.lib;libxml2.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>$(OutDir)\$(TargetName)$(TargetExt)</OutputFile>
+      <AdditionalLibraryDirectories>C:\msys64\local\ruby\lib;C:\msys64\mingw64\include\libxml2;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention>
+      </DataExecutionPrevention>
+      <TargetMachine>MachineX86</TargetMachine>
+      <ModuleDefinitionFile>..\..\libxml\libxml_ruby.def</ModuleDefinitionFile>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>C:\msys64\local\ruby240vc\include\ruby-2.4.0;C:\msys64\local\ruby240vc\include\ruby-2.4.0\x64-mswin64_140;C:\msys64\mingw64\include\libxml2;C:\msys64\mingw64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;LIBXML_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DisableSpecificWarnings>4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <ShowIncludes>false</ShowIncludes>
+      <UndefinePreprocessorDefinitions>
+      </UndefinePreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>x64-vcruntime140-ruby240.lib;libxml2.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>$(OutDir)\$(TargetName)$(TargetExt)</OutputFile>
+      <AdditionalLibraryDirectories>C:\msys64\local\ruby\lib;C:\msys64\mingw64\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention>
+      </DataExecutionPrevention>
+      <ModuleDefinitionFile>..\..\libxml\libxml_ruby.def</ModuleDefinitionFile>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\Development\ruby\lib\ruby\1.8\i386-mswin32;C:\Development\msys\local\include;C:\Development\msys\local\include\libxml2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;LIBXML_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>msvcrt-ruby18.lib;libxml2.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>C:\Development\ruby\lib\ruby\gems\1.8\gems\libxml-ruby-1.1.2-x86-mswin32-60\lib\$(ProjectName).so</OutputFile>
+      <AdditionalLibraryDirectories>C:\Development\ruby\lib;C:\Development\msys\local\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention>
+      </DataExecutionPrevention>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\Development\ruby\lib\ruby\1.8\i386-mswin32;C:\Development\msys\local\include;C:\Development\msys\local\include\libxml2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;LIBXML_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>msvcrt-ruby18.lib;libxml2.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>C:\Development\ruby\lib\ruby\gems\1.8\gems\libxml-ruby-1.1.2-x86-mswin32-60\lib\$(ProjectName).so</OutputFile>
+      <AdditionalLibraryDirectories>C:\Development\ruby\lib;C:\Development\msys\local\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention>
+      </DataExecutionPrevention>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\libxml\libxml.c" />
+    <ClCompile Include="..\..\libxml\ruby_xml.c" />
+    <ClCompile Include="..\..\libxml\ruby_xml_attr.c" />
+    <ClCompile Include="..\..\libxml\ruby_xml_attr_decl.c" />
+    <ClCompile Include="..\..\libxml\ruby_xml_attributes.c" />
+    <ClCompile Include="..\..\libxml\ruby_xml_cbg.c" />
+    <ClCompile Include="..\..\libxml\ruby_xml_document.c" />
+    <ClCompile Include="..\..\libxml\ruby_xml_dtd.c" />
+    <ClCompile Include="..\..\libxml\ruby_xml_encoding.c" />
+    <ClCompile Include="..\..\libxml\ruby_xml_error.c" />
+    <ClCompile Include="..\..\libxml\ruby_xml_html_parser.c" />
+    <ClCompile Include="..\..\libxml\ruby_xml_html_parser_context.c" />
+    <ClCompile Include="..\..\libxml\ruby_xml_html_parser_options.c" />
+    <ClCompile Include="..\..\libxml\ruby_xml_input_cbg.c" />
+    <ClCompile Include="..\..\libxml\ruby_xml_io.c" />
+    <ClCompile Include="..\..\libxml\ruby_xml_namespace.c" />
+    <ClCompile Include="..\..\libxml\ruby_xml_namespaces.c" />
+    <ClCompile Include="..\..\libxml\ruby_xml_node.c" />
+    <ClCompile Include="..\..\libxml\ruby_xml_parser.c" />
+    <ClCompile Include="..\..\libxml\ruby_xml_parser_context.c" />
+    <ClCompile Include="..\..\libxml\ruby_xml_parser_options.c" />
+    <ClCompile Include="..\..\libxml\ruby_xml_reader.c" />
+    <ClCompile Include="..\..\libxml\ruby_xml_relaxng.c" />
+    <ClCompile Include="..\..\libxml\ruby_xml_sax2_handler.c" />
+    <ClCompile Include="..\..\libxml\ruby_xml_sax_parser.c" />
+    <ClCompile Include="..\..\libxml\ruby_xml_schema.c" />
+    <ClCompile Include="..\..\libxml\ruby_xml_schema_attribute.c" />
+    <ClCompile Include="..\..\libxml\ruby_xml_schema_element.c" />
+    <ClCompile Include="..\..\libxml\ruby_xml_schema_facet.c" />
+    <ClCompile Include="..\..\libxml\ruby_xml_schema_type.c" />
+    <ClCompile Include="..\..\libxml\ruby_xml_writer.c" />
+    <ClCompile Include="..\..\libxml\ruby_xml_xinclude.c" />
+    <ClCompile Include="..\..\libxml\ruby_xml_xpath.c" />
+    <ClCompile Include="..\..\libxml\ruby_xml_xpath_context.c" />
+    <ClCompile Include="..\..\libxml\ruby_xml_xpath_expression.c" />
+    <ClCompile Include="..\..\libxml\ruby_xml_xpath_object.c" />
+    <ClCompile Include="..\..\libxml\ruby_xml_xpointer.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\libxml\ruby_libxml.h" />
+    <ClInclude Include="..\..\libxml\ruby_xml.h" />
+    <ClInclude Include="..\..\libxml\ruby_xml_attr.h" />
+    <ClInclude Include="..\..\libxml\ruby_xml_attr_decl.h" />
+    <ClInclude Include="..\..\libxml\ruby_xml_attributes.h" />
+    <ClInclude Include="..\..\libxml\ruby_xml_document.h" />
+    <ClInclude Include="..\..\libxml\ruby_xml_dtd.h" />
+    <ClInclude Include="..\..\libxml\ruby_xml_encoding.h" />
+    <ClInclude Include="..\..\libxml\ruby_xml_error.h" />
+    <ClInclude Include="..\..\libxml\ruby_xml_html_parser.h" />
+    <ClInclude Include="..\..\libxml\ruby_xml_html_parser_context.h" />
+    <ClInclude Include="..\..\libxml\ruby_xml_html_parser_options.h" />
+    <ClInclude Include="..\..\libxml\ruby_xml_input_cbg.h" />
+    <ClInclude Include="..\..\libxml\ruby_xml_io.h" />
+    <ClInclude Include="..\..\libxml\ruby_xml_namespace.h" />
+    <ClInclude Include="..\..\libxml\ruby_xml_namespaces.h" />
+    <ClInclude Include="..\..\libxml\ruby_xml_node.h" />
+    <ClInclude Include="..\..\libxml\ruby_xml_parser.h" />
+    <ClInclude Include="..\..\libxml\ruby_xml_parser_context.h" />
+    <ClInclude Include="..\..\libxml\ruby_xml_parser_options.h" />
+    <ClInclude Include="..\..\libxml\ruby_xml_reader.h" />
+    <ClInclude Include="..\..\libxml\ruby_xml_relaxng.h" />
+    <ClInclude Include="..\..\libxml\ruby_xml_sax2_handler.h" />
+    <ClInclude Include="..\..\libxml\ruby_xml_sax_parser.h" />
+    <ClInclude Include="..\..\libxml\ruby_xml_schema.h" />
+    <ClInclude Include="..\..\libxml\ruby_xml_schema_attribute.h" />
+    <ClInclude Include="..\..\libxml\ruby_xml_schema_element.h" />
+    <ClInclude Include="..\..\libxml\ruby_xml_schema_facet.h" />
+    <ClInclude Include="..\..\libxml\ruby_xml_schema_type.h" />
+    <ClInclude Include="..\..\libxml\ruby_xml_version.h" />
+    <ClInclude Include="..\..\libxml\ruby_xml_writer.h" />
+    <ClInclude Include="..\..\libxml\ruby_xml_xinclude.h" />
+    <ClInclude Include="..\..\libxml\ruby_xml_xpath.h" />
+    <ClInclude Include="..\..\libxml\ruby_xml_xpath_context.h" />
+    <ClInclude Include="..\..\libxml\ruby_xml_xpath_expression.h" />
+    <ClInclude Include="..\..\libxml\ruby_xml_xpath_object.h" />
+    <ClInclude Include="..\..\libxml\ruby_xml_xpointer.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
