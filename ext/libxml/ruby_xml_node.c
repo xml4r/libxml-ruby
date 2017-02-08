@@ -57,7 +57,7 @@ static void rxml_node_free(xmlNodePtr xnode)
 
 void rxml_node_manage(xmlNodePtr xnode, VALUE node)
 {
-  RDATA(node)->dfree = rxml_node_free;
+  RDATA(node)->dfree = (RUBY_DATA_FUNC)rxml_node_free;
   xnode->_private = (void*)node;
 }
 
