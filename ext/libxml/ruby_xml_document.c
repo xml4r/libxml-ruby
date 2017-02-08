@@ -740,7 +740,7 @@ static VALUE rxml_document_root_set(VALUE self, VALUE node)
   if (xnode->doc != NULL && xnode->doc != xdoc)
     rb_raise(eXMLError, "Nodes belong to different documents.  You must first import the node by calling XML::Document.import");
 
-  xOldRoot = xmlDocSetRootElement(xdoc, xnode);
+  xmlDocSetRootElement(xdoc, xnode);
 
   // Ruby no longer manages this nodes memory
   rxml_node_unmanage(xnode, node);
