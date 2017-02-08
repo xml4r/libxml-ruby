@@ -66,21 +66,6 @@ class TestNodeEdit < Minitest::Test
                  @doc.root.to_s.gsub(/\n\s*/,''))
   end
 
-  def test_freed_node
-    root = XML::Node.new("root")
-
-    a = XML::Node.new("a")
-    root << a
-
-    a.parent.remove!
-
-    # Node a has now been freed from under us
-    error = assert_raises(RuntimeError) do
-      a.to_s
-    end
-    assert_equal('This node has already been freed.', error.to_s)
-  end
-
   def test_remove_node_gc
     xp = XML::Parser.string('<test><num>one</num><num>two</num><num>three</num></test>')
     doc = xp.parse

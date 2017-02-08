@@ -62,8 +62,8 @@ static void rxml_reader_free(xmlTextReaderPtr xreader)
 static void rxml_reader_mark(xmlTextReaderPtr xreader)
 {
   xmlDocPtr xdoc = xmlTextReaderCurrentDoc(xreader);
-  VALUE value = rxml_lookup_doc(xdoc);
-  rb_gc_mark(value);
+  VALUE doc = (VALUE)xdoc->_private;
+  rb_gc_mark(doc);
 }
 
 static VALUE rxml_reader_wrap(xmlTextReaderPtr xreader)
@@ -996,21 +996,8 @@ static VALUE rxml_reader_lookup_namespace(VALUE self, VALUE prefix)
 static VALUE rxml_reader_expand(VALUE self)
 {
   xmlTextReaderPtr xreader = rxml_text_reader_get(self);
-  xmlNodePtr xnode = NULL;
+  xmlNodePtr xnode = xmlTextReaderExpand(xreader);
 
-  /* At this point we need to wrap the reader's document as explained above. */
-  xmlDocPtr xdoc = xmlTextReaderCurrentDoc(xreader);
-
-  if (!xdoc)
-    rb_raise(rb_eRuntimeError, "The reader does not have a document.  Did you forget to call read?");
-
-  rxml_document_wrap(xdoc);
-
-  /* And now hook in a mark function */
-  RDATA(self)->dmark = (RUBY_DATA_FUNC)rxml_reader_mark;
-
-  xnode = xmlTextReaderExpand(xreader);
-  
   if (!xnode)
   {
     return Qnil;
@@ -1020,6 +1007,34 @@ static VALUE rxml_reader_expand(VALUE self)
     return rxml_node_wrap(xnode);
   }
 }
+
+/*
+* call-seq:
+*    reader.document -> doc
+*
+* Hacking interface that provides access to the current document being accessed by the
+* reader. NOTE: as a result of this call, the reader will not destroy the associated XML
+* document. Instead, it will be destroyed when the returned document goes out of scope.
+*
+* Returns:	document
+*/
+static VALUE rxml_reader_doc(VALUE self)
+{
+  xmlTextReaderPtr xreader = rxml_text_reader_get(self);
+  xmlDocPtr xdoc = xmlTextReaderCurrentDoc(xreader);
+
+  if (!xdoc)
+    rb_raise(rb_eRuntimeError, "The reader does not have a document.  Did you forget to call read?");
+
+  VALUE result = rxml_document_wrap(xdoc);
+
+  // And now hook in a mark function to keep the document alive as long as the reader is valid
+  RDATA(self)->dmark = (RUBY_DATA_FUNC)rxml_reader_mark;
+
+  return result;
+}
+
+
 
 #if LIBXML_VERSION >= 20618
 /*
@@ -1140,6 +1155,7 @@ void rxml_init_reader(void)
   rb_define_method(cXMLReader, "column_number", rxml_reader_column_number, 0);
 #endif
   rb_define_method(cXMLReader, "depth", rxml_reader_depth, 0);
+  rb_define_method(cXMLReader, "doc", rxml_reader_doc, 0);
   rb_define_method(cXMLReader, "encoding", rxml_reader_encoding, 0);
   rb_define_method(cXMLReader, "expand", rxml_reader_expand, 0);
   rb_define_method(cXMLReader, "get_attribute", rxml_reader_get_attribute, 1);
@@ -1151,12 +1167,12 @@ void rxml_init_reader(void)
   rb_define_method(cXMLReader, "line_number", rxml_reader_line_number, 0);
 #endif
   rb_define_method(cXMLReader, "local_name", rxml_reader_local_name, 0);
-  rb_define_method(cXMLReader, "lookup_namespace",       rxml_reader_lookup_namespace, 1);
+  rb_define_method(cXMLReader, "lookup_namespace", rxml_reader_lookup_namespace, 1);
   rb_define_method(cXMLReader, "move_to_attribute", rxml_reader_move_to_attr, 1);
   rb_define_method(cXMLReader, "move_to_attribute_no", rxml_reader_move_to_attr_no, 1);
   rb_define_method(cXMLReader, "move_to_attribute_ns", rxml_reader_move_to_attr_ns, 2);
-  rb_define_method(cXMLReader, "move_to_first_attribute",       rxml_reader_move_to_first_attr, 0);
-  rb_define_method(cXMLReader, "move_to_next_attribute",       rxml_reader_move_to_next_attr, 0);
+  rb_define_method(cXMLReader, "move_to_first_attribute", rxml_reader_move_to_first_attr, 0);
+  rb_define_method(cXMLReader, "move_to_next_attribute", rxml_reader_move_to_next_attr, 0);
   rb_define_method(cXMLReader, "move_to_element", rxml_reader_move_to_element,       0);
   rb_define_method(cXMLReader, "name", rxml_reader_name, 0);
   rb_define_method(cXMLReader, "namespace_uri", rxml_reader_namespace_uri, 0);
@@ -1173,7 +1189,7 @@ void rxml_init_reader(void)
   rb_define_method(cXMLReader, "read_outer_xml", rxml_reader_read_outer_xml, 0);
   rb_define_method(cXMLReader, "read_state", rxml_reader_read_state, 0);
   rb_define_method(cXMLReader, "read_string", rxml_reader_read_string, 0);
-  rb_define_method(cXMLReader, "relax_ng_validate",       rxml_reader_relax_ng_validate, 1);
+  rb_define_method(cXMLReader, "relax_ng_validate", rxml_reader_relax_ng_validate, 1);
   rb_define_method(cXMLReader, "standalone", rxml_reader_standalone, 0);
 #if LIBXML_VERSION >= 20620
   rb_define_method(cXMLReader, "schema_validate", rxml_reader_schema_validate, 1);

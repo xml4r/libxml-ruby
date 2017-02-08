@@ -1,112 +1,6 @@
 #include "ruby_libxml.h"
 #include "ruby_xml.h"
 
-static struct st_table *private_pointers;
- 
-// Constant to track what nodes have been registered - this is just for performance (maybe not needed?)
-static int registered = 0;   
-
-void rxml_register(void *xnode, VALUE value)
-{
-  st_insert(private_pointers, (st_data_t)xnode, (st_data_t)value);
-}
-
-void rxml_register_node(xmlNodePtr xnode, VALUE value) 
-{
-  if (xnode->_private != &registered)
-  {
-    xnode->_private = &registered;
-    rxml_register(xnode, value);
-  }
-}
-
-void rxml_register_doc(xmlDocPtr xdoc, VALUE value)
-{
-  if (xdoc->_private != &registered)
-  {
-    xdoc->_private = &registered;
-    rxml_register(xdoc, value);
-  }
-}
-
-void rxml_register_dtd(xmlDtdPtr xdtd, VALUE value)
-{
-  if (xdtd->_private != &registered)
-  {
-    xdtd->_private = &registered;
-    rxml_register(xdtd, value);
-  }
-}
-
-void rxml_unregister(void *xnode)
-{
-  st_delete(private_pointers, (st_data_t*)&xnode, NULL);
-}
-
-void rxml_unregister_node(xmlNodePtr xnode)
-{
-  if (xnode->_private == &registered) 
-  {
-    xnode->_private = NULL;
-    rxml_unregister(xnode);
-  }
-}
-
-void rxml_unregister_doc(xmlDocPtr xdoc)
-{
-  if (xdoc->_private == &registered)
-  {
-    xdoc->_private = NULL;
-    rxml_unregister(xdoc);
-  }
-}
-
-void rxml_unregister_dtd(xmlDtdPtr xdtd)
-{
-  if (xdtd->_private == &registered)
-  {
-    xdtd->_private = NULL;
-    rxml_unregister(xdtd);
-  }
-}
-
-VALUE rxml_lookup(void *pointer)
-{
-  VALUE result = Qnil;
-
-  st_data_t data_t = 0;
-  if (st_lookup(private_pointers, (st_data_t)pointer, &data_t))
-  {
-    result = (VALUE)data_t;
-  }
-
-  return result;
-}
-
-VALUE rxml_lookup_node(xmlNodePtr xnode)
-{
-  if (!xnode || xnode->_private != &registered)
-    return Qnil;
-
-  return rxml_lookup(xnode);
-}
-
-VALUE rxml_lookup_doc(xmlDocPtr xdoc)
-{
-  if (!xdoc || xdoc->_private != &registered)
-    return Qnil;
-
-  return rxml_lookup(xdoc);
-}
-
-VALUE rxml_lookup_dtd(xmlDtdPtr xdtd)
-{
-  if (!xdtd || xdtd->_private != &registered)
-    return Qnil;
-
-  return rxml_lookup(xdtd);
-}
-
 VALUE mXML;
 
 /*
@@ -940,9 +834,6 @@ static VALUE rxml_memory_used(VALUE self)
 
 void rxml_init_xml(void)
 {
-  /* Create a hashtable suitable for pointer keys */
-  private_pointers = st_init_numtable();
-
   mXML = rb_define_module_under(mLibXML, "XML");
 
   /* Constants */

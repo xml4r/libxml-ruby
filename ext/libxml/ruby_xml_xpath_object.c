@@ -50,7 +50,8 @@ static void rxml_xpath_namespace_free(xmlNsPtr xns)
 
 static void rxml_xpath_object_mark(rxml_xpath_object *rxpop)
 {
-  VALUE doc = rxml_lookup_doc(rxpop->xdoc);
+  VALUE doc = (VALUE)rxpop->xdoc->_private;
+  xmlXPathObjectPtr xpop = rxpop->xpop;
   rb_gc_mark(doc);
   rb_gc_mark(rxpop->nsnodes);
 }
@@ -59,6 +60,7 @@ VALUE rxml_xpath_object_wrap(xmlDocPtr xdoc, xmlXPathObjectPtr xpop)
 {
   int i;
   rxml_xpath_object *rxpop = ALLOC(rxml_xpath_object);
+
   /* Make sure Ruby's GC can find the array in the stack */
   VALUE nsnodes = rb_ary_new();
   rxpop->xdoc =xdoc;
@@ -67,7 +69,7 @@ VALUE rxml_xpath_object_wrap(xmlDocPtr xdoc, xmlXPathObjectPtr xpop)
   /* Find all the extra namespace nodes and wrap them. */
   if (xpop->nodesetval && xpop->nodesetval->nodeNr)
   {
-    for (i = 0;i < xpop->nodesetval->nodeNr; i++)
+    for (i = 0; i < xpop->nodesetval->nodeNr; i++)
     {
       xmlNodePtr xnode = xpop->nodesetval->nodeTab[i];
       if (xnode != NULL && xnode->type == XML_NAMESPACE_DECL)

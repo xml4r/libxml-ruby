@@ -32,10 +32,6 @@ VALUE cXMLDtd;
 
 void rxml_dtd_free(xmlDtdPtr xdtd)
 {
-  /* Clear our private pointer so that we won't reuse the
-   same, freed, Ruby wrapper object later.*/
-  rxml_unregister_dtd(xdtd);
-
   if (xdtd->doc == NULL && xdtd->parent == NULL)
     xmlFreeDtd(xdtd);
 }
@@ -47,7 +43,7 @@ void rxml_dtd_mark(xmlDtdPtr xdtd)
   if (xdtd == NULL)
     return;
 
-  doc = rxml_lookup_doc(xdtd->doc);
+  doc = (VALUE)xdtd->doc->_private;
   rb_gc_mark(doc);
 }
 
@@ -58,14 +54,7 @@ static VALUE rxml_dtd_alloc(VALUE klass)
 
 VALUE rxml_dtd_wrap(xmlDtdPtr xdtd)
 {
-  VALUE result = rxml_lookup_dtd(xdtd);
-
-  // This node is already wrapped
-  if (result == Qnil) {
-    result = Data_Wrap_Struct(cXMLDtd, NULL, NULL, xdtd);
-    rxml_register_dtd(xdtd, result);
-  }
-  return result;
+  return  Data_Wrap_Struct(cXMLDtd, NULL, NULL, xdtd);
 }
 
 /*

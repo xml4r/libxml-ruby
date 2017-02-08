@@ -1,5 +1,10 @@
 = Release History
 
+== 3.0.0 / 2017-02-06 Charlie Savage
+
+* Fix crash that sometimes happened when interating over a node's children (Charlie Savage)
+* Update Visual Studio project for Visual Studio 15 - requires ruby 2.4+ (Charlie Savage)
+
 == 2.9.0 / 2016-06-13 Charlie Savage
 
 * Revamp libxml-ruby's memory management to not cause crashes when used with Nokogiri (James Laird-Wah)

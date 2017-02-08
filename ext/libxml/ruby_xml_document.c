@@ -54,39 +54,27 @@
 
 VALUE cXMLDocument;
 
-
-void rxml_document_mark_node_list(xmlNodePtr xnode)
-{
-  if (xnode == NULL) return;
-
-  while (xnode != NULL)
-  {
-    rxml_document_mark_node_list(xnode->children);
-    rxml_node_mark(xnode);
-    xnode = xnode->next;
-  }
-}
-
-void rxml_document_mark(xmlDocPtr xdoc)
-{
-  if (xdoc)
-    rxml_document_mark_node_list(xdoc->children);
-}
-
 void rxml_document_free(xmlDocPtr xdoc)
 {
-  rxml_unregister_doc(xdoc);
+  xdoc->_private = NULL;
   xmlFreeDoc(xdoc);
 }
 
 VALUE rxml_document_wrap(xmlDocPtr xdoc)
 {
-  VALUE result = rxml_lookup_doc(xdoc);
+  VALUE result = Qnil;
 
-  if (result == Qnil) {
-    result = Data_Wrap_Struct(cXMLDocument, rxml_document_mark, rxml_document_free, xdoc);
-    rxml_register_doc(xdoc, result);
+  // Is this node is already wrapped?
+  if (xdoc->_private != NULL)
+  {
+    result = (VALUE)xdoc->_private;
   }
+  else
+  {
+    result = Data_Wrap_Struct(cXMLDocument, NULL, rxml_document_free, xdoc);
+    xdoc->_private = (void*)result;
+  }
+
   return result;
 }
 
@@ -99,7 +87,7 @@ VALUE rxml_document_wrap(xmlDocPtr xdoc)
  */
 static VALUE rxml_document_alloc(VALUE klass)
 {
-  return Data_Wrap_Struct(klass, rxml_document_mark, rxml_document_free, NULL);
+  return Data_Wrap_Struct(klass, NULL, rxml_document_free, NULL);
 }
 
 /*
@@ -128,8 +116,10 @@ static VALUE rxml_document_initialize(int argc, VALUE *argv, VALUE self)
 
   Check_Type(xmlver, T_STRING);
   xdoc = xmlNewDoc((xmlChar*) StringValuePtr(xmlver));
-  rxml_register_doc(xdoc, self);
-  DATA_PTR(self) = xdoc;
+
+  // Link the ruby object to the document and the document to the ruby object
+  RDATA(self)->data = xdoc;
+  xdoc->_private = (void*)self;
 
   return self;
 }
@@ -740,6 +730,7 @@ static VALUE rxml_document_root_set(VALUE self, VALUE node)
 {
   xmlDocPtr xdoc;
   xmlNodePtr xnode;
+  xmlNodePtr xOldRoot;
 
   if (rb_obj_is_kind_of(node, cXMLNode) == Qfalse)
     rb_raise(rb_eTypeError, "must pass an XML::Node type object");
@@ -750,7 +741,11 @@ static VALUE rxml_document_root_set(VALUE self, VALUE node)
   if (xnode->doc != NULL && xnode->doc != xdoc)
     rb_raise(eXMLError, "Nodes belong to different documents.  You must first import the node by calling XML::Document.import");
 
-  xmlDocSetRootElement(xdoc, xnode);
+  xOldRoot = xmlDocSetRootElement(xdoc, xnode);
+
+  // Ruby no longer manages this nodes memory
+  rxml_node_unmanage(xnode, node);
+
   return node;
 }
 

@@ -8,4 +8,6 @@ extern VALUE cXMLNode;
 void rxml_init_node(void);
 void rxml_node_mark(xmlNodePtr xnode);
 VALUE rxml_node_wrap(xmlNodePtr xnode);
+void rxml_node_manage(xmlNodePtr xnode, VALUE node);
+void rxml_node_unmanage(xmlNodePtr xnode, VALUE node);
 #endif

@@ -42,75 +42,86 @@ VALUE cXMLNode;
 
 static void rxml_node_deregisterNode(xmlNodePtr xnode)
 {
-  /* Has the node been wrapped and exposed to Ruby? */
-  VALUE node = rxml_lookup_node(xnode);
-  if (node == Qnil)
-      return;
+  /* Has the document or node been wrapped and exposed to Ruby? */
+  if (xnode->_private == NULL)
+    return;
 
-  // Node was wrapped. Disassociate the ruby object from the xml node
-  RDATA(node)->dfree = NULL;
+  VALUE node = (VALUE)xnode->_private;
   RDATA(node)->data = NULL;
-  RDATA(node)->dmark = NULL;
-   
-  // Remove the hashtable entry
-  rxml_unregister_node(xnode);
 }
 
 static void rxml_node_free(xmlNodePtr xnode)
 {
-  /* The ruby object wrapping the xml object no longer exists. */
-  rxml_unregister_node(xnode);
-
-  /* Ruby is responsible for freeing this node if it does not
-     have a parent and is not owned by a document.  Note a corner
-     case here - calling node2 = doc.import(node1) will cause node2
-     to not have a parent but to have a document. */
+  /* The ruby object wrapping the xml object no longer exists and this
+     is a standalone node without a document or parent so ruby is 
+     responsible for freeing the underlying node.*/
   if (xnode->doc == NULL && xnode->parent == NULL)
   {
+    // Remove the back linkage from libxml to Ruby
+    xnode->_private = NULL;
     xmlFreeNode(xnode);
   }
 }
 
- void rxml_node_mark(xmlNodePtr xnode)
+void rxml_node_manage(xmlNodePtr xnode, VALUE node)
 {
-   VALUE doc = Qnil;
-   VALUE parent = Qnil;
-   xmlNodePtr xcurrent = xnode->children;
+  RDATA(node)->dfree = rxml_node_free;
+  xnode->_private = (void*)node;
+}
 
-   /* Either the node has not been created yet in initialize
-     or it has been freed by libxml already in Ruby's 
-     mark phase. */
-  if (xnode == NULL)
-    return;
+void rxml_node_unmanage(xmlNodePtr xnode, VALUE node)
+{
+  RDATA(node)->dfree = NULL;
+  xnode->_private = NULL;
+}
 
-  doc = rxml_lookup_doc(xnode->doc);
-  if (doc != Qnil)
-    rb_gc_mark(doc);
+xmlNodePtr rxml_node_root(xmlNodePtr xnode)
+{
+  xmlNodePtr current = xnode;
 
-  parent = rxml_lookup_node(xnode->parent);
-  if (parent != Qnil)
-     rb_gc_mark(parent);
-
-  /* If any children have been mapped into Ruby then tell Ruby to 
-     keep them around. Otherwise they become zombies and calling
-     each on a node results in segmentation faults. */
-  while (xcurrent)
+  while (current->parent)
   {
-    VALUE current = rxml_lookup_node(xcurrent);
-    if (current != Qnil)
-      rb_gc_mark(current);
-
-    xcurrent = xcurrent->next;
+    current = current->parent;
   }
+
+  return current;
+}
+
+void rxml_node_mark(xmlNodePtr xnode)
+{
+   if (xnode->doc)
+   {
+     VALUE doc = (VALUE)xnode->doc->_private;
+     rb_gc_mark(doc);
+   }
+   else if (xnode->parent)
+   {
+     xmlNodePtr root = rxml_node_root(xnode);
+     if (root->_private)
+     {
+       VALUE node = (VALUE)root->_private;
+       rb_gc_mark(node);
+     }
+   }
 }
 
 VALUE rxml_node_wrap(xmlNodePtr xnode)
 {
-  VALUE result = rxml_lookup_node(xnode);
+  VALUE result = Qnil;
 
-  if (result == Qnil) {
-    result = Data_Wrap_Struct(cXMLNode, rxml_node_mark, rxml_node_free, xnode);
-    rxml_register_node(xnode, result);
+  // Is this node already wrapped?
+  if (xnode->_private)
+  {
+    result = (VALUE)xnode->_private;
+  }
+  else
+  {
+    result = Data_Wrap_Struct(cXMLNode, rxml_node_mark, NULL, xnode);
+  }
+
+  if (!xnode->doc && !xnode->parent)
+  {
+    rxml_node_manage(xnode, result);
   }
   return result;
 }
@@ -281,9 +292,11 @@ static VALUE rxml_node_initialize(int argc, VALUE *argv, VALUE self)
   if (xnode == NULL)
     rxml_raise(&xmlLastError);
 
-  /* Link the Ruby object to the libxml object and vice-versa. */
-  rxml_register_node(xnode, self);
-  DATA_PTR(self) = xnode;
+  // Link the ruby wrapper to the underlying libxml node
+  RDATA(self)->data = xnode;
+
+  // Ruby is in charge of managing this node's memory
+  rxml_node_manage(xnode, self);
 
   if (!NIL_P(content))
     rxml_node_content_set(self, content);
@@ -317,8 +330,11 @@ static VALUE rxml_node_modify_dom(VALUE self, VALUE target,
   if (xresult != xtarget)
   {
     RDATA(target)->data = xresult;
-    rxml_register_node(xresult, target);
   }
+
+  // Target now has a parent so ruby should no longer manage its memory
+  rxml_node_unmanage(xresult, target);
+  xtarget->_private = NULL;
 
   return target;
 }
@@ -551,7 +567,7 @@ static VALUE rxml_node_doc(VALUE self)
   if (xdoc == NULL)
     return (Qnil);
 
-  return rxml_lookup_doc(xdoc);
+  return (VALUE)xdoc->_private;
 }
 
 /*
@@ -695,10 +711,10 @@ static VALUE rxml_node_empty_q(VALUE self)
  *    node.eql?(other_node) => (true|false)
  *
  * Test equality between the two nodes. Two nodes are equal
- * if they are the same node or have the same XML representation.*/
+ * if they are the same node.*/
 static VALUE rxml_node_eql_q(VALUE self, VALUE other)
 {
-  if(self == other)
+  if (self == other)
   {
     return Qtrue;
   }
@@ -708,15 +724,9 @@ static VALUE rxml_node_eql_q(VALUE self, VALUE other)
   }
   else
   {
-    VALUE self_xml;
-    VALUE other_xml;
-
-    if (rb_obj_is_kind_of(other, cXMLNode) == Qfalse)
-      rb_raise(rb_eTypeError, "Nodes can only be compared against other nodes");
-
-    self_xml = rxml_node_to_s(0, NULL, self);
-    other_xml = rxml_node_to_s(0, NULL, other);
-    return(rb_funcall(self_xml, rb_intern("=="), 1, other_xml));
+    xmlNodePtr xnode = rxml_get_xnode(self);
+    xmlNodePtr xnode_other = rxml_get_xnode(other);
+    return xnode == xnode_other ? Qtrue : Qfalse;
   }
 }
 
@@ -1136,35 +1146,15 @@ static VALUE rxml_node_property_set(VALUE self, VALUE name, VALUE value)
 
 static VALUE rxml_node_remove_ex(VALUE self)
 {
-  xmlNodePtr xnode, xresult;
-  xnode = rxml_get_xnode(self);
-
-  /* First unlink the node from its parent. */
+  xmlNodePtr xnode = rxml_get_xnode(self);
+ 
+  // Now unlink the node from its parent
   xmlUnlinkNode(xnode);
 
-  /* Now copy the node we want to remove and make the
-     current Ruby object point to it.  We do this because
-     a node has a number of dependencies on its parent
-     document - its name (if using a dictionary), entities,
-     namespaces, etc.  For a node to live on its own, it
-     needs to get its own copies of this information.*/
-  xresult = xmlDocCopyNode(xnode, NULL, 1);
+  // Ruby now manages this node
+  rxml_node_manage(xnode, self);
 
-  /* This ruby node object no longer points at the node.*/
-  rxml_unregister_node(xnode);
-  RDATA(self)->data = NULL;
-
-  /* Now free the original node.  This will call the deregister node
-    callback which would reset the mark and free function except for
-	the fact we already removed it from the private hashtable above */
-  xmlFreeNode(xnode);
-
-  /* Now wrap the new node */
-  RDATA(self)->data = xresult;
-  rxml_register_node(xresult, self);
-
-  /* Now return the removed node so the user can
-     do something with it.*/
+  // Now return the removed node so the user can do something with it
   return self;
 }
 

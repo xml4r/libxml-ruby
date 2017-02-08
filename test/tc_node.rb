@@ -71,7 +71,7 @@ class TestNode < Minitest::Test
       assert_instance_of(XML::Document, n.doc) if n.document?
     end
   end
-  
+
   def test_name
     node = @doc.root.children.last
     assert_equal("iron_maiden", node.name)
@@ -84,23 +84,39 @@ class TestNode < Minitest::Test
     end
   end
 
-  def test_equality
+   def test_equality
     node_a = @doc.find_first('*[@country]')
     node_b = @doc.root.child
 
+    # On the ruby side these are different objects
+    refute(node_a.equal?(node_b))
+
+    # But they are the same underlying libxml node so specify they are equal
     assert(node_a == node_b)
     assert(node_a.eql?(node_b))
-    assert(node_a.equal?(node_b))
 
     file = File.join(File.dirname(__FILE__), @file_name)
     doc2 = XML::Document.file(file)
 
     node_a2 = doc2.find_first('*[@country]')
 
+    refute(node_a == node_a2)
+    refute(node_a.eql?(node_a2))
     assert_equal(node_a.to_s, node_a2.to_s)
-    assert_equal(node_a, node_a2)
-    assert(node_a.eql?(node_a2))
-    assert(!node_a.equal?(node_a2))
+    refute(node_a.equal?(node_a2))
+  end
+
+  def test_equality_2
+    parent = XML::Node.new('parent')
+    child = XML::Node.new('child')
+    parent << child
+
+    node_a = child.parent
+    node_b = child.parent
+    # In this case the nodes are equal - the parent being the root
+    assert(node_a.equal?(node_b))
+    assert(node_a == node_b)
+    assert(node_a.eql?(node_b))
   end
 
   def test_equality_nil
@@ -127,14 +143,14 @@ class TestNode < Minitest::Test
     assert_nil(doc.root.base_uri)
   end
 
-	# We use the same facility that libXSLT does here to disable output escaping.
-	# This lets you specify that the node's content should be rendered unaltered
-	# whenever it is being output.  This is useful for things like <script> and
-	# <style> nodes in HTML documents if you don't want to be forced to wrap them
-	# in CDATA nodes.  Or if you are sanitizing existing HTML documents and want
-	# to preserve the content of any of the text nodes.
-	#
-	def test_output_escaping
+  # We use the same facility that libXSLT does here to disable output escaping.
+  # This lets you specify that the node's content should be rendered unaltered
+  # whenever it is being output.  This is useful for things like <script> and
+  # <style> nodes in HTML documents if you don't want to be forced to wrap them
+  # in CDATA nodes.  Or if you are sanitizing existing HTML documents and want
+  # to preserve the content of any of the text nodes.
+  #
+  def test_output_escaping
 		text = '<bad-script>if (a &lt; b || b &gt; c) { return "text"; }<stop/>return "&gt;&gt;&gt;snip&lt;&lt;&lt;";</bad-script>'
     node = XML::Parser.string(text).parse.root
 		assert_equal text, node.to_s
@@ -153,8 +169,8 @@ class TestNode < Minitest::Test
 		assert_equal text, node.to_s
   end
 
-	# Just a sanity check for output escaping.
-	def test_output_escaping_sanity
+  # Just a sanity check for output escaping.
+  def test_output_escaping_sanity
 		text = '<bad-script>if (a &lt; b || b &gt; c) { return "text"; }<stop/>return "&gt;&gt;&gt;snip&lt;&lt;&lt;";</bad-script>'
     node = XML::Parser.string(text).parse.root
 		affected = node.find('//text()')
@@ -201,7 +217,7 @@ class TestNode < Minitest::Test
 
     node = doc.root
     assert(!node.empty?)
-    
+
     text_node = node.first
     assert(text_node.empty?)
   end
