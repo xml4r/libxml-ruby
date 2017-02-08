@@ -730,7 +730,6 @@ static VALUE rxml_document_root_set(VALUE self, VALUE node)
 {
   xmlDocPtr xdoc;
   xmlNodePtr xnode;
-  xmlNodePtr xOldRoot;
 
   if (rb_obj_is_kind_of(node, cXMLNode) == Qfalse)
     rb_raise(rb_eTypeError, "must pass an XML::Node type object");

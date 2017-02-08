@@ -1021,13 +1021,14 @@ static VALUE rxml_reader_expand(VALUE self)
 */
 static VALUE rxml_reader_doc(VALUE self)
 {
+  VALUE result = Qnil;
   xmlTextReaderPtr xreader = rxml_text_reader_get(self);
   xmlDocPtr xdoc = xmlTextReaderCurrentDoc(xreader);
 
   if (!xdoc)
     rb_raise(rb_eRuntimeError, "The reader does not have a document.  Did you forget to call read?");
 
-  VALUE result = rxml_document_wrap(xdoc);
+  result = rxml_document_wrap(xdoc);
 
   // And now hook in a mark function to keep the document alive as long as the reader is valid
   RDATA(self)->dmark = (RUBY_DATA_FUNC)rxml_reader_mark;
