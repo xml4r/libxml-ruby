@@ -1,8 +1,22 @@
 = Release History
 
-== 3.0.0 / 2017-02-06 Charlie Savage
+== 3.0.0 / 2017-02-07 Charlie Savage
 
-* Fix crash that sometimes happened when interating over a node's children (Charlie Savage)
+* Revamp how libxml-ruby manages memory.  Instead of trying to return the same ruby object for each xmlnode,
+  the bindings now create wrapper ruby objects as needed which are then freed at the end of use.
+  This allows most memory management to be handled by libxml itself. Ruby only manages the lifespan of
+  documents and parent xml nodes.  When those go out of scope, the underlying libxml objects are also freed.
+  This implementation requires almost no overhead, plays nicely with Nokogiri and appears to work much
+  better  (Charlie Savage).
+
+* Change XML::Node#eql? API.  Nodes are now considered equal only if they wrap the same underlying
+  libxml node.  Previously, they would also be considered equal if they contained the same content
+  (Charlie Savage)
+
+* Change XML::Reader.expand API. Previously it would automatically instantiate a reader document so
+  the an xpath expression could be used to search the returned node.  Now you should first call
+  reader.doc  (Charlie Savage)
+
 * Update Visual Studio project for Visual Studio 15 - requires ruby 2.4+ (Charlie Savage)
 
 == 2.9.0 / 2016-06-13 Charlie Savage
