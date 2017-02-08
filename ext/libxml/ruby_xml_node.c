@@ -27,7 +27,7 @@ VALUE cXMLNode;
  * itself then frees all child node (recursively).
  *
  * For all other nodes (the vast majority), the bindings create temporary
- * Ruby objects the get freed once they go out of scope. Thus there can be
+ * Ruby objects that get freed once they go out of scope. Thus there can be
  * more than one ruby object pointing to the same xml node.  To mostly hide
  * this from programmers on the ruby side, the #eql? and #== methods are 
  * overriden to check if two ruby objects wrap the same xmlnode.  If they do,

@@ -113,29 +113,6 @@ For example:
 
 For simplicity's sake, the documentation uses the xml module in its examples.
 
-== Memory Management
-libxml-ruby automatically manages memory associated with the
-underlying libxml2 library. There is however one corner case that
-your code must handle. If a node is imported into a document, but not
-added to the document, a segmentation fault may occur on program termination.
-
-  # Do NOT do this
-  require 'xml'
-  doc1 = XML::Document.string("test1")
-  doc2 = XML::Document.string("test2")
-  node = doc2.import(doc1.root)
-
-If doc2 is freed before the node a segmentation fault will occur since
-the node references the document.  To avoid this, simply make sure to add the
-node to the document:
-
-  # DO this instead
-  doc1 = XML::Document.string("test1")
-  doc2 = XML::Document.string("test2")
-  doc2.root << doc2.import(doc1.root)
-
-Alternatively, you can call node.remove! to disassociate the node from doc2.
-
 == Threading
 libxml-ruby fully supports native, background Ruby threads.  This of course
 only applies to Ruby 1.9.x and higher since earlier versions of Ruby do not
@@ -180,6 +157,32 @@ ruby/lib/ruby/1.8/rdoc_old.
 
 If you have any questions about using libxml-ruby, please report them to
 Git Hub at https://github.com/xml4r/libxml-ruby/issues
+
+== Memory Management
+libxml-ruby automatically manages memory associated with the
+underlying libxml2 library.  The bindings create a one-to-one mapping between
+ruby objects and libxml documents and libxml parent nodes (ie, nodes that do not
+have a parent and do not belong to a document). In these cases,
+the bindings manage the memory.  They do this by installing a free
+function and storing a back pointer to the Ruby object from the xmlnode
+using the _private member on libxml structures.  When the Ruby object
+goes out of scope, the underlying libxml structure is freed.  Libxml
+itself then frees all child node (recursively).
+
+For all other nodes (the vast majority), the bindings create temporary
+Ruby objects that get freed once they go out of scope. Thus there can be
+more than one ruby object pointing to the same xml node. To mostly hide
+this from programmers on the ruby side, the #eql? and #== methods are
+overriden to check if two ruby objects wrap the same xmlnode.  If they do,
+then the methods return true.  During the mark phase, each of these temporary
+objects marks its owning document, thereby keeping the Ruby document object
+alive and thus the xmldoc tree.
+
+In the sweep phase of the garbage collector, or when a program ends,
+there is no order to how Ruby objects are freed. In fact, the ruby document
+object is almost always freed before any ruby objects that wrap child nodes.
+However, this is ok because those ruby objects do not have a free function
+and are no longer in scope (since if they were the document would not be freed).
 
 == License
 See LICENSE for license information.
