@@ -17,38 +17,30 @@ VALUE cXMLNode;
 
 /* Memory management:
  *
- * The bindings create a one-to-one mapping between libxml nodes
- * and Ruby nodes.  If a libxml node is wrapped, the mapping is stored in the
- * private_pointers hashtable.
+ * The bindings create a one-to-one mapping between ruby objects and
+ * libxml documents and libxml parent nodes (ie, nodes that do not
+ * have a parent and do not belong to a document). In these cases,
+ * the bindings manage the memory.  They do this by installing a free
+ * function and storing a back pointer to the Ruby object from the xmlnode
+ * using the _private member on libxml structures.  When the Ruby object
+ * goes out of scope, the underlying libxml structure is freed.  Libxml
+ * itself then frees all child node (recursively).
  *
- * When a libxml document or top level node is freed, it will free
- * all its children.  Thus Ruby is responsible for:
+ * For all other nodes (the vast majority), the bindings create temporary
+ * Ruby objects the get freed once they go out of scope. Thus there can be
+ * more than one ruby object pointing to the same xml node.  To mostly hide
+ * this from programmers on the ruby side, the #eql? and #== methods are 
+ * overriden to check if two ruby objects wrap the same xmlnode.  If they do,
+ * then the methods return true.  During the mark phase, each of these temporary
+ * objects marks its owning document, thereby keeping the Ruby document object
+ * alive and thus the xmldoc tree.
  *
- *  * Using the mark function to keep alive any documents Ruby is
- *    referencing via the document or child nodes.
- *  * Using the mark function to keep alive any top level, free
- *    standing nodes Ruby is referencing via the node or its children.
- *
- * In general use, this will cause Ruby nodes to be freed before
- * a libxml document.  When a Ruby node is freed, the hashtable entry is
- * removed.
- *
- * In the sweep phase in Ruby 1.9.*, the document tends to be
- * freed before the nodes.  To support this, the bindings register
- * a callback function with libxml that is called each time a node
- * is freed.  In that case, the data_ptr is set to null, so the bindings
- * can recognize the situation.
+ * In the sweep phase of the garbage collector, or when a program ends, 
+ * there is no order to how Ruby objects are freed. In fact, the ruby document
+ * object is almost always freed before any ruby objects that wrap child nodes.
+ * However, this is ok because those ruby objects do not have a free function
+ * and are no longer in scope (since if they were the document would not be freed).
  */
-
-static void rxml_node_deregisterNode(xmlNodePtr xnode)
-{
-  /* Has the document or node been wrapped and exposed to Ruby? */
-  if (xnode->_private == NULL)
-    return;
-
-  VALUE node = (VALUE)xnode->_private;
-  RDATA(node)->data = NULL;
-}
 
 static void rxml_node_free(xmlNodePtr xnode)
 {
@@ -1336,12 +1328,6 @@ static VALUE rxml_node_copy(VALUE self, VALUE deep)
 
 void rxml_init_node(void)
 {
-  /* Register callback for main thread */
-  xmlDeregisterNodeDefault(rxml_node_deregisterNode);
-
-  /* Register callback for all other threads */
-  xmlThrDefDeregisterNodeDefault(rxml_node_deregisterNode);
-
   cXMLNode = rb_define_class_under(mXML, "Node", rb_cObject);
 
   rb_define_const(cXMLNode, "SPACE_DEFAULT", INT2NUM(0));

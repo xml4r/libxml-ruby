@@ -991,7 +991,8 @@ static VALUE rxml_reader_lookup_namespace(VALUE self, VALUE prefix)
  *    reader.expand -> node
  *
  * Returns the current node and its full subtree. Note the returned node
- * is valid ONLY until the next read call.  
+ * is valid ONLY until the next read call. If you would like to preserve
+ * the node, or search it via xpath, call reader.doc first.
  */
 static VALUE rxml_reader_expand(VALUE self)
 {
