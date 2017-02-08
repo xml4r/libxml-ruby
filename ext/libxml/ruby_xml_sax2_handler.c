@@ -184,8 +184,8 @@ static void start_document_callback(void *ctx)
 
 static void start_element_ns_callback(void *ctx, 
                                       const xmlChar *xlocalname, const xmlChar *xprefix, const xmlChar *xURI,
-                            		  int nb_namespaces, const xmlChar **xnamespaces,
-					                  int nb_attributes, int nb_defaulted, const xmlChar **xattributes)
+                                		  int nb_namespaces, const xmlChar **xnamespaces,
+					                            int nb_attributes, int nb_defaulted, const xmlChar **xattributes)
 {
   VALUE handler = (VALUE) ctx;
   VALUE attributes = rb_hash_new();
@@ -201,7 +201,7 @@ static void start_element_ns_callback(void *ctx,
     for (i = 0;i < nb_attributes * 5; i+=5) 
     {
       VALUE attrName = rxml_new_cstr(xattributes[i+0], NULL);
-      long attrLen = xattributes[i+4] - xattributes[i+3];
+      long attrLen = (long)(xattributes[i+4] - xattributes[i+3]);
       VALUE attrValue = rxml_new_cstr_len(xattributes[i+3], attrLen, NULL);
       rb_hash_aset(attributes, attrName, attrValue);
     }
