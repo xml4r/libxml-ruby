@@ -333,4 +333,6 @@ void rxml_init_xpath_object(void)
   rb_define_method(cXMLXPathObject, "[]", rxml_xpath_object_aref, 1);
   rb_define_method(cXMLXPathObject, "string", rxml_xpath_object_string, 0);
   rb_define_method(cXMLXPathObject, "debug", rxml_xpath_object_debug, 0);
+  rb_define_alias(cXMLXPathObject, "size", "length");
+
 }

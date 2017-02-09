@@ -311,24 +311,14 @@ static VALUE rxml_reader_move_to_attr_no(VALUE self, VALUE index)
  */
 static VALUE rxml_reader_move_to_attr(VALUE self, VALUE val)
 {
-  if (TYPE(val) == T_FIXNUM)
-  {
-    rb_warn("%s::move_to_attribute with a Fixnum argument is deprecated. "
-      "Please, consider move_to_attribute_no method instead.",
-      rb_class2name(cXMLReader));
-    return rxml_reader_move_to_attr_no(self, val);
-  }
-  else
-  {
-    int ret;
-    xmlTextReaderPtr xreader;
+  int ret;
+  xmlTextReaderPtr xreader;
 
-    xreader = rxml_text_reader_get(self);
-    ret = xmlTextReaderMoveToAttribute(xreader,
-        (const xmlChar *) StringValueCStr(val));
+  xreader = rxml_text_reader_get(self);
+  ret = xmlTextReaderMoveToAttribute(xreader,
+      (const xmlChar *) StringValueCStr(val));
 
-    return INT2FIX(ret);
-  }
+  return INT2FIX(ret);
 }
 
 /*

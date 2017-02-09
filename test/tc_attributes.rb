@@ -74,12 +74,6 @@ class AttributesTest < Minitest::Test
     assert_nil(attr)
   end
 
-  def test_property
-    attr = city_member.property('name')
-    assert_instance_of(String, attr)
-    assert_equal('Cambridge', attr)
-  end
-
   def test_get_values
     assert_equal('Cambridge', city_member[:name])
     assert_equal('http://www.foo.net/cgi-bin/wfs?FeatureID=C10239', city_member[:href])

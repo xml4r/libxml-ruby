@@ -19,6 +19,8 @@
 
 * Update Visual Studio project for Visual Studio 15 - requires ruby 2.4+ (Charlie Savage)
 
+* Remove APIs that have been deprecated for several years (Charlie Savage)
+
 == 2.9.0 / 2016-06-13 Charlie Savage
 
 * Revamp libxml-ruby's memory management to not cause crashes when used with Nokogiri (James Laird-Wah)

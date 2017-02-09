@@ -103,35 +103,6 @@ class TestReader < Minitest::Test
     assert_equal("Fatal error: Couldn't find end of Start Tag foo at :1.", error.to_s)
   end
 
-  def test_deprecated_error_handler
-    called = false
-    reader = XML::Reader.string('<foo blah')
-    reader.set_error_handler do |error|
-      called = true
-    end
-
-    assert_raises(XML::Error) do
-      reader.read
-    end
-
-    assert(called)
-  end
-
-  def test_deprecated_reset_error_handler
-    called = false
-    reader = XML::Reader.string('<foo blah')
-    reader.set_error_handler do |error|
-      called = true
-    end
-    reader.reset_error_handler
-
-    assert_raises(XML::Error) do
-      reader.read
-    end
-
-    assert(!called)
-  end
-
   def test_attr
     parser = XML::Reader.string("<foo x='1' y='2'/>")
     assert(parser.read)
@@ -142,16 +113,6 @@ class TestReader < Minitest::Test
     assert_equal('2', parser[1])
     assert_nil(parser['z'])
     assert_nil(parser[2])
-  end
-
-  def test_move_to_attribute_depreciation
-    previous_stderr, $stderr = $stderr, StringIO.new
-    reader = XML::Reader.string("<foo x='1' y='2'/>")
-    assert(reader.read)
-    assert(reader.move_to_attribute 1)
-    assert($stderr.string =~ /deprecated/)
-  ensure
-    $stderr = previous_stderr
   end
 
   def test_move_attr

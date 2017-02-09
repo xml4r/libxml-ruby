@@ -423,35 +423,6 @@ static VALUE rxml_node_content_set(VALUE self, VALUE content)
 
 /*
  * call-seq:
- *    node.content_stripped -> "string"
- *
- * Obtain this node's stripped content.
- *
- * *Deprecated*: Stripped content can be obtained via the
- * +content+ method.
- */
-static VALUE rxml_node_content_stripped_get(VALUE self)
-{
-  xmlNodePtr xnode;
-  xmlChar* content;
-  VALUE result = Qnil;
-
-  xnode = rxml_get_xnode(self);
-
-  if (!xnode->content)
-    return result;
-
-  content = xmlNodeGetContent(xnode);
-  if (content)
-  {
-    result = rxml_new_cstr( content, NULL);
-    xmlFree(content);
-  }
-  return (result);
-}
-
-/*
- * call-seq:
  *    node.debug -> true|false
  *
  * Print libxml debugging information to stdout.
@@ -1406,7 +1377,6 @@ void rxml_init_node(void)
   rb_define_method(cXMLNode, "copy", rxml_node_copy, 1);
   rb_define_method(cXMLNode, "content", rxml_node_content_get, 0);
   rb_define_method(cXMLNode, "content=", rxml_node_content_set, 1);
-  rb_define_method(cXMLNode, "content_stripped", rxml_node_content_stripped_get, 0);
   rb_define_method(cXMLNode, "debug", rxml_node_debug, 0);
   rb_define_method(cXMLNode, "doc", rxml_node_doc, 0);
   rb_define_method(cXMLNode, "empty?", rxml_node_empty_q, 0);
