@@ -300,54 +300,6 @@ class TestParser < Minitest::Test
     assert_nil(error.node)
   end
 
-  # Deprecated methods
-  def test_document_deprecated
-    file = File.expand_path(File.join(File.dirname(__FILE__), 'model/bands.utf-8.xml'))
-    parser = XML::Parser.file(file)
-    doc = parser.parse
-
-    parser = XML::Parser.new
-    parser.document = doc
-    doc = parser.parse
-
-    assert_instance_of(XML::Document, doc)
-    assert_instance_of(XML::Parser::Context, parser.context)
-  end
-
-  def test_file_deprecated
-    file = File.expand_path(File.join(File.dirname(__FILE__), 'model/rubynet.xml'))
-
-    parser = XML::Parser.new
-    parser.file = file
-    doc = parser.parse
-    assert_instance_of(XML::Document, doc)
-    assert_instance_of(XML::Parser::Context, parser.context)
-  end
-
-  def test_io_deprecated
-    File.open(File.join(File.dirname(__FILE__), 'model/rubynet.xml')) do |io|
-      parser = XML::Parser.new
-      assert_instance_of(XML::Parser, parser)
-      parser.io = io
-
-      doc = parser.parse
-      assert_instance_of(XML::Document, doc)
-      assert_instance_of(XML::Parser::Context, parser.context)
-    end
-  end
-
-  def test_string_deprecated
-    str = '<ruby_array uga="booga" foo="bar"><fixnum>one</fixnum><fixnum>two</fixnum></ruby_array>'
-
-    parser = XML::Parser.new
-    parser.string = str
-    assert_instance_of(XML::Parser, parser)
-
-    doc = parser.parse
-    assert_instance_of(XML::Document, doc)
-    assert_instance_of(XML::Parser::Context, parser.context)
-  end
-
   def test_errors_from_background_thread
     errors = []
     background_errors = []

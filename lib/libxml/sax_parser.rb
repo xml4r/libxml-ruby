@@ -36,23 +36,6 @@ module LibXML
         context = XML::Parser::Context.string(string)
         self.new(context)
       end
-
-      # :enddoc:
-
-      def file=(value)
-        warn("XML::SaxParser#file is deprecated.  Use XML::SaxParser.file instead")
-        @context = XML::Parser::Context.file(value)
-      end
-
-      def io=(value)
-        warn("XML::SaxParser#io is deprecated.  Use XML::SaxParser.io instead")
-        @context = XML::Parser::Context.io(value)
-      end
-
-      def string=(value)
-        warn("XML::SaxParser#string is deprecated.  Use XML::SaxParser.string instead")
-        @context = XML::Parser::Context.string(value)
-      end
     end
   end
 end

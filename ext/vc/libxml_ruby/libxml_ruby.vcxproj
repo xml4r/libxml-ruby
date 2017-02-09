@@ -128,7 +128,7 @@
     <Link>
       <AdditionalDependencies>x64-vcruntime140-ruby240.lib;libxml2.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)\$(TargetName)$(TargetExt)</OutputFile>
-      <AdditionalLibraryDirectories>C:\msys64\local\vc\lib;C:\msys64\local\ruby\lib;C:\msys64\mingw64\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\msys64\local\ruby\lib;C:\msys64\mingw64\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>

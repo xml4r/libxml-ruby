@@ -42,8 +42,7 @@ static VALUE rxml_html_parser_initialize(int argc, VALUE *argv, VALUE self)
 
   if (context == Qnil)
   {
-    rb_warn("Passing no parameters to XML::HTMLParser.new is deprecated.  Pass an instance of XML::Parser::Context instead.");
-    context = rb_class_new_instance(0, NULL, cXMLParserContext);
+    rb_raise(rb_eArgError, "An instance of a XML::Parser::Context must be passed to XML::HTMLParser.new");
   }
 
   rb_ivar_set(self, CONTEXT_ATTR, context);
