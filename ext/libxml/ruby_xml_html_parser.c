@@ -67,8 +67,6 @@ static VALUE rxml_html_parser_parse(VALUE self)
 
   if (htmlParseDocument(ctxt) == -1 && ! ctxt->recovery)
   {
-    if (ctxt->myDoc)
-      xmlFreeDoc(ctxt->myDoc);
     rxml_raise(&ctxt->lastError);
   }
 

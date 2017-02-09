@@ -96,9 +96,6 @@ static VALUE rxml_sax_parser_parse(VALUE self)
   /* Now check the parsing result*/
   if (status == -1 || !ctxt->wellFormed)
   {
-    if (ctxt->myDoc)
-      xmlFreeDoc(ctxt->myDoc);
-
     rxml_raise(&ctxt->lastError);
   }
   return Qtrue;

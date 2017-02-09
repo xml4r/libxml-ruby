@@ -69,8 +69,6 @@ static VALUE rxml_parser_parse(VALUE self)
 
   if ((xmlParseDocument(ctxt) == -1 || !ctxt->wellFormed) && ! ctxt->recovery)
   {
-    if (ctxt->myDoc)
-      xmlFreeDoc(ctxt->myDoc);
     rxml_raise(&ctxt->lastError);
   }
 
