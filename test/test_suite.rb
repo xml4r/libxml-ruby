@@ -1,4 +1,5 @@
 # encoding: UTF-8
+Encoding.default_external="UTF-8"
 
 # Change to current directory so relative
 # requires work.
