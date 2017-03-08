@@ -32,22 +32,14 @@
 
 VALUE cXMLAttr;
 
-void rxml_attr_mark(xmlAttrPtr xattr)
-{
-  /* This can happen if Ruby does a GC run after creating the
-     new attribute but before initializing it. */
-  if (xattr != NULL)
-    rxml_node_mark((xmlNodePtr) xattr);
-}
-
 VALUE rxml_attr_wrap(xmlAttrPtr xattr)
 {
-  return Data_Wrap_Struct(cXMLAttr, rxml_attr_mark, NULL, xattr);
+  return Data_Wrap_Struct(cXMLAttr, NULL, NULL, xattr);
 }
 
 static VALUE rxml_attr_alloc(VALUE klass)
 {
-  return Data_Wrap_Struct(klass, rxml_attr_mark, NULL, NULL);
+  return Data_Wrap_Struct(klass, NULL, NULL, NULL);
 }
 
 /*
