@@ -142,16 +142,16 @@ class TestReader < Minitest::Test
       assert_equal(reader.get_attribute_ns('id', 'http://www.w3.org/XML/1998/namespace'), 'abc')
       assert_equal(reader.get_attribute('bar'), 'jkl')
 
-      assert_equal(reader.get_attribute_no(12), nil)
-      assert_equal(reader.get_attribute('baz'), nil)
-      assert_equal(reader.get_attribute_ns('baz', 'http://ruby/namespace'), nil)
+      assert_nil(reader.get_attribute_no(12))
+      assert_nil(reader.get_attribute('baz'))
+      assert_nil(reader.get_attribute_ns('baz', 'http://ruby/namespace'))
   end
 
   def test_value
     parser = XML::Reader.string("<foo><bar>1</bar><bar>2</bar><bar>3</bar></foo>")
     assert(parser.read)
     assert_equal('foo', parser.name)
-    assert_equal(nil, parser.value)
+    assert_nil(parser.value)
     3.times do |i|
       assert(parser.read)
       assert_equal(XML::Reader::TYPE_ELEMENT, parser.node_type)

@@ -23,7 +23,7 @@ class TestNS < Minitest::Test
   def test_create_default_ns
     node = XML::Node.new('foo')
     ns = XML::Namespace.new(node, nil, 'http://www.mynamespace.com')
-    assert_equal(ns.prefix, nil)
+    assert_nil(ns.prefix)
     assert_equal(ns.href, 'http://www.mynamespace.com')
   end
 

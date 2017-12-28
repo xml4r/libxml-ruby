@@ -107,7 +107,7 @@ class TestSchema < Minitest::Test
     type = schema.types['shiporder']
 
     assert_equal('shiporder', type.name)
-    assert_equal(nil, type.namespace)
+    assert_nil(type.namespace)
     assert_equal("Shiporder type documentation", type.annotation)
     assert_instance_of(XML::Node, type.node)
     assert_equal(XML::Schema::Types::XML_SCHEMA_TYPE_COMPLEX, type.kind)
@@ -123,7 +123,7 @@ class TestSchema < Minitest::Test
     element = schema.types['shiporder'].elements['orderperson']
 
     assert_equal('orderperson', element.name)
-    assert_equal(nil, element.namespace)
+    assert_nil(element.namespace)
     assert_equal("orderperson element documentation", element.annotation)
     assert_equal(1, element.min_occurs)
     assert_equal(1, element.max_occurs)
@@ -149,7 +149,7 @@ class TestSchema < Minitest::Test
     attribute = schema.types['shiporder'].attributes.first
 
     assert_equal("orderid", attribute.name)
-    assert_equal(nil, attribute.namespace)
+    assert_nil(attribute.namespace)
     assert_equal(1, attribute.occurs)
     assert_equal('string', attribute.type.name)
 
