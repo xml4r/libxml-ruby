@@ -1,4 +1,5 @@
 # encoding: utf-8
+require 'date'
 
 # Determine the current version of the software
 version = File.read('ext/libxml/ruby_xml_version.h').match(/\s*RUBY_LIBXML_VERSION\s*['"](\d.+)['"]/)[1]
