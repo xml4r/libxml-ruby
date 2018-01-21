@@ -171,7 +171,7 @@ class TestParserContext < Minitest::Test
 
     # Now check context
     context = xp.context
-    assert_equal(nil, context.data_directory)
+    assert_nil(context.data_directory)
     assert_equal(0, context.depth)
     assert_equal(true, context.disable_sax?)
     assert_equal(false, context.docbook?)
@@ -182,7 +182,7 @@ class TestParserContext < Minitest::Test
     assert_equal(1, context.io_num_streams)
     assert_equal(true, context.keep_blanks?)
     assert_equal(1, context.io_num_streams)
-    assert_equal(nil, context.name_node)
+    assert_nil(context.name_node)
     assert_equal(0, context.name_depth)
     assert_equal(10, context.name_depth_max)
     assert_equal(17, context.num_chars)
@@ -190,10 +190,10 @@ class TestParserContext < Minitest::Test
     assert_equal(1, context.space_depth)
     assert_equal(10, context.space_depth_max)
     assert_equal(false, context.subset_external?)
-    assert_equal(nil, context.subset_external_system_id)
-    assert_equal(nil, context.subset_external_uri)
+    assert_nil(context.subset_external_system_id)
+    assert_nil(context.subset_external_uri)
     assert_equal(false, context.subset_internal?)
-    assert_equal(nil, context.subset_internal_name)
+    assert_nil(context.subset_internal_name)
     assert_equal(false, context.stats?)
     assert_equal(true, context.standalone?)
     assert_equal(false, context.valid)

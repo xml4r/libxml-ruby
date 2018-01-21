@@ -157,7 +157,7 @@ class TestNamespaces < Minitest::Test
 
     namespace = ns_defs[0]
     assert_instance_of(XML::Namespace, namespace)
-    assert_equal(nil, namespace.prefix)
+    assert_nil(namespace.prefix)
     assert_equal('http://services.somewhere.com', namespace.href)
   end
 
@@ -178,7 +178,7 @@ class TestNamespaces < Minitest::Test
     namespace = node.namespaces.find_by_prefix(nil)
 
     assert_instance_of(XML::Namespace, namespace)
-    assert_equal(nil, namespace.prefix)
+    assert_nil(namespace.prefix)
     assert_equal('http://services.somewhere.com', namespace.href)
   end
 
