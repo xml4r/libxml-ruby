@@ -995,7 +995,19 @@ static VALUE rxml_reader_expand(VALUE self)
   }
   else
   {
-    return rxml_node_wrap(xnode);
+	  /* We cannot call rxml_node_wrap here because its sets up a mark function
+	   for the node. But according to the libxml docs (http://xmlsoft.org/html/libxml-xmlreader.html#xmlTextReaderExpand)
+	   this is only valid until the next xmlTextReaderRead call.  At that point the node is freed (from reading
+	   the libxml2 source code.  So don't set a mark or free function, because they will get called in the next
+	   garbage collection run and cause a segfault.*/
+	if (xnode->_private)
+	{
+		return (VALUE)xnode->_private;
+	}
+	else
+	{
+		return Data_Wrap_Struct(cXMLNode, NULL, NULL, xnode);
+	}
   }
 }
 

@@ -171,20 +171,9 @@ class TestReader < Minitest::Test
 
     # Read a node
     node = reader.expand
+    refute_nil(node.doc)
     assert_equal('feed', node.name)
     assert_equal(::Encoding::UTF_8, node.name.encoding) if defined?(::Encoding)
-  end
-
-  def test_expand_doc
-    reader = XML::Reader.file(XML_FILE)
-    reader.read.to_s
-    reader.read
-
-    # Read a node
-    node = reader.expand
-
-    # Try to access the document
-    refute_nil(node.doc)
   end
 
   def test_expand_find
@@ -229,6 +218,24 @@ class TestReader < Minitest::Test
 
     # The previous node is now invalid - this should be an error but isn't
     assert_equal('feed', node.name)
+  end
+
+  def test_expand_incorrectly_use_returned_node
+    file = File.join(File.dirname(__FILE__), 'model/cwm_1_0.xml')
+    reader = XML::Reader.file(file)
+
+    nodes = Array.new
+    while reader.read
+      node = reader.expand
+      refute_nil(node)
+      refute_nil(node.doc)
+      refute_nil(node.parent)
+
+      # NOTE - DO NOT do this in real code, these nodes are invalid after the next read. We are holding onto them
+      # to test that a segmentation fault doesn't happen.
+      nodes << node
+    end
+    assert(true)
   end
 
   def test_mode
