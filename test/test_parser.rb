@@ -237,7 +237,7 @@ class TestParser < Minitest::Test
     # otherwise an exception will be thrown.
     XML::Error.set_handler {|error|}
 
-    max_fd = if RUBY_PLATFORM.match(/mswin32|mingw/i)
+    max_fd = if RUBY_PLATFORM.match(/mswin32|mswin64|mingw/i)
       500
     else
       Process.getrlimit(Process::RLIMIT_NOFILE)[0] + 1
