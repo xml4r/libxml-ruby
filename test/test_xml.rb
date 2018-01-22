@@ -126,39 +126,39 @@ class TestXml < Minitest::Test
   end
 
   def test_enabled_automata
-    assert_equal(true, XML.enabled_automata?)
+    assert(XML.enabled_automata?)
   end
 
   def test_enabled_c14n
-    assert_equal(true, XML.enabled_c14n?)
+    assert(XML.enabled_c14n?)
   end
 
   def test_enabled_catalog
-    assert_equal(true, XML.enabled_catalog?)
+    assert(XML.enabled_catalog?)
   end
 
   def test_enabled_debug
-    assert_equal(true, XML.enabled_debug?)
+    assert(XML.enabled_debug?)
   end
 
   def test_enabled_docbook
-    assert_equal(true, XML.enabled_docbook?)
+    assert(XML.enabled_docbook?)
   end
 
   def test_enabled_ftp
-    assert_equal(true, XML.enabled_ftp?)
+    assert(XML.enabled_ftp?)
   end
 
   def test_enabled_http
-    assert_equal(true, XML.enabled_http?)
+    assert(XML.enabled_http?)
   end
 
   def test_enabled_html
-    assert_equal(true, XML.enabled_html?)
+    assert(XML.enabled_html?)
   end
 
   def test_enabled_iconv
-    assert_equal(true, XML.enabled_iconv?)
+    assert(XML.enabled_iconv?)
   end
 
   def test_enabled_memory_debug
@@ -166,35 +166,35 @@ class TestXml < Minitest::Test
   end
 
   def test_enabled_regexp
-    assert_equal(true, XML.enabled_regexp?)
+    assert(XML.enabled_regexp?)
   end
 
   def test_enabled_schemas
-    assert_equal(true, XML.enabled_schemas?)
+    assert(XML.enabled_schemas?)
   end
 
   def test_enabled_thread
-    assert_equal(true, XML.enabled_thread?)
+    assert(XML.enabled_thread?)
   end
 
   def test_enabled_unicode
-    assert_equal(true, XML.enabled_unicode?)
+    assert(XML.enabled_unicode?)
   end
 
   def test_enabled_xinclude
-    assert_equal(true, XML.enabled_xinclude?)
+    assert(XML.enabled_xinclude?)
   end
 
   def test_enabled_xpath
-    assert_equal(true, XML.enabled_xpath?)
+    assert(XML.enabled_xpath?)
   end
 
   def test_enabled_xpointer
-    assert_equal(true, XML.enabled_xpointer?)
+    assert(XML.enabled_xpointer?)
   end
 
   def test_enabled_zlib
-    assert_equal(true, XML.enabled_zlib?)
+    refute(true, XML.enabled_zlib?)
   end
 
   def test_intent_tree_output

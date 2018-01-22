@@ -10,8 +10,6 @@ We think libxml-ruby is the best XML library for Ruby because:
 * Features - It provides an amazing number of featues
 * Conformance - It passes all 1800+ tests from the OASIS XML Tests Suite
 
-+Travis build status: {<img src="https://travis-ci.org/xml4r/libxml-ruby.svg?branch=master" alt="Build Status" />}[https://travis-ci.org/xml4r/libxml-ruby.svg?branch=master]
-
 == Requirements
 libxml-ruby requires Ruby 1.8.7 or higher.  It depends on libxml2 to
 function propoerly.  libxml2, in turn, depends on:
@@ -120,6 +118,18 @@ libxml-ruby fully supports native, background Ruby threads.  This of course
 only applies to Ruby 1.9.x and higher since earlier versions of Ruby do not
 support native threads.
 
+== Tests
+
+To run tests you first need to build the shared libary:
+
+  rake compile
+
+Once you have build the shared libary, you can then run tests using rake:
+
+  rake test
+
++Travis build status: {<img src="https://travis-ci.org/xml4r/libxml-ruby.svg?branch=master" alt="Build Status" />}[https://travis-ci.org/xml4r/libxml-ruby]
+
 == Performance
 In addition to being feature rich and conformation, the main reason
 people use libxml-ruby is for performance.  Here are the results 
@@ -188,3 +198,4 @@ and are no longer in scope (since if they were the document would not be freed).
 
 == License
 See LICENSE for license information.
+
