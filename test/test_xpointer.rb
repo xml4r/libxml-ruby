@@ -1,5 +1,5 @@
 # encoding: UTF-8
-require './test_helper'
+require File.expand_path('../test_helper', __FILE__)
 
 class TC_XML_XPointer < Minitest::Test
   def setup()

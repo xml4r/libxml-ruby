@@ -1,6 +1,6 @@
 # encoding: UTF-8
 
-require './test_helper'
+require File.expand_path('../test_helper', __FILE__)
 require 'stringio'
 
 class HTMLParserTest < Minitest::Test
@@ -154,8 +154,9 @@ class HTMLParserTest < Minitest::Test
   end
 
   def test_open_many_files
+    file = File.expand_path(File.join(File.dirname(__FILE__), 'model/ruby-lang.html'))
     1000.times do
-      XML::HTMLParser.file('model/ruby-lang.html').parse
+      XML::HTMLParser.file(file).parse
     end
   end
 end

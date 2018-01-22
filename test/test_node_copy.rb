@@ -1,6 +1,6 @@
 # encoding: UTF-8
 
-require './test_helper'
+require File.expand_path('../test_helper', __FILE__)
 
 # see mailing list archive
 # [libxml-devel] Segmentation fault when add the cloned/copied node

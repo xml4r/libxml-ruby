@@ -1,6 +1,6 @@
 # encoding: UTF-8
 
-require './test_helper'
+require File.expand_path('../test_helper', __FILE__)
 
 # Code  UTF8        Latin1      Hex
 # m      109          109        6D

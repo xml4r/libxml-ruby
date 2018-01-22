@@ -1,6 +1,6 @@
 # encoding: UTF-8
 
-require './test_helper'
+require File.expand_path('../test_helper', __FILE__)
 require 'stringio'
 
 class TestParser < Minitest::Test
@@ -251,8 +251,9 @@ class TestParser < Minitest::Test
   end
 
   def test_open_many_files
+    file = File.expand_path(File.join(File.dirname(__FILE__), 'model/atom.xml'))
     1000.times do
-      XML::Parser.file('model/atom.xml').parse
+      XML::Parser.file(file).parse
     end
   end
 

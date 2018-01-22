@@ -1,6 +1,6 @@
 # encoding: UTF-8
 
-require './test_helper'
+require File.expand_path('../test_helper', __FILE__)
 require 'stringio'
 
 class TestError < Minitest::Test

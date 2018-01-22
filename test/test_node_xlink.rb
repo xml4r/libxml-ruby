@@ -1,7 +1,7 @@
 # encoding: UTF-8
 
 # $Id$
-require './test_helper'
+require File.expand_path('../test_helper', __FILE__)
 
 
 class TC_XML_Node_XLink < Minitest::Test
