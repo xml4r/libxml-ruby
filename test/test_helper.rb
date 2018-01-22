@@ -12,5 +12,3 @@ $LOAD_PATH << ext
 
 require 'xml'
 require 'minitest/autorun'
-#require 'minitest/reporters'
-#MiniTest::Reporters.use!
