@@ -83,8 +83,11 @@ void rxml_node_mark(xmlNodePtr xnode)
 {
    if (xnode->doc)
    {
-     VALUE doc = (VALUE)xnode->doc->_private;
-     rb_gc_mark(doc);
+     if (xnode->doc->_private)
+	 {
+	   VALUE doc = (VALUE)xnode->doc->_private;
+	   rb_gc_mark(doc);
+	 }
    }
    else if (xnode->parent)
    {
@@ -120,8 +123,7 @@ VALUE rxml_node_wrap(xmlNodePtr xnode)
 
 static VALUE rxml_node_alloc(VALUE klass)
 {
-  /* Ruby is responsible for freeing this node not libxml but don't set
-     up mark and free yet until we assign the node. */
+  // This node was created from Ruby so we are responsible for freeing it not libxml
   return Data_Wrap_Struct(klass, rxml_node_mark, rxml_node_free, NULL);
 }
 
