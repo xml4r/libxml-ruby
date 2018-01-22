@@ -10,8 +10,10 @@ We think libxml-ruby is the best XML library for Ruby because:
 * Features - It provides an amazing number of featues
 * Conformance - It passes all 1800+ tests from the OASIS XML Tests Suite
 
++Travis build status: {<img src="https://travis-ci.org/xml4r/libxml-ruby.svg?branch=master" alt="Build Status" />}[https://travis-ci.org/xml4r/libxml-ruby.svg?branch=master]
+
 == Requirements
-libxml-ruby requires Ruby 1.8.4 or higher.  It depends on libxml2 to
+libxml-ruby requires Ruby 1.8.7 or higher.  It depends on libxml2 to
 function propoerly.  libxml2, in turn, depends on:
 
 * libm      (math routines: very standard)
