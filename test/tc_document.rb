@@ -26,7 +26,7 @@ class TestDocument < Minitest::Test
     set = @doc.find('/ruby_array/fixnum')
     assert_instance_of(XML::XPath::Object, set)
     assert_raises(NoMethodError) {
-      xpt = set.xpath
+      set.xpath
     }
   end
 

@@ -60,7 +60,7 @@ class TestParser < Minitest::Test
     parser = XML::Parser.file(file, :encoding => XML::Encoding::ISO_8859_1)
 
     error = assert_raises(XML::Error) do
-      doc = parser.parse
+      parser.parse
     end
 
     assert(error.to_s.match(/Fatal error: Extra content at the end of the document/))
@@ -210,7 +210,7 @@ class TestParser < Minitest::Test
     parser = XML::Parser.string(xml, :encoding => XML::Encoding::UTF_8)
 
     error = assert_raises(XML::Error) do
-      doc = parser.parse
+      parser.parse
     end
 
     assert_equal("Fatal error: Input is not proper UTF-8, indicate encoding !\nBytes: 0xF6 0x74 0x6C 0x65 at :2.",
@@ -252,7 +252,7 @@ class TestParser < Minitest::Test
 
   def test_open_many_files
     1000.times do
-      doc = XML::Parser.file('model/atom.xml').parse
+      XML::Parser.file('model/atom.xml').parse
     end
   end
 

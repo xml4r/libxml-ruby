@@ -11,7 +11,7 @@ class TestTextNode < Minitest::Test
 
   def test_invalid_content
     error = assert_raises(TypeError) do
-      node = XML::Node.new_text(nil)
+      XML::Node.new_text(nil)
     end
     assert_equal('wrong argument type nil (expected String)', error.to_s)
   end

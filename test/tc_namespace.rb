@@ -44,7 +44,6 @@ class TestNS < Minitest::Test
 
   def test_eql
     node = XML::Node.new('Envelope')
-    ns = XML::Namespace.new(node, 'soap', 'http://schemas.xmlsoap.org/soap/envelope/')
 
     assert(node.namespaces.namespace.eql?(node.namespaces.namespace))
   end

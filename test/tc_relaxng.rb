@@ -15,7 +15,7 @@ class TestRelaxNG < Minitest::Test
   
   def relaxng
     document = XML::Document.file(File.join(File.dirname(__FILE__), 'model/shiporder.rng'))
-    relaxng = XML::RelaxNG.document(document)
+    XML::RelaxNG.document(document)
   end
 
   def test_from_doc

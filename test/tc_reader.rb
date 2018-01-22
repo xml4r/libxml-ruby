@@ -329,7 +329,7 @@ class TestReader < Minitest::Test
 
     reader = XML::Reader.string(xml)
     error = assert_raises(XML::Error) do
-      node = reader.read
+      reader.read
     end
 
     assert_equal("Fatal error: Input is not proper UTF-8, indicate encoding !\nBytes: 0xF6 0x74 0x6C 0x65 at :2.",

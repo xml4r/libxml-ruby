@@ -69,8 +69,7 @@ class TestNodeEdit < Minitest::Test
   def test_remove_node_gc
     xp = XML::Parser.string('<test><num>one</num><num>two</num><num>three</num></test>')
     doc = xp.parse
-    node = doc.root.child.remove!
-    node = nil
+    doc.root.child.remove!
     GC.start
     refute_nil(doc)
   end

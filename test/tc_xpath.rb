@@ -109,7 +109,7 @@ class TestXPath < Minitest::Test
 
     # No namespace has been yet defined
     assert_raises(XML::Error) do
-      node = doc.find("atom:title")
+      doc.find("atom:title")
     end
 
     node = doc.find('atom:title', 'atom:http://www.w3.org/2005/Atom')
@@ -164,7 +164,7 @@ class TestXPath < Minitest::Test
         doc.root << XML::Node.new("footer")
       end
 
-      nodes = doc.find('/header/footer')
+      doc.find('/header/footer')
     end
   end
 
