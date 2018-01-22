@@ -21,7 +21,12 @@ require './test_helper'
 
 class TestEncoding < Minitest::Test
   def setup
+    @original_encoding = Encoding.default_internal
     Encoding.default_internal = nil
+  end
+
+  def teardown
+    Encoding.default_internal = @original_encoding
   end
 
   def file_for_encoding(encoding)
@@ -55,7 +60,6 @@ class TestEncoding < Minitest::Test
   end
 
   def test_no_internal_encoding_iso_8859_1
-    Encoding.default_internal = nil
     load_encoding(Encoding::ISO_8859_1)
     node = @doc.root.children.first
 
@@ -93,7 +97,6 @@ class TestEncoding < Minitest::Test
   end
 
   def test_no_internal_encoding_utf_8
-    Encoding.default_internal = nil
     load_encoding(Encoding::UTF_8)
     node = @doc.root.children.first
 
