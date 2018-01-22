@@ -29,7 +29,7 @@ class TestXPathExpression < Minitest::Test
 
   def test_find_invalid
     error = assert_raises(TypeError) do
-      set = @doc.find(999)
+      @doc.find(999)
     end
     assert_equal('Argument should be an instance of a String or XPath::Expression',
                  error.to_s)

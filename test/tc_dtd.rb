@@ -106,18 +106,18 @@ class TestDtd < Minitest::Test
     end
 
     XML.default_load_external_dtd = false
-    doc = XML::Parser.string(xml).parse
+    XML::Parser.string(xml).parse
     assert_equal(0, errors.length)
 
     errors.clear
     XML.default_load_external_dtd = true
-    doc = XML::Parser.string(xml).parse
+    XML::Parser.string(xml).parse
     assert_equal(1, errors.length)
     assert_equal("Warning: failed to load external entity \"test.dtd\" at :1.",
                  errors[0].to_s)
 
     errors = Array.new
-    doc = XML::Parser.string(xml, :options => XML::Parser::Options::DTDLOAD).parse
+    XML::Parser.string(xml, :options => XML::Parser::Options::DTDLOAD).parse
     assert_equal(1, errors.length)
     assert_equal("Warning: failed to load external entity \"test.dtd\" at :1.",
                  errors[0].to_s)

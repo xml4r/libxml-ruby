@@ -155,7 +155,7 @@ class HTMLParserTest < Minitest::Test
 
   def test_open_many_files
     1000.times do
-      doc = XML::HTMLParser.file('model/ruby-lang.html').parse
+      XML::HTMLParser.file('model/ruby-lang.html').parse
     end
   end
 end

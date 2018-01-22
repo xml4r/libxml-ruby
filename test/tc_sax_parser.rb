@@ -243,7 +243,7 @@ EOS
     parser.callbacks = TestCaseCallbacks.new
 
     error = assert_raises(XML::Error) do
-      doc = parser.parse
+      parser.parse
     end
 
     # Check callbacks
@@ -314,6 +314,6 @@ EOS
     assert_equal("Fatal error: xmlParseEntityRef: no name at :5.", error.to_s)
 
     # Check callbacks
-    result = parser.callbacks.result
+    parser.callbacks.result
   end
 end
