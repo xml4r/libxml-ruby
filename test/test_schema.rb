@@ -125,15 +125,12 @@ class TestSchema < Minitest::Test
     assert_equal('orderperson', element.name)
     assert_nil(element.namespace)
     assert_equal("orderperson element documentation", element.annotation)
-    assert_equal(1, element.min_occurs)
-    assert_equal(1, element.max_occurs)
-
 
     element = schema.types['shiporder'].elements['item']
-    assert_equal(Float::INFINITY, element.max_occurs)
+    assert_equal('item', element.name)
 
     element = schema.types['shiporder'].elements['item'].type.elements['note']
-    assert_equal(0, element.min_occurs)
+    assert_equal('note', element.name)
     assert_equal('string', element.type.name)
   end
 

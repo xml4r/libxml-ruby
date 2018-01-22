@@ -5,14 +5,6 @@ module LibXML
         Schema::Types.constants.find { |k| Schema::Types.const_get(k) == kind }
       end
 
-      def annotation
-        return if node.nil?
-        annotations = node.children.select { |n| n.name == 'annotation' }
-        annotations.map do |annotation|
-          annotation.children.map(&:content).join("\n")
-        end.join("\n")
-      end
-
       def annonymus_subtypes
         elements.select { |_, e| e.type.name.nil? }
       end

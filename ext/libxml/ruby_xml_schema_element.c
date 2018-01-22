@@ -64,21 +64,24 @@ static VALUE rxml_schema_element_value(VALUE self)
   QNIL_OR_STRING(xelem->value)
 }
 
-static VALUE rxml_schema_element_min_occurs(VALUE self)
-{
-  return rb_iv_get(self, "@min");
-}
-
-static VALUE rxml_schema_element_max_occurs(VALUE self)
-{
-  return rb_iv_get(self, "@max");
-}
-
 static VALUE rxml_schema_element_annot(VALUE self)
 {
-  return rb_iv_get(self, "@annotation");
-}
+	VALUE result = Qnil;
+	xmlSchemaElementPtr xelem;
 
+	Data_Get_Struct(self, xmlSchemaElement, xelem);
+
+	if (xelem != NULL && xelem->annot != NULL && xelem->annot->content != NULL)
+	{
+		xmlChar *content = xmlNodeGetContent(xelem->annot->content);
+		if (content)
+		{
+			result = rxml_new_cstr(content, NULL);
+			xmlFree(content);
+		}
+	}
+	return result;
+}
 
 void rxml_init_schema_element(void)
 {
@@ -88,7 +91,5 @@ void rxml_init_schema_element(void)
   rb_define_method(cXMLSchemaElement, "type", rxml_schema_element_type, 0);
   rb_define_method(cXMLSchemaElement, "node", rxml_schema_element_node, 0);
   rb_define_method(cXMLSchemaElement, "value", rxml_schema_element_value, 0);
-  rb_define_method(cXMLSchemaElement, "min_occurs", rxml_schema_element_min_occurs, 0);
-  rb_define_method(cXMLSchemaElement, "max_occurs", rxml_schema_element_max_occurs, 0);
   rb_define_method(cXMLSchemaElement, "annotation", rxml_schema_element_annot, 0);
 }

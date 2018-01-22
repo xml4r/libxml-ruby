@@ -95,24 +95,23 @@ static VALUE rxml_schema_type_kind(VALUE self)
   return INT2NUM(xtype->type);
 }
 
-static VALUE get_annotation(xmlSchemaAnnotPtr annot)
-{
-  if(annot != NULL && annot->content != NULL && annot->content->content != NULL)
-    return rb_str_new2((const char *) annot->content->content);
-  else
-    return Qnil;
-}
-
 static VALUE rxml_schema_type_annot(VALUE self)
 {
+  VALUE result = Qnil;
   xmlSchemaTypePtr xtype;
 
   Data_Get_Struct(self, xmlSchemaType, xtype);
 
-  if(xtype != NULL && xtype->annot != NULL)
-    return get_annotation(xtype->annot);
-  else
-    return Qnil;
+  if(xtype != NULL && xtype->annot != NULL && xtype->annot->content != NULL)
+  {
+    xmlChar *content = xmlNodeGetContent(xtype->annot->content);
+	if (content)
+	{
+	  result = rxml_new_cstr(content, NULL);
+	  xmlFree(content);
+    }
+  }
+  return result;
 }
 
 static void rxmlSchemaCollectElements(xmlSchemaParticlePtr particle, VALUE self)
