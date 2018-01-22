@@ -4,7 +4,7 @@ sudo: required
 before_install:
   - sudo apt-get install -y libxml2-dev
 
+script: rake compile
+
 rvm:
-  - 1.8.7
-  - 2.4.2
   - 2.5.0

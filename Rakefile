@@ -16,13 +16,22 @@ spec = Gem::Specification.load("#{GEM_NAME}.gemspec")
 task :default => [:test]
 
 # Setup compile tasks
-Rake::ExtensionTask.new do |ext|
-  ext.gem_spec = spec
-  ext.name = SO_NAME
-  ext.ext_dir = "ext/libxml"
-  ext.lib_dir = "lib/#{RUBY_VERSION.sub(/\.\d$/, '')}"
-  ext.config_options << "--with-xml2-include=C:/msys64/mingw64/include/libxml2"
-  ext.config_options << "--with-zlib-dir=C:/msys64/mingw64"
+if RUBY_PLATFORM.match(/mswin32|mswin64|mingw32/)
+  Rake::ExtensionTask.new do |ext|
+    ext.gem_spec = spec
+    ext.name = SO_NAME
+    ext.ext_dir = "ext/libxml"
+    ext.lib_dir = "lib/#{RUBY_VERSION.sub(/\.\d$/, '')}"
+    ext.config_options << "--with-xml2-include=C:/msys64/mingw64/include/libxml2"
+  end
+else
+  Rake::ExtensionTask.new do |ext|
+    ext.gem_spec = spec
+    ext.name = SO_NAME
+    ext.ext_dir = "ext/libxml"
+    ext.lib_dir = "lib/#{RUBY_VERSION.sub(/\.\d$/, '')}"
+    ext.config_options << "--with-xml2-include=/usr/include/libxml2"
+  end
 end
 
 # Setup generic gem
@@ -32,7 +41,7 @@ Gem::PackageTask.new(spec) do |pkg|
 end
 
 # Setup Windows Gem
-if RUBY_PLATFORM.match(/win32|mingw32/)
+if RUBY_PLATFORM.match(/mswin32|mswin64|mingw32/)
   binaries = (FileList['lib/**/*.so',
                        'lib/**/*dll'])
 
