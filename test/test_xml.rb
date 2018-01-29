@@ -10,18 +10,24 @@ class TestXml < Minitest::Test
   end
 
   def test_debug_entities
+    original = XML.debug_entities
+
     XML.debug_entities = false
-    assert(!XML.debug_entities)
+    refute(XML.debug_entities)
 
     XML.debug_entities = true
     assert(XML.debug_entities)
 
     XML.debug_entities = false
-    assert(!XML.debug_entities)
+    refute(XML.debug_entities)
+
+    XML.debug_entities = original
   end
 
   def test_default_compression
     return unless XML.default_compression
+
+    original = XML.default_compression
 
     0.upto(9) do |i|
       XML.default_compression = i
@@ -42,39 +48,44 @@ class TestXml < Minitest::Test
       assert_equal(i, XML.default_compression = i)
       assert_equal(9, XML.default_compression)
     end
+
+    XML.default_compression = original
   end
 
   def test_default_keep_blanks
+    original = XML.default_keep_blanks
+
     XML.default_keep_blanks = false
-    assert(!XML.default_keep_blanks)
+    refute(XML.default_keep_blanks)
     assert_equal(XML::Parser::Options::NOBLANKS, XML.default_options)
 
     XML.default_keep_blanks = true
     assert(XML.default_keep_blanks)
     assert_equal(0, XML.default_options)
 
-    XML.default_keep_blanks = false
-    assert(!XML.default_keep_blanks)
-
-    # other tests depend on keeping blanks by default,
-    # which is the default default behaviour anyway.
-    XML.default_keep_blanks = true
+    XML.default_keep_blanks = original
   end
 
   def test_default_line_numbers
+    original = XML.default_line_numbers
+
     XML.default_line_numbers = false
-    assert(!XML.default_line_numbers)
+    refute(XML.default_line_numbers)
 
     XML.default_line_numbers = true
     assert(XML.default_line_numbers)
 
     XML.default_line_numbers = false
-    assert(!XML.default_line_numbers)
+    refute(XML.default_line_numbers)
+
+    XML.default_line_numbers = original
   end
 
   def test_default_substitute_entities
+    original = XML.default_substitute_entities
+
     XML.default_substitute_entities = false
-    assert(!XML.default_substitute_entities)
+    refute(XML.default_substitute_entities)
     assert_equal(0, XML.default_options)
 
     XML.default_substitute_entities = true
@@ -82,10 +93,14 @@ class TestXml < Minitest::Test
     assert_equal(XML::Parser::Options::NOENT, XML.default_options)
 
     XML.default_substitute_entities = false
-    assert(!XML.default_substitute_entities)
+    refute(XML.default_substitute_entities)
+
+    XML.default_substitute_entities = original
   end
 
   def test_default_tree_indent_string
+    original = XML.default_tree_indent_string
+
     s = XML.default_tree_indent_string
     assert_instance_of(String, s)
     assert_equal('  ', s)
@@ -97,11 +112,15 @@ class TestXml < Minitest::Test
     s = XML.default_tree_indent_string
     assert_instance_of(String, s)
     assert_equal('  ', s)
+
+    XML.default_tree_indent_string = original
   end
 
   def test_default_validity_checking
+    original = XML.default_validity_checking
+
     XML.default_validity_checking = false
-    assert(!XML.default_validity_checking)
+    refute(XML.default_validity_checking)
     assert_equal(0, XML.default_options)
 
     XML.default_validity_checking = true
@@ -109,12 +128,16 @@ class TestXml < Minitest::Test
     assert_equal(XML::Parser::Options::DTDVALID, XML.default_options)
 
     XML.default_validity_checking = false
-    assert(!XML.default_validity_checking)
+    refute(XML.default_validity_checking)
+
+    XML.default_validity_checking = original
   end
 
   def test_default_warnings
+    original = XML.default_warnings
+
     XML.default_warnings = false
-    assert(!XML.default_warnings)
+    refute(XML.default_warnings)
     assert_equal(XML::Parser::Options::NOWARNING, XML.default_options)
 
     XML.default_warnings = true
@@ -122,7 +145,9 @@ class TestXml < Minitest::Test
     assert_equal(0, XML.default_options)
 
     XML.default_warnings = false
-    assert(!XML.default_warnings)
+    refute(XML.default_warnings)
+
+    XML.default_warnings = original
   end
 
   def test_enabled_automata
@@ -194,7 +219,7 @@ class TestXml < Minitest::Test
   end
 
   def test_enabled_zlib
-    refute(true, XML.enabled_zlib?)
+    assert(XML.enabled_zlib?.is_a?(TrueClass) || XML.enabled_zlib?.is_a?(FalseClass))
   end
 
   def test_intent_tree_output
