@@ -229,10 +229,13 @@ class TestReader < Minitest::Test
       node = reader.expand
       refute_nil(node)
       refute_nil(node.doc)
-      refute_nil(node.parent)
 
-      # NOTE - DO NOT do this in real code, these nodes are invalid after the next read. We are holding onto them
-      # to test that a segmentation fault doesn't happen.
+      # NOTE - DO NOT do this in real code, these nodes are invalid after the next read. This *will* cause
+      # a segmentation fault next time the garbage collector runs.  The reason is the parent node will be
+      # called in the mark phase, but its underlying xml node will be gone.  Same goes for calling children,
+      # attributes, etc.  You must let go of the expanded node *before* calling xml reader again and
+      # call the garbage collector to be safe.
+      #refute_nil(node.parent)
       nodes << node
     end
     assert(true)
