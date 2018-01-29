@@ -314,21 +314,18 @@ static VALUE rxml_node_modify_dom(VALUE self, VALUE target,
 
   xmlUnlinkNode(xtarget);
 
-  /* This target node could be freed here. */  
+  // Target is about to have a parent, so stop having ruby manage it.
+  rxml_node_unmanage(xtarget, target);
+
+  // This target node could be freed here and be replaced by a different node 
   xresult = xmlFunc(xnode, xtarget);
 
   if (!xresult)
-    rxml_raise(&xmlLastError);
+	  rxml_raise(&xmlLastError);
 
-  /* Was the target freed? If yes, then wrap the new node */
-  if (xresult != xtarget)
-  {
-    RDATA(target)->data = xresult;
-  }
-
-  // Target now has a parent so ruby should no longer manage its memory
-  rxml_node_unmanage(xresult, target);
-  xtarget->_private = NULL;
+  /* Assume the target was freed, we need to fix up the ruby object to point to the
+     newly returned node. */
+  RDATA(target)->data = xresult;
 
   return target;
 }
