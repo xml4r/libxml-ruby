@@ -158,7 +158,7 @@ static VALUE rxml_error_reset_handler(VALUE self)
   return self;
 }
 
-void rxml_raise(xmlErrorPtr xerror)
+NORETURN(void rxml_raise(xmlErrorPtr xerror))
 {
   /* Wrap error up as Ruby object and send it off to ruby */
   VALUE error = rxml_error_wrap(xerror);
