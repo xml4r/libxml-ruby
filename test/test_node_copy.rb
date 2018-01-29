@@ -37,5 +37,4 @@ class TestNodeCopy < Minitest::Test
     end
     assert @div1.to_s =~ /foo/
   end
-
-end # TC_XML_Node_Copy
+end
