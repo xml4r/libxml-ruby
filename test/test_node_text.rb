@@ -23,7 +23,7 @@ class TestTextNode < Minitest::Test
 	# in CDATA nodes.  Or if you are sanitizing existing HTML documents and want
 	# to preserve the content of any of the text nodes.
 	#
-	def test_output_escaping
+  def test_output_escaping
 		textnoenc = 'if (a < b || c > d) return "e";'
 		text = "if (a &lt; b || c &gt; d) return \"e\";"
  
@@ -45,7 +45,7 @@ class TestTextNode < Minitest::Test
   end
 
 	# Just a sanity check for output escaping.
-	def test_output_escaping_sanity
+  def test_output_escaping_sanity
 		node = XML::Node.new_text('testdata')
     assert_equal 'text', node.name
 		assert node.output_escaping?
@@ -66,5 +66,4 @@ class TestTextNode < Minitest::Test
     assert_equal 'text', node.name
 		assert node.output_escaping?
   end
-
 end

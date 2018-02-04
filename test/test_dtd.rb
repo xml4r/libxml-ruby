@@ -42,7 +42,7 @@ class TestDtd < Minitest::Test
 		assert_equal "-//W3C//DTD XHTML 1.0 Transitional//EN", xhtml_dtd.external_id
 		assert_equal "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd", xhtml_dtd.uri
 		assert_equal "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd", xhtml_dtd.system_id
-	end
+  end
 
   def test_external_subset
     xhtml_dtd = XML::Dtd.new "-//W3C//DTD XHTML 1.0 Transitional//EN", "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd", nil
@@ -56,7 +56,7 @@ class TestDtd < Minitest::Test
 		assert_equal "-//W3C//DTD XHTML 1.0 Transitional//EN", xhtml_dtd.external_id
 		assert_equal "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd", xhtml_dtd.uri
 		assert_equal "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd", xhtml_dtd.system_id
-	end
+  end
 
   def test_valid
     assert(@doc.validate(dtd))

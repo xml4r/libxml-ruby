@@ -84,7 +84,7 @@ class TestNode < Minitest::Test
     end
   end
 
-   def test_equality
+  def test_equality
     node_a = @doc.find_first('*[@country]')
     node_b = @doc.root.child
 

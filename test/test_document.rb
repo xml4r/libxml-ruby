@@ -84,7 +84,7 @@ class TestDocument < Minitest::Test
 		assert(!doc.xhtml?)
     XML::Dtd.new "-//W3C//DTD XHTML 1.0 Transitional//EN", "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd", nil, doc, true
 		assert(doc.xhtml?)
-	end
+  end
 
   def test_document_root
     doc1 = LibXML::XML::Document.string("<one/>")

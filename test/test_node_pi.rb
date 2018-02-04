@@ -2,8 +2,7 @@
 
 require File.expand_path('../test_helper', __FILE__)
 
-
-class NodeCommentTest < Minitest::Test
+class NodePiTest < Minitest::Test
   def setup
     xp = XML::Parser.string('<root></root>')
     @doc = xp.parse
@@ -35,5 +34,4 @@ class NodeCommentTest < Minitest::Test
     assert_equal '<root><?mypi mycontent?></root>',
       @root.to_s.gsub(/\n\s*/,'')
   end
-
 end

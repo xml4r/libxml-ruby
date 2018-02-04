@@ -131,7 +131,8 @@ class TestNodeEdit < Minitest::Test
     end
 
     master_doc = documents.shift
-    documents.inject(master_doc) do |master_doc, child_doc|
+
+    documents.each do |child_doc|
       master_body = master_doc.find("//body").first
       child_body = child_doc.find("//body").first
 
@@ -140,7 +141,6 @@ class TestNodeEdit < Minitest::Test
       end
 
       master_body << child_element.copy(true)
-      master_doc
     end
   end
 
