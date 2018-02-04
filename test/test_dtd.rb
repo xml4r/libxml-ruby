@@ -84,7 +84,7 @@ class TestDtd < Minitest::Test
     assert_nil(error.file)
     assert_nil(error.line)
     assert_equal('invalid', error.str1)
-    assert_nil(error.str2)
+    assert_equal('invalid', error.str2)
     assert_nil(error.str3)
     assert_equal(0, error.int1)
     assert_equal(0, error.int2)
