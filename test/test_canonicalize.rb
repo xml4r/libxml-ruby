@@ -114,10 +114,10 @@ class TestCanonicalize < Minitest::Test
   # http://www.w3.org/TR/xml-c14n#Example-DocSubsets
   def test_canonicalize_with_w3c_c14n_3_7
     # Non Canonicalized Document
-    given_doc = XML::Document.file(self.path('c14n/given/example-7.xml'))
+    # given_doc = XML::Document.file(self.path('c14n/given/example-7.xml'))
     #expected = IO.read(self.path('c14n/result/without-comments/example-7'))
 
-    e1_node = given_doc.find_first('ietf:e1', 'ietf:http://www.ietf.org')
+    # e1_node = given_doc.find_first('ietf:e1', 'ietf:http://www.ietf.org')
 
     # Select current node, all child nodes, all attributes and namespace nodes
     #subdoc_nodes = e1_node.find("(.//.|.//@id|namespace::*)")
