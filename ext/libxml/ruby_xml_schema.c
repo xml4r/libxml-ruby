@@ -8,7 +8,6 @@
 #include "ruby_xml_schema_attribute.h"
 #include "ruby_xml_schema_facet.h"
 
-
 /*
  * Document-class: LibXML::XML::Schema
  *
@@ -152,7 +151,6 @@ static VALUE rxml_schema_id(VALUE self)
   QNIL_OR_STRING(xschema->id)
 }
 
-
 static VALUE rxml_schema_document(VALUE self)
 {
   xmlSchemaPtr xschema;
@@ -162,21 +160,20 @@ static VALUE rxml_schema_document(VALUE self)
   return rxml_node_wrap(xmlDocGetRootElement(xschema->doc));
 }
 
-static void storeNs(xmlSchemaImportPtr import, VALUE self, xmlChar *nsname)
+static void scan_namespaces(xmlSchemaImportPtr ximport, VALUE array, xmlChar *nsname)
 {
-  VALUE schemas;
   xmlNodePtr xnode;
   xmlNsPtr xns;
 
-  schemas = rb_iv_get(self, "@namespaces");
-  if (import->doc) {
-    xnode = xmlDocGetRootElement(import->doc);
-
+  if (ximport->doc)
+  {
+    xnode = xmlDocGetRootElement(ximport->doc);
     xns = xnode->nsDef;
 
-    while (xns) {
-      VALUE anamespace = rxml_namespace_wrap(xns);
-      rb_ary_push(schemas, anamespace);
+    while (xns)
+	{
+      VALUE namespace = rxml_namespace_wrap(xns);
+      rb_ary_push(array, namespace);
       xns = xns->next;
     }
   }
@@ -184,95 +181,76 @@ static void storeNs(xmlSchemaImportPtr import, VALUE self, xmlChar *nsname)
 
 static VALUE rxml_schema_namespaces(VALUE self)
 {
-  VALUE schemas;
+  VALUE result;
   xmlSchemaPtr xschema;
 
   Data_Get_Struct(self, xmlSchema, xschema);
 
-  if (rb_iv_get(self, "@namespaces") == Qnil) {
-    schemas = rb_ary_new();
-    rb_iv_set(self, "@namespaces", schemas);
-    xmlHashScan(xschema->schemasImports, (xmlHashScanner) storeNs, (void *)self);
-  }
+  result = rb_ary_new();
+  xmlHashScan(xschema->schemasImports, (xmlHashScanner)scan_namespaces, (void *)result);
 
-  return rb_iv_get(self, "@namespaces");
+  return result;
 }
 
-static void storeType(xmlSchemaTypePtr type, VALUE self, xmlChar *name)
+static void scan_element(xmlSchemaElementPtr xelement, VALUE hash, xmlChar *name)
 {
-  VALUE types;
-  VALUE rtype;
-
-  types = rb_iv_get(self, "@types");
-  rtype = rxml_wrap_schema_type(type);
-
-  rb_hash_aset(types, rb_str_new2((const char*)name), rtype);
-}
-
-static VALUE rxml_schema_collect_types(VALUE self);
-
-static VALUE rxml_schema_types(VALUE self)
-{
-  VALUE types;
-  xmlSchemaPtr xschema;
-
-  Data_Get_Struct(self, xmlSchema, xschema);
-
-  if (rb_iv_get(self, "@types") == Qnil) {
-    types = rb_hash_new();
-    rb_iv_set(self, "@types", types);
-    rxml_schema_collect_types(self);
-    if(xschema != NULL && xschema->typeDecl != NULL)
-      xmlHashScan(xschema->typeDecl, (xmlHashScanner) storeType, (void *)self);
-  }
-
-  return rb_iv_get(self, "@types");
-}
-
-static void storeElement(xmlSchemaElementPtr element, VALUE self, xmlChar *name)
-{
-  VALUE elements;
-  VALUE relement;
-
-  elements = rb_iv_get(self, "@elements");
-  relement = rxml_wrap_schema_element(element);
-  rb_hash_aset(elements, rb_str_new2((const char*)name), relement);
+  VALUE element = rxml_wrap_schema_element(xelement);
+  rb_hash_aset(hash, rb_str_new2((const char*)name), element);
 }
 
 static VALUE rxml_schema_elements(VALUE self)
 {
-  VALUE elements;
+  VALUE result = rb_hash_new();
   xmlSchemaPtr xschema;
 
   Data_Get_Struct(self, xmlSchema, xschema);
+  xmlHashScan(xschema->elemDecl, (xmlHashScanner)scan_element, (void *)result);
 
-  if (rb_iv_get(self, "@elements") == Qnil) {
-    elements = rb_hash_new();
-    rb_iv_set(self, "@elements", elements);
-    xmlHashScan(xschema->elemDecl, (xmlHashScanner) storeElement, (void *)self);
-  }
-
-  return rb_iv_get(self, "@elements");
+  return result;
 }
 
-static void collectSchemaTypes(xmlSchemaImportPtr import, VALUE self)
+static void scan_type(xmlSchemaTypePtr xtype, VALUE hash, xmlChar *name)
 {
-  if (import->imported && import->schema) {
-    xmlHashScan(import->schema->typeDecl, (xmlHashScanner) storeType, (void *)self);
+	VALUE type = rxml_wrap_schema_type(xtype);
+	rb_hash_aset(hash, rb_str_new2((const char*)name), type);
+}
+
+static VALUE rxml_schema_types(VALUE self)
+{
+	VALUE result = rb_hash_new();
+	xmlSchemaPtr xschema;
+
+	Data_Get_Struct(self, xmlSchema, xschema);
+
+	if (xschema != NULL && xschema->typeDecl != NULL)
+	{
+		xmlHashScan(xschema->typeDecl, (xmlHashScanner)scan_type, (void *)result);
+	}
+
+	return result;
+}
+
+static void collect_imported_types(xmlSchemaImportPtr import, VALUE result)
+{
+  if (import->imported && import->schema)
+  {
+    xmlHashScan(import->schema->typeDecl, (xmlHashScanner)scan_type, (void *)result);
   }
 }
 
-static VALUE rxml_schema_collect_types(VALUE self)
+static VALUE rxml_schema_imported_types(VALUE self)
 {
   xmlSchemaPtr xschema;
+  VALUE result = rb_hash_new();
 
   Data_Get_Struct(self, xmlSchema, xschema);
 
-  if(xschema){
-    xmlHashScan(xschema->schemasImports, (xmlHashScanner) collectSchemaTypes, (void *)self);
+  if (xschema)
+  {
+	  xmlHashScan(xschema->schemasImports, (xmlHashScanner)collect_imported_types, (void *)result);
   }
 
-  return Qnil;
+  return result;
 }
 
 void rxml_init_schema(void)
@@ -288,10 +266,10 @@ void rxml_init_schema(void)
   rb_define_method(cXMLSchema, "version", rxml_schema_version, 0);
   rb_define_method(cXMLSchema, "document", rxml_schema_document, 0);
 
-  rb_define_method(cXMLSchema, "_namespaces", rxml_schema_namespaces, 0);
-  rb_define_method(cXMLSchema, "_collect_types", rxml_schema_collect_types, 0);
-  rb_define_method(cXMLSchema, "types", rxml_schema_types, 0);
   rb_define_method(cXMLSchema, "elements", rxml_schema_elements, 0);
+  rb_define_method(cXMLSchema, "imported_types", rxml_schema_imported_types, 0);
+  rb_define_method(cXMLSchema, "namespaces", rxml_schema_namespaces, 0);
+  rb_define_method(cXMLSchema, "types", rxml_schema_types, 0);
 
   rxml_init_schema_facet();
   rxml_init_schema_element();

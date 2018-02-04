@@ -50,28 +50,22 @@ static VALUE rxml_schema_type_base(VALUE self)
 static VALUE rxml_schema_type_facets(VALUE self)
 {
   xmlSchemaTypePtr xtype;
-  xmlSchemaFacetPtr facet;
-  VALUE facets;
-  VALUE rfacet;
+  xmlSchemaFacetPtr xfacet;
+  VALUE result = rb_ary_new();
+  VALUE facet;
 
-  facets = rb_iv_get(self, "@facets");
+  Data_Get_Struct(self, xmlSchemaType, xtype);
 
-  if (facets == Qnil) {
-    facets = rb_ary_new();
-    Data_Get_Struct(self, xmlSchemaType, xtype);
+  xfacet = xtype->facets;
 
-    facet = xtype->facets;
-
-    while (facet != NULL) {
-      rfacet = rxml_wrap_schema_facet((xmlSchemaFacetPtr) facet);
-      rb_ary_push(facets, rfacet);
-      facet = facet->next;
-    }
-
-    rb_iv_set(self, "@facets", facets);
+  while (xfacet != NULL)
+  {
+    facet = rxml_wrap_schema_facet((xmlSchemaFacetPtr)xfacet);
+    rb_ary_push(result, facet);
+    xfacet = xfacet->next;
   }
 
-  return facets;
+  return result;
 }
 
 static VALUE rxml_schema_type_node(VALUE self)
@@ -114,47 +108,41 @@ static VALUE rxml_schema_type_annot(VALUE self)
   return result;
 }
 
-static void rxmlSchemaCollectElements(xmlSchemaParticlePtr particle, VALUE self)
+static void rxmlSchemaCollectElements(xmlSchemaParticlePtr xparticle, VALUE hash)
 {
-  VALUE elements;
-  VALUE relement;
-  xmlSchemaTreeItemPtr term;
+  VALUE element;
+  xmlSchemaTreeItemPtr xterm;
 
-  if (particle == NULL)
+  if (xparticle == NULL)
     return;
 
-  term = particle->children;
+  xterm = xparticle->children;
 
-  if (term != NULL) {
-    elements = rb_iv_get(self, "@elements");
-
-    switch (term->type) {
+  if (xterm != NULL)
+  {
+    switch (xterm->type)
+	{
       case XML_SCHEMA_TYPE_ELEMENT:
-        relement = rxml_wrap_schema_element((xmlSchemaElementPtr) term);
+        element = rxml_wrap_schema_element((xmlSchemaElementPtr)xterm);
+        rb_iv_set(element, "@min", INT2NUM(xparticle->minOccurs));
 
-
-        rb_iv_set(relement, "@min", INT2NUM(particle->minOccurs));
-
-        if (particle->maxOccurs >= UNBOUNDED)
-          rb_iv_set(relement, "@max", rb_const_get(rb_path2class("Float"), rb_intern("INFINITY")));
+        if (xparticle->maxOccurs >= UNBOUNDED)
+          rb_iv_set(element, "@max", rb_const_get(rb_path2class("Float"), rb_intern("INFINITY")));
         else
-          rb_iv_set(relement, "@max", INT2NUM(particle->maxOccurs));
+          rb_iv_set(element, "@max", INT2NUM(xparticle->maxOccurs));
 
-        if (particle->annot != NULL)
+        if (xparticle->annot != NULL)
         {
-          xmlChar *content;
-
-          content = xmlNodeGetContent(particle->annot->content);
+          xmlChar *content = xmlNodeGetContent(xparticle->annot->content);
 
           if (content != NULL)
           {
-            rb_iv_set(relement, "@annotation", rb_str_new2((const char *) content));
+            rb_iv_set(element, "@annotation", rb_str_new2((const char *) content));
             xmlFree(content);
           }
         }
 
-        rb_hash_aset(elements, rb_str_new2((const char *) ((xmlSchemaElementPtr) term)->name), relement);
-
+        rb_hash_aset(hash, rb_str_new2((const char *) ((xmlSchemaElementPtr)xterm)->name), element);
         break;
 
       case XML_SCHEMA_TYPE_SEQUENCE:
@@ -170,70 +158,56 @@ static void rxmlSchemaCollectElements(xmlSchemaParticlePtr particle, VALUE self)
         break;
 
       default:
-
         return;
     }
   }
 
-  if (term &&
-      ((term->type == XML_SCHEMA_TYPE_SEQUENCE) ||
-          (term->type == XML_SCHEMA_TYPE_CHOICE) ||
-          (term->type == XML_SCHEMA_TYPE_ALL)) &&
-      (term->children != NULL)) {
-
-    rxmlSchemaCollectElements((xmlSchemaParticlePtr) term->children, self);
+  if (xterm &&
+      ((xterm->type == XML_SCHEMA_TYPE_SEQUENCE) || (xterm->type == XML_SCHEMA_TYPE_CHOICE) || (xterm->type == XML_SCHEMA_TYPE_ALL)) &&
+      (xterm->children != NULL))
+  {
+    rxmlSchemaCollectElements((xmlSchemaParticlePtr)xterm->children, hash);
   }
 
-  if (particle->next != NULL)
-    rxmlSchemaCollectElements((xmlSchemaParticlePtr) particle->next, self);
+  if (xparticle->next != NULL)
+  {
+	rxmlSchemaCollectElements((xmlSchemaParticlePtr)xparticle->next, hash);
+  }
 }
 
-static VALUE
-rxml_schema_type_elements(VALUE self)
+static VALUE rxml_schema_type_elements(VALUE self)
 {
-  VALUE elements;
+  VALUE result = rb_hash_new();
   xmlSchemaTypePtr xtype;
 
   Data_Get_Struct(self, xmlSchemaType, xtype);
+  rxmlSchemaCollectElements((xmlSchemaParticlePtr) xtype->subtypes, result);
 
-  if (rb_iv_get(self, "@elements") == Qnil) {
-    elements = rb_hash_new();
-    rb_iv_set(self, "@elements", elements);
-    rxmlSchemaCollectElements((xmlSchemaParticlePtr) xtype->subtypes, self);
-  }
-
-  return rb_iv_get(self, "@elements");
+  return result;
 }
 
-static VALUE
-rxml_schema_type_attributes(VALUE self)
+static VALUE rxml_schema_type_attributes(VALUE self)
 {
-  VALUE attributes;
+  VALUE result = rb_ary_new();
   xmlSchemaTypePtr xtype;
-  xmlSchemaAttributeUsePtr use;
-  xmlSchemaItemListPtr uses;
+  xmlSchemaAttributeUsePtr xuse;
+  xmlSchemaItemListPtr xuses;
   int i;
 
   Data_Get_Struct(self, xmlSchemaType, xtype);
+  xuses = xtype->attrUses;
 
-  if (rb_iv_get(self, "@attributes") == Qnil) {
-    attributes = rb_ary_new();
-    rb_iv_set(self, "@attributes", attributes);
-
-    uses = xtype->attrUses;
-
-    if ((uses == NULL) || (uses->nbItems == 0))
-      return rb_iv_get(self, "@attributes");
-
-    for (i = 0; i < uses->nbItems; i++) {
-      use = (xmlSchemaAttributeUsePtr) uses->items[i];
-      rb_ary_push(attributes, rxml_wrap_schema_attribute(use));
+  if (xuses != NULL)
+  {
+    for (i = 0; i < xuses->nbItems; i++)
+	{
+      xuse = (xmlSchemaAttributeUsePtr)xuses->items[i];
+      rb_ary_push(result, rxml_wrap_schema_attribute(xuse));
     }
   }
 
-  return rb_iv_get(self, "@attributes");
+  return result;
 }
-
 
 void rxml_init_schema_type(void)
 {
