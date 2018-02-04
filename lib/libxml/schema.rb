@@ -43,25 +43,6 @@ module LibXML
         XML_SCHEMA_EXTRA_QNAMEREF        = 2000
         XML_SCHEMA_EXTRA_ATTR_USE_PROHIB = 2001
       end
-
-      class Namespaces < Array
-        def find_by_href(href)
-          find { |n| n.href == href }
-        end
-
-        def find_by_prefix(prefix)
-          find { |n| n.prefix == prefix }
-        end
-      end
-
-      def namespaces
-        Namespaces.new(_namespaces.uniq { |n| n.href })
-      end
-
-      def self.cached(location)
-        @_schemas ||= {}
-        @_schemas[location] ||= new(location)
-      end
     end
   end
 end

@@ -90,7 +90,6 @@ class TestSchema < Minitest::Test
 
 
   # Schema meta-data tests
-
   def test_elements
     assert_instance_of(Hash, schema.elements)
     assert_equal(1, schema.elements.length)
@@ -101,6 +100,17 @@ class TestSchema < Minitest::Test
     assert_instance_of(Hash, schema.types)
     assert_equal(1, schema.types.length)
     assert_instance_of(XML::Schema::Type, schema.types['shiporder'])
+  end
+
+  def test_imported_types
+    assert_instance_of(Hash, schema.imported_types)
+    assert_equal(1, schema.imported_types.length)
+    assert_instance_of(XML::Schema::Type, schema.types['shiporder'])
+  end
+
+  def test_namespaces
+    assert_instance_of(Array, schema.namespaces)
+    assert_equal(1, schema.namespaces.length)
   end
 
   def test_schema_type
