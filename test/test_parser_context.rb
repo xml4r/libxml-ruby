@@ -100,7 +100,7 @@ class TestParserContext < Minitest::Test
 
   def test_depth
     context = XML::Parser::Context.new
-    assert_instance_of(Fixnum, context.depth)
+    assert_instance_of(Integer, context.depth)
   end
 
   def test_disable_sax

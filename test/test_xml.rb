@@ -237,7 +237,7 @@ class TestXml < Minitest::Test
   end
 
   def test_vernum
-    assert_instance_of(Fixnum, XML::VERNUM)
+    assert_instance_of(Integer, XML::VERNUM)
   end
 
   def test_libxml_parser_features
