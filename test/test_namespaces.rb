@@ -122,15 +122,6 @@ class TestNamespaces < Minitest::Test
     assert_equal('http://www.w3.org/2001/XMLSchema-instance', namespace.href)
   end
 
-  def test_namespaces
-    node = @doc.find_first('//ns1:IdAndName',
-                           :ns1 => 'http://domain.somewhere.com')
-
-    node.namespaces.each do |namespace|
-      assert_instance_of(XML::Namespace, namespace)
-    end
-  end
-
   def test_namespace_definitions
     ns_defs = @doc.root.namespaces.definitions
     assert_equal(3, ns_defs.size)
