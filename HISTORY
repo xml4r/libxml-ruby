@@ -1,6 +1,6 @@
 = Release History
 
-== 3.1.0 / 2018-01-29 Charlie Savage
+== 3.1.0 / 2018-02-03 Charlie Savage
 
 * Fix segmentation fault when adding one node to another node (Charlie Savage)
 * Fix deprecated "assert_equal(nil, expected)" calls. #148 and #151. (utilum)
@@ -14,6 +14,8 @@
 * Rename test files to follow Ruby conventions (Charlie Savage)
 * Fix handling of node returned by Reader#expand. #142. (Charlie Savage)
 * Add Travis Build support (Charlie Savage)
+* Fix Fixnum deprecation (Charlie Savage)
+* Cleanup schema code (Charlie Savage)
 * Update Visual Studio project to 2017 (Charlie Savage)
 
 == 3.0.0 / 2017-02-07 Charlie Savage
