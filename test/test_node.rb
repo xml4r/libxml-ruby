@@ -222,6 +222,16 @@ class TestNode < Minitest::Test
     assert(text_node.empty?)
   end
 
+  def test_save_no_empty_tags
+    node = XML::Node.new('test')
+    assert_equal '<test/>', node.to_s
+
+    XML.default_save_no_empty_tags = true
+    assert_equal '<test></test>', node.to_s
+
+    XML.default_save_no_empty_tags = false
+  end
+
   def test_set_content
     node = XML::Node.new('test')
     node.content = "unescaped & string"

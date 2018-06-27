@@ -247,4 +247,16 @@ class TestXml < Minitest::Test
   def test_default_options
     assert_equal(0, XML.default_options)
   end
+
+  def test_default_save_no_empty_tags
+    original = XML.default_save_no_empty_tags
+
+    XML.default_save_no_empty_tags = false
+    refute(XML.default_save_no_empty_tags)
+
+    XML.default_save_no_empty_tags = true
+    assert(XML.default_save_no_empty_tags)
+
+    XML.default_save_no_empty_tags = original
+  end
 end

@@ -719,6 +719,44 @@ static VALUE rxml_default_compression_set(VALUE klass, VALUE num)
 
 /*
  * call-seq:
+ *    XML.default_save_no_empty_tags -> (true|false)
+ *
+ * Determine whether serializer outputs empty tags by default.
+ */
+static VALUE rxml_default_save_no_empty_tags_get(VALUE klass)
+{
+  if (xmlSaveNoEmptyTags)
+    return (Qtrue);
+  else
+    return (Qfalse);
+}
+
+/*
+ * call-seq:
+ *    XML.default_save_no_empty_tags = true|false
+ *
+ * Controls whether serializer outputs empty tags by default.
+ */
+static VALUE rxml_default_save_no_empty_tags_set(VALUE klass, VALUE value)
+{
+  if (value == Qfalse)
+  {
+    xmlSaveNoEmptyTags = 0;
+    return (Qfalse);
+  }
+  else if (value == Qtrue)
+  {
+    xmlSaveNoEmptyTags = 1;
+    return (Qtrue);
+  }
+  else
+  {
+    rb_raise(rb_eArgError, "Invalid argument, must be a boolean");
+  }
+}
+
+/*
+ * call-seq:
  *    XML.features -> ["feature", ..., "feature"]
  *
  * Obtains an array of strings representing features supported
@@ -885,6 +923,8 @@ void rxml_init_xml(void)
   rb_define_module_function(mXML, "default_validity_checking=", rxml_default_validity_checking_set, 1);
   rb_define_module_function(mXML, "default_warnings", rxml_default_warnings_get, 0);
   rb_define_module_function(mXML, "default_warnings=", rxml_default_warnings_set, 1);
+  rb_define_module_function(mXML, "default_save_no_empty_tags", rxml_default_save_no_empty_tags_get, 0);
+  rb_define_module_function(mXML, "default_save_no_empty_tags=", rxml_default_save_no_empty_tags_set, 1);
   rb_define_module_function(mXML, "features", rxml_features, 0);
   rb_define_module_function(mXML, "indent_tree_output", rxml_indent_tree_output_get, 0);
   rb_define_module_function(mXML, "indent_tree_output=", rxml_indent_tree_output_set, 1);
