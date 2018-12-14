@@ -297,7 +297,7 @@ class TestParser < Minitest::Test
     assert_nil(error.str2)
     assert_nil(error.str3)
     assert_equal(0, error.int1)
-    assert_equal(20, error.int2)
+    assert_equal(34, error.int2)
     assert_nil(error.node)
   end
 
