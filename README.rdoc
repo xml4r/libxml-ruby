@@ -1,4 +1,23 @@
-= LibXML Ruby
+= Salsify LibXML Ruby
+The libxml_ruby gem provides bindings for libxml library. The Salsify version
+of this gem adds static linking to a locally-compiled version of libxml2
+whose version can be set in extconf.rb. This isolates it from changes to the
+underlying native library, which follows the model of a much better known
+Ruby library binding to libxml2 (Nokogiri) and is especially important in
+this case due to the use of bindings to undocumented APIs.
+
+== SECURITY
+The maintainers will periodically provide security updates for libxml, but
+YOU SHOULD NOT USE this library in production environments.
+
+== INSTALLATION
+Add a reference to "salsify_libxml_ruby" in your Gemfile. This assumes
+that bundler is configured to use https://gems.salisfy.com.
+
+== Original library
+Original README offering more information about this library follows.
+
+== LibXML Ruby
 
 == Overview
 The libxml gem provides Ruby language bindings for GNOME's Libxml2
@@ -9,32 +28,6 @@ We think libxml-ruby is the best XML library for Ruby because:
 * Speed - Its much faster than REXML and Hpricot
 * Features - It provides an amazing number of featues
 * Conformance - It passes all 1800+ tests from the OASIS XML Tests Suite
-
-== Requirements
-libxml-ruby requires Ruby 1.8.7 or higher.  It depends on libxml2 to
-function propoerly.  libxml2, in turn, depends on:
-
-* libm      (math routines: very standard)
-* libz      (zlib)
-* libiconv
-
-If you are running Linux or Unix you'll need a C compiler so the
-extension can be compiled when it is installed.  If you are running
-Windows, then install the x64-mingw32 gem or build it yourself using
-Devkit (http://rubyinstaller.org/add-ons/devkit/) or
-msys2 (https://msys2.github.io/).
-
-== INSTALLATION
-The easiest way to install libxml-ruby is via Ruby Gems.  To install:
-
-<tt>gem install libxml-ruby</tt>
-
-If you are running Windows, then install the libxml-ruby-x64-mingw32 gem.
-THe gem inncludes prebuilt extensions for Ruby 2.3.  These
-extensions are built using MinGW64 and libxml2 version 2.9.3,
-iconv version 1.14 and zlib version 1.2.8. Note these binaries
-are available in the lib\libs directory.  To use them, put them
-someplace on your path.
 
 The gem also includes a Microsoft VC++ 2012 solution and XCode 5 project - these
 are very useful for debugging.

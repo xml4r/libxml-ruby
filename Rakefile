@@ -1,5 +1,7 @@
 #!/usr/bin/env ruby
 
+require "bundler/gem_tasks"
+require "salsify_gem"
 require "rubygems"
 require "rake/extensiontask"
 require "rake/testtask"
@@ -7,7 +9,7 @@ require "rubygems/package_task"
 require "rdoc/task"
 require "yaml"
 
-GEM_NAME = "libxml-ruby"
+GEM_NAME = "salsify_libxml_ruby"
 SO_NAME  = "libxml_ruby"
 
 # Read the spec file

@@ -2,56 +2,67 @@
 
 require 'mkmf'
 
+LIBXML2_VERSION = '2.9.9'.freeze
+LIBXML2_SHA256 = '94fb70890143e3c6549f265cee93ec064c80a84c42ad0f23e85ee1fd6540a871'.freeze
+
+def darwin?
+  RbConfig::CONFIG['target_os'] =~ /darwin/
+end
+
 def crash(str)
-  printf(" extconf failure: %s\n", str)
+  puts(" extconf failure: #{str}")
   exit 1
 end
 
-xc = with_config('xml2-config')
-if xc
-  cflags = `#{xc} --cflags`.chomp
-  if $? != 0
-    cflags = nil
-  else
-    libs = `#{xc} --libs`.chomp
-    if $? != 0
-      libs = nil
-    else
-      $CFLAGS += ' ' + cflags
-      $libs = libs + " " + $libs
-    end
-  end
-else
-  dir_config('xml2')
+# The gem version constraint in the Rakefile is not respected at install time.
+# Keep this version in sync with the one in the Rakefile !
+require 'rubygems'
+gem 'mini_portile2', '~> 2.4.0'
+require 'mini_portile2'
+message "Using mini_portile version #{MiniPortile::VERSION}\n"
+
+!darwin? || have_header('iconv.h') || crash('missing iconv.h')
+have_library('z', 'gzdopen', 'zlib.h') || crash('missing zlib')
+have_library('iconv') || crash('missing libiconv')
+have_library('lzma') || crash('missing lzma')
+
+libxml2_recipe = MiniPortile.new('libxml2', LIBXML2_VERSION)
+libxml2_recipe.target = "ports"
+libxml2_recipe.host = RbConfig::CONFIG["host"]
+# The source tar.gz file is only downloaded once
+libxml2_recipe.files = [{
+                          url: "http://xmlsoft.org/sources/#{libxml2_recipe.name}-#{libxml2_recipe.version}.tar.gz",
+                          sha256: LIBXML2_SHA256
+                        }]
+libxml2_recipe.configure_options = [
+    "--libdir=#{File.join(libxml2_recipe.path, "lib")}",
+    "--without-python",
+    "--without-readline",
+    "--with-c14n",
+    "--with-debug",
+    "--with-threads",
+    "--disable-shared",
+    "--enable-static",
+    "--with-iconv",
+    *(darwin? ? ["RANLIB=/usr/bin/ranlib", "AR=/usr/bin/ar"] : "")
+  ]
+append_cflags('-fPIC')
+
+message "Building with libxml2-#{LIBXML2_VERSION}"
+
+checkpoint = "#{libxml2_recipe.target}/#{libxml2_recipe.name}-#{libxml2_recipe.version}-#{libxml2_recipe.host}.installed"
+unless File.exist?(checkpoint)
+  libxml2_recipe.cook
+  FileUtils.touch checkpoint
 end
+libxml2_recipe.activate
+# .activate is supposed to do this, but it doesn't
+$LIBPATH = ["#{libxml2_recipe.path}/lib"] | $LIBPATH
+append_cflags("-I#{File.join(libxml2_recipe.path, 'include', 'libxml2')}")
 
-unless find_header('libxml/xmlversion.h',
-                   '/opt/include/libxml2',
-                   '/opt/local/include/libxml2',
-                   '/usr/local/include/libxml2',
-                   '/usr/include/libxml2') &&
-        find_library('xml2', 'xmlParseDoc',
-                     '/opt/lib',
-                     '/opt/local/lib',
-                     '/usr/local/lib',
-                     '/usr/lib')
-    crash(<<EOL)
-need libxml2.
-
-    Install the library or try one of the following options to extconf.rb:
-
-      --with-xml2-config=/path/to/xml2-config
-      --with-xml2-dir=/path/to/libxml2
-      --with-xml2-lib=/path/to/libxml2/lib
-      --with-xml2-include=/path/to/libxml2/include
-EOL
-end
-
+have_header('libxml/parser.h') || crash('parser.h not found')
+have_library('xml2', 'xmlParseDoc ') || crash('libxml2 not found')
 have_func('rb_io_bufwrite', 'ruby/io.h')
-
-# For FreeBSD add /usr/local/include
-$INCFLAGS << " -I/usr/local/include"
-$CFLAGS << ' ' << $INCFLAGS
 
 create_header()
 create_makefile('libxml_ruby')
