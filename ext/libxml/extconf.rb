@@ -48,7 +48,7 @@ libxml2_recipe.configure_options = [
     "--with-iconv",
     *(darwin? ? ["RANLIB=/usr/bin/ranlib", "AR=/usr/bin/ar"] : "")
   ]
-env['CFLAGS'] = "-fPIC #{env['CFLAGS']}"
+ENV['CFLAGS'] = "-fPIC #{ENV['CFLAGS']}"
 
 message "Building with libxml2-#{LIBXML2_VERSION}"
 
