@@ -21,9 +21,11 @@ gem 'mini_portile2', '~> 2.4.0'
 require 'mini_portile2'
 message "Using mini_portile version #{MiniPortile::VERSION}\n"
 
-!darwin? || have_header('iconv.h') || crash('missing iconv.h')
+if darwin?
+  have_header('iconv.h') || crash('missing iconv.h')
+  have_library('iconv') || crash('missing libiconv')
+end
 have_library('z', 'gzdopen', 'zlib.h') || crash('missing zlib')
-have_library('iconv') || crash('missing libiconv')
 have_library('lzma') || crash('missing lzma')
 
 libxml2_recipe = MiniPortile.new('libxml2', LIBXML2_VERSION)
