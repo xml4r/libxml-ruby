@@ -1,0 +1,27 @@
+PATH
+  remote: .
+  specs:
+    salsify_libxml_ruby (3.1.0)
+
+GEM
+  remote: https://gems.salsify.com/
+  specs:
+    minitest (5.11.3)
+    rake (12.3.2)
+    rake-compiler (1.0.7)
+      rake
+    salsify_gem (0.3.1)
+      thor
+    thor (0.20.3)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  minitest
+  rake-compiler
+  salsify_gem
+  salsify_libxml_ruby!
+
+BUNDLED WITH
+   1.17.2
