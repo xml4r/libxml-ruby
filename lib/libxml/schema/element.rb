@@ -4,11 +4,11 @@ module LibXML
   module XML
     class Schema::Element
       def required?
-        !min.zero?
+        !@min.zero?
       end
 
       def array?
-        max > 1
+        @max > 1
       end
 
       def elements
