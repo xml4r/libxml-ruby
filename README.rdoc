@@ -14,9 +14,9 @@ We think libxml-ruby is the best XML library for Ruby because:
 libxml-ruby requires Ruby 1.8.7 or higher.  It depends on libxml2 to
 function propoerly.  libxml2, in turn, depends on:
 
-* libm      (math routines: very standard)
+* libm      (glibc, math routines: very standard)
 * libz      (zlib)
-* libiconv
+* libiconv  (iconv is part of glibc but not libiconv)
 
 If you are running Linux or Unix you'll need a C compiler so the
 extension can be compiled when it is installed.  If you are running
