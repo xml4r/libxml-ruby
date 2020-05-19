@@ -47,16 +47,16 @@ class TestEncoding < Minitest::Test
   def test_encoding
     doc = LibXML::XML::Document.new
     assert_equal(LibXML::XML::Encoding::NONE, doc.encoding)
-    assert_equal(Encoding::ASCII_8BIT, doc.rb_encoding) if defined?(Encoding)
+    assert_equal(Encoding::ASCII_8BIT, doc.rb_encoding)
 
     file = File.expand_path(File.join(File.dirname(__FILE__), 'model/bands.xml'))
     doc = LibXML::XML::Document.file(file)
     assert_equal(LibXML::XML::Encoding::UTF_8, doc.encoding)
-    assert_equal(Encoding::UTF_8, doc.rb_encoding) if defined?(Encoding)
+    assert_equal(Encoding::UTF_8, doc.rb_encoding)
 
     doc.encoding = LibXML::XML::Encoding::ISO_8859_1
     assert_equal(LibXML::XML::Encoding::ISO_8859_1, doc.encoding)
-    assert_equal(Encoding::ISO8859_1, doc.rb_encoding) if defined?(Encoding)
+    assert_equal(Encoding::ISO8859_1, doc.rb_encoding)
   end
 
   def test_no_internal_encoding_iso_8859_1

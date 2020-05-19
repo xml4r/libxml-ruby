@@ -58,12 +58,8 @@ class TestNode < Minitest::Test
     assert_instance_of(TrueClass, @doc.root.child?)
     assert_instance_of(LibXML::XML::Node, @doc.root.child)
 
-    if defined?(Encoding)
-      assert_equal(Encoding::UTF_8, @doc.root.child.name.encoding)
-      assert_equal("m\u00F6tley_cr\u00FCe", @doc.root.child.name)
-    else
-      assert_equal("m\303\266tley_cr\303\274e", @doc.root.child.name)
-    end
+    assert_equal(Encoding::UTF_8, @doc.root.child.name.encoding)
+    assert_equal("m\u00F6tley_cr\u00FCe", @doc.root.child.name)
   end
 
   def test_node_doc

@@ -314,21 +314,16 @@ class TestReader < Minitest::Test
     reader = LibXML::XML::Reader.string(xml, :encoding => LibXML::XML::Encoding::ISO_8859_1)
     reader.read
 
-    if defined?(Encoding)
-      assert_equal(Encoding::ISO8859_1, reader.read_outer_xml.encoding)
-      assert_equal(Encoding::ISO8859_1, reader.read_inner_xml.encoding)
-      assert_equal(Encoding::ISO8859_1, reader.read_string.encoding)
+    assert_equal(Encoding::ISO8859_1, reader.read_outer_xml.encoding)
+    assert_equal(Encoding::ISO8859_1, reader.read_inner_xml.encoding)
+    assert_equal(Encoding::ISO8859_1, reader.read_string.encoding)
 
-      assert_equal("<bands genre=\"metal\">\n  <m\xC3\xB6tley_cr\xC3\xBCe country=\"us\">An American heavy metal band formed in Los Angeles, California in 1981.</m\xC3\xB6tley_cr\xC3\xBCe>\n  <iron_maiden country=\"uk\">British heavy metal band formed in 1975.</iron_maiden>\n</bands>".force_encoding(Encoding::ISO8859_1),
-                   reader.read_outer_xml)
-      assert_equal("\n  <m\xC3\xB6tley_cr\xC3\xBCe country=\"us\">An American heavy metal band formed in Los Angeles, California in 1981.</m\xC3\xB6tley_cr\xC3\xBCe>\n  <iron_maiden country=\"uk\">British heavy metal band formed in 1975.</iron_maiden>\n".force_encoding(Encoding::ISO8859_1),
-                   reader.read_inner_xml)
-      assert_equal("\n  An American heavy metal band formed in Los Angeles, California in 1981.\n  British heavy metal band formed in 1975.\n".force_encoding(Encoding::ISO8859_1),
-                   reader.read_string)
-    else
-      assert_equal("<bands genre=\"metal\">\n  <m\303\266tley_cr\303\274e country=\"us\">An American heavy metal band formed in Los Angeles, California in 1981.</m\303\266tley_cr\303\274e>\n  <iron_maiden country=\"uk\">British heavy metal band formed in 1975.</iron_maiden>\n</bands>",
-                   reader.read_outer_xml)
-    end
+    assert_equal("<bands genre=\"metal\">\n  <m\xC3\xB6tley_cr\xC3\xBCe country=\"us\">An American heavy metal band formed in Los Angeles, California in 1981.</m\xC3\xB6tley_cr\xC3\xBCe>\n  <iron_maiden country=\"uk\">British heavy metal band formed in 1975.</iron_maiden>\n</bands>".force_encoding(Encoding::ISO8859_1),
+                 reader.read_outer_xml)
+    assert_equal("\n  <m\xC3\xB6tley_cr\xC3\xBCe country=\"us\">An American heavy metal band formed in Los Angeles, California in 1981.</m\xC3\xB6tley_cr\xC3\xBCe>\n  <iron_maiden country=\"uk\">British heavy metal band formed in 1975.</iron_maiden>\n".force_encoding(Encoding::ISO8859_1),
+                 reader.read_inner_xml)
+    assert_equal("\n  An American heavy metal band formed in Los Angeles, California in 1981.\n  British heavy metal band formed in 1975.\n".force_encoding(Encoding::ISO8859_1),
+                 reader.read_string)
   end
 
   def test_invalid_encoding
@@ -351,7 +346,7 @@ class TestReader < Minitest::Test
     reader = LibXML::XML::Reader.file(XML_FILE)
     reader.read
     assert_equal(LibXML::XML::Encoding::UTF_8, reader.encoding)
-    assert_equal(Encoding::UTF_8, reader.value.encoding) if defined?(Encoding)
+    assert_equal(Encoding::UTF_8, reader.value.encoding)
   end
 
   def test_string_encoding

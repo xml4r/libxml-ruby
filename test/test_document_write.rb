@@ -21,13 +21,8 @@ class TestDocumentWrite < Minitest::Test
   # ---  to_s tests  ---
   def test_to_s_default
     # Default to_s has indentation
-    if defined?(Encoding)
-      assert_equal("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<bands genre=\"metal\">\n  <m\u00F6tley_cr\u00FCe country=\"us\">M\u00F6tley Cr\u00FCe is an American heavy metal band formed in Los Angeles, California in 1981.</m\u00F6tley_cr\u00FCe>\n  <iron_maiden country=\"uk\">Iron Maiden is a British heavy metal band formed in 1975.</iron_maiden>\n</bands>\n",
-                   @doc.to_s)
-    else
-      assert_equal("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<bands genre=\"metal\">\n  <m\303\266tley_cr\303\274e country=\"us\">M\303\266tley Cr\303\274e is an American heavy metal band formed in Los Angeles, California in 1981.</m\303\266tley_cr\303\274e>\n  <iron_maiden country=\"uk\">Iron Maiden is a British heavy metal band formed in 1975.</iron_maiden>\n</bands>\n",
-                   @doc.to_s)
-    end
+    assert_equal("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<bands genre=\"metal\">\n  <m\u00F6tley_cr\u00FCe country=\"us\">M\u00F6tley Cr\u00FCe is an American heavy metal band formed in Los Angeles, California in 1981.</m\u00F6tley_cr\u00FCe>\n  <iron_maiden country=\"uk\">Iron Maiden is a British heavy metal band formed in 1975.</iron_maiden>\n</bands>\n",
+                 @doc.to_s)
   end
 
   def test_to_s_no_global_indentation
@@ -35,14 +30,9 @@ class TestDocumentWrite < Minitest::Test
     LibXML::XML.indent_tree_output = false
     value = @doc.to_s
 
-    if defined?(Encoding)
-      assert_equal(Encoding::UTF_8, value.encoding)
-      assert_equal("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<bands genre=\"metal\">\n<m\u00F6tley_cr\u00FCe country=\"us\">M\u00F6tley Cr\u00FCe is an American heavy metal band formed in Los Angeles, California in 1981.</m\u00F6tley_cr\u00FCe>\n<iron_maiden country=\"uk\">Iron Maiden is a British heavy metal band formed in 1975.</iron_maiden>\n</bands>\n",
-                   value)
-    else
-      assert_equal("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<bands genre=\"metal\">\n<m\303\266tley_cr\303\274e country=\"us\">M\303\266tley Cr\303\274e is an American heavy metal band formed in Los Angeles, California in 1981.</m\303\266tley_cr\303\274e>\n<iron_maiden country=\"uk\">Iron Maiden is a British heavy metal band formed in 1975.</iron_maiden>\n</bands>\n",
-                   value)
-    end
+    assert_equal(Encoding::UTF_8, value.encoding)
+    assert_equal("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<bands genre=\"metal\">\n<m\u00F6tley_cr\u00FCe country=\"us\">M\u00F6tley Cr\u00FCe is an American heavy metal band formed in Los Angeles, California in 1981.</m\u00F6tley_cr\u00FCe>\n<iron_maiden country=\"uk\">Iron Maiden is a British heavy metal band formed in 1975.</iron_maiden>\n</bands>\n",
+                 value)
   ensure
     LibXML::XML.indent_tree_output = true
   end
@@ -50,14 +40,9 @@ class TestDocumentWrite < Minitest::Test
   def test_to_s_no_indentation
     # No indentation due to local setting
     value = @doc.to_s(:indent => false)
-    if defined?(Encoding)
-      assert_equal(Encoding::UTF_8, value.encoding)
-      assert_equal("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<bands genre=\"metal\"><m\u00F6tley_cr\u00FCe country=\"us\">M\u00F6tley Cr\u00FCe is an American heavy metal band formed in Los Angeles, California in 1981.</m\u00F6tley_cr\u00FCe><iron_maiden country=\"uk\">Iron Maiden is a British heavy metal band formed in 1975.</iron_maiden></bands>\n",
-                   value)
-    else
-      assert_equal("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<bands genre=\"metal\"><m\303\266tley_cr\303\274e country=\"us\">M\303\266tley Cr\303\274e is an American heavy metal band formed in Los Angeles, California in 1981.</m\303\266tley_cr\303\274e><iron_maiden country=\"uk\">Iron Maiden is a British heavy metal band formed in 1975.</iron_maiden></bands>\n",
-                   value)
-    end
+    assert_equal(Encoding::UTF_8, value.encoding)
+    assert_equal("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<bands genre=\"metal\"><m\u00F6tley_cr\u00FCe country=\"us\">M\u00F6tley Cr\u00FCe is an American heavy metal band formed in Los Angeles, California in 1981.</m\u00F6tley_cr\u00FCe><iron_maiden country=\"uk\">Iron Maiden is a British heavy metal band formed in 1975.</iron_maiden></bands>\n",
+                 value)
   end
 
   def test_to_s_encoding
@@ -67,27 +52,17 @@ class TestDocumentWrite < Minitest::Test
     # ö - c3 b6 in hex, \303\266 in octal
     # ü - c3 bc in hex, \303\274 in octal
     value = @doc.to_s(:encoding => LibXML::XML::Encoding::UTF_8)
-    if defined?(Encoding)
-      assert_equal(Encoding::UTF_8, value.encoding)
-      assert_equal("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<bands genre=\"metal\">\n  <m\u00F6tley_cr\u00FCe country=\"us\">M\u00F6tley Cr\u00FCe is an American heavy metal band formed in Los Angeles, California in 1981.</m\u00F6tley_cr\u00FCe>\n  <iron_maiden country=\"uk\">Iron Maiden is a British heavy metal band formed in 1975.</iron_maiden>\n</bands>\n",
-                   value)
-    else
-      assert_equal("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<bands genre=\"metal\">\n  <m\303\266tley_cr\303\274e country=\"us\">M\303\266tley Cr\303\274e is an American heavy metal band formed in Los Angeles, California in 1981.</m\303\266tley_cr\303\274e>\n  <iron_maiden country=\"uk\">Iron Maiden is a British heavy metal band formed in 1975.</iron_maiden>\n</bands>\n",
-                   value)
-    end
+    assert_equal(Encoding::UTF_8, value.encoding)
+    assert_equal("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<bands genre=\"metal\">\n  <m\u00F6tley_cr\u00FCe country=\"us\">M\u00F6tley Cr\u00FCe is an American heavy metal band formed in Los Angeles, California in 1981.</m\u00F6tley_cr\u00FCe>\n  <iron_maiden country=\"uk\">Iron Maiden is a British heavy metal band formed in 1975.</iron_maiden>\n</bands>\n",
+                 value)
 
     # ISO_8859_1:
     # ö - f6 in hex, \366 in octal
     # ü - fc in hex, \374 in octal
     value = @doc.to_s(:encoding => LibXML::XML::Encoding::ISO_8859_1)
-    if defined?(Encoding)
-      assert_equal(Encoding::ISO8859_1, value.encoding)
-      assert_equal("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n<bands genre=\"metal\">\n  <m\xF6tley_cr\xFCe country=\"us\">M\xF6tley Cr\xFCe is an American heavy metal band formed in Los Angeles, California in 1981.</m\xF6tley_cr\xFCe>\n  <iron_maiden country=\"uk\">Iron Maiden is a British heavy metal band formed in 1975.</iron_maiden>\n</bands>\n".force_encoding(Encoding::ISO8859_1),
-                   @doc.to_s(:encoding => LibXML::XML::Encoding::ISO_8859_1))
-    else
-      assert_equal("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n<bands genre=\"metal\">\n  <m\366tley_cr\374e country=\"us\">M\366tley Cr\374e is an American heavy metal band formed in Los Angeles, California in 1981.</m\366tley_cr\374e>\n  <iron_maiden country=\"uk\">Iron Maiden is a British heavy metal band formed in 1975.</iron_maiden>\n</bands>\n",
-                   @doc.to_s(:encoding => LibXML::XML::Encoding::ISO_8859_1))
-    end
+    assert_equal(Encoding::ISO8859_1, value.encoding)
+    assert_equal("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n<bands genre=\"metal\">\n  <m\xF6tley_cr\xFCe country=\"us\">M\xF6tley Cr\xFCe is an American heavy metal band formed in Los Angeles, California in 1981.</m\xF6tley_cr\xFCe>\n  <iron_maiden country=\"uk\">Iron Maiden is a British heavy metal band formed in 1975.</iron_maiden>\n</bands>\n".force_encoding(Encoding::ISO8859_1),
+                 @doc.to_s(:encoding => LibXML::XML::Encoding::ISO_8859_1))
 
     # Invalid encoding
     error = assert_raises(ArgumentError) do
@@ -103,16 +78,10 @@ class TestDocumentWrite < Minitest::Test
     bytes = @doc.save(temp_filename)
     assert_equal(305, bytes)
 
-    if defined?(Encoding)
-      contents = File.read(temp_filename, nil, nil, :encoding => Encoding::UTF_8)
-      assert_equal(Encoding::UTF_8, contents.encoding)
-      assert_equal("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<bands genre=\"metal\">\n  <m\u00F6tley_cr\u00FCe country=\"us\">M\u00F6tley Cr\u00FCe is an American heavy metal band formed in Los Angeles, California in 1981.</m\u00F6tley_cr\u00FCe>\n  <iron_maiden country=\"uk\">Iron Maiden is a British heavy metal band formed in 1975.</iron_maiden>\n</bands>\n",
-                    contents)
-    else
-      contents = File.read(temp_filename)
-      assert_equal("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<bands genre=\"metal\">\n  <m\303\266tley_cr\303\274e country=\"us\">M\303\266tley Cr\303\274e is an American heavy metal band formed in Los Angeles, California in 1981.</m\303\266tley_cr\303\274e>\n  <iron_maiden country=\"uk\">Iron Maiden is a British heavy metal band formed in 1975.</iron_maiden>\n</bands>\n",
-                 contents)
-    end
+    contents = File.read(temp_filename, nil, nil, :encoding => Encoding::UTF_8)
+    assert_equal(Encoding::UTF_8, contents.encoding)
+    assert_equal("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<bands genre=\"metal\">\n  <m\u00F6tley_cr\u00FCe country=\"us\">M\u00F6tley Cr\u00FCe is an American heavy metal band formed in Los Angeles, California in 1981.</m\u00F6tley_cr\u00FCe>\n  <iron_maiden country=\"uk\">Iron Maiden is a British heavy metal band formed in 1975.</iron_maiden>\n</bands>\n",
+                  contents)
   ensure
     File.delete(temp_filename)
   end
@@ -123,15 +92,9 @@ class TestDocumentWrite < Minitest::Test
     bytes = @doc.save(temp_filename, :indent => false)
     assert_equal(298, bytes)
 
-    if defined?(Encoding)
-      contents = File.read(temp_filename, nil, nil, :encoding => Encoding::UTF_8)
-      assert_equal("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<bands genre=\"metal\"><m\u00F6tley_cr\u00FCe country=\"us\">M\u00F6tley Cr\u00FCe is an American heavy metal band formed in Los Angeles, California in 1981.</m\u00F6tley_cr\u00FCe><iron_maiden country=\"uk\">Iron Maiden is a British heavy metal band formed in 1975.</iron_maiden></bands>\n",
-                 contents)
-    else
-      contents = File.read(temp_filename)
-      assert_equal("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<bands genre=\"metal\"><m\303\266tley_cr\303\274e country=\"us\">M\303\266tley Cr\303\274e is an American heavy metal band formed in Los Angeles, California in 1981.</m\303\266tley_cr\303\274e><iron_maiden country=\"uk\">Iron Maiden is a British heavy metal band formed in 1975.</iron_maiden></bands>\n",
-                 contents)
-    end
+    contents = File.read(temp_filename, nil, nil, :encoding => Encoding::UTF_8)
+    assert_equal("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<bands genre=\"metal\"><m\u00F6tley_cr\u00FCe country=\"us\">M\u00F6tley Cr\u00FCe is an American heavy metal band formed in Los Angeles, California in 1981.</m\u00F6tley_cr\u00FCe><iron_maiden country=\"uk\">Iron Maiden is a British heavy metal band formed in 1975.</iron_maiden></bands>\n",
+               contents)
   ensure
     File.delete(temp_filename)
   end
@@ -141,16 +104,10 @@ class TestDocumentWrite < Minitest::Test
     bytes = @doc.save(temp_filename, :encoding => LibXML::XML::Encoding::ISO_8859_1)
     assert_equal(304, bytes)
 
-    if defined?(Encoding)
-      contents = File.read(temp_filename, nil, nil, :encoding => Encoding::ISO8859_1)
-      assert_equal(Encoding::ISO8859_1, contents.encoding)
-      assert_equal("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n<bands genre=\"metal\">\n  <m\xF6tley_cr\xFCe country=\"us\">M\xF6tley Cr\xFCe is an American heavy metal band formed in Los Angeles, California in 1981.</m\xF6tley_cr\xFCe>\n  <iron_maiden country=\"uk\">Iron Maiden is a British heavy metal band formed in 1975.</iron_maiden>\n</bands>\n".force_encoding(Encoding::ISO8859_1),
-                 contents)
-    else
-      contents = File.read(temp_filename)
-      assert_equal("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n<bands genre=\"metal\">\n  <m\xF6tley_cr\xFCe country=\"us\">M\xF6tley Cr\xFCe is an American heavy metal band formed in Los Angeles, California in 1981.</m\xF6tley_cr\xFCe>\n  <iron_maiden country=\"uk\">Iron Maiden is a British heavy metal band formed in 1975.</iron_maiden>\n</bands>\n",
-                 contents)
-    end
+    contents = File.read(temp_filename, nil, nil, :encoding => Encoding::ISO8859_1)
+    assert_equal(Encoding::ISO8859_1, contents.encoding)
+    assert_equal("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n<bands genre=\"metal\">\n  <m\xF6tley_cr\xFCe country=\"us\">M\xF6tley Cr\xFCe is an American heavy metal band formed in Los Angeles, California in 1981.</m\xF6tley_cr\xFCe>\n  <iron_maiden country=\"uk\">Iron Maiden is a British heavy metal band formed in 1975.</iron_maiden>\n</bands>\n".force_encoding(Encoding::ISO8859_1),
+               contents)
   ensure
     File.delete(temp_filename)
   end
@@ -160,16 +117,10 @@ class TestDocumentWrite < Minitest::Test
     bytes = @doc.save(temp_filename, :indent => false, :encoding => LibXML::XML::Encoding::ISO_8859_1)
     assert_equal(297, bytes)
 
-    if defined?(Encoding)
-      contents = File.read(temp_filename, nil, nil, :encoding => Encoding::ISO8859_1)
-      assert_equal(Encoding::ISO8859_1, contents.encoding)
-      assert_equal("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n<bands genre=\"metal\"><m\xF6tley_cr\xFCe country=\"us\">M\xF6tley Cr\xFCe is an American heavy metal band formed in Los Angeles, California in 1981.</m\xF6tley_cr\xFCe><iron_maiden country=\"uk\">Iron Maiden is a British heavy metal band formed in 1975.</iron_maiden></bands>\n".force_encoding(Encoding::ISO8859_1),
-                   contents)
-    else
-      contents = File.read(temp_filename)
-      assert_equal("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n<bands genre=\"metal\"><m\xF6tley_cr\xFCe country=\"us\">M\xF6tley Cr\xFCe is an American heavy metal band formed in Los Angeles, California in 1981.</m\xF6tley_cr\xFCe><iron_maiden country=\"uk\">Iron Maiden is a British heavy metal band formed in 1975.</iron_maiden></bands>\n",
-                   contents)
-    end
+    contents = File.read(temp_filename, nil, nil, :encoding => Encoding::ISO8859_1)
+    assert_equal(Encoding::ISO8859_1, contents.encoding)
+    assert_equal("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n<bands genre=\"metal\"><m\xF6tley_cr\xFCe country=\"us\">M\xF6tley Cr\xFCe is an American heavy metal band formed in Los Angeles, California in 1981.</m\xF6tley_cr\xFCe><iron_maiden country=\"uk\">Iron Maiden is a British heavy metal band formed in 1975.</iron_maiden></bands>\n".force_encoding(Encoding::ISO8859_1),
+                 contents)
   ensure
     File.delete(temp_filename)
   end

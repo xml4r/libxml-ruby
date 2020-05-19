@@ -392,15 +392,13 @@ class TestWriter < Minitest::Test
   end
 
   def test_encoding
-    if defined?(Encoding)
-      iso = 'éloïse'.encode 'ISO-8859-1'
+    iso = 'éloïse'.encode 'ISO-8859-1'
 
-      writer = LibXML::XML::Writer.string
-      document writer do
-        assert(writer.write_element iso)
-      end
-      assert_equal(writer.result.strip!, "<?xml version=\"1.0\"?>\n<éloïse/>")
+    writer = LibXML::XML::Writer.string
+    document writer do
+      assert(writer.write_element iso)
     end
+    assert_equal(writer.result.strip!, "<?xml version=\"1.0\"?>\n<éloïse/>")
   end
 
   def test_flush

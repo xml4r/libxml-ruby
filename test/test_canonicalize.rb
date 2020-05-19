@@ -94,18 +94,10 @@ class TestCanonicalize < Minitest::Test
   # http://www.w3.org/TR/xml-c14n#Example-UTF8
   def test_canonicalize_with_w3c_c14n_3_6
     given_doc = LibXML::XML::Document.file(self.path('c14n/given/example-6.xml'))
-    if defined?(Encoding)
-      expected = IO.read(self.path('c14n/result/without-comments/example-6'), :encoding => Encoding::UTF_8)
-    else
-      expected = IO.read(self.path('c14n/result/without-comments/example-6'))
-    end
+    expected = IO.read(self.path('c14n/result/without-comments/example-6'), :encoding => Encoding::UTF_8)
     assert_equal(expected, given_doc.canonicalize)
 
-    if defined?(Encoding)
-      expected_1_1_without_comments = IO.read(self.path('c14n/result/1-1-without-comments/example-6'), :encoding => Encoding::UTF_8)
-    else
-      expected_1_1_without_comments = IO.read(self.path('c14n/result/1-1-without-comments/example-6'))
-    end
+    expected_1_1_without_comments = IO.read(self.path('c14n/result/1-1-without-comments/example-6'), :encoding => Encoding::UTF_8)
     mode = LibXML::XML::Document::XML_C14N_1_1
     assert_equal(expected_1_1_without_comments, given_doc.canonicalize(:mode => mode))
   end

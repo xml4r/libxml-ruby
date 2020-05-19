@@ -220,12 +220,8 @@ class TestParser < Minitest::Test
     parser = LibXML::XML::Parser.string(xml, :encoding => LibXML::XML::Encoding::ISO_8859_1)
     doc = parser.parse
     node = doc.find_first('//metal')
-    if defined?(Encoding)
-      assert_equal(Encoding::UTF_8, node.content.encoding)
-      assert_equal("m\303\266tley_cr\303\274e", node.content)
-    else
-      assert_equal("m\303\266tley_cr\303\274e", node.content)
-    end
+    assert_equal(Encoding::UTF_8, node.content.encoding)
+    assert_equal("m\303\266tley_cr\303\274e", node.content)
   end
 
   def test_fd_gc
