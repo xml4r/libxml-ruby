@@ -16,15 +16,7 @@
 #include <libxml/xmlreader.h>
 #include <libxml/c14n.h>
 
-/* Needed prior to Ruby 1.9.1 */
-#ifndef RHASH_TBL
-#define RHASH_TBL(s) (RHASH(s)->tbl)
-#endif
-
-// Encoding support added in Ruby 1.9.*
-#ifdef HAVE_RUBY_ENCODING_H
 #include <ruby/encoding.h>
-#endif
 
 #ifdef LIBXML_DEBUG_ENABLED
 #include <libxml/xpathInternals.h>
