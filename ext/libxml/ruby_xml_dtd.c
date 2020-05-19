@@ -38,13 +38,11 @@ void rxml_dtd_free(xmlDtdPtr xdtd)
 
 void rxml_dtd_mark(xmlDtdPtr xdtd)
 {
-  VALUE doc = Qnil;
-
-  if (xdtd == NULL)
-    return;
-
-  doc = (VALUE)xdtd->doc->_private;
-  rb_gc_mark(doc);
+  if (xdtd && xdtd->doc)
+  {
+      VALUE doc = (VALUE)xdtd->doc->_private;
+      rb_gc_mark(doc);
+  }
 }
 
 static VALUE rxml_dtd_alloc(VALUE klass)
