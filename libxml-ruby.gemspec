@@ -38,10 +38,10 @@ Gem::Specification.new do |spec|
                          'lib/**/*.rb',
                          'script/**/*',
                          'test/**/*'])
+
   spec.test_files = Dir.glob('test/test_*.rb')
-  spec.required_ruby_version = '>= 1.8.6'
+  spec.required_ruby_version = '>= 2.5'
   spec.date = DateTime.now
-  #spec.add_development_dependency('hanna-nouveau')
   spec.add_development_dependency('rake-compiler')
   spec.add_development_dependency('minitest')
   spec.license = 'MIT'
