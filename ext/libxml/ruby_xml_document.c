@@ -738,7 +738,7 @@ static VALUE rxml_document_root_set(VALUE self, VALUE node)
   Data_Get_Struct(node, xmlNode, xnode);
 
   if (xnode->doc != NULL && xnode->doc != xdoc)
-    rb_raise(eXMLError, "Nodes belong to different documents.  You must first import the node by calling XML::Document.import");
+    rb_raise(eXMLError, "Nodes belong to different documents.  You must first import the node by calling LibXML::XML::Document.import");
 
   xmlDocSetRootElement(xdoc, xnode);
 

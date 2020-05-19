@@ -15,7 +15,7 @@ class TestNodeCopy < Minitest::Test
       </body></html>
     STR
 
-    doc = XML::Parser.string(str).parse
+    doc = LibXML::XML::Parser.string(str).parse
 
     xpath = "//div"
     @div1 = doc.find(xpath).to_a[0]

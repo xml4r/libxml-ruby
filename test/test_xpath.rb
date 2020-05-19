@@ -5,7 +5,7 @@ require 'tempfile'
 
 class TestXPath < Minitest::Test
   def setup
-    @doc = XML::Document.file(File.join(File.dirname(__FILE__), 'model/soap.xml'))
+    @doc = LibXML::XML::Document.file(File.join(File.dirname(__FILE__), 'model/soap.xml'))
   end
   
   def teardown
@@ -14,14 +14,14 @@ class TestXPath < Minitest::Test
   
   def test_doc_find
     nodes = @doc.find('/soap:Envelope')
-    assert_instance_of(XML::XPath::Object, nodes)
+    assert_instance_of(LibXML::XML::XPath::Object, nodes)
     assert_equal(1, nodes.length)
-    assert_equal(nodes.xpath_type, XML::XPath::NODESET)
+    assert_equal(nodes.xpath_type, LibXML::XML::XPath::NODESET)
   end
 
   def test_doc_find_first
     node = @doc.find_first('/soap:Envelope/soap:Body')
-    assert_instance_of(XML::Node, node)
+    assert_instance_of(LibXML::XML::Node, node)
   end
 
   def test_ns
@@ -33,7 +33,7 @@ class TestXPath < Minitest::Test
     _stress = GC.stress
     GC.stress = true
 
-    doc = XML::Document.string('<foo xmlns="http://bar.com" />')
+    doc = LibXML::XML::Document.string('<foo xmlns="http://bar.com" />')
     node = doc.root
     # This line segfaults on prior versions of libxml-ruby
     node.find("namespace::*")
@@ -89,7 +89,7 @@ class TestXPath < Minitest::Test
 
   def test_default_ns5
     # Find all nodes with http://services.somewhere.com namespace
-    XML::Namespace.new(@doc.root, 'ns', 'http://services.somewhere.com')
+    LibXML::XML::Namespace.new(@doc.root, 'ns', 'http://services.somewhere.com')
     nodes = @doc.find('//ns:*')
     assert_equal(2, nodes.length)
     assert_equal('getManufacturerNamesResponse', nodes[0].name)
@@ -105,10 +105,10 @@ class TestXPath < Minitest::Test
   end
 
   def test_register_default_ns
-    doc = XML::Document.file(File.join(File.dirname(__FILE__), 'model/atom.xml'))
+    doc = LibXML::XML::Document.file(File.join(File.dirname(__FILE__), 'model/atom.xml'))
 
     # No namespace has been yet defined
-    assert_raises(XML::Error) do
+    assert_raises(LibXML::XML::Error) do
       doc.find("atom:title")
     end
 
@@ -143,7 +143,7 @@ class TestXPath < Minitest::Test
   end
 
   def test_node_no_doc
-    node = XML::Node.new('header', 'some content')
+    node = LibXML::XML::Node.new('header', 'some content')
     assert_raises(TypeError) do
       node = node.find_first('/header')
     end
@@ -157,11 +157,11 @@ class TestXPath < Minitest::Test
     # to the document's nodes. A segmentation fault then happens.
 
     1000.times do
-      doc = XML::Document.new('1.0')
-      doc.root = XML::Node.new("header")
+      doc = LibXML::XML::Document.new('1.0')
+      doc.root = LibXML::XML::Node.new("header")
 
       1000.times do
-        doc.root << XML::Node.new("footer")
+        doc.root << LibXML::XML::Node.new("footer")
       end
 
       doc.find('/header/footer')
@@ -170,35 +170,35 @@ class TestXPath < Minitest::Test
 
   # Test that document doesn't get freed before nodes
   def test_xpath_free
-    doc = XML::Document.file(File.join(File.dirname(__FILE__), 'model/soap.xml'))
+    doc = LibXML::XML::Document.file(File.join(File.dirname(__FILE__), 'model/soap.xml'))
     nodes = doc.find('//*')
     GC.start
     assert_equal('Envelope', nodes.first.name)
   end
 
   def test_xpath_namespace_nodes
-    doc = XML::Document.string('<feed xmlns="http://www.w3.org/2005/Atom" xmlns:xhtml="http://www.w3.org/1999/xhtml"><entry/></feed>')
+    doc = LibXML::XML::Document.string('<feed xmlns="http://www.w3.org/2005/Atom" xmlns:xhtml="http://www.w3.org/1999/xhtml"><entry/></feed>')
     nodes = doc.find('//atom:entry|namespace::*', :atom => "http://www.w3.org/2005/Atom")
     assert_equal(4, nodes.length)
 
     node = nodes[0]
-    assert_equal(XML::Node::ELEMENT_NODE, node.node_type)
+    assert_equal(LibXML::XML::Node::ELEMENT_NODE, node.node_type)
 
     node = nodes[1]
-    assert_equal(XML::Node::NAMESPACE_DECL, node.node_type)
+    assert_equal(LibXML::XML::Node::NAMESPACE_DECL, node.node_type)
 
     node = nodes[2]
-    assert_equal(XML::Node::NAMESPACE_DECL, node.node_type)
+    assert_equal(LibXML::XML::Node::NAMESPACE_DECL, node.node_type)
 
     node = nodes[3]
-    assert_equal(XML::Node::NAMESPACE_DECL, node.node_type)
+    assert_equal(LibXML::XML::Node::NAMESPACE_DECL, node.node_type)
   end
 
 	# Test to make sure we don't get nil on empty results.
 	# This is also to test that we don't segfault due to our C code getting a NULL pointer
 	# and not handling it properly.
 	def test_xpath_empty_result
-    doc = XML::Document.string('<html><body><p>Welcome to XHTML land!</p></body></html>')
+    doc = LibXML::XML::Document.string('<html><body><p>Welcome to XHTML land!</p></body></html>')
 		nodes = doc.find("//object/param[translate(@name, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'wmode']")
 		refute_nil nodes
 	end
@@ -207,13 +207,13 @@ class TestXPath < Minitest::Test
     xml = LibXML::XML::Document.string('<a></a>')
 
     # Using the expression twice used to cause a Segmentation Fault
-    error = assert_raises(XML::Error) do
+    error = assert_raises(LibXML::XML::Error) do
       xml.find('//a/')
     end
     assert_equal("Error: Invalid expression.", error.to_s)
 
     # Try again - this used to cause a Segmentation Fault
-    error = assert_raises(XML::Error) do
+    error = assert_raises(LibXML::XML::Error) do
       xml.find('//a/')
     end
     assert_equal("Error: Invalid expression.", error.to_s)

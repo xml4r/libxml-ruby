@@ -8,7 +8,7 @@ class TestTranversal < Minitest::Test
   
   def setup
     filename = File.join(File.dirname(__FILE__), 'model/books.xml')
-    @doc = XML::Document.file(filename)
+    @doc = LibXML::XML::Document.file(filename)
   end
   
   def teardown
@@ -143,10 +143,10 @@ class TestTranversal < Minitest::Test
   end
 
   def test_doc_class
-    assert_instance_of(XML::Document, @doc)
+    assert_instance_of(LibXML::XML::Document, @doc)
   end
   
   def test_root_class
-    assert_instance_of(XML::Node, @doc.root)
+    assert_instance_of(LibXML::XML::Node, @doc.root)
   end
 end

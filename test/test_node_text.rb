@@ -4,14 +4,14 @@ require_relative './test_helper'
 
 class TestTextNode < Minitest::Test
   def test_content
-    node = XML::Node.new_text('testdata')
-    assert_instance_of(XML::Node, node)
+    node = LibXML::XML::Node.new_text('testdata')
+    assert_instance_of(LibXML::XML::Node, node)
     assert_equal('testdata', node.content)
   end
 
   def test_invalid_content
     error = assert_raises(TypeError) do
-      XML::Node.new_text(nil)
+      LibXML::XML::Node.new_text(nil)
     end
     assert_equal('wrong argument type nil (expected String)', error.to_s)
   end
@@ -27,7 +27,7 @@ class TestTextNode < Minitest::Test
 		textnoenc = 'if (a < b || c > d) return "e";'
 		text = "if (a &lt; b || c &gt; d) return \"e\";"
  
-		node = XML::Node.new_text(textnoenc)
+		node = LibXML::XML::Node.new_text(textnoenc)
 		assert node.output_escaping?
 		assert_equal text, node.to_s
 
@@ -46,7 +46,7 @@ class TestTextNode < Minitest::Test
 
 	# Just a sanity check for output escaping.
   def test_output_escaping_sanity
-		node = XML::Node.new_text('testdata')
+		node = LibXML::XML::Node.new_text('testdata')
     assert_equal 'text', node.name
 		assert node.output_escaping?
 

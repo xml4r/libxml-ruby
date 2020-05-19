@@ -4,7 +4,7 @@ require_relative './test_helper'
 
 class TestNodeEdit < Minitest::Test
   def setup
-    xp = XML::Parser.string('<test><num>one</num><num>two</num><num>three</num></test>')
+    xp = LibXML::XML::Parser.string('<test><num>one</num><num>two</num><num>three</num></test>')
     @doc = xp.parse
   end
 
@@ -25,37 +25,37 @@ class TestNodeEdit < Minitest::Test
   end
 
   def test_add_next_01
-    first_node.next = XML::Node.new('num', 'one-and-a-half')
+    first_node.next = LibXML::XML::Node.new('num', 'one-and-a-half')
     assert_equal('<test><num>one</num><num>one-and-a-half</num><num>two</num><num>three</num></test>',
                  @doc.root.to_s.gsub(/\n\s*/,''))
   end
 
   def test_add_next_02
-    second_node.next = XML::Node.new('num', 'two-and-a-half')
+    second_node.next = LibXML::XML::Node.new('num', 'two-and-a-half')
     assert_equal('<test><num>one</num><num>two</num><num>two-and-a-half</num><num>three</num></test>',
                  @doc.root.to_s.gsub(/\n\s*/,''))
   end
 
   def test_add_next_03
-    third_node.next = XML::Node.new('num', 'four')
+    third_node.next = LibXML::XML::Node.new('num', 'four')
     assert_equal '<test><num>one</num><num>two</num><num>three</num><num>four</num></test>',
       @doc.root.to_s.gsub(/\n\s*/,'')
   end
 
   def test_add_prev_01
-    first_node.prev = XML::Node.new('num', 'half')
+    first_node.prev = LibXML::XML::Node.new('num', 'half')
     assert_equal '<test><num>half</num><num>one</num><num>two</num><num>three</num></test>',
       @doc.root.to_s.gsub(/\n\s*/,'')
   end
 
   def test_add_prev_02
-    second_node.prev = XML::Node.new('num', 'one-and-a-half')
+    second_node.prev = LibXML::XML::Node.new('num', 'one-and-a-half')
     assert_equal '<test><num>one</num><num>one-and-a-half</num><num>two</num><num>three</num></test>',
       @doc.root.to_s.gsub(/\n\s*/,'')
   end
 
   def test_add_prev_03
-    third_node.prev = XML::Node.new('num', 'two-and-a-half')
+    third_node.prev = LibXML::XML::Node.new('num', 'two-and-a-half')
     assert_equal '<test><num>one</num><num>two</num><num>two-and-a-half</num><num>three</num></test>',
       @doc.root.to_s.gsub(/\n\s*/,'')
   end
@@ -67,7 +67,7 @@ class TestNodeEdit < Minitest::Test
   end
 
   def test_remove_node_gc
-    xp = XML::Parser.string('<test><num>one</num><num>two</num><num>three</num></test>')
+    xp = LibXML::XML::Parser.string('<test><num>one</num><num>two</num><num>three</num></test>')
     doc = xp.parse
     doc.root.child.remove!
     GC.start
@@ -98,7 +98,7 @@ class TestNodeEdit < Minitest::Test
   end
 
   def test_append_existing_node
-    doc = XML::Parser.string('<top>a<bottom>b<one>first</one><two>second</two>c</bottom>d</top>').parse
+    doc = LibXML::XML::Parser.string('<top>a<bottom>b<one>first</one><two>second</two>c</bottom>d</top>').parse
     node1 = doc.find_first('//two')
 
     doc.root << node1
@@ -107,17 +107,17 @@ class TestNodeEdit < Minitest::Test
   end
 
   def test_wrong_doc
-    doc1 = XML::Parser.string('<nums><one></one></nums>').parse
-    doc2 = XML::Parser.string('<nums><two></two></nums>').parse
+    doc1 = LibXML::XML::Parser.string('<nums><one></one></nums>').parse
+    doc2 = LibXML::XML::Parser.string('<nums><two></two></nums>').parse
 
     node = doc1.root.child
 
-    error = assert_raises(XML::Error) do
+    error = assert_raises(LibXML::XML::Error) do
       doc2.root << node
     end
 
     GC.start
-    assert_equal(' Nodes belong to different documents.  You must first import the node by calling XML::Document.import.',
+    assert_equal(' Nodes belong to different documents.  You must first import the node by calling LibXML::XML::Document.import.',
                  error.to_s)
   end
 
@@ -127,7 +127,7 @@ class TestNodeEdit < Minitest::Test
 
     # Read in 500 documents
     500.times do
-      documents << XML::Parser.string(File.read(File.join(File.dirname(__FILE__), 'model', 'merge_bug_data.xml'))).parse
+      documents << LibXML::XML::Parser.string(File.read(File.join(File.dirname(__FILE__), 'model', 'merge_bug_data.xml'))).parse
     end
 
     master_doc = documents.shift
@@ -145,7 +145,7 @@ class TestNodeEdit < Minitest::Test
   end
 
   def test_append_chain
-    node = XML::Node.new('foo') << XML::Node.new('bar') << "bars contents"
+    node = LibXML::XML::Node.new('foo') << LibXML::XML::Node.new('bar') << "bars contents"
     assert_equal('<foo><bar/>bars contents</foo>',
                  node.to_s)
   end

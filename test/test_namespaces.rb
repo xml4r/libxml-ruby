@@ -6,7 +6,7 @@ require_relative './test_helper'
 class TestNamespaces < Minitest::Test
   def setup
     file = File.join(File.dirname(__FILE__), 'model/soap.xml')
-    @doc = XML::Document.file(file)
+    @doc = LibXML::XML::Document.file(file)
   end
 
   def teardown
@@ -28,10 +28,10 @@ class TestNamespaces < Minitest::Test
   end
 
   def test_set_namespace_node
-    node = XML::Node.new('Envelope')
+    node = LibXML::XML::Node.new('Envelope')
     assert_equal('<Envelope/>', node.to_s)
 
-    ns = XML::Namespace.new(node, 'soap', 'http://schemas.xmlsoap.org/soap/envelope/')
+    ns = LibXML::XML::Namespace.new(node, 'soap', 'http://schemas.xmlsoap.org/soap/envelope/')
     assert_equal("<Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"/>", node.to_s)
     assert_nil(node.namespaces.namespace)
 
@@ -43,16 +43,16 @@ class TestNamespaces < Minitest::Test
 
   def test_set_namespace_attribute
     # Create node
-    node = XML::Node.new('Envelope')
+    node = LibXML::XML::Node.new('Envelope')
     assert_equal('<Envelope/>', node.to_s)
 
     # Create attribute
-    attr = XML::Attr.new(node, "encodingStyle", "http://www.w3.org/2001/12/soap-encoding")
+    attr = LibXML::XML::Attr.new(node, "encodingStyle", "http://www.w3.org/2001/12/soap-encoding")
     assert_equal('<Envelope encodingStyle="http://www.w3.org/2001/12/soap-encoding"/>',
                  node.to_s)
 
     # Create namespace attribute
-    ns = XML::Namespace.new(node, 'soap', 'http://schemas.xmlsoap.org/soap/envelope/')
+    ns = LibXML::XML::Namespace.new(node, 'soap', 'http://schemas.xmlsoap.org/soap/envelope/')
     assert_equal('<Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" encodingStyle="http://www.w3.org/2001/12/soap-encoding"/>',
                   node.to_s)
     assert_nil(node.namespaces.namespace)
@@ -71,19 +71,19 @@ class TestNamespaces < Minitest::Test
   end
 
   def test_define_namespace
-    node = XML::Node.new('Envelope')
+    node = LibXML::XML::Node.new('Envelope')
     assert_equal('<Envelope/>', node.to_s)
 
-    XML::Namespace.new(node, 'soap', 'http://schemas.xmlsoap.org/soap/envelope/')
+    LibXML::XML::Namespace.new(node, 'soap', 'http://schemas.xmlsoap.org/soap/envelope/')
     assert_equal("<Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"/>", node.to_s)
     assert_nil(node.namespaces.namespace)
   end
 
   def test_define_default_namespace
-    node = XML::Node.new('Envelope')
+    node = LibXML::XML::Node.new('Envelope')
     assert_equal('<Envelope/>', node.to_s)
 
-    XML::Namespace.new(node, nil, 'http://schemas.xmlsoap.org/soap/envelope/')
+    LibXML::XML::Namespace.new(node, nil, 'http://schemas.xmlsoap.org/soap/envelope/')
     assert_equal("<Envelope xmlns=\"http://schemas.xmlsoap.org/soap/envelope/\"/>", node.to_s)
     # This seems wrong, but appears to be the way libxml works
     assert_nil(node.namespaces.namespace)
@@ -97,27 +97,27 @@ class TestNamespaces < Minitest::Test
     assert_equal(5, namespaces.length)
 
     namespace = namespaces[0]
-    assert_instance_of(XML::Namespace, namespace)
+    assert_instance_of(LibXML::XML::Namespace, namespace)
     assert_nil(namespace.prefix)
     assert_equal('http://services.somewhere.com', namespace.href)
 
     namespace = namespaces[1]
-    assert_instance_of(XML::Namespace, namespace)
+    assert_instance_of(LibXML::XML::Namespace, namespace)
     assert_equal('ns1', namespace.prefix)
     assert_equal('http://domain.somewhere.com', namespace.href)
 
     namespace = namespaces[2]
-    assert_instance_of(XML::Namespace, namespace)
+    assert_instance_of(LibXML::XML::Namespace, namespace)
     assert_equal('soap', namespace.prefix)
     assert_equal('http://schemas.xmlsoap.org/soap/envelope/', namespace.href)
 
     namespace = namespaces[3]
-    assert_instance_of(XML::Namespace, namespace)
+    assert_instance_of(LibXML::XML::Namespace, namespace)
     assert_equal('xsd', namespace.prefix)
     assert_equal('http://www.w3.org/2001/XMLSchema', namespace.href)
 
     namespace = namespaces[4]
-    assert_instance_of(XML::Namespace, namespace)
+    assert_instance_of(LibXML::XML::Namespace, namespace)
     assert_equal('xsi', namespace.prefix)
     assert_equal('http://www.w3.org/2001/XMLSchema-instance', namespace.href)
   end
@@ -127,17 +127,17 @@ class TestNamespaces < Minitest::Test
     assert_equal(3, ns_defs.size)
 
     namespace = ns_defs[0]
-    assert_instance_of(XML::Namespace, namespace)
+    assert_instance_of(LibXML::XML::Namespace, namespace)
     assert_equal('soap', namespace.prefix)
     assert_equal('http://schemas.xmlsoap.org/soap/envelope/', namespace.href)
 
     namespace = ns_defs[1]
-    assert_instance_of(XML::Namespace, namespace)
+    assert_instance_of(LibXML::XML::Namespace, namespace)
     assert_equal('xsd', namespace.prefix)
     assert_equal('http://www.w3.org/2001/XMLSchema', namespace.href)
 
     namespace = ns_defs[2]
-    assert_instance_of(XML::Namespace, namespace)
+    assert_instance_of(LibXML::XML::Namespace, namespace)
     assert_equal('xsi', namespace.prefix)
     assert_equal('http://www.w3.org/2001/XMLSchema-instance', namespace.href)
 
@@ -147,7 +147,7 @@ class TestNamespaces < Minitest::Test
     assert_equal(1, ns_defs.size)
 
     namespace = ns_defs[0]
-    assert_instance_of(XML::Namespace, namespace)
+    assert_instance_of(LibXML::XML::Namespace, namespace)
     assert_nil(namespace.prefix)
     assert_equal('http://services.somewhere.com', namespace.href)
   end
@@ -155,7 +155,7 @@ class TestNamespaces < Minitest::Test
   def test_find_by_prefix
     namespace = @doc.root.namespaces.find_by_prefix('soap')
 
-    assert_instance_of(XML::Namespace, namespace)
+    assert_instance_of(LibXML::XML::Namespace, namespace)
     assert_equal('soap', namespace.prefix)
     assert_equal('http://schemas.xmlsoap.org/soap/envelope/', namespace.href)
   end
@@ -168,7 +168,7 @@ class TestNamespaces < Minitest::Test
                            :ns1 => 'http://services.somewhere.com')
     namespace = node.namespaces.find_by_prefix(nil)
 
-    assert_instance_of(XML::Namespace, namespace)
+    assert_instance_of(LibXML::XML::Namespace, namespace)
     assert_nil(namespace.prefix)
     assert_equal('http://services.somewhere.com', namespace.href)
   end
@@ -179,19 +179,19 @@ class TestNamespaces < Minitest::Test
 
     namespace = node.namespaces.find_by_href('http://schemas.xmlsoap.org/soap/envelope/')
 
-    assert_instance_of(XML::Namespace, namespace)
+    assert_instance_of(LibXML::XML::Namespace, namespace)
     assert_equal('soap', namespace.prefix)
     assert_equal('http://schemas.xmlsoap.org/soap/envelope/', namespace.href)
   end
 
   def test_default_namespace
-    doc = XML::Document.string('<Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/"/>')
+    doc = LibXML::XML::Document.string('<Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/"/>')
     ns = doc.root.namespaces.default
     assert_equal(ns.href, 'http://schemas.xmlsoap.org/soap/envelope/')
   end
 
   def test_default_prefix
-    doc = XML::Document.string('<Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/"/>')
+    doc = LibXML::XML::Document.string('<Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/"/>')
     doc.root.namespaces.default_prefix = 'soap'
 
     node = doc.root.find_first('/soap:Envelope')

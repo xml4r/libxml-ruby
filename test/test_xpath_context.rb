@@ -11,8 +11,8 @@ class TestXPathContext < Minitest::Test
   NS0_URI = 'http://services.somewhere.com'
   
   def setup
-    doc = XML::Document.file(File.join(File.dirname(__FILE__), 'model/soap.xml'))
-    @context = XML::XPath::Context.new(doc)
+    doc = LibXML::XML::Document.file(File.join(File.dirname(__FILE__), 'model/soap.xml'))
+    @context = LibXML::XML::XPath::Context.new(doc)
   end
   
   def teardown()
@@ -79,9 +79,9 @@ class TestXPathContext < Minitest::Test
   end
 
   def test_require_doc
-    doc = XML::Document.file(File.join(File.dirname(__FILE__), 'model/soap.xml'))
+    doc = LibXML::XML::Document.file(File.join(File.dirname(__FILE__), 'model/soap.xml'))
     error = assert_raises(TypeError) do
-      @context = XML::XPath::Context.new(doc.root)
+      @context = LibXML::XML::XPath::Context.new(doc.root)
     end
     assert_equal("Supplied argument must be a document or node.", error.to_s)
   end

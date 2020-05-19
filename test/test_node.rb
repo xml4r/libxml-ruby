@@ -7,13 +7,13 @@ class TestNode < Minitest::Test
     @file_name = "model/bands.utf-8.xml"
 
     # Strip spaces to make testing easier
-    XML.default_keep_blanks = false
+    LibXML::XML.default_keep_blanks = false
     file = File.join(File.dirname(__FILE__), @file_name)
-    @doc = XML::Document.file(file)
+    @doc = LibXML::XML::Document.file(file)
   end
   
   def teardown
-    XML.default_keep_blanks = true
+    LibXML::XML.default_keep_blanks = true
     @doc = nil
   end
 
@@ -23,40 +23,40 @@ class TestNode < Minitest::Test
   end
 
   def test_doc_class
-    assert_instance_of(XML::Document, @doc)
+    assert_instance_of(LibXML::XML::Document, @doc)
   end
 
   def test_doc_node_type
-    assert_equal XML::Node::DOCUMENT_NODE, @doc.node_type
+    assert_equal LibXML::XML::Node::DOCUMENT_NODE, @doc.node_type
   end
 
   def test_root_class
-    assert_instance_of(XML::Node, @doc.root)
+    assert_instance_of(LibXML::XML::Node, @doc.root)
   end
 
   def test_root_node_type
-    assert_equal XML::Node::ELEMENT_NODE, @doc.root.node_type
+    assert_equal LibXML::XML::Node::ELEMENT_NODE, @doc.root.node_type
   end
 
   def test_node_class
     for n in nodes
-      assert_instance_of(XML::Node, n)
+      assert_instance_of(LibXML::XML::Node, n)
     end
   end
 
   def test_context
     node = @doc.root
     context = node.context
-    assert_instance_of(XML::XPath::Context, context)
+    assert_instance_of(LibXML::XML::XPath::Context, context)
   end
 
   def test_find
-    assert_instance_of(XML::XPath::Object, self.nodes)
+    assert_instance_of(LibXML::XML::XPath::Object, self.nodes)
   end
 
   def test_node_child_get
     assert_instance_of(TrueClass, @doc.root.child?)
-    assert_instance_of(XML::Node, @doc.root.child)
+    assert_instance_of(LibXML::XML::Node, @doc.root.child)
 
     if defined?(Encoding)
       assert_equal(Encoding::UTF_8, @doc.root.child.name.encoding)
@@ -68,7 +68,7 @@ class TestNode < Minitest::Test
 
   def test_node_doc
     for n in nodes
-      assert_instance_of(XML::Document, n.doc) if n.document?
+      assert_instance_of(LibXML::XML::Document, n.doc) if n.document?
     end
   end
 
@@ -80,7 +80,7 @@ class TestNode < Minitest::Test
   def test_node_find
     nodes = @doc.root.find('./fixnum')
     for node in nodes
-      assert_instance_of(XML::Node, node)
+      assert_instance_of(LibXML::XML::Node, node)
     end
   end
 
@@ -96,7 +96,7 @@ class TestNode < Minitest::Test
     assert(node_a.eql?(node_b))
 
     file = File.join(File.dirname(__FILE__), @file_name)
-    doc2 = XML::Document.file(file)
+    doc2 = LibXML::XML::Document.file(file)
 
     node_a2 = doc2.find_first('*[@country]')
 
@@ -107,8 +107,8 @@ class TestNode < Minitest::Test
   end
 
   def test_equality_2
-    parent = XML::Node.new('parent')
-    child = XML::Node.new('child')
+    parent = LibXML::XML::Node.new('parent')
+    child = LibXML::XML::Node.new('child')
     parent << child
 
     node_a = child.parent
@@ -139,7 +139,7 @@ class TestNode < Minitest::Test
   end
 
   def test_base
-    doc = XML::Parser.string('<person />').parse
+    doc = LibXML::XML::Parser.string('<person />').parse
     assert_nil(doc.root.base_uri)
   end
 
@@ -152,7 +152,7 @@ class TestNode < Minitest::Test
   #
   def test_output_escaping
 		text = '<bad-script>if (a &lt; b || b &gt; c) { return "text"; }<stop/>return "&gt;&gt;&gt;snip&lt;&lt;&lt;";</bad-script>'
-    node = XML::Parser.string(text).parse.root
+    node = LibXML::XML::Parser.string(text).parse.root
 		assert_equal text, node.to_s
 
 		text_noenc = '<bad-script>if (a < b || b > c) { return "text"; }<stop/>return ">>>snip<<<";</bad-script>'
@@ -172,7 +172,7 @@ class TestNode < Minitest::Test
   # Just a sanity check for output escaping.
   def test_output_escaping_sanity
 		text = '<bad-script>if (a &lt; b || b &gt; c) { return "text"; }<stop/>return "&gt;&gt;&gt;snip&lt;&lt;&lt;";</bad-script>'
-    node = XML::Parser.string(text).parse.root
+    node = LibXML::XML::Parser.string(text).parse.root
 		affected = node.find('//text()')
 
 		check_escaping = lambda do |flag|
@@ -205,15 +205,15 @@ class TestNode < Minitest::Test
     node = @doc.root
 
     node.space_preserve = false
-    assert_equal XML::Node::SPACE_DEFAULT, node.space_preserve
+    assert_equal LibXML::XML::Node::SPACE_DEFAULT, node.space_preserve
 
     node.space_preserve = true
-    assert_equal XML::Node::SPACE_PRESERVE, node.space_preserve
+    assert_equal LibXML::XML::Node::SPACE_PRESERVE, node.space_preserve
   end
 
   def test_empty
     text = '<name> </name>'
-    doc = XML::Parser.string(text).parse
+    doc = LibXML::XML::Parser.string(text).parse
 
     node = doc.root
     assert(!node.empty?)
@@ -223,17 +223,17 @@ class TestNode < Minitest::Test
   end
 
   def test_save_no_empty_tags
-    node = XML::Node.new('test')
+    node = LibXML::XML::Node.new('test')
     assert_equal '<test/>', node.to_s
 
-    XML.default_save_no_empty_tags = true
+    LibXML::XML.default_save_no_empty_tags = true
     assert_equal '<test></test>', node.to_s
 
-    XML.default_save_no_empty_tags = false
+    LibXML::XML.default_save_no_empty_tags = false
   end
 
   def test_set_content
-    node = XML::Node.new('test')
+    node = LibXML::XML::Node.new('test')
     node.content = "unescaped & string"
     assert_equal("unescaped & string", node.content)
     assert_equal("<test>unescaped &amp; string</test>", node.to_s)

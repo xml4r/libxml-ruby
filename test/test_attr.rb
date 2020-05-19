@@ -4,7 +4,7 @@ require_relative './test_helper'
 
 class AttrNodeTest < Minitest::Test
   def setup
-    xp = XML::Parser.string(<<-EOS)
+    xp = LibXML::XML::Parser.string(<<-EOS)
     <CityModel
       xmlns="http://www.opengis.net/examples"
       xmlns:city="http://www.opengis.net/examples"
@@ -34,12 +34,12 @@ class AttrNodeTest < Minitest::Test
 
   def test_doc
     refute_nil(@doc)
-    assert_equal(XML::Encoding::NONE, @doc.encoding)
+    assert_equal(LibXML::XML::Encoding::NONE, @doc.encoding)
   end
 
   def test_types
     attribute = city_member.attributes.get_attribute('name')
-    assert_instance_of(XML::Attr, attribute)
+    assert_instance_of(LibXML::XML::Attr, attribute)
     assert_equal('attribute', attribute.node_type_name)
   end
 
@@ -91,8 +91,8 @@ class AttrNodeTest < Minitest::Test
     attributes = city_member.attributes
     assert_equal(5, attributes.length)
 
-    attr = XML::Attr.new(city_member, 'size', '50,000')
-    assert_instance_of(XML::Attr, attr)
+    attr = LibXML::XML::Attr.new(city_member, 'size', '50,000')
+    assert_instance_of(LibXML::XML::Attr, attr)
 
     attributes = city_member.attributes
     assert_equal(6, attributes.length)
@@ -115,9 +115,9 @@ class AttrNodeTest < Minitest::Test
   def test_create_ns
     assert_equal(5, city_member.attributes.length)
 
-    ns = XML::Namespace.new(city_member, 'my_namepace', 'http://www.mynamespace.com')
-    attr = XML::Attr.new(city_member, 'rating', 'rocks', ns)
-    assert_instance_of(XML::Attr, attr)
+    ns = LibXML::XML::Namespace.new(city_member, 'my_namepace', 'http://www.mynamespace.com')
+    attr = LibXML::XML::Attr.new(city_member, 'rating', 'rocks', ns)
+    assert_instance_of(LibXML::XML::Attr, attr)
     assert_equal('rating', attr.name)
     assert_equal('rocks', attr.value)
 
@@ -144,27 +144,27 @@ class AttrNodeTest < Minitest::Test
 
   def test_first
     attribute = city_member.attributes.first
-    assert_instance_of(XML::Attr, attribute)
+    assert_instance_of(LibXML::XML::Attr, attribute)
     assert_equal('name', attribute.name)
     assert_equal('Cambridge', attribute.value)
 
     attribute = attribute.next
-    assert_instance_of(XML::Attr, attribute)
+    assert_instance_of(LibXML::XML::Attr, attribute)
     assert_equal('type', attribute.name)
     assert_equal('simple', attribute.value)
 
     attribute = attribute.next
-    assert_instance_of(XML::Attr, attribute)
+    assert_instance_of(LibXML::XML::Attr, attribute)
     assert_equal('title', attribute.name)
     assert_equal('Trinity Lane', attribute.value)
 
     attribute = attribute.next
-    assert_instance_of(XML::Attr, attribute)
+    assert_instance_of(LibXML::XML::Attr, attribute)
     assert_equal('href', attribute.name)
     assert_equal('http://www.foo.net/cgi-bin/wfs?FeatureID=C10239', attribute.value)
 
     attribute = attribute.next
-    assert_instance_of(XML::Attr, attribute)
+    assert_instance_of(LibXML::XML::Attr, attribute)
     assert_equal('remoteSchema', attribute.name)
     assert_equal("city.xsd#xpointer(//complexType[@name='RoadType'])", attribute.value)
 

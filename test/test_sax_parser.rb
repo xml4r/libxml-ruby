@@ -4,13 +4,13 @@ require_relative './test_helper'
 require 'stringio'
 
 class DocTypeCallback
-  include XML::SaxParser::Callbacks
+  include LibXML::XML::SaxParser::Callbacks
   def on_start_element(element, attributes)
   end
 end
 
 class TestCaseCallbacks
-  include XML::SaxParser::Callbacks
+  include LibXML::XML::SaxParser::Callbacks
 
   attr_accessor :result
 
@@ -119,20 +119,20 @@ class TestSaxParser < Minitest::Test
   end
 
   def test_file
-    parser = XML::SaxParser.file(saxtest_file)
+    parser = LibXML::XML::SaxParser.file(saxtest_file)
     parser.callbacks = TestCaseCallbacks.new
     parser.parse
     verify(parser)
   end
 
   def test_file_no_callbacks
-    parser = XML::SaxParser.file(saxtest_file)
+    parser = LibXML::XML::SaxParser.file(saxtest_file)
     assert_equal true, parser.parse
   end
 
   def test_noexistent_file
-    error = assert_raises(XML::Error) do
-      XML::SaxParser.file('i_dont_exist.xml')
+    error = assert_raises(LibXML::XML::Error) do
+      LibXML::XML::SaxParser.file('i_dont_exist.xml')
     end
 
     assert_equal('Warning: failed to load external entity "i_dont_exist.xml".', error.to_s)
@@ -140,7 +140,7 @@ class TestSaxParser < Minitest::Test
 
   def test_nil_file
     error = assert_raises(TypeError) do
-      XML::SaxParser.file(nil)
+      LibXML::XML::SaxParser.file(nil)
     end
 
     assert_match(/nil into String/, error.to_s)
@@ -148,7 +148,7 @@ class TestSaxParser < Minitest::Test
 
   def test_io
     File.open(saxtest_file) do |file|
-      parser = XML::SaxParser.io(file)
+      parser = LibXML::XML::SaxParser.io(file)
       parser.callbacks = TestCaseCallbacks.new
       parser.parse
       verify(parser)
@@ -157,7 +157,7 @@ class TestSaxParser < Minitest::Test
 
   def test_nil_io
     error = assert_raises(TypeError) do
-      XML::HTMLParser.io(nil)
+      LibXML::XML::HTMLParser.io(nil)
     end
 
     assert_equal("Must pass in an IO object", error.to_s)
@@ -165,13 +165,13 @@ class TestSaxParser < Minitest::Test
 
   def test_string_no_callbacks
     xml = File.read(saxtest_file)
-    parser = XML::SaxParser.string(xml)
+    parser = LibXML::XML::SaxParser.string(xml)
     assert_equal true, parser.parse
   end
 
   def test_string
     xml = File.read(saxtest_file)
-    parser = XML::SaxParser.string(xml)
+    parser = LibXML::XML::SaxParser.string(xml)
     parser.callbacks = TestCaseCallbacks.new
     parser.parse
     verify(parser)
@@ -180,7 +180,7 @@ class TestSaxParser < Minitest::Test
   def test_string_io
     xml = File.read(saxtest_file)
     io = StringIO.new(xml)
-    parser = XML::SaxParser.io(io)
+    parser = LibXML::XML::SaxParser.io(io)
     
     parser.callbacks = TestCaseCallbacks.new
     parser.parse
@@ -189,7 +189,7 @@ class TestSaxParser < Minitest::Test
 
   def test_nil_string
     error = assert_raises(TypeError) do
-      XML::SaxParser.string(nil)
+      LibXML::XML::SaxParser.string(nil)
     end
 
     assert_equal("wrong argument type nil (expected String)", error.to_s)
@@ -203,7 +203,7 @@ class TestSaxParser < Minitest::Test
 <a>a1</a>
 </Results>
 EOS
-    parser = XML::SaxParser.string(xml)
+    parser = LibXML::XML::SaxParser.string(xml)
     parser.callbacks = DocTypeCallback.new
     doc = parser.parse
     refute_nil(doc)
@@ -217,7 +217,7 @@ EOS
 <Test/>
 EOS
 
-    parser = XML::SaxParser.string(xml)
+    parser = LibXML::XML::SaxParser.string(xml)
     parser.callbacks = TestCaseCallbacks.new
 
     parser.parse
@@ -239,10 +239,10 @@ EOS
     xml = <<-EOS
       <Results>
     EOS
-    parser = XML::SaxParser.string(xml)
+    parser = LibXML::XML::SaxParser.string(xml)
     parser.callbacks = TestCaseCallbacks.new
 
-    error = assert_raises(XML::Error) do
+    error = assert_raises(LibXML::XML::Error) do
       parser.parse
     end
 
@@ -258,11 +258,11 @@ EOS
     assert_equal("end_document", result[i+=1])
 
     refute_nil(error)
-    assert_kind_of(XML::Error, error)
+    assert_kind_of(LibXML::XML::Error, error)
     assert_equal("Fatal error: Premature end of data in tag Results line 1 at :2.", error.message)
-    assert_equal(XML::Error::PARSER, error.domain)
-    assert_equal(XML::Error::TAG_NOT_FINISHED, error.code)
-    assert_equal(XML::Error::FATAL, error.level)
+    assert_equal(LibXML::XML::Error::PARSER, error.domain)
+    assert_equal(LibXML::XML::Error::TAG_NOT_FINISHED, error.code)
+    assert_equal(LibXML::XML::Error::FATAL, error.level)
     assert_nil(error.file)
     assert_equal(2, error.line)
     assert_equal('Results', error.str1)
@@ -305,10 +305,10 @@ EOS
       </Products>
     EOS
 
-    parser = XML::SaxParser.string(xml)
+    parser = LibXML::XML::SaxParser.string(xml)
     parser.callbacks = TestCaseCallbacks.new
 
-    error = assert_raises(XML::Error) do
+    error = assert_raises(LibXML::XML::Error) do
       parser.parse
     end
     assert_equal("Fatal error: xmlParseEntityRef: no name at :5.", error.to_s)

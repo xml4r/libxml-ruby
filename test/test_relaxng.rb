@@ -6,7 +6,7 @@ require_relative './test_helper'
 class TestRelaxNG < Minitest::Test
   def setup
     file = File.join(File.dirname(__FILE__), 'model/shiporder.xml')
-    @doc = XML::Document.file(file)
+    @doc = LibXML::XML::Document.file(file)
   end
   
   def teardown
@@ -14,12 +14,12 @@ class TestRelaxNG < Minitest::Test
   end
   
   def relaxng
-    document = XML::Document.file(File.join(File.dirname(__FILE__), 'model/shiporder.rng'))
-    XML::RelaxNG.document(document)
+    document = LibXML::XML::Document.file(File.join(File.dirname(__FILE__), 'model/shiporder.rng'))
+    LibXML::XML::RelaxNG.document(document)
   end
 
   def test_from_doc
-    assert_instance_of(XML::RelaxNG, relaxng)
+    assert_instance_of(LibXML::XML::RelaxNG, relaxng)
   end
   
   def test_valid
@@ -27,19 +27,19 @@ class TestRelaxNG < Minitest::Test
   end
   
   def test_invalid
-    new_node = XML::Node.new('invalid', 'this will mess up validation')
+    new_node = LibXML::XML::Node.new('invalid', 'this will mess up validation')
     @doc.root << new_node
     
-    error = assert_raises(XML::Error) do
+    error = assert_raises(LibXML::XML::Error) do
       @doc.validate_relaxng(relaxng)
     end
 
     refute_nil(error)
-    assert_kind_of(XML::Error, error)
+    assert_kind_of(LibXML::XML::Error, error)
     assert(error.message.match(/Error: Did not expect element invalid there/))
-    assert_equal(XML::Error::RELAXNGV, error.domain)
-    assert_equal(XML::Error::LT_IN_ATTRIBUTE, error.code)
-    assert_equal(XML::Error::ERROR, error.level)
+    assert_equal(LibXML::XML::Error::RELAXNGV, error.domain)
+    assert_equal(LibXML::XML::Error::LT_IN_ATTRIBUTE, error.code)
+    assert_equal(LibXML::XML::Error::ERROR, error.level)
     assert(error.file.match(/shiporder\.xml/))
     assert_nil(error.line)
     assert_equal('invalid', error.str1)

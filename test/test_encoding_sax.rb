@@ -102,13 +102,13 @@ class TestEncodingSax < Minitest::Test
   end
 
   def test_encoding_iso_8859_1
-    parser = XML::SaxParser.file(file_for_encoding(Encoding::ISO_8859_1))
+    parser = LibXML::XML::SaxParser.file(file_for_encoding(Encoding::ISO_8859_1))
     parser.callbacks = SaxEncodingCallbacks.new
     parser.parse
   end
 
   def test_encoding_utf8
-    parser = XML::SaxParser.file(file_for_encoding(Encoding::UTF_8))
+    parser = LibXML::XML::SaxParser.file(file_for_encoding(Encoding::UTF_8))
     parser.callbacks = SaxEncodingCallbacks.new
     parser.parse
   end

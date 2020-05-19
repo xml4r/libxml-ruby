@@ -19,60 +19,60 @@ class TestReader < Minitest::Test
     assert(!reader.read)
 
     # Check what was read
-    expected = [XML::Reader::TYPE_PROCESSING_INSTRUCTION,
-                XML::Reader::TYPE_ELEMENT,
-                XML::Reader::TYPE_SIGNIFICANT_WHITESPACE,
-                XML::Reader::TYPE_COMMENT,
-                XML::Reader::TYPE_SIGNIFICANT_WHITESPACE,
-                XML::Reader::TYPE_ELEMENT,
-                XML::Reader::TYPE_SIGNIFICANT_WHITESPACE,
-                XML::Reader::TYPE_ELEMENT,
-                XML::Reader::TYPE_CDATA,
-                XML::Reader::TYPE_END_ELEMENT,
-                XML::Reader::TYPE_SIGNIFICANT_WHITESPACE,
-                XML::Reader::TYPE_ELEMENT,
-                XML::Reader::TYPE_SIGNIFICANT_WHITESPACE,
-                XML::Reader::TYPE_ELEMENT,
-                XML::Reader::TYPE_SIGNIFICANT_WHITESPACE,
-                XML::Reader::TYPE_ELEMENT,
-                XML::Reader::TYPE_TEXT,
-                XML::Reader::TYPE_END_ELEMENT,
-                XML::Reader::TYPE_SIGNIFICANT_WHITESPACE,
-                XML::Reader::TYPE_END_ELEMENT,
-                XML::Reader::TYPE_SIGNIFICANT_WHITESPACE,
-                XML::Reader::TYPE_END_ELEMENT,
-                XML::Reader::TYPE_SIGNIFICANT_WHITESPACE,
-                XML::Reader::TYPE_END_ELEMENT,
-                XML::Reader::TYPE_SIGNIFICANT_WHITESPACE,
-                XML::Reader::TYPE_END_ELEMENT]
+    expected = [LibXML::XML::Reader::TYPE_PROCESSING_INSTRUCTION,
+                LibXML::XML::Reader::TYPE_ELEMENT,
+                LibXML::XML::Reader::TYPE_SIGNIFICANT_WHITESPACE,
+                LibXML::XML::Reader::TYPE_COMMENT,
+                LibXML::XML::Reader::TYPE_SIGNIFICANT_WHITESPACE,
+                LibXML::XML::Reader::TYPE_ELEMENT,
+                LibXML::XML::Reader::TYPE_SIGNIFICANT_WHITESPACE,
+                LibXML::XML::Reader::TYPE_ELEMENT,
+                LibXML::XML::Reader::TYPE_CDATA,
+                LibXML::XML::Reader::TYPE_END_ELEMENT,
+                LibXML::XML::Reader::TYPE_SIGNIFICANT_WHITESPACE,
+                LibXML::XML::Reader::TYPE_ELEMENT,
+                LibXML::XML::Reader::TYPE_SIGNIFICANT_WHITESPACE,
+                LibXML::XML::Reader::TYPE_ELEMENT,
+                LibXML::XML::Reader::TYPE_SIGNIFICANT_WHITESPACE,
+                LibXML::XML::Reader::TYPE_ELEMENT,
+                LibXML::XML::Reader::TYPE_TEXT,
+                LibXML::XML::Reader::TYPE_END_ELEMENT,
+                LibXML::XML::Reader::TYPE_SIGNIFICANT_WHITESPACE,
+                LibXML::XML::Reader::TYPE_END_ELEMENT,
+                LibXML::XML::Reader::TYPE_SIGNIFICANT_WHITESPACE,
+                LibXML::XML::Reader::TYPE_END_ELEMENT,
+                LibXML::XML::Reader::TYPE_SIGNIFICANT_WHITESPACE,
+                LibXML::XML::Reader::TYPE_END_ELEMENT,
+                LibXML::XML::Reader::TYPE_SIGNIFICANT_WHITESPACE,
+                LibXML::XML::Reader::TYPE_END_ELEMENT]
 
     assert_equal(expected, node_types)
   end
 
   def test_document
-    reader = XML::Reader.document(XML::Document.file(XML_FILE))
+    reader = LibXML::XML::Reader.document(LibXML::XML::Document.file(XML_FILE))
     verify_simple(reader)
   end
 
   def test_file
-    reader = XML::Reader.file(XML_FILE)
+    reader = LibXML::XML::Reader.file(XML_FILE)
     verify_simple(reader)
   end
 
   def test_invalid_file
-    assert_raises(XML::Error) do
-      XML::Reader.file('/does/not/exist')
+    assert_raises(LibXML::XML::Error) do
+      LibXML::XML::Reader.file('/does/not/exist')
     end
   end
 
   def test_string
-    reader = XML::Reader.string(File.read(XML_FILE))
+    reader = LibXML::XML::Reader.string(File.read(XML_FILE))
     verify_simple(reader)
   end
 
   def test_io
     File.open(XML_FILE, 'rb') do |io|
-      reader = XML::Reader.io(io)
+      reader = LibXML::XML::Reader.io(io)
       verify_simple(reader)
     end
   end
@@ -81,7 +81,7 @@ class TestReader < Minitest::Test
     # Test that the reader keeps a reference
     # to the io object
     file = File.open(XML_FILE, 'rb')
-    reader = XML::Reader.io(file)
+    reader = LibXML::XML::Reader.io(file)
     file = nil
     GC.start
     assert(reader.read)
@@ -90,21 +90,21 @@ class TestReader < Minitest::Test
   def test_string_io
     data = File.read(XML_FILE)
     string_io = StringIO.new(data)
-    reader = XML::Reader.io(string_io)
+    reader = LibXML::XML::Reader.io(string_io)
     verify_simple(reader)
   end
 
   def test_error
-    reader = XML::Reader.string('<foo blah')
+    reader = LibXML::XML::Reader.string('<foo blah')
 
-    error = assert_raises(XML::Error) do
+    error = assert_raises(LibXML::XML::Error) do
       reader.read
     end
     assert_equal("Fatal error: Couldn't find end of Start Tag foo at :1.", error.to_s)
   end
 
   def test_attr
-    parser = XML::Reader.string("<foo x='1' y='2'/>")
+    parser = LibXML::XML::Reader.string("<foo x='1' y='2'/>")
     assert(parser.read)
     assert_equal('foo', parser.name)
     assert_equal('1', parser['x'])
@@ -116,7 +116,7 @@ class TestReader < Minitest::Test
   end
 
   def test_move_attr
-      reader = XML::Reader.string('<root xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xhtml="http://www.w3.org/1999/xhtml"><link xml:id="abc" xlink:href="def" xhtml:class="ghi" bar="jkl" /></root>')
+      reader = LibXML::XML::Reader.string('<root xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xhtml="http://www.w3.org/1999/xhtml"><link xml:id="abc" xlink:href="def" xhtml:class="ghi" bar="jkl" /></root>')
       assert(reader.read) # <root/>
       assert(reader.read) # <link/>
 
@@ -134,7 +134,7 @@ class TestReader < Minitest::Test
   end
 
   def test_get_attr
-      reader = XML::Reader.string('<root xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xhtml="http://www.w3.org/1999/xhtml"><link xml:id="abc" xlink:href="def" xhtml:class="ghi" bar="jkl" /></root>')
+      reader = LibXML::XML::Reader.string('<root xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xhtml="http://www.w3.org/1999/xhtml"><link xml:id="abc" xlink:href="def" xhtml:class="ghi" bar="jkl" /></root>')
       assert(reader.read) # <root/>
       assert(reader.read) # <link/>
 
@@ -148,24 +148,24 @@ class TestReader < Minitest::Test
   end
 
   def test_value
-    parser = XML::Reader.string("<foo><bar>1</bar><bar>2</bar><bar>3</bar></foo>")
+    parser = LibXML::XML::Reader.string("<foo><bar>1</bar><bar>2</bar><bar>3</bar></foo>")
     assert(parser.read)
     assert_equal('foo', parser.name)
     assert_nil(parser.value)
     3.times do |i|
       assert(parser.read)
-      assert_equal(XML::Reader::TYPE_ELEMENT, parser.node_type)
+      assert_equal(LibXML::XML::Reader::TYPE_ELEMENT, parser.node_type)
       assert_equal('bar', parser.name)
       assert(parser.read)
-      assert_equal(XML::Reader::TYPE_TEXT, parser.node_type)
+      assert_equal(LibXML::XML::Reader::TYPE_TEXT, parser.node_type)
       assert_equal((i + 1).to_s, parser.value)
       assert(parser.read)
-      assert_equal(XML::Reader::TYPE_END_ELEMENT, parser.node_type)
+      assert_equal(LibXML::XML::Reader::TYPE_END_ELEMENT, parser.node_type)
     end
   end
 
   def test_expand
-    reader = XML::Reader.file(XML_FILE)
+    reader = LibXML::XML::Reader.file(XML_FILE)
     reader.read.to_s
     reader.read
 
@@ -177,7 +177,7 @@ class TestReader < Minitest::Test
   end
 
   def test_expand_find
-    reader = XML::Reader.file(XML_FILE)
+    reader = LibXML::XML::Reader.file(XML_FILE)
     reader.read.to_s
     reader.read
 
@@ -195,7 +195,7 @@ class TestReader < Minitest::Test
   end
 
   def test_expand_invalid
-    reader = XML::Reader.file(XML_FILE)
+    reader = LibXML::XML::Reader.file(XML_FILE)
 
     # Expand a node before one has been read
     node = reader.expand
@@ -203,7 +203,7 @@ class TestReader < Minitest::Test
   end
 
   def test_expand_should_be_invalid
-    reader = XML::Reader.file(XML_FILE)
+    reader = LibXML::XML::Reader.file(XML_FILE)
 
     # Read a couple of nodes
     reader.read
@@ -222,7 +222,7 @@ class TestReader < Minitest::Test
 
   def test_expand_incorrectly_use_returned_node
     file = File.join(File.dirname(__FILE__), 'model/cwm_1_0.xml')
-    reader = XML::Reader.file(file)
+    reader = LibXML::XML::Reader.file(file)
 
     nodes = Array.new
     while reader.read
@@ -242,27 +242,27 @@ class TestReader < Minitest::Test
   end
 
   def test_mode
-    reader = XML::Reader.string('<xml/>')
-    assert_equal(XML::Reader::MODE_INITIAL, reader.read_state)
+    reader = LibXML::XML::Reader.string('<xml/>')
+    assert_equal(LibXML::XML::Reader::MODE_INITIAL, reader.read_state)
     reader.read
-    assert_equal(XML::Reader::MODE_EOF, reader.read_state)
+    assert_equal(LibXML::XML::Reader::MODE_EOF, reader.read_state)
   end
 
   def test_bytes_consumed
-    reader = XML::Reader.file(XML_FILE)
+    reader = LibXML::XML::Reader.file(XML_FILE)
     reader.read
     assert_equal(416, reader.byte_consumed)
   end
 
   def test_node
-    XML.default_line_numbers = true
-    reader = XML::Reader.file(XML_FILE)
+    LibXML::XML.default_line_numbers = true
+    reader = LibXML::XML::Reader.file(XML_FILE)
 
     # first try to get a node
     assert_nil(reader.node)
 
     reader.read
-    assert_instance_of(XML::Node, reader.node)
+    assert_instance_of(LibXML::XML::Node, reader.node)
   end
 
   def test_base_uri
@@ -270,7 +270,7 @@ class TestReader < Minitest::Test
     # ö - c3 b6 in hex, \303\266 in octal
     # ü - c3 bc in hex, \303\274 in octal
     xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?><bands genre=\"metal\">\n  <m\303\266tley_cr\303\274e country=\"us\">An American heavy metal band formed in Los Angeles, California in 1981.</m\303\266tley_cr\303\274e>\n  <iron_maiden country=\"uk\">British heavy metal band formed in 1975.</iron_maiden>\n</bands>"
-    reader = XML::Reader.string(xml, :base_uri => "http://libxml.rubyforge.org")
+    reader = LibXML::XML::Reader.string(xml, :base_uri => "http://libxml.rubyforge.org")
 
     reader.read
     assert_equal(reader.base_uri, "http://libxml.rubyforge.org")
@@ -287,22 +287,22 @@ class TestReader < Minitest::Test
     EOS
 
     # Parse normally
-    reader = XML::Reader.string(xml)
+    reader = LibXML::XML::Reader.string(xml)
     reader.read # foo
     reader.read # test
     reader.read # text
     reader.read # cdata
     reader.read # cdata-section
-    assert_equal(XML::Node::CDATA_SECTION_NODE, reader.node_type)
+    assert_equal(LibXML::XML::Node::CDATA_SECTION_NODE, reader.node_type)
 
     # Convert cdata section to text
-    reader = XML::Reader.string(xml, :options => XML::Parser::Options::NOCDATA)
+    reader = LibXML::XML::Reader.string(xml, :options => LibXML::XML::Parser::Options::NOCDATA)
     reader.read # foo
     reader.read # test
     reader.read # text
     reader.read # cdata
     reader.read # cdata-section
-    assert_equal(XML::Node::TEXT_NODE, reader.node_type)
+    assert_equal(LibXML::XML::Node::TEXT_NODE, reader.node_type)
   end
 
   def test_encoding
@@ -311,7 +311,7 @@ class TestReader < Minitest::Test
     # ü - fc in hex, \374 in octal
     xml = "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?><bands genre=\"metal\">\n  <m\366tley_cr\374e country=\"us\">An American heavy metal band formed in Los Angeles, California in 1981.</m\366tley_cr\374e>\n  <iron_maiden country=\"uk\">British heavy metal band formed in 1975.</iron_maiden>\n</bands>"
 
-    reader = XML::Reader.string(xml, :encoding => XML::Encoding::ISO_8859_1)
+    reader = LibXML::XML::Reader.string(xml, :encoding => LibXML::XML::Encoding::ISO_8859_1)
     reader.read
 
     if defined?(Encoding)
@@ -337,8 +337,8 @@ class TestReader < Minitest::Test
     # ü - fc in hex, \374 in octal
     xml = "<bands genre=\"metal\">\n  <m\366tley_cr\374e country=\"us\">An American heavy metal band formed in Los Angeles, California in 1981.</m\366tley_cr\374e>\n  <iron_maiden country=\"uk\">British heavy metal band formed in 1975.</iron_maiden>\n</bands>"
 
-    reader = XML::Reader.string(xml)
-    error = assert_raises(XML::Error) do
+    reader = LibXML::XML::Reader.string(xml)
+    error = assert_raises(LibXML::XML::Error) do
       reader.read
     end
 
@@ -348,9 +348,9 @@ class TestReader < Minitest::Test
   end
 
   def test_file_encoding
-    reader = XML::Reader.file(XML_FILE)
+    reader = LibXML::XML::Reader.file(XML_FILE)
     reader.read
-    assert_equal(XML::Encoding::UTF_8, reader.encoding)
+    assert_equal(LibXML::XML::Encoding::UTF_8, reader.encoding)
     assert_equal(Encoding::UTF_8, reader.value.encoding) if defined?(Encoding)
   end
 
@@ -359,10 +359,10 @@ class TestReader < Minitest::Test
     # ö - f6 in hex, \366 in octal
     # ü - fc in hex, \374 in octal
     xml = "<bands genre=\"metal\">\n  <m\366tley_cr\374e country=\"us\">An American heavy metal band formed in Los Angeles, California in 1981.</m\366tley_cr\374e>\n  <iron_maiden country=\"uk\">British heavy metal band formed in 1975.</iron_maiden>\n</bands>"
-    reader = XML::Reader.string(xml, :encoding => XML::Encoding::ISO_8859_1)
+    reader = LibXML::XML::Reader.string(xml, :encoding => LibXML::XML::Encoding::ISO_8859_1)
     reader.read
 
     # Encoding is always null for strings, very annoying!
-    assert_equal(reader.encoding, XML::Encoding::NONE)
+    assert_equal(reader.encoding, LibXML::XML::Encoding::NONE)
   end
 end

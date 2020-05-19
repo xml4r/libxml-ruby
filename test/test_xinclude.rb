@@ -4,8 +4,8 @@ require_relative './test_helper'
 
 class TestXInclude < Minitest::Test
   def setup
-    @doc = XML::Document.file(File.join(File.dirname(__FILE__), 'model/xinclude.xml'))
-    assert_instance_of(XML::Document, @doc)
+    @doc = LibXML::XML::Document.file(File.join(File.dirname(__FILE__), 'model/xinclude.xml'))
+    assert_instance_of(LibXML::XML::Document, @doc)
   end
 
   def teardown

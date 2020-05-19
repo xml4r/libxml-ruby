@@ -47,7 +47,7 @@ static VALUE rxml_parser_context_document(VALUE klass, VALUE document)
   int length;
 
   if (rb_obj_is_kind_of(document, cXMLDocument) == Qfalse)
-    rb_raise(rb_eTypeError, "Must pass an XML::Document object");
+    rb_raise(rb_eTypeError, "Must pass an LibXML::XML::Document object");
 
   Data_Get_Struct(document, xmlDoc, xdoc);
   xmlDocDumpFormatMemoryEnc(xdoc, &buffer, &length, (const char*)xdoc->encoding, 0);
