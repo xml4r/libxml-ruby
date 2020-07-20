@@ -12,7 +12,7 @@ We think libxml-ruby is the best XML library for Ruby because:
 
 == Requirements
 libxml-ruby requires Ruby 1.8.7 or higher.  It depends on libxml2 to
-function propoerly.  libxml2, in turn, depends on:
+function properly.  libxml2, in turn, depends on:
 
 * libm      (math routines: very standard)
 * libz      (zlib)
@@ -60,7 +60,7 @@ Beyond the basics of parsing and processing XML and HTML documents,
 libxml provides a wealth of additional functionality.
 
 Most commonly, you'll want to use its LibXML::XML::XPath support, which makes
-it easy to find data inside a XML document.  Although not as popular,
+it easy to find data inside an XML document.  Although not as popular,
 LibXML::XML::XPointer provides another API for finding data inside an XML document.
 
 Often times you'll need to validate data before processing it. For example,
@@ -179,7 +179,7 @@ the bindings manage the memory.  They do this by installing a free
 function and storing a back pointer to the Ruby object from the xmlnode
 using the _private member on libxml structures.  When the Ruby object
 goes out of scope, the underlying libxml structure is freed.  Libxml
-itself then frees all child node (recursively).
+itself then frees all child nodes (recursively).
 
 For all other nodes (the vast majority), the bindings create temporary
 Ruby objects that get freed once they go out of scope. Thus there can be
