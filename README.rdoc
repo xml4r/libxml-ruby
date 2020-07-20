@@ -33,8 +33,8 @@ If you are running Windows, then install the libxml-ruby-x64-mingw32 gem.
 The gem includes prebuilt extensions for Ruby 2.3.  These
 extensions are built using MinGW64 and libxml2 version 2.9.3,
 iconv version 1.14 and zlib version 1.2.8. Note these binaries
-are available in the lib\\libs directory.  To use them, put them
-someplace on your path.
+are available in the <tt>lib\\libs</tt> directory.  To use them, put them
+on your <tt>PATH</tt>.
 
 The gem also includes a Microsoft VC++ 2012 solution and XCode 5 project - these
 are very useful for debugging.
@@ -82,7 +82,7 @@ http://xml4r.github.com/libxml-ruby/rdoc/index.html. Some tutorials are also
 available at https://github.com/xml4r/libxml-ruby/wiki.
 
 All libxml classes are in the LibXML::XML module. The easiest
-way to use libxml is to require 'xml'.  This will mixin
+way to use libxml is to <tt>require 'xml'</tt>.  This will mixin
 the LibXML module into the global namespace, allowing you to
 write code like this:
 
@@ -162,8 +162,9 @@ development gem dependency.
 Note that older versions of Rdoc, which ship with Ruby 1.8.x, will report
 a number of errors.  To avoid them, install Rdoc 2.1 or higher.  Once you have
 installed the gem, you'll have to disable the version of Rdoc that Ruby 1.8.x
-includes.  An easy way to do that is rename the directory ruby/lib/ruby/1.8/rdoc to
-ruby/lib/ruby/1.8/rdoc_old.
+includes.  An easy way to do that is rename the directory
+<tt>ruby/lib/ruby/1.8/rdoc</tt> to
+<tt>ruby/lib/ruby/1.8/rdoc_old</tt>.
 
 == Support
 
@@ -184,7 +185,7 @@ itself then frees all child nodes (recursively).
 For all other nodes (the vast majority), the bindings create temporary
 Ruby objects that get freed once they go out of scope. Thus there can be
 more than one ruby object pointing to the same xml node. To mostly hide
-this from programmers on the ruby side, the #eql? and #== methods are
+this from a programmer on the Ruby side, the <tt>#eql?</tt> and <tt>#==</tt> methods are
 overriden to check if two ruby objects wrap the same xmlnode.  If they do,
 then the methods return true.  During the mark phase, each of these temporary
 objects marks its owning document, thereby keeping the Ruby document object
