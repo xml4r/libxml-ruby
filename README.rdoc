@@ -29,6 +29,22 @@ The easiest way to install libxml-ruby is via RubyGems.  To install:
 
 <tt>gem install libxml-ruby</tt>
 
+If the extension compile process cannot find libxml2, you may need to indicate
+the location of the libxml2 configuration utility as it is used to find the
+required header and include files.  (If you need to indicate a location for the
+libxml2 library or header files different than reported by <tt>xml2-config</tt>,
+see the additional configuration options.)
+
+This may be done with RubyGems:
+
+<tt>gem install libxml-ruby -- --with-xml2-dir=/path/to/xml2-config</tt>
+
+Or bundler:
+
+<tt>bundle config build.libxml-ruby --with-xml2-config=/path/to/xml2-config</tt>
+
+<tt>bundle install libxml-ruby</tt>
+
 If you are running Windows, then install the libxml-ruby-x64-mingw32 gem.
 The gem includes prebuilt extensions for Ruby 2.3.  These
 extensions are built using MinGW64 and libxml2 version 2.9.3,
