@@ -33,7 +33,7 @@ If you are running Windows, then install the libxml-ruby-x64-mingw32 gem.
 The gem includes prebuilt extensions for Ruby 2.3.  These
 extensions are built using MinGW64 and libxml2 version 2.9.3,
 iconv version 1.14 and zlib version 1.2.8. Note these binaries
-are available in the lib\libs directory.  To use them, put them
+are available in the lib\\libs directory.  To use them, put them
 someplace on your path.
 
 The gem also includes a Microsoft VC++ 2012 solution and XCode 5 project - these
