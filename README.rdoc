@@ -24,7 +24,7 @@ Windows, then install the x64-mingw32 gem or build it yourself using
 Devkit (http://rubyinstaller.org/add-ons/devkit/) or
 msys2 (https://msys2.github.io/).
 
-== INSTALLATION
+== Installation
 The easiest way to install libxml-ruby is via Ruby Gems.  To install:
 
 <tt>gem install libxml-ruby</tt>
