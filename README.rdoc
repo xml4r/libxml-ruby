@@ -25,7 +25,7 @@ Devkit (http://rubyinstaller.org/add-ons/devkit/) or
 msys2 (https://msys2.github.io/).
 
 == Installation
-The easiest way to install libxml-ruby is via Ruby Gems.  To install:
+The easiest way to install libxml-ruby is via RubyGems.  To install:
 
 <tt>gem install libxml-ruby</tt>
 
@@ -131,10 +131,11 @@ Once you have build the shared libary, you can then run tests using rake:
 +Travis build status: {<img src="https://travis-ci.org/xml4r/libxml-ruby.svg?branch=master" alt="Build Status" />}[https://travis-ci.org/xml4r/libxml-ruby]
 
 == Performance
+
 In addition to being feature rich and conformation, the main reason
-people use libxml-ruby is for performance.  Here are the results 
+people use libxml-ruby is for performance.  Here are the results
 of a couple simple benchmarks recently blogged about on the
-Web (you can find them in the benchmark directory of the 
+Web (you can find them in the benchmark directory of the
 libxml distribution).
 
 From http://depixelate.com/2008/4/23/ruby-xml-parsing-benchmarks
@@ -167,7 +168,6 @@ includes.  An easy way to do that is rename the directory
 <tt>ruby/lib/ruby/1.8/rdoc_old</tt>.
 
 == Support
-
 If you have any questions about using libxml-ruby, please report them to
 Git Hub at https://github.com/xml4r/libxml-ruby/issues
 
@@ -175,7 +175,7 @@ Git Hub at https://github.com/xml4r/libxml-ruby/issues
 libxml-ruby automatically manages memory associated with the
 underlying libxml2 library.  The bindings create a one-to-one mapping between
 ruby objects and libxml documents and libxml parent nodes (ie, nodes that do not
-have a parent and do not belong to a document). In these cases,
+have a parent and do not belong to a document).  In these cases,
 the bindings manage the memory.  They do this by installing a free
 function and storing a back pointer to the Ruby object from the xmlnode
 using the _private member on libxml structures.  When the Ruby object
@@ -192,11 +192,10 @@ objects marks its owning document, thereby keeping the Ruby document object
 alive and thus the xmldoc tree.
 
 In the sweep phase of the garbage collector, or when a program ends,
-there is no order to how Ruby objects are freed. In fact, the ruby document
+there is no order to how Ruby objects are freed.  In fact, the Ruby document
 object is almost always freed before any ruby objects that wrap child nodes.
 However, this is ok because those ruby objects do not have a free function
 and are no longer in scope (since if they were the document would not be freed).
 
 == License
 See LICENSE for license information.
-
