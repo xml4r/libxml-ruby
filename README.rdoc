@@ -174,7 +174,7 @@ Git Hub at https://github.com/xml4r/libxml-ruby/issues
 == Memory Management
 libxml-ruby automatically manages memory associated with the
 underlying libxml2 library.  The bindings create a one-to-one mapping between
-ruby objects and libxml documents and libxml parent nodes (ie, nodes that do not
+Ruby objects and libxml documents and libxml parent nodes (ie, nodes that do not
 have a parent and do not belong to a document).  In these cases,
 the bindings manage the memory.  They do this by installing a free
 function and storing a back pointer to the Ruby object from the xmlnode
@@ -184,17 +184,17 @@ itself then frees all child nodes (recursively).
 
 For all other nodes (the vast majority), the bindings create temporary
 Ruby objects that get freed once they go out of scope. Thus there can be
-more than one ruby object pointing to the same xml node. To mostly hide
+more than one Ruby object pointing to the same xml node. To mostly hide
 this from a programmer on the Ruby side, the <tt>#eql?</tt> and <tt>#==</tt> methods are
-overriden to check if two ruby objects wrap the same xmlnode.  If they do,
+overriden to check if two Ruby objects wrap the same xmlnode.  If they do,
 then the methods return true.  During the mark phase, each of these temporary
 objects marks its owning document, thereby keeping the Ruby document object
 alive and thus the xmldoc tree.
 
 In the sweep phase of the garbage collector, or when a program ends,
 there is no order to how Ruby objects are freed.  In fact, the Ruby document
-object is almost always freed before any ruby objects that wrap child nodes.
-However, this is ok because those ruby objects do not have a free function
+object is almost always freed before any Ruby objects that wrap child nodes.
+However, this is ok because those Ruby objects do not have a free function
 and are no longer in scope (since if they were the document would not be freed).
 
 == License
