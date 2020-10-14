@@ -93,7 +93,7 @@ the {libxslt gem}[https://github.com/xml4r/libxslt-rubygem].
 
 == Usage
 For information about using libxml-ruby please refer to its
-documentation[http://xml4r.github.com/libxml-ruby/rdoc/index.html]. Some tutorials are also
+documentation[http://xml4r.github.com/libxml-ruby]. Some tutorials are also
 available[https://github.com/xml4r/libxml-ruby/wiki].
 
 All libxml classes are in the LibXML::XML module. The easiest
