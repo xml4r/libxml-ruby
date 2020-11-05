@@ -28,43 +28,12 @@ typedef enum {
 
 typedef struct {
     VALUE output;
-#ifdef HAVE_RUBY_ENCODING_H
     rb_encoding *encoding;
-#endif /* HAVE_RUBY_ENCODING_H */
     xmlBufferPtr buffer;
     xmlTextWriterPtr writer;
     rxmlw_output_type output_type;
     int closed;
 } rxml_writer_object;
-
-#ifdef HAVE_RUBY_ENCODING_H
-
-#define /*VALUE*/ rxml_writer_c_to_ruby_string(/*const xmlChar **/ string, /*long*/ string_len) \
-    rb_external_str_new_with_enc(string, string_len, rb_utf8_encoding())
-
-#define /*VALUE*/ rxml_writer_ruby_string_to_utf8(/*VALUE*/ string) \
-    rb_str_conv_enc(string, rb_enc_get(string), rb_utf8_encoding())
-// rb_str_export_to_enc(string, rb_utf8_encoding())
-
-#define /*void*/ rxml_writer_free_utf8_string(/*VALUE*/ orig, /*VALUE*/ utf8) \
-    do {                       \
-        if (orig != utf8) {    \
-            rb_str_free(utf8); \
-        }                      \
-    } while (0);
-
-#else
-
-#define /*VALUE*/ rxml_writer_c_to_ruby_string(/*const xmlChar **/ string, /*long*/ string_len) \
-    rb_str_new(string, string_len)
-
-#define /*VALUE*/ rxml_writer_ruby_string_to_utf8(/*VALUE*/ string) \
-    string
-
-#define /*void*/ rxml_writer_free_utf8_string(/*VALUE*/ orig, /*VALUE*/ utf8) \
-    /* NOP */
-
-#endif /* HAVE_RUBY_ENCODING_H */
 
 static void rxml_writer_free(rxml_writer_object *rwo)
 {
@@ -137,9 +106,7 @@ xmlCharEncodingHandlerPtr xmlFindCharEncodingHandler(const char * name);
     rwo->output = io;
     rwo->buffer = NULL;
     rwo->closed = 0;
-#ifdef HAVE_RUBY_ENCODING_H
-    rwo->encoding = NULL;
-#endif /* HAVE_RUBY_ENCODING_H */
+    rwo->encoding = rb_utf8_encoding();
     rwo->output_type = RXMLW_OUTPUT_IO;
     if (NULL == (out = xmlOutputBufferCreateIO(rxml_writer_write_callback, NULL, (void *) rwo, NULL))) {
         rxml_raise(&xmlLastError);
@@ -166,9 +133,7 @@ static VALUE rxml_writer_file(VALUE klass, VALUE filename)
     rwo->output = Qnil;
     rwo->buffer = NULL;
     rwo->closed = 0;
-#ifdef HAVE_RUBY_ENCODING_H
-    rwo->encoding = NULL;
-#endif /* HAVE_RUBY_ENCODING_H */
+    rwo->encoding = rb_utf8_encoding();
     rwo->output_type = RXMLW_OUTPUT_NONE;
     if (NULL == (rwo->writer = xmlNewTextWriterFilename(StringValueCStr(filename), 0))) {
         rxml_raise(&xmlLastError);
@@ -189,9 +154,7 @@ static VALUE rxml_writer_string(VALUE klass)
     rwo = ALLOC(rxml_writer_object);
     rwo->output = Qnil;
     rwo->closed = 0;
-#ifdef HAVE_RUBY_ENCODING_H
-    rwo->encoding = NULL;
-#endif /* HAVE_RUBY_ENCODING_H */
+    rwo->encoding = rb_utf8_encoding();
     rwo->output_type = RXMLW_OUTPUT_STRING;
     if (NULL == (rwo->buffer = xmlBufferCreate())) {
         rxml_raise(&xmlLastError);
@@ -218,9 +181,7 @@ static VALUE rxml_writer_doc(VALUE klass)
     rwo->buffer = NULL;
     rwo->output = Qnil;
     rwo->closed = 0;
-#ifdef HAVE_RUBY_ENCODING_H
-    rwo->encoding = NULL;
-#endif /* HAVE_RUBY_ENCODING_H */
+    rwo->encoding = rb_utf8_encoding();
     rwo->output_type = RXMLW_OUTPUT_DOC;
     if (NULL == (rwo->writer = xmlNewTextWriterDoc(&doc, 0))) {
         rxml_raise(&xmlLastError);
@@ -256,11 +217,7 @@ static VALUE rxml_writer_flush(int argc, VALUE *argv, VALUE self)
     if (NULL != rwo->buffer) {
         VALUE content;
 
-#ifdef HAVE_RUBY_ENCODING_H
         content = rb_external_str_new_with_enc((const char*)rwo->buffer->content, rwo->buffer->use, rwo->encoding);
-#else
-        content = rb_str_new(rwo->buffer->content, rwo->buffer->use);
-#endif /* HAVE_RUBY_ENCODING_H */
         if (NIL_P(empty) || RTEST(empty)) { /* nil = default value = true */
             xmlBufferEmpty(rwo->buffer);
         }
@@ -293,7 +250,7 @@ static VALUE rxml_writer_result(VALUE self)
             ret = rwo->output;
             break;
         case RXMLW_OUTPUT_STRING:
-            ret = rxml_writer_c_to_ruby_string((const char*)rwo->buffer->content, rwo->buffer->use);
+            ret = rb_external_str_new_with_enc((const char*)rwo->buffer->content, rwo->buffer->use, rwo->encoding);
             break;
         case RXMLW_OUTPUT_IO:
         case RXMLW_OUTPUT_NONE:
@@ -354,7 +311,7 @@ static VALUE numeric_rxml_writer_va_strings(VALUE obj, VALUE pe, size_t strings_
             utf8[argc] = Qnil;
             argv[argc] = NULL;
         } else {
-            utf8[argc] = rxml_writer_ruby_string_to_utf8(orig[argc]);
+            utf8[argc] = rb_str_conv_enc(orig[argc], rb_enc_get(orig[argc]), rwo->encoding);
             argv[argc] = BAD_CAST StringValueCStr(utf8[argc]);
         }
     }
@@ -410,13 +367,14 @@ static VALUE numeric_rxml_writer_va_strings(VALUE obj, VALUE pe, size_t strings_
                 break;
         }
     }
-#ifdef HAVE_RUBY_ENCODING_H
+
     while (--strings_count > 0) {
         if (!NIL_P(orig[strings_count])) {
-            rxml_writer_free_utf8_string(orig[strings_count], utf8[strings_count]);
+            if (orig[strings_count] != utf8[strings_count]) {
+                rb_str_free(utf8[strings_count]);
+            }
         }
     }
-#endif /* HAVE_RUBY_ENCODING_H */
 
     return (-1 == ret ? Qfalse : Qtrue);
 }
@@ -786,9 +744,7 @@ static VALUE rxml_writer_start_document(int argc, VALUE *argv, VALUE self)
         }
     }
     rwo = rxml_textwriter_get(self);
-#ifdef HAVE_RUBY_ENCODING_H
     rwo->encoding = rxml_figure_encoding(xencoding);
-#endif /* !HAVE_RUBY_ENCODING_H */
     ret = xmlTextWriterStartDocument(rwo->writer, NULL, (const char*)xencoding, xstandalone);
 
     return (-1 == ret ? Qfalse : Qtrue);

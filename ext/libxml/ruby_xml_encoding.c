@@ -74,7 +74,6 @@ static VALUE rxml_encoding_to_s(VALUE klass, VALUE encoding)
     return rxml_new_cstr(xencoding, xencoding);
 }
 
-#ifdef HAVE_RUBY_ENCODING_H
 /*
  * Converts an xmlCharEncoding enum value into a Ruby Encoding object (available
  * on Ruby 1.9.* and higher).
@@ -179,26 +178,17 @@ rb_encoding* rxml_figure_encoding(const xmlChar* xencoding)
   }
   return result;
 }
-#endif
 
 VALUE rxml_new_cstr(const xmlChar* xstr, const xmlChar* xencoding)
 {
-#ifdef HAVE_RUBY_ENCODING_H
   rb_encoding *rbencoding = rxml_figure_encoding(xencoding);
   return rb_external_str_new_with_enc((const char*)xstr, strlen((const char*)xstr), rbencoding);
-#else
-  return rb_str_new2((const char*)xstr);
-#endif
 }
 
 VALUE rxml_new_cstr_len(const xmlChar* xstr, const long length, const xmlChar* xencoding)
 {
-#ifdef HAVE_RUBY_ENCODING_H
   rb_encoding *rbencoding = rxml_figure_encoding(xencoding);
   return rb_external_str_new_with_enc((const char*)xstr, length, rbencoding);
-#else
-  return rb_str_new((const char*)xstr, length);
-#endif
 }
 
 void rxml_init_encoding(void)
@@ -207,9 +197,7 @@ void rxml_init_encoding(void)
   rb_define_module_function(mXMLEncoding, "from_s", rxml_encoding_from_s, 1);
   rb_define_module_function(mXMLEncoding, "to_s", rxml_encoding_to_s, 1);
 
-#ifdef HAVE_RUBY_ENCODING_H
- // rb_define_module_function(mXMLEncoding, "to_rb_encoding", rxml_encoding_to_rb_encoding, 2);
-#endif
+  rb_define_module_function(mXMLEncoding, "to_rb_encoding", rxml_encoding_to_rb_encoding, 2);
 
   /* -1: No char encoding detected. */
   rb_define_const(mXMLEncoding, "ERROR", INT2NUM(XML_CHAR_ENCODING_ERROR));
