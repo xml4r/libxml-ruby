@@ -137,8 +137,8 @@ class TestParserContext < Minitest::Test
     context = LibXML::XML::Parser::Context.new
     assert(!context.replace_entities?)
 
-#    context.options = 1
- #   assert(context.replace_entities?)
+    context.options = LibXML::XML::Parser::Options::NOENT
+    assert(context.replace_entities?)
 
     context.options = 0
     assert(!context.replace_entities?)
