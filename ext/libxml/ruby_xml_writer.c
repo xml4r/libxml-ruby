@@ -83,7 +83,7 @@ int rxml_writer_write_callback(void* context, const char* buffer, int len)
     }
     else
     {
-        return rxml_write_callback((void*)rwo->output, buffer, len);
+        return rxml_write_callback(rwo->output, buffer, len);
     }
 }
 
@@ -96,16 +96,6 @@ int rxml_writer_write_callback(void* context, const char* buffer, int len)
  */
 static VALUE rxml_writer_io(VALUE klass, VALUE io)
 {
-#if 0
-    typedef int (*xmlOutputCloseCallback)(void* context);
-    typedef int (*xmlOutputWriteCallback)(void* context, const char* buffer, int len);
-
-    ssize_t rb_io_bufwrite(VALUE io, const void* buf, size_t size);
-
-    xmlOutputBufferPtr xmlOutputBufferCreateIO(xmlOutputWriteCallback iowrite, xmlOutputCloseCallback ioclose, void* ioctx, xmlCharEncodingHandlerPtr encoder)
-
-        xmlCharEncodingHandlerPtr xmlFindCharEncodingHandler(const char* name);
-#endif
     xmlOutputBufferPtr out;
     rxml_writer_object* rwo;
 
@@ -113,9 +103,14 @@ static VALUE rxml_writer_io(VALUE klass, VALUE io)
     rwo->output = io;
     rwo->buffer = NULL;
     rwo->closed = 0;
-    rwo->encoding = rb_utf8_encoding();
+    rwo->encoding = rb_enc_get(io);
+    if (!rwo->encoding)
+        rwo->encoding = rb_utf8_encoding();
+
     rwo->output_type = RXMLW_OUTPUT_IO;
-    if (NULL == (out = xmlOutputBufferCreateIO(rxml_writer_write_callback, NULL, (void*)rwo, NULL)))
+
+    xmlCharEncodingHandlerPtr encodingHdlr = xmlFindCharEncodingHandler(rwo->encoding->name);
+    if (NULL == (out = xmlOutputBufferCreateIO(rxml_writer_write_callback, NULL, (void*)rwo, encodingHdlr)))
     {
         rxml_raise(&xmlLastError);
     }

@@ -16,25 +16,48 @@ class TestWriter < Minitest::Test
 
   def test_empty_doc
     writer = LibXML::XML::Writer.string
-    document writer
+    document(writer)
     assert_equal(writer.result.strip!, '<?xml version="1.0"?>')
 
     writer = LibXML::XML::Writer.string
-    document writer, { :encoding => LibXML::XML::Encoding::ISO_8859_1 }
+    document(writer, :encoding => LibXML::XML::Encoding::ISO_8859_1)
     assert_equal(writer.result.strip!, '<?xml version="1.0" encoding="ISO-8859-1"?>')
 
     writer = LibXML::XML::Writer.string
-    document writer, { :standalone => 1 }
+    document(writer, :standalone => 1)
     assert_equal(writer.result.strip!, '<?xml version="1.0" standalone="yes"?>')
 
     writer = LibXML::XML::Writer.string
-    document writer, { :standalone => 1, :encoding => LibXML::XML::Encoding::ISO_8859_1, :foo => :bar }
+    document(writer, :standalone => 1, :encoding => LibXML::XML::Encoding::ISO_8859_1, :foo => :bar)
     assert_equal(writer.result.strip!, '<?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>')
+  end
+
+  def test_file_encoding
+    value = "François".encode(Encoding::UTF_8)
+
+    File.open('test.xml', 'wb', encoding: 'UTF-8') do |file|
+      writer = LibXML::XML::Writer::io(file)
+      document(writer, encoding: LibXML::XML::Encoding::UTF_8) do
+        writer.write_element('Name', value)
+      end
+    end
+  end
+
+  def test_io_encoding
+    value = "François".encode(Encoding::UTF_8)
+    expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Name>François</Name>".encode(Encoding::UTF_8)
+
+    io = StringIO.new
+    writer = LibXML::XML::Writer::io(io)
+    document(writer, encoding: LibXML::XML::Encoding::UTF_8) do
+      writer.write_element('Name', value)
+    end
+    assert_equal(expected, io.string.strip)
   end
 
   def test_single_root
     writer = LibXML::XML::Writer.string
-    document writer do
+    document(writer) do
       element writer, 'root'
     end
 
@@ -45,7 +68,7 @@ class TestWriter < Minitest::Test
     expected = "<?xml version=\"1.0\"?>\n<?php echo \"foo\";?>"
 
     writer = LibXML::XML::Writer.string
-    document writer do
+    document(writer) do
       assert(writer.start_pi('php'))
       assert(writer.write_string('echo "foo";'))
       assert(writer.end_pi)
@@ -53,7 +76,7 @@ class TestWriter < Minitest::Test
     assert_equal(writer.result.strip!, expected)
 
     writer = LibXML::XML::Writer.string
-    document writer do
+    document(writer) do
       assert(writer.write_pi('php', 'echo "foo";'))
     end
     assert_equal(writer.result.strip!, expected)
@@ -63,7 +86,7 @@ class TestWriter < Minitest::Test
     expected = "<?xml version=\"1.0\"?>\n<!--foo-->"
 
     writer = LibXML::XML::Writer.string
-    document writer do
+    document(writer) do
       assert(writer.start_comment)
       assert(writer.write_string 'foo')
       assert(writer.end_comment)
@@ -71,7 +94,7 @@ class TestWriter < Minitest::Test
     assert_equal(writer.result.strip!, expected)
 
     writer = LibXML::XML::Writer.string
-    document writer do
+    document(writer) do
       assert(writer.write_comment 'foo')
     end
     assert_equal(writer.result.strip!, expected)
@@ -81,7 +104,7 @@ class TestWriter < Minitest::Test
     expected = "<?xml version=\"1.0\"?>\n<root><![CDATA[<?php echo $foo; ?>]]></root>"
 
     writer = LibXML::XML::Writer.string
-    document writer do
+    document(writer) do
       element writer, 'root' do
         assert(writer.start_cdata)
         assert(writer.write_string '<?php echo $foo; ?>')
@@ -91,7 +114,7 @@ class TestWriter < Minitest::Test
     assert_equal(writer.result.strip!, expected)
 
     writer = LibXML::XML::Writer.string
-    document writer do
+    document(writer) do
       element writer, 'root' do
         assert(writer.write_cdata '<?php echo $foo; ?>')
       end
@@ -101,13 +124,13 @@ class TestWriter < Minitest::Test
 
   def test_write_empty_elements
     writer = LibXML::XML::Writer.string
-    document writer do
+    document(writer) do
       assert(writer.write_element 'foo')
     end
     assert_equal(writer.result.strip!, "<?xml version=\"1.0\"?>\n<foo/>")
 
     writer = LibXML::XML::Writer.string
-    document writer do
+    document(writer) do
       assert(writer.write_element_ns XSL_PREFIX, 'stylesheet', XSL_URI)
     end
     assert_equal(writer.result.strip!, "<?xml version=\"1.0\"?>\n<" + XSL_PREFIX + ":stylesheet xmlns:xsl=\"" + XSL_URI + "\"/>")
@@ -117,7 +140,7 @@ class TestWriter < Minitest::Test
     expected = "<?xml version=\"1.0\"?>\n<abc>123<def>456<ghi>789</ghi>cueillir des cerises</def>nous irons au bois</abc>"
 
     writer = LibXML::XML::Writer.string
-    document writer do
+    document(writer) do
       assert(writer.start_element 'abc')
         assert(writer.write_string '123')
         assert(writer.start_element 'def')
@@ -133,7 +156,7 @@ class TestWriter < Minitest::Test
     assert_equal(writer.result.strip!, expected)
 
     writer = LibXML::XML::Writer.string
-    document writer do
+    document(writer) do
       assert(writer.start_element 'abc')
         assert(writer.write_string '123')
         assert(writer.start_element 'def')
@@ -157,7 +180,7 @@ class TestWriter < Minitest::Test
       "</xsl:stylesheet>"
 
     writer = LibXML::XML::Writer.string
-    document writer do
+    document(writer) do
       assert(writer.start_element_ns XSL_PREFIX, 'stylesheet', XSL_URI)
         assert(writer.start_element_ns XSL_PREFIX, 'attribute-set')
           assert(writer.start_element_ns XSL_PREFIX, 'attribute')
@@ -172,7 +195,7 @@ class TestWriter < Minitest::Test
     assert_equal(writer.result.strip!, expected)
 
     writer = LibXML::XML::Writer.string
-    document writer do
+    document(writer) do
       assert(writer.start_element_ns XSL_PREFIX, 'stylesheet', XSL_URI)
         assert(writer.start_element_ns XSL_PREFIX, 'attribute-set')
           assert(writer.write_element_ns XSL_PREFIX, 'attribute', nil, '20px')
@@ -185,7 +208,7 @@ class TestWriter < Minitest::Test
 
   def test_attribute
     writer = LibXML::XML::Writer.string
-    document writer do
+    document(writer) do
       element writer, 'root' do
         element writer, 'child' do
           assert(writer.start_attribute 'foo')
@@ -197,7 +220,7 @@ class TestWriter < Minitest::Test
     assert_equal(writer.result.strip!, "<?xml version=\"1.0\"?>\n<root><child foo=\"bar\"/></root>")
 
     writer = LibXML::XML::Writer.string
-    document writer do
+    document(writer) do
       element writer, 'root' do
         element writer, 'child' do
           assert(writer.write_attribute 'abc', 'def')
@@ -212,7 +235,7 @@ class TestWriter < Minitest::Test
     expected = "<?xml version=\"1.0\"?>\n<root><link xlink:href=\"abc\" xhtml:class=\"def\"/></root>"
 
     writer = LibXML::XML::Writer.string
-    document writer do
+    document(writer) do
       element writer, 'root' do
         element writer, 'link' do
           assert(writer.write_attribute_ns 'xlink', 'href', nil, 'abc')
@@ -223,7 +246,7 @@ class TestWriter < Minitest::Test
     assert_equal(writer.result.strip!, expected)
 
     writer = LibXML::XML::Writer.string
-    document writer do
+    document(writer) do
       element writer, 'root' do
         element writer, 'link' do
           assert(writer.start_attribute_ns 'xlink', 'href')
@@ -242,7 +265,7 @@ class TestWriter < Minitest::Test
     if LibXML::XML::Writer.method_defined? :set_quote_char
       writer = LibXML::XML::Writer.string
       writer.set_quote_char "'"
-      document writer do
+      document(writer) do
         element writer, 'root' do
           assert(writer.start_attribute 'abc')
           assert(writer.write_string 'def')
@@ -257,7 +280,7 @@ class TestWriter < Minitest::Test
     if LibXML::XML::Writer.method_defined? :set_indent
       writer = LibXML::XML::Writer.string
       assert(writer.set_indent true)
-      document writer do
+      document(writer) do
         element writer, 'root' do
           element writer, 'child' do
             assert(writer.start_attribute 'abc')
@@ -275,7 +298,7 @@ class TestWriter < Minitest::Test
       writer = LibXML::XML::Writer.string
       assert(writer.set_indent true)
       assert(writer.set_indent_string ' ' * 4)
-      document writer do
+      document(writer) do
         element writer, 'root' do
           element writer, 'child' do
             assert(writer.start_attribute 'abc')
@@ -395,7 +418,7 @@ class TestWriter < Minitest::Test
     iso = 'éloïse'.encode 'ISO-8859-1'
 
     writer = LibXML::XML::Writer.string
-    document writer do
+    document(writer) do
       assert(writer.write_element iso)
     end
     assert_equal(writer.result.strip!, "<?xml version=\"1.0\"?>\n<éloïse/>")

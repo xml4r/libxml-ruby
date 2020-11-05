@@ -4,7 +4,7 @@
 #define __RXML_IO__
 
 int rxml_read_callback(void *context, char *buffer, int len);
-int rxml_write_callback(void *context, const char *buffer, int len);
+int rxml_write_callback(VALUE io, const char *buffer, int len);
 void rxml_init_io(void);
 
 #endif
