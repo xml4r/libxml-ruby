@@ -1,10 +1,15 @@
 = Release History
 
+== 3.2.1 / 2020-11-05
+
+* Fix incorrect handling of encodings when using XMLWriter.io (Charlie Savage)
+* Clean up README  (Richard Michael)
+
 == 3.2.0 / 2020-05-09 Charlie Savage
 
 * Fix crash when creating an empty DTD
 * Modernize tests to use Bundler to load gem
-* Add libxml-ruby.rb file so gem loads in expted way.
+* Add libxml-ruby.rb file so gem loads in expected way.
 * Add support for xmlSaveNoEmptyTags.
 * Clean up extconf.rb file
 
