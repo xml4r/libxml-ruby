@@ -1,10 +1,10 @@
 # encoding: UTF-8
 
-require File.expand_path('../test_helper', __FILE__)
+require_relative './test_helper'
 
 class AttrDeclTest < Minitest::Test
   def setup
-    xp = XML::Parser.string(<<-EOS)
+    xp = LibXML::XML::Parser.string(<<-EOS)
 	<!DOCTYPE test [
 	  <!ELEMENT root (property*)>
 	  <!ELEMENT property EMPTY>
@@ -42,7 +42,7 @@ class AttrDeclTest < Minitest::Test
     # Get the attr_decl
     attr = elem.attributes.get_attribute('access')
     refute_nil(attr)
-    assert_equal(XML::Node::ATTRIBUTE_NODE, attr.node_type)
+    assert_equal(LibXML::XML::Node::ATTRIBUTE_NODE, attr.node_type)
     assert_equal('attribute', attr.node_type_name)
 
     # Get its value
@@ -56,7 +56,7 @@ class AttrDeclTest < Minitest::Test
     # Get the attr_decl
     attr_decl = elem.attributes.get_attribute('access')
     refute_nil(attr_decl)
-    assert_equal(XML::Node::ATTRIBUTE_DECL, attr_decl.node_type)
+    assert_equal(LibXML::XML::Node::ATTRIBUTE_DECL, attr_decl.node_type)
     assert_equal('attribute declaration', attr_decl.node_type_name)
 
     # Get its value
@@ -69,7 +69,7 @@ class AttrDeclTest < Minitest::Test
     attr_decl = elem.attributes.get_attribute('access')
 
     refute_nil(attr_decl)
-    assert_equal(XML::Node::ATTRIBUTE_DECL, attr_decl.node_type)
+    assert_equal(LibXML::XML::Node::ATTRIBUTE_DECL, attr_decl.node_type)
     assert_equal('attribute declaration', attr_decl.node_type_name)
   end
   
@@ -99,12 +99,12 @@ class AttrDeclTest < Minitest::Test
     attr_decl = elem.attributes.get_attribute('access')
 
     first_decl = attr_decl.prev
-    assert_equal(XML::Node::ATTRIBUTE_DECL, first_decl.node_type)
+    assert_equal(LibXML::XML::Node::ATTRIBUTE_DECL, first_decl.node_type)
     assert_equal('name', first_decl.name)
     assert_nil(first_decl.value)
 
     elem_decl = first_decl.prev
-    assert_equal(XML::Node::ELEMENT_DECL, elem_decl.node_type)
+    assert_equal(LibXML::XML::Node::ELEMENT_DECL, elem_decl.node_type)
   end
 
   def test_next
@@ -127,6 +127,6 @@ class AttrDeclTest < Minitest::Test
     attr_decl = elem.attributes.get_attribute('access')
 
     parent = attr_decl.parent
-    assert_instance_of(XML::Dtd, parent)
+    assert_instance_of(LibXML::XML::Dtd, parent)
   end
 end

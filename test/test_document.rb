@@ -1,12 +1,12 @@
 # encoding: UTF-8
-require File.expand_path('../test_helper', __FILE__)
+require_relative './test_helper'
 
 class TestDocument < Minitest::Test
   def setup
-    xp = XML::Parser.string('<ruby_array uga="booga" foo="bar"><fixnum>one</fixnum><fixnum>two</fixnum></ruby_array>')
-    assert_instance_of(XML::Parser, xp)
+    xp = LibXML::XML::Parser.string('<ruby_array uga="booga" foo="bar"><fixnum>one</fixnum><fixnum>two</fixnum></ruby_array>')
+    assert_instance_of(LibXML::XML::Parser, xp)
     @doc = xp.parse
-    assert_instance_of(XML::Document, @doc)
+    assert_instance_of(LibXML::XML::Document, @doc)
   end
 
   def teardown
@@ -14,24 +14,24 @@ class TestDocument < Minitest::Test
   end
 
   def test_klass
-    assert_instance_of(XML::Document, @doc)
+    assert_instance_of(LibXML::XML::Document, @doc)
   end
 
   def test_context
     context = @doc.context
-    assert_instance_of(XML::XPath::Context, context)
+    assert_instance_of(LibXML::XML::XPath::Context, context)
   end
 
   def test_find
     set = @doc.find('/ruby_array/fixnum')
-    assert_instance_of(XML::XPath::Object, set)
+    assert_instance_of(LibXML::XML::XPath::Object, set)
     assert_raises(NoMethodError) {
       set.xpath
     }
   end
 
   def test_compression
-    if XML.enabled_zlib?
+    if LibXML::XML.enabled_zlib?
       0.upto(9) do |i|
         assert_equal(i, @doc.compression = i)
         assert_equal(i, @doc.compression)
@@ -59,30 +59,30 @@ class TestDocument < Minitest::Test
   def test_version
     assert_equal('1.0', @doc.version)
 
-    doc = XML::Document.new('6.9')
+    doc = LibXML::XML::Document.new('6.9')
     assert_equal('6.9', doc.version)
   end
 
   def test_write_root
-    @doc.root = XML::Node.new('rubynet')
-    assert_instance_of(XML::Node, @doc.root)
-    assert_instance_of(XML::Document, @doc.root.doc)
+    @doc.root = LibXML::XML::Node.new('rubynet')
+    assert_instance_of(LibXML::XML::Node, @doc.root)
+    assert_instance_of(LibXML::XML::Document, @doc.root.doc)
     assert_equal("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<rubynet/>\n",
                  @doc.to_s(:indent => false))
   end
 
   def test_doc_node_type
-    assert_equal(XML::Node::DOCUMENT_NODE, XML::Document.new.node_type)
+    assert_equal(LibXML::XML::Node::DOCUMENT_NODE, LibXML::XML::Document.new.node_type)
   end
 
   def test_doc_node_type_name
-    assert_equal('document_xml', XML::Document.new.node_type_name)
+    assert_equal('document_xml', LibXML::XML::Document.new.node_type_name)
   end
 
   def test_xhtml
-		doc = XML::Document.new
+		doc = LibXML::XML::Document.new
 		assert(!doc.xhtml?)
-    XML::Dtd.new "-//W3C//DTD XHTML 1.0 Transitional//EN", "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd", nil, doc, true
+    LibXML::XML::Dtd.new "-//W3C//DTD XHTML 1.0 Transitional//EN", "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd", nil, doc, true
 		assert(doc.xhtml?)
   end
 
@@ -90,10 +90,10 @@ class TestDocument < Minitest::Test
     doc1 = LibXML::XML::Document.string("<one/>")
     doc2 = LibXML::XML::Document.string("<two/>")
 
-    error = assert_raises(XML::Error) do
+    error = assert_raises(LibXML::XML::Error) do
       doc1.root = doc2.root
     end
-    assert_equal(" Nodes belong to different documents.  You must first import the node by calling XML::Document.import.",
+    assert_equal(" Nodes belong to different documents.  You must first import the node by calling LibXML::XML::Document.import.",
                  error.to_s)
 
     doc2.root << doc2.import(doc1.root)
@@ -105,21 +105,27 @@ class TestDocument < Minitest::Test
   end
 
   def test_import_node
-    doc1 = XML::Parser.string('<nums><one></one></nums>').parse
-    doc2 = XML::Parser.string('<nums><two></two></nums>').parse
+    doc1 = LibXML::XML::Parser.string('<nums><one></one></nums>').parse
+    doc2 = LibXML::XML::Parser.string('<nums><two></two></nums>').parse
 
     node = doc1.root.child
 
-    error = assert_raises(XML::Error) do
+    error = assert_raises(LibXML::XML::Error) do
       doc2.root << node
     end
 
-    assert_equal(" Nodes belong to different documents.  You must first import the node by calling XML::Document.import.",
+    assert_equal(" Nodes belong to different documents.  You must first import the node by calling LibXML::XML::Document.import.",
                  error.to_s)
 
     doc2.root << doc2.import(node)
 
     assert_equal("<nums><two/><one/></nums>",
                  doc2.root.to_s(:indent => false))
+  end
+
+  def test_nonet
+    xml_string = '<ruby_array uga="booga" foo="bar"><fixnum>one</fixnum><fixnum>two</fixnum></ruby_array>'
+    xml = LibXML::XML::Document.string(xml_string, options: LibXML::XML::Parser::Options::NONET)
+    schema_document = LibXML::XML::Document.file('d:/src/libxml-ruby/test/model/atom.xml', options: LibXML::XML::Parser::Options::NONET)
   end
 end

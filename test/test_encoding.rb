@@ -1,6 +1,6 @@
 # encoding: UTF-8
 
-require File.expand_path('../test_helper', __FILE__)
+require_relative './test_helper'
 
 # Code  UTF8        Latin1      Hex
 # m      109          109        6D
@@ -39,24 +39,24 @@ class TestEncoding < Minitest::Test
     file = file_for_encoding(encoding)
 
     # Strip spaces to make testing easier
-    XML.default_keep_blanks = false
-    @doc = XML::Document.file(file)
-    XML.default_keep_blanks = true
+    LibXML::XML.default_keep_blanks = false
+    @doc = LibXML::XML::Document.file(file)
+    LibXML::XML.default_keep_blanks = true
   end
 
   def test_encoding
-    doc = XML::Document.new
-    assert_equal(XML::Encoding::NONE, doc.encoding)
-    assert_equal(Encoding::ASCII_8BIT, doc.rb_encoding) if defined?(Encoding)
+    doc = LibXML::XML::Document.new
+    assert_equal(LibXML::XML::Encoding::NONE, doc.encoding)
+    assert_equal(Encoding::ASCII_8BIT, doc.rb_encoding)
 
     file = File.expand_path(File.join(File.dirname(__FILE__), 'model/bands.xml'))
-    doc = XML::Document.file(file)
-    assert_equal(XML::Encoding::UTF_8, doc.encoding)
-    assert_equal(Encoding::UTF_8, doc.rb_encoding) if defined?(Encoding)
+    doc = LibXML::XML::Document.file(file)
+    assert_equal(LibXML::XML::Encoding::UTF_8, doc.encoding)
+    assert_equal(Encoding::UTF_8, doc.rb_encoding)
 
-    doc.encoding = XML::Encoding::ISO_8859_1
-    assert_equal(XML::Encoding::ISO_8859_1, doc.encoding)
-    assert_equal(Encoding::ISO8859_1, doc.rb_encoding) if defined?(Encoding)
+    doc.encoding = LibXML::XML::Encoding::ISO_8859_1
+    assert_equal(LibXML::XML::Encoding::ISO_8859_1, doc.encoding)
+    assert_equal(Encoding::ISO8859_1, doc.rb_encoding)
   end
 
   def test_no_internal_encoding_iso_8859_1
@@ -123,7 +123,7 @@ class TestEncoding < Minitest::Test
   end
 
   def test_encoding_conversions
-    assert_equal("UTF-8", XML::Encoding.to_s(XML::Encoding::UTF_8))
-    assert_equal(XML::Encoding::UTF_8, XML::Encoding.from_s("UTF-8"))
+    assert_equal("UTF-8", LibXML::XML::Encoding.to_s(LibXML::XML::Encoding::UTF_8))
+    assert_equal(LibXML::XML::Encoding::UTF_8, LibXML::XML::Encoding.from_s("UTF-8"))
   end
 end

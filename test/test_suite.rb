@@ -40,10 +40,9 @@ require './test_xpath_context'
 require './test_xpath_expression'
 require './test_xpointer'
 
-if defined?(Encoding)
-  require './test_encoding'
-  require './test_encoding_sax'
-end
+require './test_encoding'
+require './test_encoding_sax'
+
 # Compatibility
 require './test_properties'
 require './test_deprecated_require'

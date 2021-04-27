@@ -1,12 +1,12 @@
 # encoding: UTF-8
 
-require File.expand_path('../test_helper', __FILE__)
+require_relative './test_helper'
 
 
 class TestNS < Minitest::Test
   def setup
     file = File.join(File.dirname(__FILE__), 'model/soap.xml')
-    @doc = XML::Document.file(file)
+    @doc = LibXML::XML::Document.file(file)
   end
 
   def teardown
@@ -14,46 +14,46 @@ class TestNS < Minitest::Test
   end
 
   def test_create_ns
-    node = XML::Node.new('foo')
-    ns = XML::Namespace.new(node, 'my_namepace', 'http://www.mynamespace.com')
+    node = LibXML::XML::Node.new('foo')
+    ns = LibXML::XML::Namespace.new(node, 'my_namepace', 'http://www.mynamespace.com')
     assert_equal(ns.prefix, 'my_namepace')
     assert_equal(ns.href, 'http://www.mynamespace.com')
   end
 
   def test_create_default_ns
-    node = XML::Node.new('foo')
-    ns = XML::Namespace.new(node, nil, 'http://www.mynamespace.com')
+    node = LibXML::XML::Node.new('foo')
+    ns = LibXML::XML::Namespace.new(node, nil, 'http://www.mynamespace.com')
     assert_nil(ns.prefix)
     assert_equal(ns.href, 'http://www.mynamespace.com')
   end
 
   def test_create_unbound_ns
     error = assert_raises(TypeError) do
-      XML::Namespace.new(nil, 'my_namepace', 'http://www.mynamespace.com')
+      LibXML::XML::Namespace.new(nil, 'my_namepace', 'http://www.mynamespace.com')
     end
     assert_equal('wrong argument type nil (expected Data)', error.to_s)
   end
 
   def test_duplicate_ns
-    node = XML::Node.new('foo')
-    XML::Namespace.new(node, 'myname', 'http://www.mynamespace.com')
-    assert_raises(XML::Error) do
-      XML::Namespace.new(node, 'myname', 'http://www.mynamespace.com')
+    node = LibXML::XML::Node.new('foo')
+    LibXML::XML::Namespace.new(node, 'myname', 'http://www.mynamespace.com')
+    assert_raises(LibXML::XML::Error) do
+      LibXML::XML::Namespace.new(node, 'myname', 'http://www.mynamespace.com')
     end
   end
 
   def test_eql
-    node = XML::Node.new('Envelope')
+    node = LibXML::XML::Node.new('Envelope')
 
     assert(node.namespaces.namespace.eql?(node.namespaces.namespace))
   end
 
   def test_equal
-    node1 = XML::Node.new('Envelope')
-    ns1 = XML::Namespace.new(node1, 'soap', 'http://schemas.xmlsoap.org/soap/envelope/')
+    node1 = LibXML::XML::Node.new('Envelope')
+    ns1 = LibXML::XML::Namespace.new(node1, 'soap', 'http://schemas.xmlsoap.org/soap/envelope/')
 
-    node2 = XML::Node.new('Envelope')
-    ns2 = XML::Namespace.new(node2, 'soap', 'http://schemas.xmlsoap.org/soap/envelope/')
+    node2 = LibXML::XML::Node.new('Envelope')
+    ns2 = LibXML::XML::Namespace.new(node2, 'soap', 'http://schemas.xmlsoap.org/soap/envelope/')
 
     assert(ns1 == ns2)
   end

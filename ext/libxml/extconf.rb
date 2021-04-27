@@ -64,7 +64,6 @@ append_cflags("-I#{File.join(libxml2_recipe.path, 'include', 'libxml2')}")
 
 have_header('libxml/parser.h') || crash('parser.h not found')
 have_library('xml2', 'xmlParseDoc ') || crash('libxml2 not found')
-have_func('rb_io_bufwrite', 'ruby/io.h')
 
 create_header()
 create_makefile('libxml_ruby')

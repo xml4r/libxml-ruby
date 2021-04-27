@@ -483,7 +483,6 @@ static VALUE rxml_document_encoding_get(VALUE self)
  * Returns the Ruby encoding specified by this document
  * (available on Ruby 1.9.x and higher).
  */
-#ifdef HAVE_RUBY_ENCODING_H
 static VALUE rxml_document_rb_encoding_get(VALUE self)
 {
   xmlDocPtr xdoc;
@@ -493,7 +492,6 @@ static VALUE rxml_document_rb_encoding_get(VALUE self)
   rbencoding = rxml_xml_encoding_to_rb_encoding(mXMLEncoding, xmlParseCharEncoding((const char*)xdoc->encoding));
   return rb_enc_from_encoding(rbencoding);
 }
-#endif
 
 /*
  * call-seq:
@@ -738,7 +736,7 @@ static VALUE rxml_document_root_set(VALUE self, VALUE node)
   Data_Get_Struct(node, xmlNode, xnode);
 
   if (xnode->doc != NULL && xnode->doc != xdoc)
-    rb_raise(eXMLError, "Nodes belong to different documents.  You must first import the node by calling XML::Document.import");
+    rb_raise(eXMLError, "Nodes belong to different documents.  You must first import the node by calling LibXML::XML::Document.import");
 
   xmlDocSetRootElement(xdoc, xnode);
 
@@ -1097,9 +1095,7 @@ void rxml_init_document(void)
   rb_define_method(cXMLDocument, "compression?", rxml_document_compression_q, 0);
   rb_define_method(cXMLDocument, "debug", rxml_document_debug, 0);
   rb_define_method(cXMLDocument, "encoding", rxml_document_encoding_get, 0);
-#ifdef HAVE_RUBY_ENCODING_H
   rb_define_method(cXMLDocument, "rb_encoding", rxml_document_rb_encoding_get, 0);
-#endif
   rb_define_method(cXMLDocument, "encoding=", rxml_document_encoding_set, 1);
   rb_define_method(cXMLDocument, "import", rxml_document_import, 1);
   rb_define_method(cXMLDocument, "last", rxml_document_last_get, 0);

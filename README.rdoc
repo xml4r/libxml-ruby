@@ -32,7 +32,7 @@ We think libxml-ruby is the best XML library for Ruby because:
 The gem also includes a Microsoft VC++ 2012 solution and XCode 5 project - these
 are very useful for debugging.
 
-libxml-ruby's source codes lives on Github at https://github.com/xml4r/libxml-ruby.
+libxml-ruby's source codes lives on GitHub[https://github.com/xml4r/libxml-ruby].
 
 == Getting Started
 Using libxml is easy. First decide what parser you want to use:
@@ -53,7 +53,7 @@ Beyond the basics of parsing and processing XML and HTML documents,
 libxml provides a wealth of additional functionality.
 
 Most commonly, you'll want to use its LibXML::XML::XPath support, which makes
-it easy to find data inside a XML document.  Although not as popular,
+it easy to find data inside an XML document.  Although not as popular,
 LibXML::XML::XPointer provides another API for finding data inside an XML document.
 
 Often times you'll need to validate data before processing it. For example,
@@ -65,17 +65,16 @@ This can be done using libxml's powerful set of validators:
 * Relax Schemas (LibXML::XML::RelaxNG)
 * XML Schema (LibXML::XML::Schema)
 
-Finally, if you'd like to use XSL Transformations to process data,
-then install the libxslt gem which is available at
-https://github.com/xml4r/libxslt-ruby.
+Finally, if you'd like to use XSL Transformations to process data, then install
+the {libxslt gem}[https://github.com/xml4r/libxslt-rubygem].
 
 == Usage
-For information about using libxml-ruby please refer to its documentation at
-http://xml4r.github.com/libxml-ruby/rdoc/index.html. Some tutorials are also
-available at https://github.com/xml4r/libxml-ruby/wiki.
+For information about using libxml-ruby please refer to its
+documentation[http://xml4r.github.io/libxml-ruby]. Some tutorials are also
+available[https://github.com/xml4r/libxml-ruby/wiki].
 
 All libxml classes are in the LibXML::XML module. The easiest
-way to use libxml is to require 'xml'.  This will mixin
+way to use libxml is to <tt>require 'xml'</tt>.  This will mixin
 the LibXML module into the global namespace, allowing you to
 write code like this:
 
@@ -124,10 +123,11 @@ Once you have build the shared libary, you can then run tests using rake:
 +Travis build status: {<img src="https://travis-ci.org/xml4r/libxml-ruby.svg?branch=master" alt="Build Status" />}[https://travis-ci.org/xml4r/libxml-ruby]
 
 == Performance
+
 In addition to being feature rich and conformation, the main reason
-people use libxml-ruby is for performance.  Here are the results 
+people use libxml-ruby is for performance.  Here are the results
 of a couple simple benchmarks recently blogged about on the
-Web (you can find them in the benchmark directory of the 
+Web (you can find them in the benchmark directory of the
 libxml distribution).
 
 From http://depixelate.com/2008/4/23/ruby-xml-parsing-benchmarks
@@ -149,46 +149,46 @@ From https://svn.concord.org/svn/projects/trunk/common/ruby/xml_benchmarks/
 Documentation is available via rdoc, and is installed automatically with the
 gem.
 
-libxml-ruby's online documentation is generated using Hanna, which is a
-development gem dependency.
+libxml-ruby's {online
+documentation}[https://xml4r.github.io/libxml-ruby/rdoc/index.html] is generated
+using Hanna, which is a development gem dependency.
 
 Note that older versions of Rdoc, which ship with Ruby 1.8.x, will report
 a number of errors.  To avoid them, install Rdoc 2.1 or higher.  Once you have
 installed the gem, you'll have to disable the version of Rdoc that Ruby 1.8.x
-includes.  An easy way to do that is rename the directory ruby/lib/ruby/1.8/rdoc to
-ruby/lib/ruby/1.8/rdoc_old.
+includes.  An easy way to do that is rename the directory
+<tt>ruby/lib/ruby/1.8/rdoc</tt> to
+<tt>ruby/lib/ruby/1.8/rdoc_old</tt>.
 
 == Support
-
-If you have any questions about using libxml-ruby, please report them to
-Git Hub at https://github.com/xml4r/libxml-ruby/issues
+If you have any questions about using libxml-ruby, please report an issue
+on GitHub[https://github.com/xml4r/libxml-ruby/issues].
 
 == Memory Management
 libxml-ruby automatically manages memory associated with the
 underlying libxml2 library.  The bindings create a one-to-one mapping between
-ruby objects and libxml documents and libxml parent nodes (ie, nodes that do not
-have a parent and do not belong to a document). In these cases,
+Ruby objects and libxml documents and libxml parent nodes (ie, nodes that do not
+have a parent and do not belong to a document).  In these cases,
 the bindings manage the memory.  They do this by installing a free
 function and storing a back pointer to the Ruby object from the xmlnode
 using the _private member on libxml structures.  When the Ruby object
 goes out of scope, the underlying libxml structure is freed.  Libxml
-itself then frees all child node (recursively).
+itself then frees all child nodes (recursively).
 
 For all other nodes (the vast majority), the bindings create temporary
 Ruby objects that get freed once they go out of scope. Thus there can be
-more than one ruby object pointing to the same xml node. To mostly hide
-this from programmers on the ruby side, the #eql? and #== methods are
-overriden to check if two ruby objects wrap the same xmlnode.  If they do,
+more than one Ruby object pointing to the same xml node. To mostly hide
+this from a programmer on the Ruby side, the <tt>#eql?</tt> and <tt>#==</tt> methods are
+overriden to check if two Ruby objects wrap the same xmlnode.  If they do,
 then the methods return true.  During the mark phase, each of these temporary
 objects marks its owning document, thereby keeping the Ruby document object
 alive and thus the xmldoc tree.
 
 In the sweep phase of the garbage collector, or when a program ends,
-there is no order to how Ruby objects are freed. In fact, the ruby document
-object is almost always freed before any ruby objects that wrap child nodes.
-However, this is ok because those ruby objects do not have a free function
+there is no order to how Ruby objects are freed.  In fact, the Ruby document
+object is almost always freed before any Ruby objects that wrap child nodes.
+However, this is ok because those Ruby objects do not have a free function
 and are no longer in scope (since if they were the document would not be freed).
 
 == License
 See LICENSE for license information.
-

@@ -1,6 +1,6 @@
 # encoding: UTF-8
 
-require File.expand_path('../test_helper', __FILE__)
+require_relative './test_helper'
 
 # see mailing list archive
 # [libxml-devel] Segmentation fault when add the cloned/copied node
@@ -15,7 +15,7 @@ class TestNodeCopy < Minitest::Test
       </body></html>
     STR
 
-    doc = XML::Parser.string(str).parse
+    doc = LibXML::XML::Parser.string(str).parse
 
     xpath = "//div"
     @div1 = doc.find(xpath).to_a[0]

@@ -1,11 +1,11 @@
 # encoding: UTF-8
 
-require File.expand_path('../test_helper', __FILE__)
+require_relative './test_helper'
 
 
 class TestXPathExpression < Minitest::Test
   def setup
-    xp = XML::Parser.string('<ruby_array uga="booga" foo="bar"><fixnum>one</fixnum><fixnum>two</fixnum></ruby_array>')
+    xp = LibXML::XML::Parser.string('<ruby_array uga="booga" foo="bar"><fixnum>one</fixnum><fixnum>two</fixnum></ruby_array>')
     @doc = xp.parse
   end
   
@@ -14,16 +14,16 @@ class TestXPathExpression < Minitest::Test
   end
 
   def test_nodes
-    expr = XML::XPath::Expression.compile('/ruby_array/fixnum')
+    expr = LibXML::XML::XPath::Expression.compile('/ruby_array/fixnum')
     set = @doc.find(expr)
-    assert_instance_of(XML::XPath::Object, set)
+    assert_instance_of(LibXML::XML::XPath::Object, set)
     assert_equal(2, set.size)
   end
 
   def test_find_class
-    expr = XML::XPath::Expression.new('/ruby_array/fixnum')
+    expr = LibXML::XML::XPath::Expression.new('/ruby_array/fixnum')
     set = @doc.find(expr)
-    assert_instance_of(XML::XPath::Object, set)
+    assert_instance_of(LibXML::XML::XPath::Object, set)
     assert_equal(2, set.size)
   end
 

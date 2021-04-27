@@ -1,47 +1,47 @@
 # encoding: UTF-8
 
-require File.expand_path('../test_helper', __FILE__)
+require_relative './test_helper'
 require 'stringio'
 
 class TestParser < Minitest::Test
   def setup
-    XML::Error.set_handler(&XML::Error::QUIET_HANDLER)
+    LibXML::XML::Error.set_handler(&LibXML::XML::Error::QUIET_HANDLER)
   end
 
   # -----  Sources  -------
   def test_document
     file = File.expand_path(File.join(File.dirname(__FILE__), 'model/bands.utf-8.xml'))
-    parser = XML::Parser.file(file)
+    parser = LibXML::XML::Parser.file(file)
     doc = parser.parse
 
-    parser = XML::Parser.document(doc)
+    parser = LibXML::XML::Parser.document(doc)
 
     doc = parser.parse
 
-    assert_instance_of(XML::Document, doc)
-    assert_instance_of(XML::Parser::Context, parser.context)
+    assert_instance_of(LibXML::XML::Document, doc)
+    assert_instance_of(LibXML::XML::Parser::Context, parser.context)
   end
 
   def test_nil_document
     error = assert_raises(TypeError) do
-      XML::Parser.document(nil)
+      LibXML::XML::Parser.document(nil)
     end
 
-    assert_equal("Must pass an XML::Document object", error.to_s)
+    assert_equal("Must pass an LibXML::XML::Document object", error.to_s)
   end
 
   def test_file
     file = File.expand_path(File.join(File.dirname(__FILE__), 'model/rubynet.xml'))
 
-    parser = XML::Parser.file(file)
+    parser = LibXML::XML::Parser.file(file)
     doc = parser.parse
-    assert_instance_of(XML::Document, doc)
-    assert_instance_of(XML::Parser::Context, parser.context)
+    assert_instance_of(LibXML::XML::Document, doc)
+    assert_instance_of(LibXML::XML::Parser::Context, parser.context)
   end
 
   def test_noexistent_file
-    error = assert_raises(XML::Error) do
-      XML::Parser.file('i_dont_exist.xml')
+    error = assert_raises(LibXML::XML::Error) do
+      LibXML::XML::Parser.file('i_dont_exist.xml')
     end
 
     assert_equal('Warning: failed to load external entity "i_dont_exist.xml".', error.to_s)
@@ -49,7 +49,7 @@ class TestParser < Minitest::Test
 
   def test_nil_file
     error = assert_raises(TypeError) do
-      XML::Parser.file(nil)
+      LibXML::XML::Parser.file(nil)
     end
 
     assert_match(/nil into String/, error.to_s)
@@ -57,15 +57,15 @@ class TestParser < Minitest::Test
 
   def test_file_encoding
     file = File.expand_path(File.join(File.dirname(__FILE__), 'model/bands.utf-8.xml'))
-    parser = XML::Parser.file(file, :encoding => XML::Encoding::ISO_8859_1)
+    parser = LibXML::XML::Parser.file(file, :encoding => LibXML::XML::Encoding::ISO_8859_1)
 
-    error = assert_raises(XML::Error) do
+    error = assert_raises(LibXML::XML::Error) do
       parser.parse
     end
 
     assert(error.to_s.match(/Fatal error: Extra content at the end of the document/))
 
-    parser = XML::Parser.file(file, :encoding => XML::Encoding::UTF_8)
+    parser = LibXML::XML::Parser.file(file, :encoding => LibXML::XML::Encoding::UTF_8)
     doc = parser.parse
     refute_nil(doc)
   end
@@ -73,23 +73,23 @@ class TestParser < Minitest::Test
   def test_file_base_uri
     file = File.expand_path(File.join(File.dirname(__FILE__), 'model/bands.utf-8.xml'))
 
-    parser = XML::Parser.file(file)
+    parser = LibXML::XML::Parser.file(file)
     doc = parser.parse
     assert(doc.child.base_uri.match(/test\/model\/bands.utf-8.xml/))
 
-    parser = XML::Parser.file(file, :base_uri => "http://libxml.org")
+    parser = LibXML::XML::Parser.file(file, :base_uri => "http://libxml.org")
     doc = parser.parse
     assert(doc.child.base_uri.match(/test\/model\/bands.utf-8.xml/))
   end
 
   def test_io
     File.open(File.join(File.dirname(__FILE__), 'model/rubynet.xml')) do |io|
-      parser = XML::Parser.io(io)
-      assert_instance_of(XML::Parser, parser)
+      parser = LibXML::XML::Parser.io(io)
+      assert_instance_of(LibXML::XML::Parser, parser)
 
       doc = parser.parse
-      assert_instance_of(XML::Document, doc)
-      assert_instance_of(XML::Parser::Context, parser.context)
+      assert_instance_of(LibXML::XML::Document, doc)
+      assert_instance_of(LibXML::XML::Parser::Context, parser.context)
     end
   end
 
@@ -97,7 +97,7 @@ class TestParser < Minitest::Test
     # Test that the reader keeps a reference
     # to the io object
     file = File.open(File.join(File.dirname(__FILE__), 'model/rubynet.xml'))
-    parser = XML::Parser.io(file)
+    parser = LibXML::XML::Parser.io(file)
     file = nil
     GC.start
     assert(parser.parse)
@@ -105,7 +105,7 @@ class TestParser < Minitest::Test
 
   def test_nil_io
     error = assert_raises(TypeError) do
-      XML::Parser.io(nil)
+      LibXML::XML::Parser.io(nil)
     end
 
     assert_equal("Must pass in an IO object", error.to_s)
@@ -114,22 +114,22 @@ class TestParser < Minitest::Test
   def test_string_io
     data = File.read(File.join(File.dirname(__FILE__), 'model/rubynet.xml'))
     string_io = StringIO.new(data)
-    parser = XML::Parser.io(string_io)
+    parser = LibXML::XML::Parser.io(string_io)
 
     doc = parser.parse
-    assert_instance_of(XML::Document, doc)
-    assert_instance_of(XML::Parser::Context, parser.context)
+    assert_instance_of(LibXML::XML::Document, doc)
+    assert_instance_of(LibXML::XML::Parser::Context, parser.context)
   end
 
   def test_string_io_thread
     thread = Thread.new do
       data = File.read(File.join(File.dirname(__FILE__), 'model/rubynet.xml'))
       string_io = StringIO.new(data)
-      parser = XML::Parser.io(string_io)
+      parser = LibXML::XML::Parser.io(string_io)
 
       doc = parser.parse
-      assert_instance_of(XML::Document, doc)
-      assert_instance_of(XML::Parser::Context, parser.context)
+      assert_instance_of(LibXML::XML::Document, doc)
+      assert_instance_of(LibXML::XML::Parser::Context, parser.context)
     end
 
     thread.join
@@ -140,17 +140,17 @@ class TestParser < Minitest::Test
   def test_string
     str = '<ruby_array uga="booga" foo="bar"><fixnum>one</fixnum><fixnum>two</fixnum></ruby_array>'
 
-    parser = XML::Parser.string(str)
-    assert_instance_of(XML::Parser, parser)
+    parser = LibXML::XML::Parser.string(str)
+    assert_instance_of(LibXML::XML::Parser, parser)
 
     doc = parser.parse
-    assert_instance_of(XML::Document, doc)
-    assert_instance_of(XML::Parser::Context, parser.context)
+    assert_instance_of(LibXML::XML::Document, doc)
+    assert_instance_of(LibXML::XML::Parser::Context, parser.context)
   end
 
   def test_nil_string
     error = assert_raises(TypeError) do
-      XML::Parser.string(nil)
+      LibXML::XML::Parser.string(nil)
     end
 
     assert_equal("wrong argument type nil (expected String)", error.to_s)
@@ -165,30 +165,30 @@ class TestParser < Minitest::Test
       </test>
     EOS
 
-    XML::default_substitute_entities = false
+    LibXML::XML::default_substitute_entities = false
 
     # Parse normally
-    parser = XML::Parser.string(xml)
+    parser = LibXML::XML::Parser.string(xml)
     doc = parser.parse
     assert_nil(doc.child.base_uri)
 
     # Cdata section should be cdata nodes
     node = doc.find_first('/test/cdata').child
-    assert_equal(XML::Node::CDATA_SECTION_NODE, node.node_type)
+    assert_equal(LibXML::XML::Node::CDATA_SECTION_NODE, node.node_type)
 
     # Entities should not be subtituted
     node = doc.find_first('/test/entity')
     assert_equal('&foo;', node.child.to_s)
 
     # Parse with options
-    parser = XML::Parser.string(xml, :base_uri => 'http://libxml.rubyforge.org',
-                                     :options => XML::Parser::Options::NOCDATA | XML::Parser::Options::NOENT)
+    parser = LibXML::XML::Parser.string(xml, :base_uri => 'http://libxml.rubyforge.org',
+                                     :options => LibXML::XML::Parser::Options::NOCDATA | LibXML::XML::Parser::Options::NOENT)
     doc = parser.parse
     assert_equal(doc.child.base_uri, 'http://libxml.rubyforge.org')
 
     # Cdata section should be text nodes
     node = doc.find_first('/test/cdata').child
-    assert_equal(XML::Node::TEXT_NODE, node.node_type)
+    assert_equal(LibXML::XML::Node::TEXT_NODE, node.node_type)
 
     # Entities should be subtituted
     node = doc.find_first('/test/entity')
@@ -207,9 +207,9 @@ class TestParser < Minitest::Test
     EOS
 
     # Parse as UTF_8
-    parser = XML::Parser.string(xml, :encoding => XML::Encoding::UTF_8)
+    parser = LibXML::XML::Parser.string(xml, :encoding => LibXML::XML::Encoding::UTF_8)
 
-    error = assert_raises(XML::Error) do
+    error = assert_raises(LibXML::XML::Error) do
       parser.parse
     end
 
@@ -217,15 +217,11 @@ class TestParser < Minitest::Test
                  error.to_s)
 
     # Parse as ISO_8859_1:
-    parser = XML::Parser.string(xml, :encoding => XML::Encoding::ISO_8859_1)
+    parser = LibXML::XML::Parser.string(xml, :encoding => LibXML::XML::Encoding::ISO_8859_1)
     doc = parser.parse
     node = doc.find_first('//metal')
-    if defined?(Encoding)
-      assert_equal(Encoding::UTF_8, node.content.encoding)
-      assert_equal("m\303\266tley_cr\303\274e", node.content)
-    else
-      assert_equal("m\303\266tley_cr\303\274e", node.content)
-    end
+    assert_equal(Encoding::UTF_8, node.content.encoding)
+    assert_equal("m\303\266tley_cr\303\274e", node.content)
   end
 
   def test_fd_gc
@@ -235,7 +231,7 @@ class TestParser < Minitest::Test
     # re-open the same doc `limit descriptors` times.
     # If we make it to the end, then we've succeeded,
     # otherwise an exception will be thrown.
-    XML::Error.set_handler {|error|}
+    LibXML::XML::Error.set_handler {|error|}
 
     max_fd = if RUBY_PLATFORM.match(/mswin32|mswin64|mingw/i)
       500
@@ -245,30 +241,30 @@ class TestParser < Minitest::Test
 
     file = File.join(File.dirname(__FILE__), 'model/rubynet.xml')
     max_fd.times do
-       XML::Parser.file(file).parse
+       LibXML::XML::Parser.file(file).parse
     end
-    XML::Error.reset_handler {|error|}
+    LibXML::XML::Error.reset_handler {|error|}
   end
 
   def test_open_many_files
     file = File.expand_path(File.join(File.dirname(__FILE__), 'model/atom.xml'))
     1000.times do
-      XML::Parser.file(file).parse
+      LibXML::XML::Parser.file(file).parse
     end
   end
 
   # -----  Errors  ------
   def test_error
-    error = assert_raises(XML::Error) do
-      XML::Parser.string('<foo><bar/></foz>').parse
+    error = assert_raises(LibXML::XML::Error) do
+      LibXML::XML::Parser.string('<foo><bar/></foz>').parse
     end
 
     refute_nil(error)
-    assert_kind_of(XML::Error, error)
+    assert_kind_of(LibXML::XML::Error, error)
     assert_equal("Fatal error: Opening and ending tag mismatch: foo line 1 and foz at :1.", error.message)
-    assert_equal(XML::Error::PARSER, error.domain)
-    assert_equal(XML::Error::TAG_NAME_MISMATCH, error.code)
-    assert_equal(XML::Error::FATAL, error.level)
+    assert_equal(LibXML::XML::Error::PARSER, error.domain)
+    assert_equal(LibXML::XML::Error::TAG_NAME_MISMATCH, error.code)
+    assert_equal(LibXML::XML::Error::FATAL, error.level)
     assert_nil(error.file)
     assert_equal(1, error.line)
     assert_equal('foo', error.str1)
@@ -280,17 +276,17 @@ class TestParser < Minitest::Test
   end
 
   def test_bad_xml
-    parser = XML::Parser.string('<ruby_array uga="booga" foo="bar"<fixnum>one</fixnum><fixnum>two</fixnum></ruby_array>')
-    error = assert_raises(XML::Error) do
+    parser = LibXML::XML::Parser.string('<ruby_array uga="booga" foo="bar"<fixnum>one</fixnum><fixnum>two</fixnum></ruby_array>')
+    error = assert_raises(LibXML::XML::Error) do
       refute_nil(parser.parse)
     end
 
     refute_nil(error)
-    assert_kind_of(XML::Error, error)
+    assert_kind_of(LibXML::XML::Error, error)
     assert_equal("Fatal error: Extra content at the end of the document at :1.", error.message)
-    assert_equal(XML::Error::PARSER, error.domain)
-    assert_equal(XML::Error::DOCUMENT_END, error.code)
-    assert_equal(XML::Error::FATAL, error.level)
+    assert_equal(LibXML::XML::Error::PARSER, error.domain)
+    assert_equal(LibXML::XML::Error::DOCUMENT_END, error.code)
+    assert_equal(LibXML::XML::Error::FATAL, error.level)
     assert_nil(error.file)
     assert_equal(1, error.line)
     assert_nil(error.str1)
@@ -306,20 +302,20 @@ class TestParser < Minitest::Test
     background_errors = []
 
     begin
-      XML::Error.set_handler do |error|
+      LibXML::XML::Error.set_handler do |error|
         errors << error
       end
-      parser = XML::Parser.string("<moo>")
+      parser = LibXML::XML::Parser.string("<moo>")
 
       thread = Thread.new do
-        XML::Error.set_handler do |error|
+        LibXML::XML::Error.set_handler do |error|
           background_errors << error
         end
         parser.parse rescue nil
       end
       thread.join
     ensure
-      XML::Error.set_handler(&XML::Error::QUIET_HANDLER)
+      LibXML::XML::Error.set_handler(&LibXML::XML::Error::QUIET_HANDLER)
     end
 
     assert_equal(errors.size, 0)

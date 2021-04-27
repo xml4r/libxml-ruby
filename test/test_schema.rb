@@ -1,11 +1,11 @@
 # encoding: UTF-8
 
-require File.expand_path('../test_helper', __FILE__)
+require_relative './test_helper'
 
 class TestSchema < Minitest::Test
   def setup
     file = File.join(File.dirname(__FILE__), 'model/shiporder.xml')
-    @doc = XML::Document.file(file)
+    @doc = LibXML::XML::Document.file(file)
   end
 
   def teardown
@@ -13,17 +13,17 @@ class TestSchema < Minitest::Test
   end
 
   def schema
-    document = XML::Document.file(File.join(File.dirname(__FILE__), 'model/shiporder.xsd'))
-    XML::Schema.document(document)
+    document = LibXML::XML::Document.file(File.join(File.dirname(__FILE__), 'model/shiporder.xsd'))
+    LibXML::XML::Schema.document(document)
   end
 
   def check_error(error)
     refute_nil(error)
     assert(error.message.match(/Error: Element 'invalid': This element is not expected. Expected is \( item \)/))
-    assert_kind_of(XML::Error, error)
-    assert_equal(XML::Error::SCHEMASV, error.domain)
-    assert_equal(XML::Error::SCHEMAV_ELEMENT_CONTENT, error.code)
-    assert_equal(XML::Error::ERROR, error.level)
+    assert_kind_of(LibXML::XML::Error, error)
+    assert_equal(LibXML::XML::Error::SCHEMASV, error.domain)
+    assert_equal(LibXML::XML::Error::SCHEMAV_ELEMENT_CONTENT, error.code)
+    assert_equal(LibXML::XML::Error::ERROR, error.level)
     assert(error.file.match(/shiporder.xml/)) if error.file
     assert_nil(error.str1)
     assert_nil(error.str2)
@@ -33,7 +33,7 @@ class TestSchema < Minitest::Test
   end
 
   def test_load_from_doc
-    assert_instance_of(XML::Schema, schema)
+    assert_instance_of(LibXML::XML::Schema, schema)
   end
 
   def test_doc_valid
@@ -41,10 +41,10 @@ class TestSchema < Minitest::Test
   end
 
   def test_doc_invalid
-    new_node = XML::Node.new('invalid', 'this will mess up validation')
+    new_node = LibXML::XML::Node.new('invalid', 'this will mess up validation')
     @doc.root << new_node
 
-    error = assert_raises(XML::Error) do
+    error = assert_raises(LibXML::XML::Error) do
       @doc.validate_schema(schema)
     end
 
@@ -55,7 +55,7 @@ class TestSchema < Minitest::Test
   end
 
   def test_reader_valid
-    reader = XML::Reader.string(@doc.to_s)
+    reader = LibXML::XML::Reader.string(@doc.to_s)
     assert(reader.schema_validate(schema))
 
     while reader.read
@@ -65,13 +65,13 @@ class TestSchema < Minitest::Test
   def test_reader_invalid
     # Set error handler
     errors = Array.new
-    XML::Error.set_handler do |error|
+    LibXML::XML::Error.set_handler do |error|
       errors << error
     end
 
-    new_node = XML::Node.new('invalid', 'this will mess up validation')
+    new_node = LibXML::XML::Node.new('invalid', 'this will mess up validation')
     @doc.root << new_node
-    reader = XML::Reader.string(@doc.to_s)
+    reader = LibXML::XML::Reader.string(@doc.to_s)
 
     # Set a schema
     assert(reader.schema_validate(schema))
@@ -85,7 +85,7 @@ class TestSchema < Minitest::Test
     check_error(error)
     assert_equal(21, error.line)
   ensure
-    XML::Error.set_handler(&LibXML::XML::Error::VERBOSE_HANDLER)
+    LibXML::XML::Error.set_handler(&LibXML::XML::Error::VERBOSE_HANDLER)
   end
 
 
@@ -93,19 +93,19 @@ class TestSchema < Minitest::Test
   def test_elements
     assert_instance_of(Hash, schema.elements)
     assert_equal(1, schema.elements.length)
-    assert_instance_of(XML::Schema::Element, schema.elements['shiporder'])
+    assert_instance_of(LibXML::XML::Schema::Element, schema.elements['shiporder'])
   end
 
   def test_types
     assert_instance_of(Hash, schema.types)
     assert_equal(1, schema.types.length)
-    assert_instance_of(XML::Schema::Type, schema.types['shiporder'])
+    assert_instance_of(LibXML::XML::Schema::Type, schema.types['shiporder'])
   end
 
   def test_imported_types
     assert_instance_of(Hash, schema.imported_types)
     assert_equal(1, schema.imported_types.length)
-    assert_instance_of(XML::Schema::Type, schema.types['shiporder'])
+    assert_instance_of(LibXML::XML::Schema::Type, schema.types['shiporder'])
   end
 
   def test_namespaces
@@ -119,11 +119,11 @@ class TestSchema < Minitest::Test
     assert_equal('shiporder', type.name)
     assert_nil(type.namespace)
     assert_equal("Shiporder type documentation", type.annotation)
-    assert_instance_of(XML::Node, type.node)
-    assert_equal(XML::Schema::Types::XML_SCHEMA_TYPE_COMPLEX, type.kind)
-    assert_instance_of(XML::Schema::Type, type.base)
+    assert_instance_of(LibXML::XML::Node, type.node)
+    assert_equal(LibXML::XML::Schema::Types::XML_SCHEMA_TYPE_COMPLEX, type.kind)
+    assert_instance_of(LibXML::XML::Schema::Type, type.base)
     assert_equal("anyType", type.base.name)
-    assert_equal(XML::Schema::Types::XML_SCHEMA_TYPE_BASIC, type.base.kind)
+    assert_equal(LibXML::XML::Schema::Types::XML_SCHEMA_TYPE_BASIC, type.base.kind)
 
     assert_instance_of(Hash, type.elements)
     assert_equal(3, type.elements.length)
@@ -149,7 +149,7 @@ class TestSchema < Minitest::Test
 
     assert_instance_of(Array, type.attributes)
     assert_equal(2, type.attributes.length)
-    assert_instance_of(XML::Schema::Attribute, type.attributes.first)
+    assert_instance_of(LibXML::XML::Schema::Attribute, type.attributes.first)
   end
 
   def test_schema_attribute

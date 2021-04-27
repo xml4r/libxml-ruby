@@ -1,6 +1,6 @@
 # encoding: UTF-8
 
-require File.expand_path('../test_helper', __FILE__)
+require_relative './test_helper'
 
 
 class TestParserContext < Minitest::Test
@@ -12,9 +12,9 @@ class TestParserContext < Minitest::Test
       </bands>
     EOS
 
-    context = XML::Parser::Context.string(xml)
-    assert_instance_of(XML::Parser::Context, context)
-    assert_equal(XML::Encoding::NONE, context.encoding)
+    context = LibXML::XML::Parser::Context.string(xml)
+    assert_instance_of(LibXML::XML::Parser::Context, context)
+    assert_equal(LibXML::XML::Encoding::NONE, context.encoding)
     assert_nil(context.base_uri)
   end
 
@@ -26,11 +26,11 @@ class TestParserContext < Minitest::Test
       </bands>
     EOS
 
-    context = XML::Parser::Context.string(xml)
-    assert_equal(XML::Encoding::NONE, context.encoding)
+    context = LibXML::XML::Parser::Context.string(xml)
+    assert_equal(LibXML::XML::Encoding::NONE, context.encoding)
 
-    context.encoding = XML::Encoding::ISO_8859_1
-    assert_equal(XML::Encoding::ISO_8859_1, context.encoding)
+    context.encoding = LibXML::XML::Encoding::ISO_8859_1
+    assert_equal(LibXML::XML::Encoding::ISO_8859_1, context.encoding)
   end
 
   def test_invalid_encoding
@@ -41,7 +41,7 @@ class TestParserContext < Minitest::Test
       </bands>
     EOS
 
-    context = XML::Parser::Context.string(xml)
+    context = LibXML::XML::Parser::Context.string(xml)
 
     error = assert_raises(ArgumentError) do
       context.encoding = -999
@@ -57,7 +57,7 @@ class TestParserContext < Minitest::Test
       </bands>
     EOS
 
-    context = XML::Parser::Context.string(xml)
+    context = LibXML::XML::Parser::Context.string(xml)
     assert_nil(context.base_uri)
 
     context.base_uri = 'http://libxml.rubyforge.org'
@@ -66,25 +66,25 @@ class TestParserContext < Minitest::Test
 
   def test_string_empty
     error = assert_raises(TypeError) do
-      XML::Parser::Context.string(nil)
+      LibXML::XML::Parser::Context.string(nil)
     end
     assert_equal("wrong argument type nil (expected String)", error.to_s)
 
     error = assert_raises(ArgumentError) do
-      XML::Parser::Context.string('')
+      LibXML::XML::Parser::Context.string('')
     end
     assert_equal("Must specify a string with one or more characters", error.to_s)
   end
 
   def test_well_formed
-    parser = XML::Parser.string("<abc/>")
+    parser = LibXML::XML::Parser.string("<abc/>")
     parser.parse
     assert(parser.context.well_formed?)
   end
 
   def test_not_well_formed
-    parser = XML::Parser.string("<abc>")
-    assert_raises(XML::Error) do
+    parser = LibXML::XML::Parser.string("<abc>")
+    assert_raises(LibXML::XML::Error) do
       parser.parse
     end
     assert(!parser.context.well_formed?)
@@ -92,34 +92,34 @@ class TestParserContext < Minitest::Test
 
   def test_version_info
     file = File.expand_path(File.join(File.dirname(__FILE__), 'model/bands.utf-8.xml'))
-    parser = XML::Parser.file(file)
+    parser = LibXML::XML::Parser.file(file)
     assert_nil(parser.context.version)
     parser.parse
     assert_equal("1.0", parser.context.version)
   end
 
   def test_depth
-    context = XML::Parser::Context.new
+    context = LibXML::XML::Parser::Context.new
     assert_instance_of(Integer, context.depth)
   end
 
   def test_disable_sax
-    context = XML::Parser::Context.new
+    context = LibXML::XML::Parser::Context.new
     assert(!context.disable_sax?)
   end
 
   def test_docbook
-    context = XML::Parser::Context.new
+    context = LibXML::XML::Parser::Context.new
     assert(!context.docbook?)
   end
 
   def test_html
-    context = XML::Parser::Context.new
+    context = LibXML::XML::Parser::Context.new
     assert(!context.html?)
   end
 
   def test_keep_blanks
-    context = XML::Parser::Context.new
+    context = LibXML::XML::Parser::Context.new
     if context.keep_blanks?
       assert_instance_of(TrueClass, context.keep_blanks?)
     else
@@ -134,11 +134,11 @@ class TestParserContext < Minitest::Test
   end
 
   def test_replace_entities
-    context = XML::Parser::Context.new
+    context = LibXML::XML::Parser::Context.new
     assert(!context.replace_entities?)
 
-#    context.options = 1
- #   assert(context.replace_entities?)
+    context.options = LibXML::XML::Parser::Options::NOENT
+    assert(context.replace_entities?)
 
     context.options = 0
     assert(!context.replace_entities?)
@@ -148,24 +148,24 @@ class TestParserContext < Minitest::Test
   end
 
   def test_space_depth
-    context = XML::Parser::Context.new
+    context = LibXML::XML::Parser::Context.new
     assert_equal(1, context.space_depth)
   end
 
   def test_subset_external
-    context = XML::Parser::Context.new
+    context = LibXML::XML::Parser::Context.new
     assert(!context.subset_external?)
   end
 
   def test_data_directory_get
-    context = XML::Parser::Context.new
+    context = LibXML::XML::Parser::Context.new
     assert_nil(context.data_directory)
   end
 
   def test_parse_error
-    xp = XML::Parser.string('<foo><bar/></foz>')
+    xp = LibXML::XML::Parser.string('<foo><bar/></foz>')
 
-    assert_raises(XML::Error) do
+    assert_raises(LibXML::XML::Error) do
       xp.parse
     end
 
@@ -175,7 +175,7 @@ class TestParserContext < Minitest::Test
     assert_equal(0, context.depth)
     assert_equal(true, context.disable_sax?)
     assert_equal(false, context.docbook?)
-    assert_equal(XML::Encoding::NONE, context.encoding)
+    assert_equal(LibXML::XML::Encoding::NONE, context.encoding)
     assert_equal(76, context.errno)
     assert_equal(false, context.html?)
     assert_equal(5, context.io_max_num_streams)

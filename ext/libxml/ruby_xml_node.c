@@ -310,7 +310,7 @@ static VALUE rxml_node_modify_dom(VALUE self, VALUE target,
   xtarget = rxml_get_xnode(target);
 
   if (xtarget->doc != NULL && xtarget->doc != xnode->doc)
-    rb_raise(eXMLError, "Nodes belong to different documents.  You must first import the node by calling XML::Document.import");
+    rb_raise(eXMLError, "Nodes belong to different documents.  You must first import the node by calling LibXML::XML::Document.import");
 
   xmlUnlinkNode(xtarget);
 

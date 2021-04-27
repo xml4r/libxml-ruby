@@ -38,13 +38,11 @@ void rxml_dtd_free(xmlDtdPtr xdtd)
 
 void rxml_dtd_mark(xmlDtdPtr xdtd)
 {
-  VALUE doc = Qnil;
-
-  if (xdtd == NULL)
-    return;
-
-  doc = (VALUE)xdtd->doc->_private;
-  rb_gc_mark(doc);
+  if (xdtd && xdtd->doc)
+  {
+      VALUE doc = (VALUE)xdtd->doc->_private;
+      rb_gc_mark(doc);
+  }
 }
 
 static VALUE rxml_dtd_alloc(VALUE klass)
@@ -173,7 +171,7 @@ static VALUE rxml_dtd_initialize(int argc, VALUE *argv, VALUE self)
       }
       if (doc != Qnil) {
         if (rb_obj_is_kind_of(doc, cXMLDocument) == Qfalse)
-          rb_raise(rb_eTypeError, "Must pass an XML::Document object");
+          rb_raise(rb_eTypeError, "Must pass an LibXML::XML::Document object");
         Data_Get_Struct(doc, xmlDoc, xdoc);
       }
 
