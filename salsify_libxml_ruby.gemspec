@@ -37,6 +37,7 @@ Gem::Specification.new do |spec|
 
   spec.test_files = Dir.glob('test/test_*.rb')
   spec.required_ruby_version = '>= 2.5'
+  spec.add_runtime_dependency("mini_portile2", ">= 2.4.0") # keep version in sync with the one in extconf.rb
   spec.add_development_dependency 'salsify_gem'
   spec.add_development_dependency 'rake-compiler'
   spec.add_development_dependency 'minitest'
