@@ -2,12 +2,12 @@
 
 require 'mkmf'
 require 'rubygems'
-gem 'mini_portile2', '>= 2.4.0' # Keep this version in sync with the one in the gemspec!
+gem 'mini_portile2', '~> 2.5.0' # Keep this version in sync with the one in the gemspec!
 require 'mini_portile2'
 message "Using mini_portile2 version #{MiniPortile::VERSION}\n"
 
-LIBXML2_VERSION = '2.9.10'.freeze
-LIBXML2_SHA256 = 'aafee193ffb8fe0c82d4afef6ef91972cbaf5feea100edc2f262750611b4be1f'.freeze
+LIBXML2_VERSION = '2.9.12'.freeze
+LIBXML2_SHA256 = 'c8d6681e38c56f172892c85ddc0852e1fd4b53b4209e7f4ebf17f7e2eae71d92'.freeze
 
 def darwin?
   RbConfig::CONFIG['target_os'] =~ /darwin/
@@ -55,8 +55,6 @@ unless File.exist?(checkpoint)
   FileUtils.touch checkpoint
 end
 libxml2_recipe.activate
-# .activate is supposed to do this, but it doesn't before mini_portile2-2.5.0, can be removed once we update.
-$LIBPATH = ["#{libxml2_recipe.path}/lib"] | $LIBPATH
 append_cflags("-I#{File.join(libxml2_recipe.path, 'include', 'libxml2')}")
 
 have_header('libxml/parser.h') || crash('parser.h not found')
