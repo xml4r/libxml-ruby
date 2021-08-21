@@ -7,7 +7,7 @@ version = File.read('ext/libxml/ruby_xml_version.h').match(/\s*RUBY_LIBXML_VERSI
 Gem::Specification.new do |spec|
   spec.name        = 'libxml-ruby'
   spec.version     = version
-  spec.homepage    = 'http://xml4r.github.com/libxml-ruby'
+  spec.homepage    = 'https://xml4r.github.io/libxml-ruby/'
   spec.summary     = 'Ruby Bindings for LibXML2'
   spec.description = <<-EOS
     The Libxml-Ruby project provides Ruby language bindings for the GNOME
