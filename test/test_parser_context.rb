@@ -127,12 +127,6 @@ class TestParserContext < Minitest::Test
     end
   end
 
-  if ENV['NOTWORKING']
-    def test_num_chars
-      assert_equal(17, context.num_chars)
-    end
-  end
-
   def test_replace_entities
     context = LibXML::XML::Parser::Context.new
     assert(!context.replace_entities?)
@@ -185,7 +179,7 @@ class TestParserContext < Minitest::Test
     assert_nil(context.name_node)
     assert_equal(0, context.name_depth)
     assert_equal(10, context.name_depth_max)
-    assert_equal(17, context.num_chars)
+    assert_equal(0, context.num_chars)
     assert_equal(false, context.replace_entities?)
     assert_equal(1, context.space_depth)
     assert_equal(10, context.space_depth_max)
