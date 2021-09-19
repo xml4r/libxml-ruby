@@ -265,7 +265,7 @@ EOS
     assert_equal(LibXML::XML::Error::FATAL, error.level)
     assert_nil(error.file)
     assert_equal(2, error.line)
-    refuse_nil(error.str1)
+    refute_nil(error.str1)
     assert_nil(error.str2)
     assert_nil(error.str3)
     assert_equal(1, error.int1)
