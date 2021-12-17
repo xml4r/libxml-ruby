@@ -181,7 +181,7 @@ class TestSaxParser < Minitest::Test
     xml = File.read(saxtest_file)
     io = StringIO.new(xml)
     parser = LibXML::XML::SaxParser.io(io)
-    
+
     parser.callbacks = TestCaseCallbacks.new
     parser.parse
     verify(parser)
@@ -250,16 +250,21 @@ EOS
     result = parser.callbacks.result
 
     i = -1
+
+    base_err_msg = "Fatal error: (Premature end of data in tag Results line 1|EndTag: '<\\/' not found) at :2\\."
+    re_err_msg1 = /\A(error: )#{base_err_msg}\z/
+    re_err_msg2 = /\A#{base_err_msg}\z/
+
     assert_equal("startdoc", result[i+=1])
     assert_equal("start_element: Results, attr: {}", result[i+=1])
     assert_equal("start_element_ns: Results, attr: {}, prefix: , uri: , ns: {}", result[i+=1])
     assert_equal("characters: \n", result[i+=1])
-    assert_equal("error: Fatal error: Premature end of data in tag Results line 1 at :2.", result[i+=1])
+    assert_match(re_err_msg1, result[i+=1])
     assert_equal("end_document", result[i+=1])
 
     refute_nil(error)
     assert_kind_of(LibXML::XML::Error, error)
-    assert_equal("Fatal error: Premature end of data in tag Results line 1 at :2.", error.message)
+    assert_match(re_err_msg2, error.message)
     assert_equal(LibXML::XML::Error::PARSER, error.domain)
     assert_equal(LibXML::XML::Error::TAG_NOT_FINISHED, error.code)
     assert_equal(LibXML::XML::Error::FATAL, error.level)
