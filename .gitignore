@@ -17,3 +17,5 @@ InstalledFiles
 ext/libxml/libxml_ruby.bundle
 .DS_Store
 /ext/vc/*.suo
+Gemfile.lock
+lib/*/libxml_ruby.so
