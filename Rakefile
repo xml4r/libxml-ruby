@@ -16,21 +16,29 @@ spec = Gem::Specification.load("#{GEM_NAME}.gemspec")
 task :default => [:test]
 
 # Setup compile tasks
-if RUBY_PLATFORM.match(/mswin32|mswin64|mingw32/)
-  Rake::ExtensionTask.new do |ext|
-    ext.gem_spec = spec
-    ext.name = SO_NAME
-    ext.ext_dir = "ext/libxml"
-    ext.lib_dir = "lib/#{RUBY_VERSION.sub(/\.\d$/, '')}"
-    ext.config_options << "--with-xml2-include=C:/msys64/mingw64/include/libxml2"
-  end
-else
-  Rake::ExtensionTask.new do |ext|
-    ext.gem_spec = spec
-    ext.name = SO_NAME
-    ext.ext_dir = "ext/libxml"
-    ext.lib_dir = "lib/#{RUBY_VERSION.sub(/\.\d$/, '')}"
-    ext.config_options << "--with-xml2-include=/usr/include/libxml2"
+Rake::ExtensionTask.new do |ext|
+  ext.gem_spec = spec
+  ext.name = SO_NAME
+  ext.ext_dir = "ext/libxml"
+  ext.lib_dir = "lib/#{RUBY_VERSION.sub(/\.\d$/, '')}"
+  if RUBY_PLATFORM.match(/mswin32|mswin64|mingw32|ucrt/)
+    ext.config_options <<
+      if (dir = ENV['WINDOWS_XML2_INCLUDE'])
+        "--with-xml2-include=#{dir}"
+      else
+        case RUBY_PLATFORM
+        when 'i386-mingw32'
+          '--with-xml2-include=C:/msys64/mingw32/include/libxml2'
+        when 'x64-mingw32'
+          '--with-xml2-include=C:/msys64/mingw64/include/libxml2'
+        when 'x64-mingw-ucrt'
+          '--with-xml2-include=C:/msys64/ucrt64/include/libxml2'
+        else
+          raise "Unknown Windows Ruby, please set ENV['WINDOWS_XML2_INCLUDE']"
+        end
+      end
+  else
+    ext.config_options << '--with-xml2-include=/usr/include/libxml2'
   end
 end
 

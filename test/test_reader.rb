@@ -249,9 +249,10 @@ class TestReader < Minitest::Test
   end
 
   def test_bytes_consumed
+    ending_are_rn = File.binread(XML_FILE).include? "\r\n"
     reader = LibXML::XML::Reader.file(XML_FILE)
     reader.read
-    assert_equal(428, reader.byte_consumed)
+    assert_equal(ending_are_rn ? 428 : 416, reader.byte_consumed)
   end
 
   def test_node

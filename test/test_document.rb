@@ -126,6 +126,7 @@ class TestDocument < Minitest::Test
   def test_nonet
     xml_string = '<ruby_array uga="booga" foo="bar"><fixnum>one</fixnum><fixnum>two</fixnum></ruby_array>'
     xml = LibXML::XML::Document.string(xml_string, options: LibXML::XML::Parser::Options::NONET)
-    schema_document = LibXML::XML::Document.file('d:/src/libxml-ruby/test/model/atom.xml', options: LibXML::XML::Parser::Options::NONET)
+    file = File.join(File.dirname(__FILE__), 'model/atom.xml')
+    schema_document = LibXML::XML::Document.file(file, options: LibXML::XML::Parser::Options::NONET)
   end
 end
