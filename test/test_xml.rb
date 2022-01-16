@@ -183,7 +183,8 @@ class TestXml < Minitest::Test
   end
 
   def test_enabled_iconv
-    assert(LibXML::XML.enabled_iconv?)
+    iconv_enabled = RUBY_PLATFORM !~ /darwin/
+    assert_equal(iconv_enabled, LibXML::XML.enabled_iconv?)
   end
 
   def test_enabled_memory_debug
