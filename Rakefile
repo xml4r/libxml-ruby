@@ -21,7 +21,7 @@ Rake::ExtensionTask.new do |ext|
   ext.name = SO_NAME
   ext.ext_dir = "ext/libxml"
   ext.lib_dir = "lib/#{RUBY_VERSION.sub(/\.\d$/, '')}"
-  if RUBY_PLATFORM.match(/mswin32|mswin64|mingw32|ucrt/)
+  if RUBY_PLATFORM.match(/mswin|mingw/)
     ext.config_options <<
       if (dir = ENV['WINDOWS_XML2_INCLUDE'])
         "--with-xml2-include=#{dir}"
@@ -49,7 +49,7 @@ Gem::PackageTask.new(spec) do |pkg|
 end
 
 # Setup Windows Gem
-if RUBY_PLATFORM.match(/mswin32|mswin64|mingw32/)
+if RUBY_PLATFORM.match(/mswin|mingw/)
   binaries = (FileList['lib/**/*.so',
                        'lib/**/*dll'])
 
