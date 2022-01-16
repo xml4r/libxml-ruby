@@ -266,7 +266,7 @@ EOS
     assert_kind_of(LibXML::XML::Error, error)
     assert_match(re_err_msg2, error.message)
     assert_equal(LibXML::XML::Error::PARSER, error.domain)
-    assert_equal(LibXML::XML::Error::TAG_NOT_FINISHED, error.code)
+    assert([LibXML::XML::Error::TAG_NOT_FINISHED, XML_ERR_LTSLASH_REQUIRED].include?(error.code))
     assert_equal(LibXML::XML::Error::FATAL, error.level)
     assert_nil(error.file)
     assert_equal(2, error.line)
