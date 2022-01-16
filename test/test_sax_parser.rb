@@ -271,7 +271,8 @@ EOS
     assert_equal(LibXML::XML::Error::FATAL, error.level)
     assert_nil(error.file)
     assert_equal(2, error.line)
-    assert_nil(error.str1)
+    # Sometimes this is nil and sometimes its not depending on OS and libxlm version
+    # assert_nil(error.str1)
     assert_nil(error.str2)
     assert_nil(error.str3)
     assert([0, 1].include?(error.int1))
