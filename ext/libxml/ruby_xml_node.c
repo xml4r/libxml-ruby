@@ -983,14 +983,18 @@ static VALUE rxml_node_path(VALUE self)
 {
   xmlNodePtr xnode;
   xmlChar *path;
+  VALUE result = Qnil;
 
   xnode = rxml_get_xnode(self);
   path = xmlGetNodePath(xnode);
 
-  if (path == NULL)
-    return (Qnil);
-  else
-    return (rxml_new_cstr( path, NULL));
+  if (path)
+  {
+    result = rxml_new_cstr( path, NULL);
+    xmlFree(path);
+  }
+
+  return result;
 }
 
 /*
