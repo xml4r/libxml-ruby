@@ -17,21 +17,20 @@ jobs:
       fail-fast: false
       matrix:
         os: [ ubuntu-20.04, ubuntu-18.04, macos-11, windows-2022 ]
-        ruby: [ 3.1, 3.0, 2.7 ]
+        ruby: [ 3.1, '3.0', 2.7 ]
 
     steps:
       - name: repo checkout
         uses: actions/checkout@v2
 
       - name: load ruby
-        uses: MSP-Greg/setup-ruby-pkgs@win-ucrt-2
+        uses: MSP-Greg/setup-ruby-pkgs@v1
         with:
           ruby-version: ${{ matrix.ruby }}
           apt-get: libxml2-dev
           # brew: libxml2
           mingw: libxml2
           bundler-cache: true
-          setup-ruby-ref: MSP-Greg/ruby-setup-ruby/win-ucrt-1
         timeout-minutes: 10
 
       - name: compile
