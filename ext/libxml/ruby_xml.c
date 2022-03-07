@@ -764,6 +764,9 @@ static VALUE rxml_default_save_no_empty_tags_set(VALUE klass, VALUE value)
  */
 static VALUE rxml_features(VALUE klass)
 {
+#ifndef LIBXML_LEGACY_ENABLED
+  return Qnil;
+#else
   VALUE arr, str;
   int i, len = MAX_LIBXML_FEATURES_LEN;
   char **list = NULL;
@@ -788,6 +791,7 @@ static VALUE rxml_features(VALUE klass)
 
   ruby_xfree(list);
   return (arr);
+#endif /* LIBXML_LEGACY_ENABLED */
 }
 
 /*
