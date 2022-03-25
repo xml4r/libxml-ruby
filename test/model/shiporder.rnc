@@ -5,9 +5,9 @@
 #
 namespace xsi = "http://www.w3.org/2001/XMLSchema-instance"
 
-start = shiporder
+start = shiporderType
 
-shiporder  = element shiporder { attribute orderid { text }, 
+shiporderType  = element shiporder { attribute orderid { text },
                                  attribute xsi:noNamespaceSchemaLocation { text }, 
                                orderperson, shipto, item* }
 

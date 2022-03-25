@@ -99,13 +99,19 @@ class TestSchema < Minitest::Test
   def test_types
     assert_instance_of(Hash, schema.types)
     assert_equal(1, schema.types.length)
-    assert_instance_of(LibXML::XML::Schema::Type, schema.types['shiporder'])
+    assert_instance_of(LibXML::XML::Schema::Type, schema.types['shiporderType'])
   end
 
   def test_imported_types
     assert_instance_of(Hash, schema.imported_types)
     assert_equal(1, schema.imported_types.length)
-    assert_instance_of(LibXML::XML::Schema::Type, schema.types['shiporder'])
+    assert_instance_of(LibXML::XML::Schema::Type, schema.imported_types['shiporderType'])
+  end
+
+  def test_imported_elements
+    assert_instance_of(Hash, schema.imported_elements)
+    assert_equal(1, schema.imported_elements.length)
+    assert_instance_of(LibXML::XML::Schema::Element, schema.imported_elements['shiporder'])
   end
 
   def test_namespaces
@@ -114,9 +120,9 @@ class TestSchema < Minitest::Test
   end
 
   def test_schema_type
-    type = schema.types['shiporder']
+    type = schema.types['shiporderType']
 
-    assert_equal('shiporder', type.name)
+    assert_equal('shiporderType', type.name)
     assert_nil(type.namespace)
     assert_equal("Shiporder type documentation", type.annotation)
     assert_instance_of(LibXML::XML::Node, type.node)
@@ -130,22 +136,22 @@ class TestSchema < Minitest::Test
   end
 
   def test_schema_element
-    element = schema.types['shiporder'].elements['orderperson']
+    element = schema.types['shiporderType'].elements['orderperson']
 
     assert_equal('orderperson', element.name)
     assert_nil(element.namespace)
     assert_equal("orderperson element documentation", element.annotation)
 
-    element = schema.types['shiporder'].elements['item']
+    element = schema.types['shiporderType'].elements['item']
     assert_equal('item', element.name)
 
-    element = schema.types['shiporder'].elements['item'].type.elements['note']
+    element = schema.types['shiporderType'].elements['item'].type.elements['note']
     assert_equal('note', element.name)
     assert_equal('string', element.type.name)
   end
 
   def test_schema_attributes
-    type = schema.types['shiporder']
+    type = schema.types['shiporderType']
 
     assert_instance_of(Array, type.attributes)
     assert_equal(2, type.attributes.length)
@@ -153,14 +159,14 @@ class TestSchema < Minitest::Test
   end
 
   def test_schema_attribute
-    attribute = schema.types['shiporder'].attributes.first
+    attribute = schema.types['shiporderType'].attributes.first
 
     assert_equal("orderid", attribute.name)
     assert_nil(attribute.namespace)
     assert_equal(1, attribute.occurs)
     assert_equal('string', attribute.type.name)
 
-    attribute = schema.types['shiporder'].attributes[1]
+    attribute = schema.types['shiporderType'].attributes[1]
     assert_equal(2, attribute.occurs)
     assert_equal('1', attribute.default)
     assert_equal('integer', attribute.type.name)

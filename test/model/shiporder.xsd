@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="iso-8859-1" ?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
-  <xs:element name="shiporder" type="shiporder"/>
+  <xs:element name="shiporder" type="shiporderType"/>
 
-  <xs:complexType name="shiporder">
+  <xs:complexType name="shiporderType">
     <xs:annotation>
       <xs:documentation>Shiporder type documentation</xs:documentation>
     </xs:annotation>

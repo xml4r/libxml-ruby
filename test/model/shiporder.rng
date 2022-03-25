@@ -7,9 +7,9 @@
 -->
 <grammar xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://relaxng.org/ns/structure/1.0">
   <start>
-    <ref name="shiporder"/>
+    <ref name="shiporderType"/>
   </start>
-  <define name="shiporder">
+  <define name="shiporderType">
     <element name="shiporder">
       <attribute name="orderid"/>
       <attribute name="xsi:noNamespaceSchemaLocation"/>
