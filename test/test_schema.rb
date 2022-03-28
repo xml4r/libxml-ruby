@@ -108,10 +108,18 @@ class TestSchema < Minitest::Test
     assert_instance_of(LibXML::XML::Schema::Type, schema.imported_types['shiporderType'])
   end
 
-  def test_imported_elements
-    assert_instance_of(Hash, schema.imported_elements)
-    assert_equal(1, schema.imported_elements.length)
-    assert_instance_of(LibXML::XML::Schema::Element, schema.imported_elements['shiporder'])
+  def test_imported_ns_types
+    assert_instance_of(Hash, schema.imported_ns_types)
+    assert_equal(1, schema.imported_ns_types.length)
+    assert_equal(1, schema.imported_ns_types[nil].length)
+    assert_instance_of(LibXML::XML::Schema::Type, schema.imported_ns_types[nil]['shiporderType'])
+  end
+
+  def test_imported_ns_elements
+    assert_instance_of(Hash, schema.imported_ns_elements)
+    assert_equal(1, schema.imported_ns_elements.length)
+    assert_equal(1, schema.imported_ns_elements[nil].length)
+    assert_instance_of(LibXML::XML::Schema::Element, schema.imported_ns_elements[nil]['shiporder'])
   end
 
   def test_namespaces
