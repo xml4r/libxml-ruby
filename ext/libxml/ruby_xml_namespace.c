@@ -52,6 +52,7 @@ static VALUE rxml_namespace_initialize(VALUE self, VALUE node, VALUE prefix,
 
   Check_Type(node, T_DATA);
   Data_Get_Struct(node, xmlNode, xnode);
+  xmlResetLastError();
 
   /* Prefix can be null - that means its the default namespace */
   xmlPrefix = NIL_P(prefix) ? NULL : (xmlChar *)StringValuePtr(prefix);
