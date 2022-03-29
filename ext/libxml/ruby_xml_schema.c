@@ -46,7 +46,23 @@ static void rxml_schema_free(xmlSchemaPtr xschema)
 
 VALUE rxml_wrap_schema(xmlSchemaPtr xschema)
 {
-  return Data_Wrap_Struct(cXMLSchema, NULL, rxml_schema_free, xschema);
+  VALUE class;
+
+  if (!xschema)
+    rb_raise(rb_eArgError, "XML::Schema is required!");
+
+  class = Data_Wrap_Struct(cXMLSchema, NULL, rxml_schema_free, xschema);
+
+  /*
+   * Create these as instance variables to provide the output of inspect/to_str some
+   * idea of what schema this class contains.
+   */
+  rb_iv_set(class, "@target_namespace", QNIL_OR_STRING(xschema->targetNamespace));
+  rb_iv_set(class, "@name", QNIL_OR_STRING(xschema->name));
+  rb_iv_set(class, "@id", QNIL_OR_STRING(xschema->id));
+  rb_iv_set(class, "@version", QNIL_OR_STRING(xschema->name));
+
+  return class;
 }
 
 static VALUE rxml_schema_init(VALUE class, xmlSchemaParserCtxtPtr xparser)
@@ -123,43 +139,6 @@ static VALUE rxml_schema_init_from_string(VALUE class, VALUE schema_str)
   return rxml_schema_init(class, xparser);
 }
 
-static VALUE rxml_schema_target_namespace(VALUE self)
-{
-  xmlSchemaPtr xschema;
-
-  Data_Get_Struct(self, xmlSchema, xschema);
-
-  QNIL_OR_STRING(xschema->targetNamespace)
-}
-
-static VALUE rxml_schema_name(VALUE self)
-{
-  xmlSchemaPtr xschema;
-
-  Data_Get_Struct(self, xmlSchema, xschema);
-
-  QNIL_OR_STRING(xschema->name)
-}
-
-static VALUE rxml_schema_version(VALUE self)
-{
-  xmlSchemaPtr xschema;
-
-  Data_Get_Struct(self, xmlSchema, xschema);
-
-  QNIL_OR_STRING(xschema->version)
-}
-
-static VALUE rxml_schema_id(VALUE self)
-{
-  xmlSchemaPtr xschema;
-
-  Data_Get_Struct(self, xmlSchema, xschema);
-
-  QNIL_OR_STRING(xschema->id)
-}
-
-
 /*
  * call-seq:
  *    XML::Schema.document -> document
@@ -234,11 +213,9 @@ static void collect_imported_ns_elements(xmlSchemaImportPtr import, VALUE result
 {
   if (import->imported && import->schema)
   {
-    const char *tns;
     VALUE elements = rb_hash_new();
     xmlHashScan(import->schema->elemDecl, (xmlHashScanner)scan_schema_element, (void *)elements);
-    tns = (import->schema->targetNamespace) ? rb_str_new2((const char *)import->schema->targetNamespace) : Qnil;
-    rb_hash_aset(result, tns, elements);
+    rb_hash_aset(result, QNIL_OR_STRING(import->schema->targetNamespace), elements);
   }
 }
 
@@ -317,11 +294,9 @@ static void collect_imported_ns_types(xmlSchemaImportPtr import, VALUE result, c
 {
   if (import->imported && import->schema)
   {
-    const char *tns;
     VALUE types = rb_hash_new();
     xmlHashScan(import->schema->typeDecl, (xmlHashScanner)scan_schema_type, (void *)types);
-    tns = (import->schema->targetNamespace) ? rb_str_new2((const char *)import->schema->targetNamespace) : Qnil;
-    rb_hash_aset(result, tns, types);
+    rb_hash_aset(result, QNIL_OR_STRING(import->schema->targetNamespace), types);
   }
 }
 
@@ -353,10 +328,13 @@ void rxml_init_schema(void)
   rb_define_singleton_method(cXMLSchema, "from_string", rxml_schema_init_from_string, 1);
   rb_define_singleton_method(cXMLSchema, "document", rxml_schema_init_from_document, 1);
 
-  rb_define_method(cXMLSchema, "target_namespace", rxml_schema_target_namespace, 0);
-  rb_define_method(cXMLSchema, "name", rxml_schema_name, 0);
-  rb_define_method(cXMLSchema, "id", rxml_schema_id, 0);
-  rb_define_method(cXMLSchema, "version", rxml_schema_version, 0);
+  /* Create attr_reader methods for the above instance variables */
+  rb_define_attr(cXMLSchema, "target_namespace", 1, 0);
+  rb_define_attr(cXMLSchema, "name", 1, 0);
+  rb_define_attr(cXMLSchema, "id", 1, 0);
+  rb_define_attr(cXMLSchema, "version", 1, 0);
+
+  // These are just methods so as to hide their values and not overly clutter the output of inspect/to_str
   rb_define_method(cXMLSchema, "document", rxml_schema_document, 0);
   rb_define_method(cXMLSchema, "namespaces", rxml_schema_namespaces, 0);
   rb_define_method(cXMLSchema, "elements", rxml_schema_elements, 0);

@@ -10,43 +10,24 @@ static void rxml_schema_element_free(xmlSchemaElementPtr xschema_element)
   xmlFree(xschema_element);
 }
 
-VALUE rxml_wrap_schema_element(xmlSchemaElementPtr xelement)
+VALUE rxml_wrap_schema_element(xmlSchemaElementPtr xelem)
 {
-  return Data_Wrap_Struct(cXMLSchemaElement, NULL, rxml_schema_element_free, xelement);
+  VALUE class;
+
+  if (!xelem)
+    rb_raise(rb_eArgError, "XML::Schema::Element is required!");
+
+  class = Data_Wrap_Struct(cXMLSchemaElement, NULL, rxml_schema_element_free, xelem);
+
+  rb_iv_set(class, "@name", QNIL_OR_STRING(xelem->name));
+  rb_iv_set(class, "@value", QNIL_OR_STRING(xelem->value));
+  rb_iv_set(class, "@namespace", QNIL_OR_STRING(xelem->targetNamespace));
+  rb_iv_set(class, "@type", rxml_wrap_schema_type((xmlSchemaTypePtr) (xelem->subtypes)));
+
+  return class;
 }
 
-static VALUE rxml_schema_element_namespace(VALUE self)
-{
-  xmlSchemaElementPtr xelem;
-
-  Data_Get_Struct(self, xmlSchemaElement, xelem);
-
-  QNIL_OR_STRING(xelem->targetNamespace)
-}
-
-static VALUE rxml_schema_element_name(VALUE self)
-{
-  xmlSchemaElementPtr xelem;
-
-  Data_Get_Struct(self, xmlSchemaElement, xelem);
-
-
-  QNIL_OR_STRING(xelem->name)
-}
-
-static VALUE rxml_schema_element_type(VALUE self)
-{
-  xmlSchemaElementPtr xelem;
-  xmlSchemaTypePtr xtype;
-
-  Data_Get_Struct(self, xmlSchemaElement, xelem);
-
-  xtype = xelem->subtypes;
-
-  return rxml_wrap_schema_type((xmlSchemaTypePtr) xtype);
-}
-
-static VALUE rxml_schema_element_node(VALUE self)
+static VALUE rexml_schema_element_node(VALUE self)
 {
   xmlSchemaElementPtr xelem;
 
@@ -55,41 +36,34 @@ static VALUE rxml_schema_element_node(VALUE self)
   return rxml_node_wrap(xelem->node);
 }
 
-static VALUE rxml_schema_element_value(VALUE self)
+static VALUE rexml_schema_element_annot(VALUE self)
 {
   xmlSchemaElementPtr xelem;
+  VALUE annotation = Qnil;
 
   Data_Get_Struct(self, xmlSchemaElement, xelem);
 
-  QNIL_OR_STRING(xelem->value)
-}
+  if ((xelem->annot != NULL) && (xelem->annot->content != NULL))
+  {
+    xmlChar *content = xmlNodeGetContent(xelem->annot->content);
+    if (content)
+    {
+      annotation = rxml_new_cstr(content, NULL);
+      xmlFree(content);
+    }
+  }
 
-static VALUE rxml_schema_element_annot(VALUE self)
-{
-	VALUE result = Qnil;
-	xmlSchemaElementPtr xelem;
-
-	Data_Get_Struct(self, xmlSchemaElement, xelem);
-
-	if (xelem != NULL && xelem->annot != NULL && xelem->annot->content != NULL)
-	{
-		xmlChar *content = xmlNodeGetContent(xelem->annot->content);
-		if (content)
-		{
-			result = rxml_new_cstr(content, NULL);
-			xmlFree(content);
-		}
-	}
-	return result;
+  return annotation;
 }
 
 void rxml_init_schema_element(void)
 {
   cXMLSchemaElement = rb_define_class_under(cXMLSchema, "Element", rb_cObject);
-  rb_define_method(cXMLSchemaElement, "namespace", rxml_schema_element_namespace, 0);
-  rb_define_method(cXMLSchemaElement, "name", rxml_schema_element_name, 0);
-  rb_define_method(cXMLSchemaElement, "type", rxml_schema_element_type, 0);
-  rb_define_method(cXMLSchemaElement, "node", rxml_schema_element_node, 0);
-  rb_define_method(cXMLSchemaElement, "value", rxml_schema_element_value, 0);
-  rb_define_method(cXMLSchemaElement, "annotation", rxml_schema_element_annot, 0);
+  rb_define_attr(cXMLSchemaElement, "name", 1, 0);
+  rb_define_attr(cXMLSchemaElement, "value", 1, 0);
+  rb_define_attr(cXMLSchemaElement, "namespace", 1, 0);
+  rb_define_attr(cXMLSchemaElement, "type", 1, 0);
+
+  rb_define_method(cXMLSchemaElement, "node", rexml_schema_element_node, 0);
+  rb_define_method(cXMLSchemaElement, "annotation", rexml_schema_element_annot, 0);
 }
