@@ -74,6 +74,7 @@ static VALUE rxml_schema_init_from_uri(VALUE class, VALUE uri)
 
   Check_Type(uri, T_STRING);
 
+  xmlResetLastError();
   xparser = xmlSchemaNewParserCtxt(StringValuePtr(uri));
   if (!xparser)
     rxml_raise(&xmlLastError);
@@ -94,6 +95,7 @@ static VALUE rxml_schema_init_from_document(VALUE class, VALUE document)
 
   Data_Get_Struct(document, xmlDoc, xdoc);
 
+  xmlResetLastError();
   xparser = xmlSchemaNewDocParserCtxt(xdoc);
   if (!xparser)
     rxml_raise(&xmlLastError);
@@ -113,6 +115,7 @@ static VALUE rxml_schema_init_from_string(VALUE class, VALUE schema_str)
 
   Check_Type(schema_str, T_STRING);
 
+  xmlResetLastError();
   xparser = xmlSchemaNewMemParserCtxt(StringValuePtr(schema_str), (int)strlen(StringValuePtr(schema_str)));
   if (!xparser)
     rxml_raise(&xmlLastError);
