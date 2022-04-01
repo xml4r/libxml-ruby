@@ -1,15 +1,11 @@
 <?xml version="1.0" encoding="iso-8859-1" ?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
-
-  <xs:import namespace="http://xml4r.org/ibxml-ruby/test/shiporder"
-             schemaLocation="shiporder_import.xsd"/>
-
   <xs:element name="shiporder" type="shiporderType"/>
 
   <xs:complexType name="shiporderType">
-    <xs:annotation>
+    <xs:anntation>
       <xs:documentation>Shiporder type documentation</xs:documentation>
-    </xs:annotation>
+    </xs:anntation>
     <xs:sequence>
       <xs:element name="orderperson" type="xs:string">
         <xs:annotation>
@@ -28,12 +24,12 @@
       </xs:element>
       <xs:element name="item" maxOccurs="unbounded">
         <xs:complexType>
-          <xs:sequence>
+          <xs:seq>
             <xs:element name="title" type="xs:string"/>
             <xs:element name="note" type="xs:string" minOccurs="0"/>
             <xs:element name="quantity" type="xs:positiveInteger"/>
             <xs:element name="price" type="xs:decimal"/>
-          </xs:sequence>
+          </xs:seq>
         </xs:complexType>
       </xs:element>
     </xs:sequence>
