@@ -214,7 +214,6 @@ static void collect_imported_ns_elements(xmlSchemaImportPtr import, VALUE result
   if (import->imported && import->schema)
   {
     VALUE elements = rb_hash_new();
-    VALUE tns;
     xmlHashScan(import->schema->elemDecl, (xmlHashScanner)scan_schema_element, (void *)elements);
     rb_hash_aset(result, QNIL_OR_STRING(import->schema->targetNamespace), elements);
   }
@@ -296,7 +295,6 @@ static void collect_imported_ns_types(xmlSchemaImportPtr import, VALUE result, c
   if (import->imported && import->schema)
   {
     VALUE types = rb_hash_new();
-    VALUE tns;
     xmlHashScan(import->schema->typeDecl, (xmlHashScanner)scan_schema_type, (void *)types);
     rb_hash_aset(result, QNIL_OR_STRING(import->schema->targetNamespace), types);
   }
