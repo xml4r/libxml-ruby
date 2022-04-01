@@ -3,18 +3,19 @@
 require_relative './test_helper'
 
 class TestSchema < Minitest::Test
+  Import_NS = 'http://xml4r.org/libxml-ruby/test/shiporder'.freeze
+
   def setup
     file = File.join(File.dirname(__FILE__), 'model/shiporder.xml')
     @doc = LibXML::XML::Document.file(file)
+    schema_file = File.join(File.dirname(__FILE__), 'model/shiporder.xsd')
+    schema_doc = LibXML::XML::Document.file(schema_file)
+    @schema = LibXML::XML::Schema.document(schema_doc)
   end
 
   def teardown
     @doc = nil
-  end
-
-  def schema
-    document = LibXML::XML::Document.file(File.join(File.dirname(__FILE__), 'model/shiporder.xsd'))
-    LibXML::XML::Schema.document(document)
+    @schema = nil
   end
 
   def check_error(error)
@@ -33,11 +34,50 @@ class TestSchema < Minitest::Test
   end
 
   def test_load_from_doc
-    assert_instance_of(LibXML::XML::Schema, schema)
+    assert_instance_of(LibXML::XML::Schema, @schema)
+  end
+
+  def test_schema_load_from_uri
+    xlink_schema = LibXML::XML::Schema.new('http://www.w3.org/1999/xlink.xsd')
+    assert_instance_of(LibXML::XML::Schema, xlink_schema)
+    assert_instance_of(LibXML::XML::Schema::Element, xlink_schema.elements['title'])
+    assert_instance_of(LibXML::XML::Schema::Type, xlink_schema.types['titleEltType'])
+    assert_equal('http://www.w3.org/1999/xlink', xlink_schema.target_namespace)
+  end
+
+  def test_schema_from_string
+    schema_file = File.join(File.dirname(__FILE__), 'model/shiporder.xsd')
+    schema_from_str = LibXML::XML::Schema.from_string(File.read(schema_file))
+    assert_instance_of(LibXML::XML::Schema, schema_from_str)
+  end
+
+  def test_invalid_schema_doc
+    bad_schema_file = File.join(File.dirname(__FILE__), 'model/shiporder_bad.xsd')
+    bad_schema_doc = LibXML::XML::Document.file(bad_schema_file)
+    bad_schema = nil
+    ## Note: this type of error throws
+    begin
+      bad_schema = LibXML::XML::Schema.document(bad_schema_doc)
+    rescue LibXML::XML::Error => error
+      bad_schema = error
+      assert(error.message.match(/Error: Element '.*': The content is not valid. Expected is \(/))
+      assert_kind_of(LibXML::XML::Error, error)
+      assert_equal(LibXML::XML::Error::SCHEMASP, error.domain)
+      assert_equal(LibXML::XML::Error::SCHEMAP_S4S_ELEM_NOT_ALLOWED, error.code)
+      assert_equal(LibXML::XML::Error::ERROR, error.level)
+      assert(error.file.match(/shiporder_bad.xsd/))
+      assert_equal("Element '{http://www.w3.org/2001/XMLSchema}complexType'", error.str1)
+      refute_nil(error.str2)
+      assert_nil(error.str3)
+      assert_equal(0, error.int1)
+      assert_equal(0, error.int2)
+    end
+    ## Last but not least, make sure we threw an error
+    assert_instance_of(LibXML::XML::Error, bad_schema)
   end
 
   def test_doc_valid
-    assert(@doc.validate_schema(schema))
+    assert(@doc.validate_schema(@schema))
   end
 
   def test_doc_invalid
@@ -45,7 +85,7 @@ class TestSchema < Minitest::Test
     @doc.root << new_node
 
     error = assert_raises(LibXML::XML::Error) do
-      @doc.validate_schema(schema)
+      @doc.validate_schema(@schema)
     end
 
     check_error(error)
@@ -56,7 +96,7 @@ class TestSchema < Minitest::Test
 
   def test_reader_valid
     reader = LibXML::XML::Reader.string(@doc.to_s)
-    assert(reader.schema_validate(schema))
+    assert(reader.schema_validate(@schema))
 
     while reader.read
     end
@@ -74,7 +114,7 @@ class TestSchema < Minitest::Test
     reader = LibXML::XML::Reader.string(@doc.to_s)
 
     # Set a schema
-    assert(reader.schema_validate(schema))
+    assert(reader.schema_validate(@schema))
 
     while reader.read
     end
@@ -91,44 +131,53 @@ class TestSchema < Minitest::Test
 
   # Schema meta-data tests
   def test_elements
-    assert_instance_of(Hash, schema.elements)
-    assert_equal(1, schema.elements.length)
-    assert_instance_of(LibXML::XML::Schema::Element, schema.elements['shiporder'])
+    assert_instance_of(Hash, @schema.elements)
+    assert_equal(1, @schema.elements.length)
+    assert_instance_of(LibXML::XML::Schema::Element, @schema.elements['shiporder'])
   end
 
   def test_types
-    assert_instance_of(Hash, schema.types)
-    assert_equal(1, schema.types.length)
-    assert_instance_of(LibXML::XML::Schema::Type, schema.types['shiporderType'])
+    assert_instance_of(Hash, @schema.types)
+    assert_equal(1, @schema.types.length)
+    assert_instance_of(LibXML::XML::Schema::Type, @schema.types['shiporderType'])
   end
 
   def test_imported_types
-    assert_instance_of(Hash, schema.imported_types)
-    assert_equal(1, schema.imported_types.length)
-    assert_instance_of(LibXML::XML::Schema::Type, schema.imported_types['shiporderType'])
+    assert_instance_of(Hash, @schema.imported_types)
+    assert_equal(2, @schema.imported_types.length)
+    assert_instance_of(LibXML::XML::Schema::Type, @schema.imported_types['shiporderType'])
+    assert_instance_of(LibXML::XML::Schema::Type, @schema.imported_types['shiporderFooType'])
   end
 
   def test_imported_ns_types
-    assert_instance_of(Hash, schema.imported_ns_types)
-    assert_equal(1, schema.imported_ns_types.length)
-    assert_equal(1, schema.imported_ns_types[nil].length)
-    assert_instance_of(LibXML::XML::Schema::Type, schema.imported_ns_types[nil]['shiporderType'])
+    assert_instance_of(Hash, @schema.imported_ns_types)
+    assert_equal(2, @schema.imported_ns_types.length)
+    assert_equal(1, @schema.imported_ns_types[nil].length)
+    assert_equal(1, @schema.imported_ns_types[Import_NS].length)
+    assert_instance_of(LibXML::XML::Schema::Type, @schema.imported_ns_types[nil]['shiporderType'])
+    assert_instance_of(LibXML::XML::Schema::Type, @schema.imported_ns_types[Import_NS]['shiporderFooType'])
   end
 
   def test_imported_ns_elements
-    assert_instance_of(Hash, schema.imported_ns_elements)
-    assert_equal(1, schema.imported_ns_elements.length)
-    assert_equal(1, schema.imported_ns_elements[nil].length)
-    assert_instance_of(LibXML::XML::Schema::Element, schema.imported_ns_elements[nil]['shiporder'])
+    assert_instance_of(Hash, @schema.imported_ns_elements)
+    assert_equal(2, @schema.imported_ns_elements.length)
+    assert_equal(1, @schema.imported_ns_elements[nil].length)
+    assert_equal(1, @schema.imported_ns_elements[Import_NS].length)
+    assert_instance_of(LibXML::XML::Schema::Element, @schema.imported_ns_elements[nil]['shiporder'])
+    assert_instance_of(LibXML::XML::Schema::Element, @schema.imported_ns_elements[Import_NS]['shiporder'])
+    assert_equal('shiporderType', @schema.imported_ns_elements[nil]['shiporder'].type.name)
+    assert_equal('shiporderFooType', @schema.imported_ns_elements[Import_NS]['shiporder'].type.name)
   end
 
   def test_namespaces
-    assert_instance_of(Array, schema.namespaces)
-    assert_equal(1, schema.namespaces.length)
+    assert_instance_of(Array, @schema.namespaces)
+    ## For some reason, when importing another schema we end up with two xs->http://www.w3.org/2001/XMLSchema namespaces.
+    ## So, we expect 3 here (one for Import_NS and then two for the schema namespace.
+    assert_equal(3, @schema.namespaces.length)
   end
 
   def test_schema_type
-    type = schema.types['shiporderType']
+    type = @schema.types['shiporderType']
 
     assert_equal('shiporderType', type.name)
     assert_nil(type.namespace)
@@ -144,22 +193,22 @@ class TestSchema < Minitest::Test
   end
 
   def test_schema_element
-    element = schema.types['shiporderType'].elements['orderperson']
+    element = @schema.types['shiporderType'].elements['orderperson']
 
     assert_equal('orderperson', element.name)
     assert_nil(element.namespace)
     assert_equal("orderperson element documentation", element.annotation)
 
-    element = schema.types['shiporderType'].elements['item']
+    element = @schema.types['shiporderType'].elements['item']
     assert_equal('item', element.name)
 
-    element = schema.types['shiporderType'].elements['item'].type.elements['note']
+    element = @schema.types['shiporderType'].elements['item'].type.elements['note']
     assert_equal('note', element.name)
     assert_equal('string', element.type.name)
   end
 
   def test_schema_attributes
-    type = schema.types['shiporderType']
+    type = @schema.types['shiporderType']
 
     assert_instance_of(Array, type.attributes)
     assert_equal(2, type.attributes.length)
@@ -167,14 +216,14 @@ class TestSchema < Minitest::Test
   end
 
   def test_schema_attribute
-    attribute = schema.types['shiporderType'].attributes.first
+    attribute = @schema.types['shiporderType'].attributes.first
 
     assert_equal("orderid", attribute.name)
     assert_nil(attribute.namespace)
     assert_equal(1, attribute.occurs)
     assert_equal('string', attribute.type.name)
 
-    attribute = schema.types['shiporderType'].attributes[1]
+    attribute = @schema.types['shiporderType'].attributes[1]
     assert_equal(2, attribute.occurs)
     assert_equal('1', attribute.default)
     assert_equal('integer', attribute.type.name)
