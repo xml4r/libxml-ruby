@@ -27,7 +27,7 @@ VALUE rxml_wrap_schema_element(xmlSchemaElementPtr xelem)
   return class;
 }
 
-static VALUE rexml_schema_element_node(VALUE self)
+static VALUE rxml_schema_element_node(VALUE self)
 {
   xmlSchemaElementPtr xelem;
 
@@ -36,7 +36,7 @@ static VALUE rexml_schema_element_node(VALUE self)
   return rxml_node_wrap(xelem->node);
 }
 
-static VALUE rexml_schema_element_annot(VALUE self)
+static VALUE rxml_schema_element_annot(VALUE self)
 {
   xmlSchemaElementPtr xelem;
   VALUE annotation = Qnil;
@@ -64,6 +64,6 @@ void rxml_init_schema_element(void)
   rb_define_attr(cXMLSchemaElement, "namespace", 1, 0);
   rb_define_attr(cXMLSchemaElement, "type", 1, 0);
 
-  rb_define_method(cXMLSchemaElement, "node", rexml_schema_element_node, 0);
-  rb_define_method(cXMLSchemaElement, "annotation", rexml_schema_element_annot, 0);
+  rb_define_method(cXMLSchemaElement, "node", rxml_schema_element_node, 0);
+  rb_define_method(cXMLSchemaElement, "annotation", rxml_schema_element_annot, 0);
 }
