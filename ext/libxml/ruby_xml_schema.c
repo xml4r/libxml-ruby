@@ -49,6 +49,18 @@ VALUE rxml_wrap_schema(xmlSchemaPtr xschema)
   return Data_Wrap_Struct(cXMLSchema, NULL, rxml_schema_free, xschema);
 }
 
+static VALUE rxml_schema_init(VALUE class, xmlSchemaParserCtxtPtr xparser)
+{
+  xmlSchemaPtr xschema;
+
+  xschema = xmlSchemaParse(xparser);
+  xmlSchemaFreeParserCtxt(xparser);
+
+  if (!xschema)
+    rxml_raise(&xmlLastError);
+
+  return rxml_wrap_schema(xschema);
+}
 
 /*
  * call-seq:
@@ -59,15 +71,15 @@ VALUE rxml_wrap_schema(xmlSchemaPtr xschema)
 static VALUE rxml_schema_init_from_uri(VALUE class, VALUE uri)
 {
   xmlSchemaParserCtxtPtr xparser;
-  xmlSchemaPtr xschema;
 
   Check_Type(uri, T_STRING);
 
+  xmlResetLastError();
   xparser = xmlSchemaNewParserCtxt(StringValuePtr(uri));
-  xschema = xmlSchemaParse(xparser);
-  xmlSchemaFreeParserCtxt(xparser);
+  if (!xparser)
+    rxml_raise(&xmlLastError);
 
-  return Data_Wrap_Struct(cXMLSchema, NULL, rxml_schema_free, xschema);
+  return rxml_schema_init(class, xparser);
 }
 
 /*
@@ -79,19 +91,16 @@ static VALUE rxml_schema_init_from_uri(VALUE class, VALUE uri)
 static VALUE rxml_schema_init_from_document(VALUE class, VALUE document)
 {
   xmlDocPtr xdoc;
-  xmlSchemaPtr xschema;
   xmlSchemaParserCtxtPtr xparser;
 
   Data_Get_Struct(document, xmlDoc, xdoc);
 
+  xmlResetLastError();
   xparser = xmlSchemaNewDocParserCtxt(xdoc);
-  xschema = xmlSchemaParse(xparser);
-  xmlSchemaFreeParserCtxt(xparser);
+  if (!xparser)
+    rxml_raise(&xmlLastError);
 
-  if (xschema == NULL)
-    return Qnil;
-
-  return Data_Wrap_Struct(cXMLSchema, NULL, rxml_schema_free, xschema);
+  return rxml_schema_init(class, xparser);
 }
 
 /*
@@ -100,20 +109,19 @@ static VALUE rxml_schema_init_from_document(VALUE class, VALUE document)
  *
  * Create a new schema using the specified string.
  */
-static VALUE rxml_schema_init_from_string(VALUE self, VALUE schema_str)
+static VALUE rxml_schema_init_from_string(VALUE class, VALUE schema_str)
 {
   xmlSchemaParserCtxtPtr xparser;
-  xmlSchemaPtr xschema;
 
   Check_Type(schema_str, T_STRING);
 
+  xmlResetLastError();
   xparser = xmlSchemaNewMemParserCtxt(StringValuePtr(schema_str), (int)strlen(StringValuePtr(schema_str)));
-  xschema = xmlSchemaParse(xparser);
-  xmlSchemaFreeParserCtxt(xparser);
+  if (!xparser)
+    rxml_raise(&xmlLastError);
 
-  return Data_Wrap_Struct(cXMLSchema, NULL, rxml_schema_free, xschema);
+  return rxml_schema_init(class, xparser);
 }
-
 
 static VALUE rxml_schema_target_namespace(VALUE self)
 {
@@ -151,6 +159,13 @@ static VALUE rxml_schema_id(VALUE self)
   QNIL_OR_STRING(xschema->id)
 }
 
+
+/*
+ * call-seq:
+ *    XML::Schema.document -> document
+ *
+ * Return the Schema XML Document
+ */
 static VALUE rxml_schema_document(VALUE self)
 {
   xmlSchemaPtr xschema;
@@ -160,7 +175,7 @@ static VALUE rxml_schema_document(VALUE self)
   return rxml_node_wrap(xmlDocGetRootElement(xschema->doc));
 }
 
-static void scan_namespaces(xmlSchemaImportPtr ximport, VALUE array, xmlChar *nsname)
+static void scan_namespaces(xmlSchemaImportPtr ximport, VALUE array, const xmlChar *nsname)
 {
   xmlNodePtr xnode;
   xmlNsPtr xns;
@@ -171,7 +186,7 @@ static void scan_namespaces(xmlSchemaImportPtr ximport, VALUE array, xmlChar *ns
     xns = xnode->nsDef;
 
     while (xns)
-	{
+    {
       VALUE namespace = rxml_namespace_wrap(xns);
       rb_ary_push(array, namespace);
       xns = xns->next;
@@ -179,6 +194,12 @@ static void scan_namespaces(xmlSchemaImportPtr ximport, VALUE array, xmlChar *ns
   }
 }
 
+/*
+ * call-seq:
+ *    XML::Schema.namespaces -> array
+ *
+ * Returns an array of Namespaces defined by the schema
+ */
 static VALUE rxml_schema_namespaces(VALUE self)
 {
   VALUE result;
@@ -192,7 +213,7 @@ static VALUE rxml_schema_namespaces(VALUE self)
   return result;
 }
 
-static void scan_element(xmlSchemaElementPtr xelement, VALUE hash, xmlChar *name)
+static void scan_schema_element(xmlSchemaElementPtr xelement, VALUE hash, const xmlChar *name)
 {
   VALUE element = rxml_wrap_schema_element(xelement);
   rb_hash_aset(hash, rb_str_new2((const char*)name), element);
@@ -204,40 +225,79 @@ static VALUE rxml_schema_elements(VALUE self)
   xmlSchemaPtr xschema;
 
   Data_Get_Struct(self, xmlSchema, xschema);
-  xmlHashScan(xschema->elemDecl, (xmlHashScanner)scan_element, (void *)result);
+  xmlHashScan(xschema->elemDecl, (xmlHashScanner)scan_schema_element, (void *)result);
 
   return result;
 }
 
-static void scan_type(xmlSchemaTypePtr xtype, VALUE hash, xmlChar *name)
+static void collect_imported_ns_elements(xmlSchemaImportPtr import, VALUE result, const xmlChar *name)
 {
-	VALUE type = rxml_wrap_schema_type(xtype);
-	rb_hash_aset(hash, rb_str_new2((const char*)name), type);
+  if (import->imported && import->schema)
+  {
+    VALUE elements = rb_hash_new();
+    VALUE tns;
+    xmlHashScan(import->schema->elemDecl, (xmlHashScanner)scan_schema_element, (void *)elements);
+    tns = (import->schema->targetNamespace) ? rb_str_new2((const char *)import->schema->targetNamespace) : Qnil;
+    rb_hash_aset(result, tns, elements);
+  }
+}
+
+/*
+ * call-seq:
+ *    XML::Schema.imported_ns_elements -> hash
+ *
+ * Returns a hash by namespace of a hash of schema elements within the entire schema including imports
+ */
+static VALUE rxml_schema_imported_ns_elements(VALUE self)
+{
+  xmlSchemaPtr xschema;
+  VALUE result = rb_hash_new();
+
+  Data_Get_Struct(self, xmlSchema, xschema);
+
+  if (xschema)
+  {
+    xmlHashScan(xschema->schemasImports, (xmlHashScanner)collect_imported_ns_elements, (void *)result);
+  }
+
+  return result;
+}
+
+static void scan_schema_type(xmlSchemaTypePtr xtype, VALUE hash, const xmlChar *name)
+{
+  VALUE type = rxml_wrap_schema_type(xtype);
+  rb_hash_aset(hash, rb_str_new2((const char*)name), type);
 }
 
 static VALUE rxml_schema_types(VALUE self)
 {
-	VALUE result = rb_hash_new();
-	xmlSchemaPtr xschema;
+  VALUE result = rb_hash_new();
+  xmlSchemaPtr xschema;
 
-	Data_Get_Struct(self, xmlSchema, xschema);
+  Data_Get_Struct(self, xmlSchema, xschema);
 
-	if (xschema != NULL && xschema->typeDecl != NULL)
-	{
-		xmlHashScan(xschema->typeDecl, (xmlHashScanner)scan_type, (void *)result);
-	}
+  if (xschema != NULL && xschema->typeDecl != NULL)
+  {
+    xmlHashScan(xschema->typeDecl, (xmlHashScanner)scan_schema_type, (void *)result);
+  }
 
-	return result;
+  return result;
 }
 
-static void collect_imported_types(xmlSchemaImportPtr import, VALUE result)
+static void collect_imported_types(xmlSchemaImportPtr import, VALUE result, const xmlChar *name)
 {
   if (import->imported && import->schema)
   {
-    xmlHashScan(import->schema->typeDecl, (xmlHashScanner)scan_type, (void *)result);
+    xmlHashScan(import->schema->typeDecl, (xmlHashScanner)scan_schema_type, (void *)result);
   }
 }
 
+/*
+ * call-seq:
+ *    XML::Schema.imported_types -> hash
+ *
+ * Returns a hash of all types within the entire schema including imports
+ */
 static VALUE rxml_schema_imported_types(VALUE self)
 {
   xmlSchemaPtr xschema;
@@ -247,7 +307,40 @@ static VALUE rxml_schema_imported_types(VALUE self)
 
   if (xschema)
   {
-	  xmlHashScan(xschema->schemasImports, (xmlHashScanner)collect_imported_types, (void *)result);
+    xmlHashScan(xschema->schemasImports, (xmlHashScanner)collect_imported_types, (void *)result);
+  }
+
+  return result;
+}
+
+static void collect_imported_ns_types(xmlSchemaImportPtr import, VALUE result, const xmlChar *name)
+{
+  if (import->imported && import->schema)
+  {
+    VALUE types = rb_hash_new();
+    VALUE tns;
+    xmlHashScan(import->schema->typeDecl, (xmlHashScanner)scan_schema_type, (void *)types);
+    tns = (import->schema->targetNamespace) ? rb_str_new2((const char *)import->schema->targetNamespace) : Qnil;
+    rb_hash_aset(result, tns, types);
+  }
+}
+
+/*
+ * call-seq:
+ *    XML::Schema.imported_ns_types -> hash
+ *
+ * Returns a hash by namespace of a hash of schema types within the entire schema including imports
+ */
+static VALUE rxml_schema_imported_ns_types(VALUE self)
+{
+  xmlSchemaPtr xschema;
+  VALUE result = rb_hash_new();
+
+  Data_Get_Struct(self, xmlSchema, xschema);
+
+  if (xschema)
+  {
+    xmlHashScan(xschema->schemasImports, (xmlHashScanner)collect_imported_ns_types, (void *)result);
   }
 
   return result;
@@ -265,11 +358,12 @@ void rxml_init_schema(void)
   rb_define_method(cXMLSchema, "id", rxml_schema_id, 0);
   rb_define_method(cXMLSchema, "version", rxml_schema_version, 0);
   rb_define_method(cXMLSchema, "document", rxml_schema_document, 0);
-
-  rb_define_method(cXMLSchema, "elements", rxml_schema_elements, 0);
-  rb_define_method(cXMLSchema, "imported_types", rxml_schema_imported_types, 0);
   rb_define_method(cXMLSchema, "namespaces", rxml_schema_namespaces, 0);
+  rb_define_method(cXMLSchema, "elements", rxml_schema_elements, 0);
+  rb_define_method(cXMLSchema, "imported_ns_elements", rxml_schema_imported_ns_elements, 0);
   rb_define_method(cXMLSchema, "types", rxml_schema_types, 0);
+  rb_define_method(cXMLSchema, "imported_types", rxml_schema_imported_types, 0);
+  rb_define_method(cXMLSchema, "imported_ns_types", rxml_schema_imported_ns_types, 0);
 
   rxml_init_schema_facet();
   rxml_init_schema_element();
