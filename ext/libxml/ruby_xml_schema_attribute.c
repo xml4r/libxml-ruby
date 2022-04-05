@@ -10,27 +10,28 @@ static void rxml_schema_attribute_free(xmlSchemaAttributeUsePtr attr)
   xmlFree(attr);
 }
 
-#define GET_SCHEMA_ATTRIBUTE(attr_ptr, attr_name) \
-    (attr_ptr->type == XML_SCHEMA_EXTRA_ATTR_USE_PROHIB) ? \
-        (const char *)(((xmlSchemaAttributeUseProhibPtr) attr_ptr)->attr_name) : \
-            (attr_ptr->type == XML_SCHEMA_EXTRA_QNAMEREF) ? \
-                (const char *)(((xmlSchemaQNameRefPtr) attr_ptr)->attr_name) : \
-                (const char *)((xmlSchemaAttributePtr) (attr_ptr->attrDecl)->attr_name)
-
 VALUE rxml_wrap_schema_attribute(xmlSchemaAttributeUsePtr attr)
 {
   VALUE class;
-  const char *str;
+  const char *tns_str, *name_str;
 
   if (!attr)
     rb_raise(rb_eArgError, "XML::Schema::Attribute required!");
 
   class = Data_Wrap_Struct(cXMLSchemaAttribute, NULL, rxml_schema_attribute_free, attr);
 
-  str = GET_SCHEMA_ATTRIBUTE(attr, targetNamespace);
-  rb_iv_set(class, "@target_namespace", QNIL_OR_STRING(str));
-  str = GET_SCHEMA_ATTRIBUTE(attr, name);
-  rb_iv_set(class, "@name", QNIL_OR_STRING(str));
+  if (attr->type == XML_SCHEMA_EXTRA_ATTR_USE_PROHIB) {
+    tns_str = (const char *)(((xmlSchemaAttributeUseProhibPtr) attr)->targetNamespace);
+    name_str = (const char *)(((xmlSchemaAttributeUseProhibPtr) attr)->name);
+  } else if (attr->type == XML_SCHEMA_EXTRA_QNAMEREF) {
+    tns_str = (const char *)(((xmlSchemaQNameRefPtr) attr)->targetNamespace);
+    name_str = (const char *)(((xmlSchemaQNameRefPtr) attr)->name);
+  } else {
+    tns_str = (const char *)((xmlSchemaAttributePtr) (attr->attrDecl)->targetNamespace);
+    name_str = (const char *)((xmlSchemaAttributePtr) (attr->attrDecl)->name);
+  }
+  rb_iv_set(class, "@target_namespace", QNIL_OR_STRING(tns_str));
+  rb_iv_set(class, "@name", QNIL_OR_STRING(name_str));
   rb_iv_set(class, "@type", rxml_wrap_schema_type((xmlSchemaTypePtr)attr->attrDecl->subtypes));
   rb_iv_set(class, "@value", QNIL_OR_STRING(attr->defValue));
   rb_iv_set(class, "@occurs", INT2NUM(attr->occurs));
@@ -38,7 +39,7 @@ VALUE rxml_wrap_schema_attribute(xmlSchemaAttributeUsePtr attr)
   return class;
 }
 
-static VALUE rexml_schema_attribute_node(VALUE self)
+static VALUE rxml_schema_attribute_node(VALUE self)
 {
   xmlSchemaAttributeUsePtr attr;
 
@@ -56,5 +57,5 @@ void rxml_init_schema_attribute(void)
   rb_define_attr(cXMLSchemaAttribute, "value", 1, 0);
   rb_define_attr(cXMLSchemaAttribute, "occurs", 1, 0);
 
-  rb_define_method(cXMLSchemaAttribute, "node", rexml_schema_attribute_node, 0);
+  rb_define_method(cXMLSchemaAttribute, "node", rxml_schema_attribute_node, 0);
 }
