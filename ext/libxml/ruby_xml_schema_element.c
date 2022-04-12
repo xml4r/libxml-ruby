@@ -12,19 +12,19 @@ static void rxml_schema_element_free(xmlSchemaElementPtr xschema_element)
 
 VALUE rxml_wrap_schema_element(xmlSchemaElementPtr xelem)
 {
-  VALUE class;
+  VALUE result;
 
   if (!xelem)
     rb_raise(rb_eArgError, "XML::Schema::Element is required!");
 
-  class = Data_Wrap_Struct(cXMLSchemaElement, NULL, rxml_schema_element_free, xelem);
+  result = Data_Wrap_Struct(cXMLSchemaElement, NULL, rxml_schema_element_free, xelem);
 
-  rb_iv_set(class, "@name", QNIL_OR_STRING(xelem->name));
-  rb_iv_set(class, "@value", QNIL_OR_STRING(xelem->value));
-  rb_iv_set(class, "@namespace", QNIL_OR_STRING(xelem->targetNamespace));
-  rb_iv_set(class, "@type", rxml_wrap_schema_type((xmlSchemaTypePtr) (xelem->subtypes)));
+  rb_iv_set(result, "@name", QNIL_OR_STRING(xelem->name));
+  rb_iv_set(result, "@value", QNIL_OR_STRING(xelem->value));
+  rb_iv_set(result, "@namespace", QNIL_OR_STRING(xelem->targetNamespace));
+  rb_iv_set(result, "@type", rxml_wrap_schema_type((xmlSchemaTypePtr) (xelem->subtypes)));
 
-  return class;
+  return result;
 }
 
 static VALUE rxml_schema_element_node(VALUE self)

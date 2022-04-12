@@ -17,18 +17,18 @@ static void rxml_schema_type_free(xmlSchemaTypePtr xschema_type)
 
 VALUE rxml_wrap_schema_type(xmlSchemaTypePtr xtype)
 {
-  VALUE class;
+  VALUE result;
 
   if (!xtype)
     rb_raise(rb_eArgError, "XML::Schema::Type required!");
 
-  class = Data_Wrap_Struct(cXMLSchemaType, NULL, rxml_schema_type_free, xtype);
+  result = Data_Wrap_Struct(cXMLSchemaType, NULL, rxml_schema_type_free, xtype);
 
-  rb_iv_set(class, "@name", QNIL_OR_STRING(xtype->name));
-  rb_iv_set(class, "@namespace", QNIL_OR_STRING(xtype->targetNamespace));
-  rb_iv_set(class, "@kind", INT2NUM(xtype->type));
+  rb_iv_set(result, "@name", QNIL_OR_STRING(xtype->name));
+  rb_iv_set(result, "@namespace", QNIL_OR_STRING(xtype->targetNamespace));
+  rb_iv_set(result, "@kind", INT2NUM(xtype->type));
 
-  return class;
+  return result;
 }
 
 static VALUE rxml_schema_type_base(VALUE self)

@@ -11,17 +11,17 @@ static void rxml_schema_facet_free(xmlSchemaFacetPtr xschema_type)
 
 VALUE rxml_wrap_schema_facet(xmlSchemaFacetPtr facet)
 {
-  VALUE class;
+  VALUE result;
 
   if (!facet)
     rb_raise(rb_eArgError, "XML::Schema::Facet required!");
 
-  class = Data_Wrap_Struct(cXMLSchemaFacet, NULL, rxml_schema_facet_free, facet);
+  result = Data_Wrap_Struct(cXMLSchemaFacet, NULL, rxml_schema_facet_free, facet);
 
-  rb_iv_set(class, "@kind", INT2NUM(facet->type));
-  rb_iv_set(class, "@value", QNIL_OR_STRING(facet->value));
+  rb_iv_set(result, "@kind", INT2NUM(facet->type));
+  rb_iv_set(result, "@value", QNIL_OR_STRING(facet->value));
 
-  return class;
+  return result;
 
 }
 

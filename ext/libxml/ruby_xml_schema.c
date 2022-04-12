@@ -46,23 +46,23 @@ static void rxml_schema_free(xmlSchemaPtr xschema)
 
 VALUE rxml_wrap_schema(xmlSchemaPtr xschema)
 {
-  VALUE class;
+  VALUE result;
 
   if (!xschema)
     rb_raise(rb_eArgError, "XML::Schema is required!");
 
-  class = Data_Wrap_Struct(cXMLSchema, NULL, rxml_schema_free, xschema);
+  result = Data_Wrap_Struct(cXMLSchema, NULL, rxml_schema_free, xschema);
 
   /*
    * Create these as instance variables to provide the output of inspect/to_str some
    * idea of what schema this class contains.
    */
-  rb_iv_set(class, "@target_namespace", QNIL_OR_STRING(xschema->targetNamespace));
-  rb_iv_set(class, "@name", QNIL_OR_STRING(xschema->name));
-  rb_iv_set(class, "@id", QNIL_OR_STRING(xschema->id));
-  rb_iv_set(class, "@version", QNIL_OR_STRING(xschema->name));
+  rb_iv_set(result, "@target_namespace", QNIL_OR_STRING(xschema->targetNamespace));
+  rb_iv_set(result, "@name", QNIL_OR_STRING(xschema->name));
+  rb_iv_set(result, "@id", QNIL_OR_STRING(xschema->id));
+  rb_iv_set(result, "@version", QNIL_OR_STRING(xschema->name));
 
-  return class;
+  return result;
 }
 
 static VALUE rxml_schema_init(VALUE class, xmlSchemaParserCtxtPtr xparser)
