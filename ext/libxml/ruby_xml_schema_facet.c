@@ -9,6 +9,22 @@ static void rxml_schema_facet_free(xmlSchemaFacetPtr xschema_type)
   xmlFree(xschema_type);
 }
 
+VALUE rxml_wrap_schema_facet(xmlSchemaFacetPtr facet)
+{
+  VALUE result;
+
+  if (!facet)
+    rb_raise(rb_eArgError, "XML::Schema::Facet required!");
+
+  result = Data_Wrap_Struct(cXMLSchemaFacet, NULL, rxml_schema_facet_free, facet);
+
+  rb_iv_set(result, "@kind", INT2NUM(facet->type));
+  rb_iv_set(result, "@value", QNIL_OR_STRING(facet->value));
+
+  return result;
+
+}
+
 /* START FACET*/
 
 static VALUE rxml_schema_facet_node(VALUE self)
@@ -20,33 +36,11 @@ static VALUE rxml_schema_facet_node(VALUE self)
   return rxml_node_wrap(facet->node);
 }
 
-static VALUE rxml_schema_facet_value(VALUE self)
-{
-  xmlSchemaFacetPtr facet;
-
-  Data_Get_Struct(self, xmlSchemaFacet, facet);
-
-  QNIL_OR_STRING(facet->value)
-}
-
-static VALUE rxml_schema_facet_kind(VALUE self)
-{
-  xmlSchemaFacetPtr facet;
-
-  Data_Get_Struct(self, xmlSchemaFacet, facet);
-
-  return INT2NUM(facet->type);
-}
-
-VALUE rxml_wrap_schema_facet(xmlSchemaFacetPtr facet)
-{
-  return Data_Wrap_Struct(cXMLSchemaFacet, NULL, rxml_schema_facet_free, facet);
-}
-
 void rxml_init_schema_facet(void)
 {
   cXMLSchemaFacet = rb_define_class_under(cXMLSchema, "Facet", rb_cObject);
-  rb_define_method(cXMLSchemaFacet, "value", rxml_schema_facet_value, 0);
+  rb_define_attr(cXMLSchemaFacet, "kind", 1, 0);
+  rb_define_attr(cXMLSchemaFacet, "value", 1, 0);
+
   rb_define_method(cXMLSchemaFacet, "node", rxml_schema_facet_node, 0);
-  rb_define_method(cXMLSchemaFacet, "kind", rxml_schema_facet_kind, 0);
 }

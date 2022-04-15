@@ -17,25 +17,18 @@ static void rxml_schema_type_free(xmlSchemaTypePtr xschema_type)
 
 VALUE rxml_wrap_schema_type(xmlSchemaTypePtr xtype)
 {
-  return Data_Wrap_Struct(cXMLSchemaType, NULL, rxml_schema_type_free, xtype);
-}
+  VALUE result;
 
-static VALUE rxml_schema_type_namespace(VALUE self)
-{
-  xmlSchemaTypePtr xtype;
+  if (!xtype)
+    rb_raise(rb_eArgError, "XML::Schema::Type required!");
 
-  Data_Get_Struct(self, xmlSchemaType, xtype);
+  result = Data_Wrap_Struct(cXMLSchemaType, NULL, rxml_schema_type_free, xtype);
 
-  QNIL_OR_STRING(xtype->targetNamespace)
-}
+  rb_iv_set(result, "@name", QNIL_OR_STRING(xtype->name));
+  rb_iv_set(result, "@namespace", QNIL_OR_STRING(xtype->targetNamespace));
+  rb_iv_set(result, "@kind", INT2NUM(xtype->type));
 
-static VALUE rxml_schema_type_name(VALUE self)
-{
-  xmlSchemaTypePtr xtype;
-
-  Data_Get_Struct(self, xmlSchemaType, xtype);
-
-  QNIL_OR_STRING(xtype->name)
+  return result;
 }
 
 static VALUE rxml_schema_type_base(VALUE self)
@@ -44,7 +37,16 @@ static VALUE rxml_schema_type_base(VALUE self)
 
   Data_Get_Struct(self, xmlSchemaType, xtype);
 
-  return Data_Wrap_Struct(cXMLSchemaType, NULL, rxml_schema_type_free, xtype->baseType);
+  return (xtype->baseType != xtype) ? rxml_wrap_schema_type(xtype->baseType) : Qnil;
+}
+
+static VALUE rxml_schema_type_node(VALUE self)
+{
+  xmlSchemaTypePtr xtype;
+
+  Data_Get_Struct(self, xmlSchemaType, xtype);
+
+  return (xtype->node != NULL) ? rxml_node_wrap(xtype->node) : Qnil;
 }
 
 static VALUE rxml_schema_type_facets(VALUE self)
@@ -66,27 +68,6 @@ static VALUE rxml_schema_type_facets(VALUE self)
   }
 
   return result;
-}
-
-static VALUE rxml_schema_type_node(VALUE self)
-{
-  xmlSchemaTypePtr xtype;
-
-  Data_Get_Struct(self, xmlSchemaType, xtype);
-
-  if(xtype->node != NULL)
-    return rxml_node_wrap(xtype->node);
-  else
-    return Qnil;
-}
-
-static VALUE rxml_schema_type_kind(VALUE self)
-{
-  xmlSchemaTypePtr xtype;
-
-  Data_Get_Struct(self, xmlSchemaType, xtype);
-
-  return INT2NUM(xtype->type);
 }
 
 static VALUE rxml_schema_type_annot(VALUE self)
@@ -220,13 +201,14 @@ void rxml_init_schema_type(void)
 
   cXMLSchemaType = rb_define_class_under(cXMLSchema, "Type", rb_cObject);
 
-  rb_define_method(cXMLSchemaType, "namespace", rxml_schema_type_namespace, 0);
-  rb_define_method(cXMLSchemaType, "name", rxml_schema_type_name, 0);
+  rb_define_attr(cXMLSchemaType, "namespace", 1, 0);
+  rb_define_attr(cXMLSchemaType, "name", 1, 0);
+  rb_define_attr(cXMLSchemaType, "kind", 1, 0);
+
+  rb_define_method(cXMLSchemaType, "base", rxml_schema_type_base, 0);
+  rb_define_method(cXMLSchemaType, "node", rxml_schema_type_node, 0);
   rb_define_method(cXMLSchemaType, "elements", rxml_schema_type_elements, 0);
   rb_define_method(cXMLSchemaType, "attributes", rxml_schema_type_attributes, 0);
-  rb_define_method(cXMLSchemaType, "base", rxml_schema_type_base, 0);
-  rb_define_method(cXMLSchemaType, "kind", rxml_schema_type_kind, 0);
-  rb_define_method(cXMLSchemaType, "node", rxml_schema_type_node, 0);
   rb_define_method(cXMLSchemaType, "facets", rxml_schema_type_facets, 0);
   rb_define_method(cXMLSchemaType, "annotation", rxml_schema_type_annot, 0);
 }

@@ -12,62 +12,31 @@ static void rxml_schema_attribute_free(xmlSchemaAttributeUsePtr attr)
 
 VALUE rxml_wrap_schema_attribute(xmlSchemaAttributeUsePtr attr)
 {
-  return Data_Wrap_Struct(cXMLSchemaAttribute, NULL, rxml_schema_attribute_free, attr);
-}
+  VALUE result;
+  const xmlChar *tns_str, *name_str;
 
-static VALUE rxml_schema_attribute_namespace(VALUE self)
-{
-  xmlSchemaAttributeUsePtr attr;
-  const xmlChar *tns;
+  if (!attr)
+    rb_raise(rb_eArgError, "XML::Schema::Attribute required!");
 
-  Data_Get_Struct(self, xmlSchemaAttributeUse, attr);
-
-  if (attr == NULL)
-    return Qnil;
+  result = Data_Wrap_Struct(cXMLSchemaAttribute, NULL, rxml_schema_attribute_free, attr);
 
   if (attr->type == XML_SCHEMA_EXTRA_ATTR_USE_PROHIB) {
-      tns = ((xmlSchemaAttributeUseProhibPtr) attr)->targetNamespace;
+    tns_str = ((xmlSchemaAttributeUseProhibPtr) attr)->targetNamespace;
+    name_str = ((xmlSchemaAttributeUseProhibPtr) attr)->name;
   } else if (attr->type == XML_SCHEMA_EXTRA_QNAMEREF) {
-      tns = ((xmlSchemaQNameRefPtr) attr)->targetNamespace;
+    tns_str = ((xmlSchemaQNameRefPtr) attr)->targetNamespace;
+    name_str = ((xmlSchemaQNameRefPtr) attr)->name;
   } else {
-      tns = ((xmlSchemaAttributePtr) ((xmlSchemaAttributeUsePtr) (attr))->attrDecl)->targetNamespace;
+    tns_str = ((xmlSchemaAttributePtr) (attr->attrDecl))->targetNamespace;
+    name_str = ((xmlSchemaAttributePtr) (attr->attrDecl))->name;
   }
+  rb_iv_set(result, "@target_namespace", QNIL_OR_STRING(tns_str));
+  rb_iv_set(result, "@name", QNIL_OR_STRING(name_str));
+  rb_iv_set(result, "@type", rxml_wrap_schema_type((xmlSchemaTypePtr)attr->attrDecl->subtypes));
+  rb_iv_set(result, "@value", QNIL_OR_STRING(attr->defValue));
+  rb_iv_set(result, "@occurs", INT2NUM(attr->occurs));
 
-  QNIL_OR_STRING(tns)
-}
-
-static VALUE rxml_schema_attribute_name(VALUE self)
-{
-  xmlSchemaAttributeUsePtr attr;
-  const xmlChar *name;
-
-  Data_Get_Struct(self, xmlSchemaAttributeUse, attr);
-
-  if (attr == NULL)
-    return Qnil;
-
-  if (attr->type == XML_SCHEMA_EXTRA_ATTR_USE_PROHIB) {
-      name = ((xmlSchemaAttributeUseProhibPtr) attr)->name;
-  } else if (attr->type == XML_SCHEMA_EXTRA_QNAMEREF) {
-      name = ((xmlSchemaQNameRefPtr) attr)->name;
-  } else {
-      xmlSchemaAttributePtr attrDecl = ((xmlSchemaAttributeUsePtr) attr)->attrDecl;
-      name = attrDecl->name;
-  }
-
-  QNIL_OR_STRING(name)
-}
-
-static VALUE rxml_schema_attribute_type(VALUE self)
-{
-  xmlSchemaAttributeUsePtr attr;
-  xmlSchemaTypePtr xtype;
-
-  Data_Get_Struct(self, xmlSchemaAttributeUse, attr);
-
-  xtype = attr->attrDecl->subtypes;
-
-  return rxml_wrap_schema_type((xmlSchemaTypePtr) xtype);
+  return result;
 }
 
 static VALUE rxml_schema_attribute_node(VALUE self)
@@ -79,31 +48,14 @@ static VALUE rxml_schema_attribute_node(VALUE self)
   return rxml_node_wrap(attr->node);
 }
 
-static VALUE rxml_schema_attribute_value(VALUE self)
-{
-  xmlSchemaAttributeUsePtr attr;
-
-  Data_Get_Struct(self, xmlSchemaAttributeUse, attr);
-
-  QNIL_OR_STRING(attr->defValue)
-}
-
-static VALUE rxml_schema_attribute_occurs(VALUE self)
-{
-  xmlSchemaAttributeUsePtr attr;
-
-  Data_Get_Struct(self, xmlSchemaAttributeUse, attr);
-
-  return INT2NUM(attr->occurs);
-}
-
 void rxml_init_schema_attribute(void)
 {
   cXMLSchemaAttribute = rb_define_class_under(cXMLSchema, "Attribute", rb_cObject);
-  rb_define_method(cXMLSchemaAttribute, "namespace", rxml_schema_attribute_namespace, 0);
-  rb_define_method(cXMLSchemaAttribute, "name", rxml_schema_attribute_name, 0);
-  rb_define_method(cXMLSchemaAttribute, "type", rxml_schema_attribute_type, 0);
+  rb_define_attr(cXMLSchemaAttribute, "name", 1, 0);
+  rb_define_attr(cXMLSchemaAttribute, "type", 1, 0);
+  rb_define_attr(cXMLSchemaAttribute, "namespace", 1, 0);
+  rb_define_attr(cXMLSchemaAttribute, "value", 1, 0);
+  rb_define_attr(cXMLSchemaAttribute, "occurs", 1, 0);
+
   rb_define_method(cXMLSchemaAttribute, "node", rxml_schema_attribute_node, 0);
-  rb_define_method(cXMLSchemaAttribute, "value", rxml_schema_attribute_value, 0);
-  rb_define_method(cXMLSchemaAttribute, "occurs", rxml_schema_attribute_occurs, 0);
 }
