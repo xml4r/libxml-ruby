@@ -1,5 +1,16 @@
 = Release History
 
+== 3.2.3 / 2022-05-22
+
+* Change some getter methods to instance variables with attr_accessors for easier debuggability (David Hansen)
+* Add a number of tests related to schemas  (David Hansen)
+* Add schema.imported_elements so we can find imported elements (David Hansen)
+* Fix segfault under windows when dereferencing a pre-existing error where the node has already been freed (David Hansen)
+* Update to change name from imported_elements to imported_ns_elements and return a hash of hashes for namespaced elements (David Hansen)
+* Only call xmlGetFeaturesList if LIBXML_LEGACY_ENABLED is defined. Most distros still ship libxml2 with legacy features enabled, but this will change (Nick Wellnhofer)
+* Update GitHub Actions to use ruby/setup-ruby (Greg)
+* Fix memory leak in rxml_node_path, node.path (vovanmozg)
+
 == 3.2.2 / 2022-01-15
 * Switch to Github actions for CI/CD (Greg)
 * Test fixes (Greg, Sergio Durigan Junior)
