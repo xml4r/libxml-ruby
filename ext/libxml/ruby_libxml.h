@@ -15,6 +15,7 @@
 #include <libxml/HTMLparser.h>
 #include <libxml/xmlreader.h>
 #include <libxml/c14n.h>
+#include <libxml/xlink.h>
 
 #include <ruby/encoding.h>
 
