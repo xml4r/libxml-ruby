@@ -2,6 +2,52 @@
 #include "ruby_xml_schema_attribute.h"
 #include "ruby_xml_schema_type.h"
 
+/**
+ * xmlSchemaBasicItem:
+ *
+ * The abstract base type for schema components.
+ */
+typedef struct _xmlSchemaBasicItem xmlSchemaBasicItem;
+typedef xmlSchemaBasicItem *xmlSchemaBasicItemPtr;
+struct _xmlSchemaBasicItem {
+    xmlSchemaTypeType type;
+};
+
+/**
+ * xmlSchemaQNameRef:
+ *
+ * A component reference item (not a schema component)
+ * (Extends xmlSchemaBasicItem)
+ */
+typedef struct _xmlSchemaQNameRef xmlSchemaQNameRef;
+typedef xmlSchemaQNameRef *xmlSchemaQNameRefPtr;
+struct _xmlSchemaQNameRef {
+    xmlSchemaTypeType type;
+    xmlSchemaBasicItemPtr item;
+    /* The resolved referenced item. */
+    xmlSchemaTypeType itemType;
+    const xmlChar *name;
+    const xmlChar *targetNamespace;
+    xmlNodePtr node;
+};
+
+/**
+ * xmlSchemaAttributeUseProhibPtr:
+ *
+ * A helper component to reflect attribute prohibitions.
+ * (Extends xmlSchemaBasicItem)
+ */
+typedef struct _xmlSchemaAttributeUseProhib xmlSchemaAttributeUseProhib;
+typedef xmlSchemaAttributeUseProhib *xmlSchemaAttributeUseProhibPtr;
+struct _xmlSchemaAttributeUseProhib {
+    xmlSchemaTypeType type;
+    /* == XML_SCHEMA_EXTRA_ATTR_USE_PROHIB */
+    xmlNodePtr node;
+    const xmlChar *name;
+    const xmlChar *targetNamespace;
+    int isRef;
+};
+
 VALUE cXMLSchemaAttribute;
 
 static void rxml_schema_attribute_free(xmlSchemaAttributeUsePtr attr)

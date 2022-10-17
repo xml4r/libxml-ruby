@@ -1,8 +1,6 @@
 #ifndef __RXML_SCHEMA_TYPE__
 #define __RXML_SCHEMA_TYPE__
 
-#include <libxml/xmlschemastypes.h>
-
 extern VALUE cXMLSchemaType;
 
 VALUE rxml_wrap_schema_type(xmlSchemaTypePtr xtype);

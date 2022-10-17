@@ -8,6 +8,76 @@
 
 #include <libxml/xmlschemas.h>
 
+typedef struct _xmlSchemaBucket xmlSchemaBucket;
+typedef xmlSchemaBucket *xmlSchemaBucketPtr;
+
+/**
+ * xmlSchemaSchemaRelation:
+ *
+ * Used to create a graph of schema relationships.
+ */
+typedef struct _xmlSchemaSchemaRelation xmlSchemaSchemaRelation;
+typedef xmlSchemaSchemaRelation *xmlSchemaSchemaRelationPtr;
+struct _xmlSchemaSchemaRelation {
+    xmlSchemaSchemaRelationPtr next;
+    int type;
+    /* E.g. XML_SCHEMA_SCHEMA_IMPORT */
+    const xmlChar *importNamespace;
+    xmlSchemaBucketPtr bucket;
+};
+
+struct _xmlSchemaBucket {
+    int type;
+    int flags;
+    const xmlChar *schemaLocation;
+    const xmlChar *origTargetNamespace;
+    const xmlChar *targetNamespace;
+    xmlDocPtr doc;
+    xmlSchemaSchemaRelationPtr relations;
+    int located;
+    int parsed;
+    int imported;
+    int preserveDoc;
+    xmlSchemaItemListPtr globals;
+    /* Global components. */
+    xmlSchemaItemListPtr locals; /* Local components. */
+};
+
+/**
+ * xmlSchemaImport:
+ * (extends xmlSchemaBucket)
+ *
+ * Reflects a schema. Holds some information
+ * about the schema and its toplevel components. Duplicate
+ * toplevel components are not checked at this level.
+ */
+typedef struct _xmlSchemaImport xmlSchemaImport;
+typedef xmlSchemaImport *xmlSchemaImportPtr;
+struct _xmlSchemaImport {
+    int type;
+    /* Main OR import OR include. */
+    int flags;
+    const xmlChar *schemaLocation; /* The URI of the schema document. */
+    /* For chameleon includes, @origTargetNamespace will be NULL */
+    const xmlChar *origTargetNamespace;
+    /*
+    * For chameleon includes, @targetNamespace will be the
+    * targetNamespace of the including schema.
+    */
+    const xmlChar *targetNamespace;
+    xmlDocPtr doc; /* The schema node-tree. */
+    /* @relations will hold any included/imported/redefined schemas. */
+    xmlSchemaSchemaRelationPtr relations;
+    int located;
+    int parsed;
+    int imported;
+    int preserveDoc;
+    xmlSchemaItemListPtr globals;
+    xmlSchemaItemListPtr locals;
+    /* The imported schema. */
+    xmlSchemaPtr schema;
+};
+
 /*
  * Document-class: LibXML::XML::Schema
  *

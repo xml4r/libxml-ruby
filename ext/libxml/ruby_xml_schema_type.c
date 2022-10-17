@@ -7,6 +7,43 @@
 #define UNBOUNDED 1 << 30
 #define FREE_AND_NULL(str) if ((str) != NULL) { xmlFree((xmlChar *) (str)); str = NULL; }
 
+/**
+ * xmlSchemaTreeItem:
+ *
+ * The abstract base type for tree-like structured schema components.
+ * (Extends xmlSchemaAnnotItem)
+ */
+typedef struct _xmlSchemaTreeItem xmlSchemaTreeItem;
+typedef xmlSchemaTreeItem *xmlSchemaTreeItemPtr;
+struct _xmlSchemaTreeItem {
+    xmlSchemaTypeType type;
+    xmlSchemaAnnotPtr annot;
+    xmlSchemaTreeItemPtr next;
+    xmlSchemaTreeItemPtr children;
+};
+
+ /**
+ * xmlSchemaParticle:
+ *
+ * A particle component.
+ * (Extends xmlSchemaTreeItem)
+ */
+typedef struct _xmlSchemaParticle xmlSchemaParticle;
+typedef xmlSchemaParticle *xmlSchemaParticlePtr;
+struct _xmlSchemaParticle {
+    xmlSchemaTypeType type;
+    xmlSchemaAnnotPtr annot;
+    xmlSchemaTreeItemPtr next;
+    /* next particle */
+    xmlSchemaTreeItemPtr children;
+    /* the "term" (e.g. a model group,
+a group definition, a XML_SCHEMA_EXTRA_QNAMEREF (if a reference),
+   etc.) */
+    int minOccurs;
+    int maxOccurs;
+    xmlNodePtr node;
+};
+
 VALUE cXMLSchemaType;
 
 static void rxml_schema_type_free(xmlSchemaTypePtr xschema_type)
