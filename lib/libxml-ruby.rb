@@ -4,7 +4,7 @@
 begin
   RUBY_VERSION =~ /(\d+.\d+)/
   require "#{$1}/libxml_ruby"
-rescue LoadError
+rescue LoadError => e
   require "libxml_ruby"
 end
 
