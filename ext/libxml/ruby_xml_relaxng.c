@@ -1,6 +1,8 @@
 #include "ruby_libxml.h"
 #include "ruby_xml_relaxng.h"
 
+#include <libxml/relaxng.h>
+
 /*
  * Document-class: LibXML::XML::RelaxNG
  *

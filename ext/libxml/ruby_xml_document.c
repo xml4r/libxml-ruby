@@ -54,6 +54,7 @@
 
 #include <libxml/c14n.h>
 #include <libxml/debugXML.h>
+#include <libxml/relaxng.h>
 #include <libxml/xmlschemas.h>
 #include <libxml/xinclude.h>
 
