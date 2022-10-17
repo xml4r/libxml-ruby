@@ -2,9 +2,6 @@
 #define __RXML_SCHEMA_ELEMENT__
 
 #include "ruby_xml_schema.h"
-#include <libxml/schemasInternals.h>
-#include <libxml/xmlschemas.h>
-#include <libxml/xmlschemastypes.h>
 
 extern VALUE cXMLSchemaElement;
 

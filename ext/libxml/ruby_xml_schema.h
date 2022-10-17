@@ -2,6 +2,7 @@
 #define __RXML_SCHEMA__
 
 #include <libxml/schemasInternals.h>
+#include <libxml/xmlreader.h>
 #include <libxml/xmlschemas.h>
 #include <libxml/xmlschemastypes.h>
 

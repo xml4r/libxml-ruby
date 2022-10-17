@@ -3,6 +3,7 @@
 #include "ruby_libxml.h"
 #include "ruby_xml_html_parser_context.h"
 
+#include <libxml/parserInternals.h>
 
 /*
  * Document-class: LibXML::XML::HTMLParser::Context

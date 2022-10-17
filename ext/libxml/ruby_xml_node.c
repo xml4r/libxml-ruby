@@ -2,6 +2,10 @@
 #include "ruby_xml_node.h"
 #include <assert.h>
 
+#include <libxml/debugXML.h>
+#include <libxml/parserInternals.h>
+#include <libxml/xlink.h>
+
 VALUE cXMLNode;
 
 /* Document-class: LibXML::XML::Node

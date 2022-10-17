@@ -10,6 +10,8 @@
 #include <st.h>
 #endif
 
+#include <libxml/xpathInternals.h>
+
 /*
  * Document-class: LibXML::XML::XPath::Context
  *

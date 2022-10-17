@@ -4,6 +4,9 @@
 #include "ruby_libxml.h"
 #include "ruby_xml_reader.h"
 
+#include <libxml/xmlreader.h>
+#include <libxml/xmlschemas.h>
+
 /*
  * Document-class: LibXML::XML::Reader
  *

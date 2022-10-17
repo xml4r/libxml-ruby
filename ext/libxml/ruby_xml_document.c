@@ -52,6 +52,11 @@
 #include "ruby_libxml.h"
 #include "ruby_xml_document.h"
 
+#include <libxml/c14n.h>
+#include <libxml/debugXML.h>
+#include <libxml/xmlschemas.h>
+#include <libxml/xinclude.h>
+
 VALUE cXMLDocument;
 
 void rxml_document_free(xmlDocPtr xdoc)

@@ -2,6 +2,8 @@
 
 #include "ruby_libxml.h"
 
+#include <libxml/HTMLparser.h>
+
 /* Document-class: LibXML::XML::HTMLParser
  *
  * The HTML parser implements an HTML 4.0 non-verifying parser with an API

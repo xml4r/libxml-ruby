@@ -2,6 +2,8 @@
 
 #include "ruby_libxml.h"
 
+#include <libxml/HTMLparser.h>
+
 /* Document-class: LibXML::XML::HTMLParser::Options
  *
  * Options to control the operation of the HTMLParser.  The easiest

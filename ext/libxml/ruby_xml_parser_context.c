@@ -3,6 +3,8 @@
 #include "ruby_libxml.h"
 #include "ruby_xml_parser_context.h"
 
+#include <libxml/parserInternals.h>
+
 VALUE cXMLParserContext;
 static ID IO_ATTR;
 

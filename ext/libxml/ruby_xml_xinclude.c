@@ -1,6 +1,10 @@
 #include "ruby_libxml.h"
 #include "ruby_xml_xinclude.h"
 
+#ifdef LIBXML_XINCLUDE_ENABLED
+#include <libxml/xinclude.h>
+#endif
+
 VALUE cXMLXInclude;
 
 /*

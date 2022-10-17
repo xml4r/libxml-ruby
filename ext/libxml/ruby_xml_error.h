@@ -3,6 +3,8 @@
 #ifndef __RXML_ERROR__
 #define __RXML_ERROR__
 
+#include <libxml/xmlerror.h>
+
 extern VALUE eXMLError;
 
 void rxml_init_error();

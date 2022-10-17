@@ -1,6 +1,8 @@
 #include "ruby_libxml.h"
 #include "ruby_xml.h"
 
+#include <libxml/catalog.h>
+
 VALUE mXML;
 
 /*

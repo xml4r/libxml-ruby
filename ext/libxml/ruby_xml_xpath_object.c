@@ -1,4 +1,5 @@
 #include "ruby_libxml.h"
+#include <libxml/xpathInternals.h>
 
 /*
  * Document-class: LibXML::XML::XPath::Object

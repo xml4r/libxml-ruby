@@ -75,6 +75,7 @@
 */
 
 #include "ruby_libxml.h"
+#include <libxml/xpathInternals.h>
 
 VALUE mXPath;
 

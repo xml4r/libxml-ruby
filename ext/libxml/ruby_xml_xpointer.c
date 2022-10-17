@@ -3,6 +3,10 @@
 #include "ruby_libxml.h"
 #include "ruby_xml_xpointer.h"
 
+#ifdef LIBXML_XPTR_ENABLED
+#include <libxml/xpointer.h>
+#endif
+
 VALUE cXMLXPointer;
 
 /*
@@ -62,7 +66,7 @@ VALUE rxml_xpointer_point2(VALUE node, VALUE xptr_str)
  */
 static VALUE rxml_xpointer_range(VALUE class, VALUE rstart, VALUE rend)
 {
-#ifdef LIBXML_XPTR_ENABLED
+#if defined LIBXML_XPTR_ENABLED && defined LIBXML_XPTR_LOCS_ENABLED
   xmlNodePtr start, end;
   VALUE rxxp;
   xmlXPathObjectPtr xpath;

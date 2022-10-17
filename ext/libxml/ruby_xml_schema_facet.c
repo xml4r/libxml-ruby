@@ -1,6 +1,10 @@
 #include "ruby_libxml.h"
 #include "ruby_xml_schema_facet.h"
 
+#include <libxml/schemasInternals.h>
+#include <libxml/xmlschemas.h>
+#include <libxml/xmlschemastypes.h>
+
 VALUE cXMLSchemaFacet;
 
 static void rxml_schema_facet_free(xmlSchemaFacetPtr xschema_type)

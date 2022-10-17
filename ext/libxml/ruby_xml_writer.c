@@ -1,6 +1,10 @@
 #include "ruby_libxml.h"
 #include "ruby_xml_writer.h"
 
+#ifdef LIBXML_WRITER_ENABLED
+#include <libxml/xmlwriter.h>
+#endif
+
 VALUE cXMLWriter;
 static VALUE sEncoding, sStandalone;
 

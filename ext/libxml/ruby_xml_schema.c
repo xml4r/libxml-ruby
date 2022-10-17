@@ -1,12 +1,12 @@
 #include "ruby_libxml.h"
-#define LIBXML_OUTPUT_ENABLED
-#define DUMP_CONTENT_MODEL
 #include "ruby_xml_schema.h"
 
 #include "ruby_xml_schema_type.h"
 #include "ruby_xml_schema_element.h"
 #include "ruby_xml_schema_attribute.h"
 #include "ruby_xml_schema_facet.h"
+
+#include <libxml/xmlschemas.h>
 
 /*
  * Document-class: LibXML::XML::Schema

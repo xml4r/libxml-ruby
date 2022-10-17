@@ -4,29 +4,8 @@
 #define __RUBY_LIBXML_H__
 
 #include <ruby.h>
-#include <libxml/parser.h>
-#include <libxml/parserInternals.h>
-#include <libxml/debugXML.h>
-#include <libxml/xmlversion.h>
-#include <libxml/xmlmemory.h>
-#include <libxml/xpath.h>
-#include <libxml/valid.h>
-#include <libxml/catalog.h>
-#include <libxml/HTMLparser.h>
-#include <libxml/xmlreader.h>
-#include <libxml/c14n.h>
-
 #include <ruby/encoding.h>
-
-#ifdef LIBXML_DEBUG_ENABLED
-#include <libxml/xpathInternals.h>
-#endif
-#ifdef LIBXML_XINCLUDE_ENABLED
-#include <libxml/xinclude.h>
-#endif
-#ifdef LIBXML_XPTR_ENABLED
-#include <libxml/xpointer.h>
-#endif
+#include <libxml/xmlversion.h>
 
 #include "ruby_xml_version.h"
 #include "ruby_xml.h"
