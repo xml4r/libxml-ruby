@@ -167,11 +167,19 @@ class TestXml < Minitest::Test
   end
 
   def test_enabled_docbook
-    assert(LibXML::XML.enabled_docbook?)
+    if windows?
+      refute(LibXML::XML.enabled_docbook?)
+    else
+      assert(LibXML::XML.enabled_docbook?)
+    end
   end
 
   def test_enabled_ftp
-    assert(LibXML::XML.enabled_ftp?)
+    if windows?
+      refute(LibXML::XML.enabled_ftp?)
+    else
+      assert(LibXML::XML.enabled_ftp?)
+    end
   end
 
   def test_enabled_http
@@ -242,7 +250,11 @@ class TestXml < Minitest::Test
   end
 
   def test_libxml_parser_features
-    assert_instance_of(Array, LibXML::XML.features)
+    if windows?
+      assert_nil(LibXML::XML.features)
+    else
+      assert_instance_of(Array, LibXML::XML.features)
+    end
   end
 
   def test_default_options
