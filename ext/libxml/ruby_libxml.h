@@ -4,7 +4,6 @@
 #define __RUBY_LIBXML_H__
 
 #include <ruby.h>
-#include <ruby/encoding.h>
 #include <libxml/xmlversion.h>
 
 #include "ruby_xml_version.h"

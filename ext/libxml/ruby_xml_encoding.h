@@ -3,6 +3,8 @@
 #ifndef __RXML_ENCODING__
 #define __RXML_ENCODING__
 
+#include <ruby/encoding.h>
+
 extern VALUE mXMLEncoding;
 
 void rxml_init_encoding();
