@@ -1,5 +1,10 @@
 = Release History
 
+== 3.2.4 / 2022-10-29
+
+* Support libxml2 version 2.10.2 (Charlie Savage)
+* Reduce number of globally included C header files (Charlie Savage)
+
 == 3.2.3 / 2022-05-22
 
 * Change some getter methods to instance variables with attr_accessors for easier debuggability (David Hansen)
