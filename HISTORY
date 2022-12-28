@@ -1,5 +1,10 @@
 = Release History
 
+== 4.0.0 / 2022-12-28
+
+* Breaking - Remove support for XPointer since libxml2 has deprecated it and will remove it (Charlie Savage)
+* Breaking - Remove support for ancient setup.rb script (Charlie Savage)
+
 == 3.2.4 / 2022-10-29
 
 * Support libxml2 version 2.10.2 (Charlie Savage)
