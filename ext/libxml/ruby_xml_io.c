@@ -30,7 +30,7 @@ int rxml_write_callback(VALUE io, const char *buffer, int len)
     {
         // Could be StringIO
         VALUE written, string;
-        string = rb_external_str_new_with_enc(buffer, strlen(buffer), rb_enc_get(io));
+        string = rb_external_str_new_with_enc(buffer, (long)strlen(buffer), rb_enc_get(io));
         written = rb_funcall(io, WRITE_METHOD, 1, string);
         return NUM2INT(written);
     }

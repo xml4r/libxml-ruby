@@ -182,7 +182,7 @@ rb_encoding* rxml_figure_encoding(const xmlChar* xencoding)
 VALUE rxml_new_cstr(const xmlChar* xstr, const xmlChar* xencoding)
 {
   rb_encoding *rbencoding = rxml_figure_encoding(xencoding);
-  return rb_external_str_new_with_enc((const char*)xstr, strlen((const char*)xstr), rbencoding);
+  return rb_external_str_new_with_enc((const char*)xstr, (long)strlen((const char*)xstr), rbencoding);
 }
 
 VALUE rxml_new_cstr_len(const xmlChar* xstr, const long length, const xmlChar* xencoding)
