@@ -112,7 +112,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>C:\msys64\usr\local\ruby-3.1.2-vc\include\ruby-3.1.0;C:\msys64\usr\local\ruby-3.1.2-vc\include\ruby-3.1.0\x64-mswin64_140;C:\msys64\ucrt64\include\libxml2;C:\msys64\ucrt64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\msys64\usr\local\ruby-3.1.2-vc\include\ruby-3.1.0;C:\msys64\usr\local\ruby-3.1.2-vc\include\ruby-3.1.0\x64-mswin64_140;C:\msys64\ucrt64\include\libxml2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN64;_DEBUG;_WINDOWS;_USRDLL;LIBXML_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -122,7 +122,7 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <DisableSpecificWarnings>4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <ShowIncludes>false</ShowIncludes>
-      <UndefinePreprocessorDefinitions>__GNUC__;_GNU_SOURCE;%(UndefinePreprocessorDefinitions)</UndefinePreprocessorDefinitions>
+      <UndefinePreprocessorDefinitions>LIBXML_ICONV_ENABLED;%(UndefinePreprocessorDefinitions)</UndefinePreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalDependencies>x64-vcruntime140-ruby310.lib;libxml2-2.lib;%(AdditionalDependencies)</AdditionalDependencies>
