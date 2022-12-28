@@ -220,7 +220,6 @@
     <ClCompile Include="..\..\libxml\ruby_xml_xpath_context.c" />
     <ClCompile Include="..\..\libxml\ruby_xml_xpath_expression.c" />
     <ClCompile Include="..\..\libxml\ruby_xml_xpath_object.c" />
-    <ClCompile Include="..\..\libxml\ruby_xml_xpointer.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\libxml\ruby_libxml.h" />
@@ -259,7 +258,6 @@
     <ClInclude Include="..\..\libxml\ruby_xml_xpath_context.h" />
     <ClInclude Include="..\..\libxml\ruby_xml_xpath_expression.h" />
     <ClInclude Include="..\..\libxml\ruby_xml_xpath_object.h" />
-    <ClInclude Include="..\..\libxml\ruby_xml_xpointer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
