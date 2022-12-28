@@ -25,7 +25,6 @@ cXMLXInclude DATA
 cXMLXPathContext DATA
 cXMLXPathExpression DATA
 cXMLXPathObject DATA
-cXMLXPointer DATA
 eXMLError DATA
 mLibXML DATA
 mXML DATA

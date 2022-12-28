@@ -67,7 +67,6 @@ void Init_libxml_ruby(void)
   rxml_init_xpath_object();
   rxml_init_xpath_context();
   rxml_init_xpath_expression();
-  rxml_init_xpointer();
   rxml_init_html_parser();
   rxml_init_html_parser_options();
   rxml_init_html_parser_context();

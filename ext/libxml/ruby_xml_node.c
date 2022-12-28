@@ -1003,17 +1003,6 @@ static VALUE rxml_node_path(VALUE self)
 
 /*
  * call-seq:
- *    node.pointer -> XML::NodeSet
- *
- * Evaluates an XPointer expression relative to this node.
- */
-static VALUE rxml_node_pointer(VALUE self, VALUE xptr_str)
-{
-  return (rxml_xpointer_point2(self, xptr_str));
-}
-
-/*
- * call-seq:
  *    node.prev -> XML::Node
  *
  * Obtain the previous sibling, if any.
@@ -1397,7 +1386,6 @@ void rxml_init_node(void)
   rb_define_method(cXMLNode, "output_escaping?", rxml_node_output_escaping_q, 0);
   rb_define_method(cXMLNode, "output_escaping=", rxml_node_output_escaping_set, 1);
   rb_define_method(cXMLNode, "path", rxml_node_path, 0);
-  rb_define_method(cXMLNode, "pointer", rxml_node_pointer, 1);
   rb_define_method(cXMLNode, "remove!", rxml_node_remove_ex, 0);
   rb_define_method(cXMLNode, "space_preserve", rxml_node_space_preserve_get, 0);
   rb_define_method(cXMLNode, "space_preserve=", rxml_node_space_preserve_set, 1);
