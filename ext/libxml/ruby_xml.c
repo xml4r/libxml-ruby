@@ -479,7 +479,7 @@ static VALUE rxml_default_line_numbers_set(VALUE klass, VALUE value)
   }
 }
 
-int rxml_libxml_default_options()
+int rxml_libxml_default_options(void)
 {
   int options = 0;
 

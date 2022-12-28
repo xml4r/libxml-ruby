@@ -79,7 +79,7 @@ int deb_Close(void *context)
   return 1;
 }
 
-void deb_register_cbg()
+void deb_register_cbg(void)
 {
   xmlRegisterInputCallbacks(deb_Match, deb_Open, deb_Read, deb_Close);
 }

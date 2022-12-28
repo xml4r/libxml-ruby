@@ -4,7 +4,7 @@
 #define __RUBY_XML_H__
 
 extern VALUE mXML;
-int rxml_libxml_default_options();
+int rxml_libxml_default_options(void);
 void rxml_init_xml(void);
 
 #endif

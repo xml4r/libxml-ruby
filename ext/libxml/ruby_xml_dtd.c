@@ -235,7 +235,7 @@ static VALUE rxml_dtd_initialize(int argc, VALUE *argv, VALUE self)
   return self;
 }
 
-void rxml_init_dtd()
+void rxml_init_dtd(void)
 {
   cXMLDtd = rb_define_class_under(mXML, "Dtd", rb_cObject);
   rb_define_alloc_func(cXMLDtd, rxml_dtd_alloc);

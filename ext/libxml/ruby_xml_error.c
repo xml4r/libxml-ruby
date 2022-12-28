@@ -44,7 +44,7 @@ static ID ERROR_HANDLER_ID;
  * Returns the proc that will be called when libxml generates
  * warning, error or fatal error messages.
  */
-static VALUE rxml_error_get_handler()
+static VALUE rxml_error_get_handler(void)
 {
   VALUE block = rb_cvar_get(eXMLError, ERROR_HANDLER_ID);
   return block;
@@ -165,7 +165,7 @@ NORETURN(void rxml_raise(xmlErrorPtr xerror))
   rb_exc_raise(error);
 }
 
-void rxml_init_error()
+void rxml_init_error(void)
 {
   CALL_METHOD = rb_intern("call");
   ERROR_HANDLER_ID = rb_intern("@@__error_handler_callback__");
