@@ -1,9 +1,9 @@
 = Release History
 
-== 4.0.1 / 2023-04-30
+== 4.1.0 / 2023-04-30
 
 * Fix compile warning (or error) for rxml_encoding_to_rb_encoding (Charlie Savage)
-* Remove LibXML::XML.features since its uses functionality deprecated in LibXML (Charlie Savage)
+* Breaking - Remove LibXML::XML.features since its uses functionality deprecated in LibXML (Charlie Savage)
 
 == 4.0.0 / 2022-12-28
 
