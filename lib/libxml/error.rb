@@ -3,24 +3,24 @@
 module LibXML
   module XML
     class Error
-      # Create mapping from domain constant value to keys
+      # Create mapping from domain constant values to keys
       DOMAIN_CODE_MAP = [:NO_ERROR, :PARSER, :TREE, :NAMESPACE, :DTD, :HTML, :MEMORY,
                          :OUTPUT, :IO, :FTP, :HTTP, :XINCLUDE, :XPATH, :XPOINTER, :REGEXP,
                          :DATATYPE, :SCHEMASP, :SCHEMASV, :RELAXNGP, :RELAXNGV, :CATALOG,
                          :C14N, :XSLT, :VALID, :CHECK, :WRITER, :MODULE, :I18N, :SCHEMATRONV].inject(Hash.new) do |hash, code|
         if const_defined?(code)
-          hash[const_get(code)] = code.to_s
+          hash[const_get(code)] = code
         end
         hash
       end
 
-      # Create mapping from domain constant value to keys
+      # Create mapping from error constant values (so need to remove domain_codes) to keys
       ERROR_CODE_MAP = Hash.new.tap do |map|
         (constants -
          DOMAIN_CODE_MAP.values - #Domains
          [:NONE, :WARNING, :ERROR, :FATAL] # Levels
          ).each do |code|
-          map[const_get(code)] = code.to_s
+          map[const_get(code)] = code
         end
       end
       
@@ -70,11 +70,11 @@ module LibXML
       end
 
       def domain_to_s
-        DOMAIN_CODE_MAP[self.domain]
+        DOMAIN_CODE_MAP[self.domain].to_s
       end
 
       def code_to_s
-        ERROR_CODE_MAP[self.code]
+        ERROR_CODE_MAP[self.code].to_s
       end
 
       def to_s
