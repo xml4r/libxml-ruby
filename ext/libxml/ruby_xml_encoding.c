@@ -197,7 +197,7 @@ void rxml_init_encoding(void)
   rb_define_module_function(mXMLEncoding, "from_s", rxml_encoding_from_s, 1);
   rb_define_module_function(mXMLEncoding, "to_s", rxml_encoding_to_s, 1);
 
-  rb_define_module_function(mXMLEncoding, "to_rb_encoding", rxml_encoding_to_rb_encoding, 2);
+  rb_define_module_function(mXMLEncoding, "to_rb_encoding", rxml_encoding_to_rb_encoding, 1);
 
   /* -1: No char encoding detected. */
   rb_define_const(mXMLEncoding, "ERROR", INT2NUM(XML_CHAR_ENCODING_ERROR));
