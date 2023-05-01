@@ -44,7 +44,7 @@ static ID ERROR_HANDLER_ID;
  * Returns the proc that will be called when libxml generates
  * warning, error or fatal error messages.
  */
-static VALUE rxml_error_get_handler(void)
+static VALUE rxml_error_get_handler(VALUE self)
 {
   VALUE block = rb_cvar_get(eXMLError, ERROR_HANDLER_ID);
   return block;
@@ -102,7 +102,7 @@ static void structuredErrorFunc(void *userData, xmlErrorPtr xerror)
   VALUE error = rxml_error_wrap(xerror);
 
   /* Wrap error up as Ruby object and send it off to ruby */
-  VALUE block = rxml_error_get_handler();
+  VALUE block = rxml_error_get_handler(error);
 
   /* Now call global handler */
   if (block != Qnil)
