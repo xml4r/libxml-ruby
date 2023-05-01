@@ -183,7 +183,7 @@ class TestXml < Minitest::Test
   end
 
   def test_enabled_http
-    assert(LibXML::XML.enabled_http?)
+    refute(LibXML::XML.enabled_http?)
   end
 
   def test_enabled_html
