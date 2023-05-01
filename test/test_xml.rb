@@ -249,14 +249,6 @@ class TestXml < Minitest::Test
     assert_instance_of(Integer, LibXML::XML::VERNUM)
   end
 
-  def test_libxml_parser_features
-    if windows?
-      assert_nil(LibXML::XML.features)
-    else
-      assert_instance_of(Array, LibXML::XML.features)
-    end
-  end
-
   def test_default_options
     assert_equal(0, LibXML::XML.default_options)
   end

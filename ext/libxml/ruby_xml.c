@@ -759,45 +759,6 @@ static VALUE rxml_default_save_no_empty_tags_set(VALUE klass, VALUE value)
 
 /*
  * call-seq:
- *    XML.features -> ["feature", ..., "feature"]
- *
- * Obtains an array of strings representing features supported
- * (and enabled) by the installed libxml.
- */
-static VALUE rxml_features(VALUE klass)
-{
-#ifndef LIBXML_LEGACY_ENABLED
-  return Qnil;
-#else
-  VALUE arr, str;
-  int i, len = MAX_LIBXML_FEATURES_LEN;
-  char **list = NULL;
-
-  list = ALLOC_N(char *,MAX_LIBXML_FEATURES_LEN);
-  MEMZERO(list, char *, MAX_LIBXML_FEATURES_LEN);
-
-  arr = rb_ary_new();
-  if (xmlGetFeaturesList(&len, (const char **) list) == -1)
-    return Qnil;
-
-  for (i = 0; i < len; i++)
-  {
-    str = rb_str_new2((const char *) list[i]);
-    rb_gc_unregister_address(&str);
-    rb_ary_push(arr, str);
-  }
-
-  if (len == MAX_LIBXML_FEATURES_LEN)
-    rb_warn(
-        "Please contact libxml-devel@rubyforge.org and ask to have the \"MAX_LIBXML_FEATURES_LEN increased\" because you could possibly be seeing an incomplete list");
-
-  ruby_xfree(list);
-  return (arr);
-#endif /* LIBXML_LEGACY_ENABLED */
-}
-
-/*
- * call-seq:
  *    XML.indent_tree_output -> (true|false)
  *
  * Determines whether XML output will be indented
@@ -931,7 +892,6 @@ void rxml_init_xml(void)
   rb_define_module_function(mXML, "default_warnings=", rxml_default_warnings_set, 1);
   rb_define_module_function(mXML, "default_save_no_empty_tags", rxml_default_save_no_empty_tags_get, 0);
   rb_define_module_function(mXML, "default_save_no_empty_tags=", rxml_default_save_no_empty_tags_set, 1);
-  rb_define_module_function(mXML, "features", rxml_features, 0);
   rb_define_module_function(mXML, "indent_tree_output", rxml_indent_tree_output_get, 0);
   rb_define_module_function(mXML, "indent_tree_output=", rxml_indent_tree_output_set, 1);
   rb_define_module_function(mXML, "memory_dump", rxml_memory_dump, 0);
