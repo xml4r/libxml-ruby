@@ -88,7 +88,7 @@ int ic_close(void *context)
  *
  * Register a new set of I/O callback for handling parser input.
  */
-static VALUE input_callbacks_register_input_callbacks(void)
+static VALUE input_callbacks_register_input_callbacks(VALUE self)
 {
   xmlRegisterInputCallbacks(ic_match, ic_open, ic_read, ic_close);
   return (Qtrue);
@@ -182,10 +182,7 @@ void rxml_init_input_callbacks(void)
   cInputCallbacks = rb_define_class_under(mXML, "InputCallbacks", rb_cObject);
 
   /* Class Methods */
-  rb_define_singleton_method(cInputCallbacks, "register",
-      input_callbacks_register_input_callbacks, 0);
-  rb_define_singleton_method(cInputCallbacks, "add_scheme",
-      input_callbacks_add_scheme, 2);
-  rb_define_singleton_method(cInputCallbacks, "remove_scheme",
-      input_callbacks_remove_scheme, 1);
+  rb_define_singleton_method(cInputCallbacks, "register", input_callbacks_register_input_callbacks, 0);
+  rb_define_singleton_method(cInputCallbacks, "add_scheme", input_callbacks_add_scheme, 2);
+  rb_define_singleton_method(cInputCallbacks, "remove_scheme", input_callbacks_remove_scheme, 1);
 }
