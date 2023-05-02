@@ -1,5 +1,10 @@
 = Release History
 
+== 4.1.1 / 2023-05-01
+
+* Fix compile warning (or error) for input_callbacks_register_input_callbacks (Charlie Savage)
+* Remove call to deprecated function htmlDefaultSAXHandlerInit (Charlie Savage)
+
 == 4.1.0 / 2023-04-30
 
 * Fix compile warning (or error) for rxml_encoding_to_rb_encoding (Charlie Savage)
