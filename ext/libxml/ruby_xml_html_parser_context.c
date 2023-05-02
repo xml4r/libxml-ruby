@@ -243,7 +243,6 @@ static VALUE rxml_html_parser_context_string(VALUE klass, VALUE string)
      sets to 0 and xmlCtxtUseOptionsInternal sets to 1.  So we have to call both. */
   htmlCtxtUseOptions(ctxt, rxml_libxml_default_options());
 
-  htmlDefaultSAXHandlerInit();
   if (ctxt->sax != NULL)
     memcpy(ctxt->sax, &htmlDefaultSAXHandler, sizeof(xmlSAXHandlerV1));
   
