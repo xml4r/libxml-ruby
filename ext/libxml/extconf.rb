@@ -28,21 +28,27 @@ end
 found_header = find_header('libxml/xmlversion.h',
                            '/opt/include/libxml2',
                            '/opt/local/include/libxml2',
+                           '/opt/homebrew/opt/libxml2/include/libxml2',
                            '/usr/local/include/libxml2',
                            '/usr/include/libxml2',
-                           '/usr/local/include')
+                           '/usr/local/include',
+                           '/usr/local/opt/libxml2/include/libxml2')
 
 found_lib = find_library('xml2', 'xmlParseDoc',
-                         '/opt/lib',
-                         '/opt/local/lib',
-                         '/usr/local/lib',
-                         '/usr/lib')
+                           '/opt/lib',
+                           '/opt/local/lib',
+                           '/opt/homebrew/opt/libxml2/lib',
+                           '/usr/lib',
+                           '/usr/local/lib',
+                           '/usr/local/opt/libxml2/lib')
 
 found_lib ||= find_library('libxml2', 'xmlParseDoc',
                            '/opt/lib',
                            '/opt/local/lib',
+                           '/opt/homebrew/opt/libxml2/lib',
+                           '/usr/lib',
                            '/usr/local/lib',
-                           '/usr/lib')
+                           '/usr/local/opt/libxml2/lib')
 
 if !found_header || !found_lib
     crash(<<~EOL)
