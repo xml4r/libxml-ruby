@@ -1240,4 +1240,6 @@ void rxml_init_reader(void)
   rb_define_const(cXMLReader, "MODE_EOF", INT2FIX(XML_TEXTREADER_MODE_EOF));
   rb_define_const(cXMLReader, "MODE_CLOSED",       INT2FIX(XML_TEXTREADER_MODE_CLOSED));
   rb_define_const(cXMLReader, "MODE_READING", INT2FIX(XML_TEXTREADER_MODE_READING));
+
+  rb_undef_method(CLASS_OF(cXMLReader), "new");
 }
