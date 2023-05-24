@@ -394,6 +394,8 @@ static VALUE rxml_schema_imported_ns_types(VALUE self)
 void rxml_init_schema(void)
 {
   cXMLSchema = rb_define_class_under(mXML, "Schema", rb_cObject);
+  rb_undef_alloc_func(cXMLSchema);
+
   rb_define_singleton_method(cXMLSchema, "new", rxml_schema_init_from_uri, 1);
   rb_define_singleton_method(cXMLSchema, "from_string", rxml_schema_init_from_string, 1);
   rb_define_singleton_method(cXMLSchema, "document", rxml_schema_init_from_document, 1);
