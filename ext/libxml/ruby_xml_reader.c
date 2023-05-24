@@ -1138,6 +1138,7 @@ void rxml_init_reader(void)
   OPTIONS_SYMBOL = ID2SYM(rb_intern("options"));
 
   cXMLReader = rb_define_class_under(mXML, "Reader", rb_cObject);
+  rb_undef_alloc_func(cXMLReader);
 
   rb_define_singleton_method(cXMLReader, "document", rxml_reader_document, 1);
   rb_define_singleton_method(cXMLReader, "file", rxml_reader_file, -1);
