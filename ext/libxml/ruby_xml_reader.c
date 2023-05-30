@@ -1138,6 +1138,7 @@ void rxml_init_reader(void)
   OPTIONS_SYMBOL = ID2SYM(rb_intern("options"));
 
   cXMLReader = rb_define_class_under(mXML, "Reader", rb_cObject);
+  rb_undef_alloc_func(cXMLReader);
 
   rb_define_singleton_method(cXMLReader, "document", rxml_reader_document, 1);
   rb_define_singleton_method(cXMLReader, "file", rxml_reader_file, -1);
@@ -1239,4 +1240,6 @@ void rxml_init_reader(void)
   rb_define_const(cXMLReader, "MODE_EOF", INT2FIX(XML_TEXTREADER_MODE_EOF));
   rb_define_const(cXMLReader, "MODE_CLOSED",       INT2FIX(XML_TEXTREADER_MODE_CLOSED));
   rb_define_const(cXMLReader, "MODE_READING", INT2FIX(XML_TEXTREADER_MODE_READING));
+
+  rb_undef_method(CLASS_OF(cXMLReader), "new");
 }

@@ -1065,6 +1065,7 @@ void rxml_init_writer(void)
     sStandalone = ID2SYM(rb_intern("standalone"));
 
     cXMLWriter = rb_define_class_under(mXML, "Writer", rb_cObject);
+    rb_undef_alloc_func(cXMLWriter);
 
 #ifdef LIBXML_WRITER_ENABLED
     rb_define_singleton_method(cXMLWriter, "io", rxml_writer_io, 1);
