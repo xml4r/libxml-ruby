@@ -103,6 +103,7 @@ static VALUE rxml_relaxng_init_from_string(VALUE self, VALUE relaxng_str)
 void rxml_init_relaxng(void)
 {
   cXMLRelaxNG = rb_define_class_under(mXML, "RelaxNG", rb_cObject);
+  rb_undef_alloc_func(cXMLRelaxNG);
   rb_define_singleton_method(cXMLRelaxNG, "new", rxml_relaxng_init_from_uri, 1);
   rb_define_singleton_method(cXMLRelaxNG, "from_string",
       rxml_relaxng_init_from_string, 1);
