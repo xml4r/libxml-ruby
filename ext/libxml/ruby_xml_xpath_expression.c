@@ -35,7 +35,7 @@ static VALUE rxml_xpath_expression_alloc(VALUE klass)
 /* call-seq:
  *    XPath::Expression.compile(expression) -> XPath::Expression
  *
- * Compiles an XPatch expression. This improves performance
+ * Compiles an XPath expression. This improves performance
  * when an XPath expression is called multiple times.
  *
  *  doc = XML::Document.string('<header><first>hi</first></header>')
@@ -51,7 +51,7 @@ static VALUE rxml_xpath_expression_compile(VALUE klass, VALUE expression)
 /* call-seq:
  *    XPath::Expression.new(expression) -> XPath::Expression
  *
- * Compiles an XPatch expression. This improves performance
+ * Compiles an XPath expression. This improves performance
  * when an XPath expression is called multiple times.
  *
  *  doc = XML::Document.string('<header><first>hi</first></header>')
