@@ -198,13 +198,19 @@ class TestSchema < Minitest::Test
     assert_equal('orderperson', element.name)
     assert_nil(element.namespace)
     assert_equal("orderperson element documentation", element.annotation)
+    assert_equal(false, element.array?)
+    assert_equal(true, element.required?)
 
     element = @schema.types['shiporderType'].elements['item']
     assert_equal('item', element.name)
+    assert_equal(true, element.array?)
+    assert_equal(true, element.required?)
 
     element = @schema.types['shiporderType'].elements['item'].type.elements['note']
     assert_equal('note', element.name)
     assert_equal('string', element.type.name)
+    assert_equal(false, element.array?)
+    assert_equal(false, element.required?)
   end
 
   def test_schema_attributes

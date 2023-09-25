@@ -3,6 +3,14 @@
 module LibXML
   module XML
     class Schema::Element
+      def min_occurs
+        @min
+      end
+
+      def max_occurs
+        @max
+      end
+
       def required?
         !min_occurs.zero?
       end
