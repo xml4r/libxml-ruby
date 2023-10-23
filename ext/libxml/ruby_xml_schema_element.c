@@ -59,6 +59,7 @@ static VALUE rxml_schema_element_annot(VALUE self)
 void rxml_init_schema_element(void)
 {
   cXMLSchemaElement = rb_define_class_under(cXMLSchema, "Element", rb_cObject);
+  rb_undef_alloc_func(cXMLSchemaElement);
   rb_define_attr(cXMLSchemaElement, "name", 1, 0);
   rb_define_attr(cXMLSchemaElement, "value", 1, 0);
   rb_define_attr(cXMLSchemaElement, "namespace", 1, 0);

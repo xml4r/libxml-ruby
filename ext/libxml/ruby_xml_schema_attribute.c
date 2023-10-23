@@ -97,6 +97,7 @@ static VALUE rxml_schema_attribute_node(VALUE self)
 void rxml_init_schema_attribute(void)
 {
   cXMLSchemaAttribute = rb_define_class_under(cXMLSchema, "Attribute", rb_cObject);
+  rb_undef_alloc_func(cXMLSchemaAttribute);
   rb_define_attr(cXMLSchemaAttribute, "name", 1, 0);
   rb_define_attr(cXMLSchemaAttribute, "type", 1, 0);
   rb_define_attr(cXMLSchemaAttribute, "namespace", 1, 0);

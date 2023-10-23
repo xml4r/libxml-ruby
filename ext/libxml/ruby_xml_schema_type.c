@@ -237,6 +237,7 @@ void rxml_init_schema_type(void)
   #endif
 
   cXMLSchemaType = rb_define_class_under(cXMLSchema, "Type", rb_cObject);
+  rb_undef_alloc_func(cXMLSchemaType);
 
   rb_define_attr(cXMLSchemaType, "namespace", 1, 0);
   rb_define_attr(cXMLSchemaType, "name", 1, 0);

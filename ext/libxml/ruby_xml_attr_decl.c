@@ -143,6 +143,7 @@ VALUE rxml_attr_decl_value_get(VALUE self)
 void rxml_init_attr_decl(void)
 {
   cXMLAttrDecl = rb_define_class_under(mXML, "AttrDecl", rb_cObject);
+  rb_undef_alloc_func(cXMLAttrDecl);
   rb_define_method(cXMLAttrDecl, "doc", rxml_attr_decl_doc_get, 0);
   rb_define_method(cXMLAttrDecl, "name", rxml_attr_decl_name_get, 0);
   rb_define_method(cXMLAttrDecl, "next", rxml_attr_decl_next_get, 0);

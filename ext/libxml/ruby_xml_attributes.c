@@ -263,6 +263,7 @@ static VALUE rxml_attributes_first(VALUE self)
 void rxml_init_attributes(void)
 {
   cXMLAttributes = rb_define_class_under(mXML, "Attributes", rb_cObject);
+  rb_undef_alloc_func(cXMLAttributes);
   rb_include_module(cXMLAttributes, rb_mEnumerable);
   rb_define_method(cXMLAttributes, "node", rxml_attributes_node_get, 0);
   rb_define_method(cXMLAttributes, "get_attribute", rxml_attributes_get_attribute, 1);
