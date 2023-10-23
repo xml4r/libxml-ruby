@@ -322,6 +322,8 @@ static VALUE rxml_xpath_object_debug(VALUE self)
 void rxml_init_xpath_object(void)
 {
   cXMLXPathObject = rb_define_class_under(mXPath, "Object", rb_cObject);
+  rb_undef_alloc_func(cXMLXPathObject);
+
   rb_include_module(cXMLXPathObject, rb_mEnumerable);
   rb_define_attr(cXMLXPathObject, "context", 1, 0);
   rb_define_method(cXMLXPathObject, "each", rxml_xpath_object_each, 0);
