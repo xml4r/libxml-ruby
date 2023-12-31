@@ -5,6 +5,7 @@
 
 #include <ruby.h>
 #include <libxml/xmlversion.h>
+#include <libxml/parser.h>
 
 #include "ruby_xml_version.h"
 #include "ruby_xml.h"
