@@ -1048,7 +1048,7 @@ static VALUE
 rxml_reader_byte_consumed(VALUE self)
 {
   xmlTextReaderPtr xreader = rxml_text_reader_get(self);
-  return INT2NUM(xmlTextReaderByteConsumed(xreader));
+  return LONG2NUM(xmlTextReaderByteConsumed(xreader));
 }
 #endif
 

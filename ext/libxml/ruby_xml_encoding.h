@@ -7,7 +7,7 @@
 
 extern VALUE mXMLEncoding;
 
-void rxml_init_encoding();
+void rxml_init_encoding(void);
 
 VALUE rxml_new_cstr(const xmlChar* xstr, const xmlChar* xencoding);
 VALUE rxml_new_cstr_len(const xmlChar* xstr, const long length, const xmlChar* xencoding);

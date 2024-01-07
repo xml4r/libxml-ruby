@@ -781,7 +781,7 @@ static VALUE rxml_node_line_num(VALUE self)
   if (line_num == -1)
     return (Qnil);
   else
-    return (INT2NUM((long) line_num));
+    return (LONG2NUM((long) line_num));
 }
 
 /*

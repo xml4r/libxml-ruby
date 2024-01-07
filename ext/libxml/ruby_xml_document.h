@@ -4,7 +4,7 @@
 #define __RXML_DOCUMENT__
 
 extern VALUE cXMLDocument;
-void rxml_init_document();
+void rxml_init_document(void);
 VALUE rxml_document_wrap(xmlDocPtr xnode);
 
 typedef xmlChar * xmlCharPtr;

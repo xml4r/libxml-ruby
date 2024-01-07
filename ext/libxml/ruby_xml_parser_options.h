@@ -5,6 +5,6 @@
 
 extern VALUE mXMLParserOptions;
 
-void rxml_init_parser_options();
+void rxml_init_parser_options(void);
 
 #endif

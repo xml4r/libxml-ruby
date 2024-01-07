@@ -5,6 +5,6 @@
 
 extern VALUE cXMLParser;
 
-void rxml_init_parser();
+void rxml_init_parser(void);
 
 #endif
