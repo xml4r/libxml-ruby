@@ -3,343 +3,488 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 56;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		C7F2B59E2B4B608E004E0A86 /* libxml_ruby.h in Headers */ = {isa = PBXBuildFile; fileRef = C7F2B59D2B4B608E004E0A86 /* libxml_ruby.h */; };
+		C7F2B5A62B4B610C004E0A86 /* ruby_libxml.h in Headers */ = {isa = PBXBuildFile; fileRef = C7F2B5542B4B5AEE004E0A86 /* ruby_libxml.h */; };
+		C7F2B5A72B4B610C004E0A86 /* ruby_xml_attr_decl.h in Headers */ = {isa = PBXBuildFile; fileRef = C7F2B5642B4B5AEE004E0A86 /* ruby_xml_attr_decl.h */; };
+		C7F2B5A82B4B610C004E0A86 /* ruby_xml_attr.h in Headers */ = {isa = PBXBuildFile; fileRef = C7F2B54F2B4B5AED004E0A86 /* ruby_xml_attr.h */; };
+		C7F2B5A92B4B610C004E0A86 /* ruby_xml_attributes.h in Headers */ = {isa = PBXBuildFile; fileRef = C7F2B52E2B4B5AED004E0A86 /* ruby_xml_attributes.h */; };
+		C7F2B5AA2B4B610C004E0A86 /* ruby_xml_document.h in Headers */ = {isa = PBXBuildFile; fileRef = C7F2B5602B4B5AEE004E0A86 /* ruby_xml_document.h */; };
+		C7F2B5AB2B4B610C004E0A86 /* ruby_xml_dtd.h in Headers */ = {isa = PBXBuildFile; fileRef = C7F2B5532B4B5AED004E0A86 /* ruby_xml_dtd.h */; };
+		C7F2B5AC2B4B610D004E0A86 /* ruby_xml_encoding.h in Headers */ = {isa = PBXBuildFile; fileRef = C7F2B5352B4B5AED004E0A86 /* ruby_xml_encoding.h */; };
+		C7F2B5AD2B4B610D004E0A86 /* ruby_xml_error.h in Headers */ = {isa = PBXBuildFile; fileRef = C7F2B5432B4B5AED004E0A86 /* ruby_xml_error.h */; };
+		C7F2B5AE2B4B610D004E0A86 /* ruby_xml_html_parser_context.h in Headers */ = {isa = PBXBuildFile; fileRef = C7F2B5672B4B5AEE004E0A86 /* ruby_xml_html_parser_context.h */; };
+		C7F2B5AF2B4B610D004E0A86 /* ruby_xml_html_parser_options.h in Headers */ = {isa = PBXBuildFile; fileRef = C7F2B5262B4B5AEC004E0A86 /* ruby_xml_html_parser_options.h */; };
+		C7F2B5B02B4B610D004E0A86 /* ruby_xml_html_parser.h in Headers */ = {isa = PBXBuildFile; fileRef = C7F2B5272B4B5AEC004E0A86 /* ruby_xml_html_parser.h */; };
+		C7F2B5B12B4B610D004E0A86 /* ruby_xml_input_cbg.h in Headers */ = {isa = PBXBuildFile; fileRef = C7F2B5302B4B5AED004E0A86 /* ruby_xml_input_cbg.h */; };
+		C7F2B5B22B4B610D004E0A86 /* ruby_xml_io.h in Headers */ = {isa = PBXBuildFile; fileRef = C7F2B5502B4B5AED004E0A86 /* ruby_xml_io.h */; };
+		C7F2B5B32B4B610D004E0A86 /* ruby_xml_namespace.h in Headers */ = {isa = PBXBuildFile; fileRef = C7F2B5202B4B5AEC004E0A86 /* ruby_xml_namespace.h */; };
+		C7F2B5B42B4B610D004E0A86 /* ruby_xml_namespaces.h in Headers */ = {isa = PBXBuildFile; fileRef = C7F2B53D2B4B5AED004E0A86 /* ruby_xml_namespaces.h */; };
+		C7F2B5B52B4B610D004E0A86 /* ruby_xml_node.h in Headers */ = {isa = PBXBuildFile; fileRef = C7F2B55B2B4B5AEE004E0A86 /* ruby_xml_node.h */; };
+		C7F2B5B62B4B610D004E0A86 /* ruby_xml_parser_context.h in Headers */ = {isa = PBXBuildFile; fileRef = C7F2B52C2B4B5AED004E0A86 /* ruby_xml_parser_context.h */; };
+		C7F2B5B72B4B610D004E0A86 /* ruby_xml_parser_options.h in Headers */ = {isa = PBXBuildFile; fileRef = C7F2B5682B4B5AEE004E0A86 /* ruby_xml_parser_options.h */; };
+		C7F2B5B82B4B610D004E0A86 /* ruby_xml_parser.h in Headers */ = {isa = PBXBuildFile; fileRef = C7F2B5472B4B5AED004E0A86 /* ruby_xml_parser.h */; };
+		C7F2B5B92B4B610D004E0A86 /* ruby_xml_reader.h in Headers */ = {isa = PBXBuildFile; fileRef = C7F2B55D2B4B5AEE004E0A86 /* ruby_xml_reader.h */; };
+		C7F2B5BA2B4B610D004E0A86 /* ruby_xml_relaxng.h in Headers */ = {isa = PBXBuildFile; fileRef = C7F2B52B2B4B5AED004E0A86 /* ruby_xml_relaxng.h */; };
+		C7F2B5BB2B4B610D004E0A86 /* ruby_xml_sax_parser.h in Headers */ = {isa = PBXBuildFile; fileRef = C7F2B5332B4B5AED004E0A86 /* ruby_xml_sax_parser.h */; };
+		C7F2B5BC2B4B610D004E0A86 /* ruby_xml_sax2_handler.h in Headers */ = {isa = PBXBuildFile; fileRef = C7F2B5662B4B5AEE004E0A86 /* ruby_xml_sax2_handler.h */; };
+		C7F2B5BD2B4B610D004E0A86 /* ruby_xml_schema_attribute.h in Headers */ = {isa = PBXBuildFile; fileRef = C7F2B5392B4B5AED004E0A86 /* ruby_xml_schema_attribute.h */; };
+		C7F2B5BE2B4B610D004E0A86 /* ruby_xml_schema_element.h in Headers */ = {isa = PBXBuildFile; fileRef = C7F2B5342B4B5AED004E0A86 /* ruby_xml_schema_element.h */; };
+		C7F2B5BF2B4B610D004E0A86 /* ruby_xml_schema_facet.h in Headers */ = {isa = PBXBuildFile; fileRef = C7F2B5572B4B5AEE004E0A86 /* ruby_xml_schema_facet.h */; };
+		C7F2B5C02B4B610D004E0A86 /* ruby_xml_schema_type.h in Headers */ = {isa = PBXBuildFile; fileRef = C7F2B5442B4B5AED004E0A86 /* ruby_xml_schema_type.h */; };
+		C7F2B5C12B4B610D004E0A86 /* ruby_xml_schema.h in Headers */ = {isa = PBXBuildFile; fileRef = C7F2B53E2B4B5AED004E0A86 /* ruby_xml_schema.h */; };
+		C7F2B5C22B4B610D004E0A86 /* ruby_xml_version.h in Headers */ = {isa = PBXBuildFile; fileRef = C7F2B55F2B4B5AEE004E0A86 /* ruby_xml_version.h */; };
+		C7F2B5C32B4B610D004E0A86 /* ruby_xml_writer.h in Headers */ = {isa = PBXBuildFile; fileRef = C7F2B53C2B4B5AED004E0A86 /* ruby_xml_writer.h */; };
+		C7F2B5C42B4B610D004E0A86 /* ruby_xml_xinclude.h in Headers */ = {isa = PBXBuildFile; fileRef = C7F2B5222B4B5AEC004E0A86 /* ruby_xml_xinclude.h */; };
+		C7F2B5C52B4B610D004E0A86 /* ruby_xml_xpath_context.h in Headers */ = {isa = PBXBuildFile; fileRef = C7F2B5282B4B5AEC004E0A86 /* ruby_xml_xpath_context.h */; };
+		C7F2B5C62B4B610D004E0A86 /* ruby_xml_xpath_expression.h in Headers */ = {isa = PBXBuildFile; fileRef = C7F2B5612B4B5AEE004E0A86 /* ruby_xml_xpath_expression.h */; };
+		C7F2B5C72B4B610D004E0A86 /* ruby_xml_xpath_object.h in Headers */ = {isa = PBXBuildFile; fileRef = C7F2B5452B4B5AED004E0A86 /* ruby_xml_xpath_object.h */; };
+		C7F2B5C82B4B610D004E0A86 /* ruby_xml_xpath.h in Headers */ = {isa = PBXBuildFile; fileRef = C7F2B54B2B4B5AED004E0A86 /* ruby_xml_xpath.h */; };
+		C7F2B5C92B4B610D004E0A86 /* ruby_xml.h in Headers */ = {isa = PBXBuildFile; fileRef = C7F2B55A2B4B5AEE004E0A86 /* ruby_xml.h */; };
+		C7F2B5CB2B4B6219004E0A86 /* libxml_ruby.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = C7F2B59B2B4B608E004E0A86 /* libxml_ruby.bundle */; };
+		C7F2B5CC2B4B636C004E0A86 /* libxml.c in Sources */ = {isa = PBXBuildFile; fileRef = C7F2B5652B4B5AEE004E0A86 /* libxml.c */; };
+		C7F2B5CD2B4B636C004E0A86 /* ruby_xml_attr_decl.c in Sources */ = {isa = PBXBuildFile; fileRef = C7F2B54A2B4B5AED004E0A86 /* ruby_xml_attr_decl.c */; };
+		C7F2B5CE2B4B636C004E0A86 /* ruby_xml_attr.c in Sources */ = {isa = PBXBuildFile; fileRef = C7F2B5212B4B5AEC004E0A86 /* ruby_xml_attr.c */; };
+		C7F2B5CF2B4B636C004E0A86 /* ruby_xml_attributes.c in Sources */ = {isa = PBXBuildFile; fileRef = C7F2B5482B4B5AED004E0A86 /* ruby_xml_attributes.c */; };
+		C7F2B5D02B4B636C004E0A86 /* ruby_xml_cbg.c in Sources */ = {isa = PBXBuildFile; fileRef = C7F2B5382B4B5AED004E0A86 /* ruby_xml_cbg.c */; };
+		C7F2B5D12B4B636C004E0A86 /* ruby_xml_document.c in Sources */ = {isa = PBXBuildFile; fileRef = C7F2B5522B4B5AED004E0A86 /* ruby_xml_document.c */; };
+		C7F2B5D22B4B636C004E0A86 /* ruby_xml_dtd.c in Sources */ = {isa = PBXBuildFile; fileRef = C7F2B5622B4B5AEE004E0A86 /* ruby_xml_dtd.c */; };
+		C7F2B5D32B4B636C004E0A86 /* ruby_xml_encoding.c in Sources */ = {isa = PBXBuildFile; fileRef = C7F2B5362B4B5AED004E0A86 /* ruby_xml_encoding.c */; };
+		C7F2B5D42B4B636C004E0A86 /* ruby_xml_error.c in Sources */ = {isa = PBXBuildFile; fileRef = C7F2B5592B4B5AEE004E0A86 /* ruby_xml_error.c */; };
+		C7F2B5D52B4B636C004E0A86 /* ruby_xml_html_parser_context.c in Sources */ = {isa = PBXBuildFile; fileRef = C7F2B5412B4B5AED004E0A86 /* ruby_xml_html_parser_context.c */; };
+		C7F2B5D62B4B636C004E0A86 /* ruby_xml_html_parser_options.c in Sources */ = {isa = PBXBuildFile; fileRef = C7F2B5252B4B5AEC004E0A86 /* ruby_xml_html_parser_options.c */; };
+		C7F2B5D72B4B636C004E0A86 /* ruby_xml_html_parser.c in Sources */ = {isa = PBXBuildFile; fileRef = C7F2B52F2B4B5AED004E0A86 /* ruby_xml_html_parser.c */; };
+		C7F2B5D82B4B636C004E0A86 /* ruby_xml_input_cbg.c in Sources */ = {isa = PBXBuildFile; fileRef = C7F2B5242B4B5AEC004E0A86 /* ruby_xml_input_cbg.c */; };
+		C7F2B5D92B4B636C004E0A86 /* ruby_xml_io.c in Sources */ = {isa = PBXBuildFile; fileRef = C7F2B5292B4B5AEC004E0A86 /* ruby_xml_io.c */; };
+		C7F2B5DA2B4B636C004E0A86 /* ruby_xml_namespace.c in Sources */ = {isa = PBXBuildFile; fileRef = C7F2B53B2B4B5AED004E0A86 /* ruby_xml_namespace.c */; };
+		C7F2B5DB2B4B636C004E0A86 /* ruby_xml_namespaces.c in Sources */ = {isa = PBXBuildFile; fileRef = C7F2B54D2B4B5AED004E0A86 /* ruby_xml_namespaces.c */; };
+		C7F2B5DC2B4B636C004E0A86 /* ruby_xml_node.c in Sources */ = {isa = PBXBuildFile; fileRef = C7F2B52D2B4B5AED004E0A86 /* ruby_xml_node.c */; };
+		C7F2B5DD2B4B636C004E0A86 /* ruby_xml_parser_context.c in Sources */ = {isa = PBXBuildFile; fileRef = C7F2B5232B4B5AEC004E0A86 /* ruby_xml_parser_context.c */; };
+		C7F2B5DE2B4B636C004E0A86 /* ruby_xml_parser_options.c in Sources */ = {isa = PBXBuildFile; fileRef = C7F2B5422B4B5AED004E0A86 /* ruby_xml_parser_options.c */; };
+		C7F2B5DF2B4B636C004E0A86 /* ruby_xml_parser.c in Sources */ = {isa = PBXBuildFile; fileRef = C7F2B51F2B4B5AEC004E0A86 /* ruby_xml_parser.c */; };
+		C7F2B5E02B4B636C004E0A86 /* ruby_xml_reader.c in Sources */ = {isa = PBXBuildFile; fileRef = C7F2B5492B4B5AED004E0A86 /* ruby_xml_reader.c */; };
+		C7F2B5E12B4B636C004E0A86 /* ruby_xml_relaxng.c in Sources */ = {isa = PBXBuildFile; fileRef = C7F2B5632B4B5AEE004E0A86 /* ruby_xml_relaxng.c */; };
+		C7F2B5E22B4B636C004E0A86 /* ruby_xml_sax_parser.c in Sources */ = {isa = PBXBuildFile; fileRef = C7F2B55E2B4B5AEE004E0A86 /* ruby_xml_sax_parser.c */; };
+		C7F2B5E32B4B636C004E0A86 /* ruby_xml_sax2_handler.c in Sources */ = {isa = PBXBuildFile; fileRef = C7F2B5462B4B5AED004E0A86 /* ruby_xml_sax2_handler.c */; };
+		C7F2B5E42B4B636C004E0A86 /* ruby_xml_schema_attribute.c in Sources */ = {isa = PBXBuildFile; fileRef = C7F2B55C2B4B5AEE004E0A86 /* ruby_xml_schema_attribute.c */; };
+		C7F2B5E52B4B636C004E0A86 /* ruby_xml_schema_element.c in Sources */ = {isa = PBXBuildFile; fileRef = C7F2B52A2B4B5AED004E0A86 /* ruby_xml_schema_element.c */; };
+		C7F2B5E62B4B636C004E0A86 /* ruby_xml_schema_facet.c in Sources */ = {isa = PBXBuildFile; fileRef = C7F2B5562B4B5AEE004E0A86 /* ruby_xml_schema_facet.c */; };
+		C7F2B5E72B4B636C004E0A86 /* ruby_xml_schema_type.c in Sources */ = {isa = PBXBuildFile; fileRef = C7F2B53F2B4B5AED004E0A86 /* ruby_xml_schema_type.c */; };
+		C7F2B5E82B4B636C004E0A86 /* ruby_xml_schema.c in Sources */ = {isa = PBXBuildFile; fileRef = C7F2B54C2B4B5AED004E0A86 /* ruby_xml_schema.c */; };
+		C7F2B5E92B4B636C004E0A86 /* ruby_xml_writer.c in Sources */ = {isa = PBXBuildFile; fileRef = C7F2B5372B4B5AED004E0A86 /* ruby_xml_writer.c */; };
+		C7F2B5EA2B4B636C004E0A86 /* ruby_xml_xinclude.c in Sources */ = {isa = PBXBuildFile; fileRef = C7F2B5582B4B5AEE004E0A86 /* ruby_xml_xinclude.c */; };
+		C7F2B5EB2B4B636C004E0A86 /* ruby_xml_xpath_context.c in Sources */ = {isa = PBXBuildFile; fileRef = C7F2B5512B4B5AED004E0A86 /* ruby_xml_xpath_context.c */; };
+		C7F2B5EC2B4B636C004E0A86 /* ruby_xml_xpath_expression.c in Sources */ = {isa = PBXBuildFile; fileRef = C7F2B5322B4B5AED004E0A86 /* ruby_xml_xpath_expression.c */; };
+		C7F2B5ED2B4B636C004E0A86 /* ruby_xml_xpath_object.c in Sources */ = {isa = PBXBuildFile; fileRef = C7F2B5552B4B5AEE004E0A86 /* ruby_xml_xpath_object.c */; };
+		C7F2B5EE2B4B636C004E0A86 /* ruby_xml_xpath.c in Sources */ = {isa = PBXBuildFile; fileRef = C7F2B5402B4B5AED004E0A86 /* ruby_xml_xpath.c */; };
+		C7F2B5EF2B4B636C004E0A86 /* ruby_xml.c in Sources */ = {isa = PBXBuildFile; fileRef = C7F2B53A2B4B5AED004E0A86 /* ruby_xml.c */; };
+		C7F2B5F12B4B63BA004E0A86 /* libxml2.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C7F2B5F02B4B63BA004E0A86 /* libxml2.2.dylib */; };
+		C7F2B5F22B4B63E4004E0A86 /* libruby.3.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C7F2B5922B4B5D38004E0A86 /* libruby.3.2.dylib */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		C7F2B5A42B4B6098004E0A86 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "usr/local/src/libxml-ruby/lib/3.2";
+			dstSubfolderSpec = 0;
+			files = (
+				C7F2B5CB2B4B6219004E0A86 /* libxml_ruby.bundle in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
-		8B11C6E21D0D3B9E00693D78 /* .gitignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
-		8B11C6E31D0D3B9E00693D78 /* extconf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = extconf.h; sourceTree = "<group>"; };
-		8B11C6E41D0D3B9E00693D78 /* extconf.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = extconf.rb; sourceTree = "<group>"; };
-		8B11C6E51D0D3B9E00693D78 /* libxml.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = libxml.c; sourceTree = "<group>"; };
-		8B11C6E61D0D3B9E00693D78 /* libxml.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = libxml.o; sourceTree = "<group>"; };
-		8B11C6E71D0D3B9E00693D78 /* libxml_ruby.bundle */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.bundle"; path = libxml_ruby.bundle; sourceTree = "<group>"; };
-		8B11C6E81D0D3B9F00693D78 /* libxml_ruby.def */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = libxml_ruby.def; sourceTree = "<group>"; };
-		8B11C6E91D0D3B9F00693D78 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
-		8B11C6EA1D0D3B9F00693D78 /* ruby_libxml.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ruby_libxml.h; sourceTree = "<group>"; };
-		8B11C6EB1D0D3B9F00693D78 /* ruby_xml.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ruby_xml.c; sourceTree = "<group>"; };
-		8B11C6EC1D0D3B9F00693D78 /* ruby_xml.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ruby_xml.h; sourceTree = "<group>"; };
-		8B11C6ED1D0D3B9F00693D78 /* ruby_xml.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ruby_xml.o; sourceTree = "<group>"; };
-		8B11C6EE1D0D3B9F00693D78 /* ruby_xml_attr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ruby_xml_attr.c; sourceTree = "<group>"; };
-		8B11C6EF1D0D3B9F00693D78 /* ruby_xml_attr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ruby_xml_attr.h; sourceTree = "<group>"; };
-		8B11C6F01D0D3B9F00693D78 /* ruby_xml_attr.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ruby_xml_attr.o; sourceTree = "<group>"; };
-		8B11C6F11D0D3B9F00693D78 /* ruby_xml_attr_decl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ruby_xml_attr_decl.c; sourceTree = "<group>"; };
-		8B11C6F21D0D3B9F00693D78 /* ruby_xml_attr_decl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ruby_xml_attr_decl.h; sourceTree = "<group>"; };
-		8B11C6F31D0D3B9F00693D78 /* ruby_xml_attr_decl.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ruby_xml_attr_decl.o; sourceTree = "<group>"; };
-		8B11C6F41D0D3B9F00693D78 /* ruby_xml_attributes.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ruby_xml_attributes.c; sourceTree = "<group>"; };
-		8B11C6F51D0D3B9F00693D78 /* ruby_xml_attributes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ruby_xml_attributes.h; sourceTree = "<group>"; };
-		8B11C6F61D0D3B9F00693D78 /* ruby_xml_attributes.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ruby_xml_attributes.o; sourceTree = "<group>"; };
-		8B11C6F71D0D3B9F00693D78 /* ruby_xml_cbg.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ruby_xml_cbg.c; sourceTree = "<group>"; };
-		8B11C6F81D0D3B9F00693D78 /* ruby_xml_cbg.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ruby_xml_cbg.o; sourceTree = "<group>"; };
-		8B11C6F91D0D3B9F00693D78 /* ruby_xml_document.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ruby_xml_document.c; sourceTree = "<group>"; };
-		8B11C6FA1D0D3B9F00693D78 /* ruby_xml_document.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ruby_xml_document.h; sourceTree = "<group>"; };
-		8B11C6FB1D0D3B9F00693D78 /* ruby_xml_document.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ruby_xml_document.o; sourceTree = "<group>"; };
-		8B11C6FC1D0D3B9F00693D78 /* ruby_xml_dtd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ruby_xml_dtd.c; sourceTree = "<group>"; };
-		8B11C6FD1D0D3B9F00693D78 /* ruby_xml_dtd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ruby_xml_dtd.h; sourceTree = "<group>"; };
-		8B11C6FE1D0D3B9F00693D78 /* ruby_xml_dtd.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ruby_xml_dtd.o; sourceTree = "<group>"; };
-		8B11C6FF1D0D3B9F00693D78 /* ruby_xml_encoding.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ruby_xml_encoding.c; sourceTree = "<group>"; };
-		8B11C7001D0D3B9F00693D78 /* ruby_xml_encoding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ruby_xml_encoding.h; sourceTree = "<group>"; };
-		8B11C7011D0D3B9F00693D78 /* ruby_xml_encoding.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ruby_xml_encoding.o; sourceTree = "<group>"; };
-		8B11C7021D0D3B9F00693D78 /* ruby_xml_error.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ruby_xml_error.c; sourceTree = "<group>"; };
-		8B11C7031D0D3B9F00693D78 /* ruby_xml_error.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ruby_xml_error.h; sourceTree = "<group>"; };
-		8B11C7041D0D3B9F00693D78 /* ruby_xml_error.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ruby_xml_error.o; sourceTree = "<group>"; };
-		8B11C7051D0D3B9F00693D78 /* ruby_xml_html_parser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ruby_xml_html_parser.c; sourceTree = "<group>"; };
-		8B11C7061D0D3B9F00693D78 /* ruby_xml_html_parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ruby_xml_html_parser.h; sourceTree = "<group>"; };
-		8B11C7071D0D3B9F00693D78 /* ruby_xml_html_parser.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ruby_xml_html_parser.o; sourceTree = "<group>"; };
-		8B11C7081D0D3B9F00693D78 /* ruby_xml_html_parser_context.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ruby_xml_html_parser_context.c; sourceTree = "<group>"; };
-		8B11C7091D0D3B9F00693D78 /* ruby_xml_html_parser_context.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ruby_xml_html_parser_context.h; sourceTree = "<group>"; };
-		8B11C70A1D0D3B9F00693D78 /* ruby_xml_html_parser_context.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ruby_xml_html_parser_context.o; sourceTree = "<group>"; };
-		8B11C70B1D0D3B9F00693D78 /* ruby_xml_html_parser_options.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ruby_xml_html_parser_options.c; sourceTree = "<group>"; };
-		8B11C70C1D0D3B9F00693D78 /* ruby_xml_html_parser_options.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ruby_xml_html_parser_options.h; sourceTree = "<group>"; };
-		8B11C70D1D0D3B9F00693D78 /* ruby_xml_html_parser_options.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ruby_xml_html_parser_options.o; sourceTree = "<group>"; };
-		8B11C70E1D0D3B9F00693D78 /* ruby_xml_input_cbg.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ruby_xml_input_cbg.c; sourceTree = "<group>"; };
-		8B11C70F1D0D3B9F00693D78 /* ruby_xml_input_cbg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ruby_xml_input_cbg.h; sourceTree = "<group>"; };
-		8B11C7101D0D3B9F00693D78 /* ruby_xml_input_cbg.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ruby_xml_input_cbg.o; sourceTree = "<group>"; };
-		8B11C7111D0D3B9F00693D78 /* ruby_xml_io.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ruby_xml_io.c; sourceTree = "<group>"; };
-		8B11C7121D0D3B9F00693D78 /* ruby_xml_io.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ruby_xml_io.h; sourceTree = "<group>"; };
-		8B11C7131D0D3B9F00693D78 /* ruby_xml_io.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ruby_xml_io.o; sourceTree = "<group>"; };
-		8B11C7141D0D3B9F00693D78 /* ruby_xml_namespace.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ruby_xml_namespace.c; sourceTree = "<group>"; };
-		8B11C7151D0D3B9F00693D78 /* ruby_xml_namespace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ruby_xml_namespace.h; sourceTree = "<group>"; };
-		8B11C7161D0D3B9F00693D78 /* ruby_xml_namespace.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ruby_xml_namespace.o; sourceTree = "<group>"; };
-		8B11C7171D0D3B9F00693D78 /* ruby_xml_namespaces.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ruby_xml_namespaces.c; sourceTree = "<group>"; };
-		8B11C7181D0D3B9F00693D78 /* ruby_xml_namespaces.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ruby_xml_namespaces.h; sourceTree = "<group>"; };
-		8B11C7191D0D3B9F00693D78 /* ruby_xml_namespaces.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ruby_xml_namespaces.o; sourceTree = "<group>"; };
-		8B11C71A1D0D3B9F00693D78 /* ruby_xml_node.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ruby_xml_node.c; sourceTree = "<group>"; };
-		8B11C71B1D0D3B9F00693D78 /* ruby_xml_node.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ruby_xml_node.h; sourceTree = "<group>"; };
-		8B11C71C1D0D3B9F00693D78 /* ruby_xml_node.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ruby_xml_node.o; sourceTree = "<group>"; };
-		8B11C71D1D0D3B9F00693D78 /* ruby_xml_parser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ruby_xml_parser.c; sourceTree = "<group>"; };
-		8B11C71E1D0D3B9F00693D78 /* ruby_xml_parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ruby_xml_parser.h; sourceTree = "<group>"; };
-		8B11C71F1D0D3B9F00693D78 /* ruby_xml_parser.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ruby_xml_parser.o; sourceTree = "<group>"; };
-		8B11C7201D0D3B9F00693D78 /* ruby_xml_parser_context.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ruby_xml_parser_context.c; sourceTree = "<group>"; };
-		8B11C7211D0D3B9F00693D78 /* ruby_xml_parser_context.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ruby_xml_parser_context.h; sourceTree = "<group>"; };
-		8B11C7221D0D3B9F00693D78 /* ruby_xml_parser_context.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ruby_xml_parser_context.o; sourceTree = "<group>"; };
-		8B11C7231D0D3B9F00693D78 /* ruby_xml_parser_options.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ruby_xml_parser_options.c; sourceTree = "<group>"; };
-		8B11C7241D0D3B9F00693D78 /* ruby_xml_parser_options.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ruby_xml_parser_options.h; sourceTree = "<group>"; };
-		8B11C7251D0D3B9F00693D78 /* ruby_xml_parser_options.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ruby_xml_parser_options.o; sourceTree = "<group>"; };
-		8B11C7261D0D3B9F00693D78 /* ruby_xml_reader.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ruby_xml_reader.c; sourceTree = "<group>"; };
-		8B11C7271D0D3B9F00693D78 /* ruby_xml_reader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ruby_xml_reader.h; sourceTree = "<group>"; };
-		8B11C7281D0D3B9F00693D78 /* ruby_xml_reader.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ruby_xml_reader.o; sourceTree = "<group>"; };
-		8B11C7291D0D3B9F00693D78 /* ruby_xml_relaxng.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ruby_xml_relaxng.c; sourceTree = "<group>"; };
-		8B11C72A1D0D3B9F00693D78 /* ruby_xml_relaxng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ruby_xml_relaxng.h; sourceTree = "<group>"; };
-		8B11C72B1D0D3B9F00693D78 /* ruby_xml_relaxng.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ruby_xml_relaxng.o; sourceTree = "<group>"; };
-		8B11C72C1D0D3B9F00693D78 /* ruby_xml_sax2_handler.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ruby_xml_sax2_handler.c; sourceTree = "<group>"; };
-		8B11C72D1D0D3B9F00693D78 /* ruby_xml_sax2_handler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ruby_xml_sax2_handler.h; sourceTree = "<group>"; };
-		8B11C72E1D0D3B9F00693D78 /* ruby_xml_sax2_handler.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ruby_xml_sax2_handler.o; sourceTree = "<group>"; };
-		8B11C72F1D0D3B9F00693D78 /* ruby_xml_sax_parser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ruby_xml_sax_parser.c; sourceTree = "<group>"; };
-		8B11C7301D0D3B9F00693D78 /* ruby_xml_sax_parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ruby_xml_sax_parser.h; sourceTree = "<group>"; };
-		8B11C7311D0D3B9F00693D78 /* ruby_xml_sax_parser.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ruby_xml_sax_parser.o; sourceTree = "<group>"; };
-		8B11C7321D0D3B9F00693D78 /* ruby_xml_schema.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ruby_xml_schema.c; sourceTree = "<group>"; };
-		8B11C7331D0D3B9F00693D78 /* ruby_xml_schema.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ruby_xml_schema.h; sourceTree = "<group>"; };
-		8B11C7341D0D3B9F00693D78 /* ruby_xml_schema.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ruby_xml_schema.o; sourceTree = "<group>"; };
-		8B11C7351D0D3B9F00693D78 /* ruby_xml_schema_attribute.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ruby_xml_schema_attribute.c; sourceTree = "<group>"; };
-		8B11C7361D0D3B9F00693D78 /* ruby_xml_schema_attribute.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ruby_xml_schema_attribute.h; sourceTree = "<group>"; };
-		8B11C7371D0D3B9F00693D78 /* ruby_xml_schema_attribute.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ruby_xml_schema_attribute.o; sourceTree = "<group>"; };
-		8B11C7381D0D3B9F00693D78 /* ruby_xml_schema_element.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ruby_xml_schema_element.c; sourceTree = "<group>"; };
-		8B11C7391D0D3B9F00693D78 /* ruby_xml_schema_element.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ruby_xml_schema_element.h; sourceTree = "<group>"; };
-		8B11C73A1D0D3B9F00693D78 /* ruby_xml_schema_element.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ruby_xml_schema_element.o; sourceTree = "<group>"; };
-		8B11C73B1D0D3B9F00693D78 /* ruby_xml_schema_facet.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ruby_xml_schema_facet.c; sourceTree = "<group>"; };
-		8B11C73C1D0D3B9F00693D78 /* ruby_xml_schema_facet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ruby_xml_schema_facet.h; sourceTree = "<group>"; };
-		8B11C73D1D0D3B9F00693D78 /* ruby_xml_schema_facet.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ruby_xml_schema_facet.o; sourceTree = "<group>"; };
-		8B11C73E1D0D3B9F00693D78 /* ruby_xml_schema_type.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ruby_xml_schema_type.c; sourceTree = "<group>"; };
-		8B11C73F1D0D3B9F00693D78 /* ruby_xml_schema_type.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ruby_xml_schema_type.h; sourceTree = "<group>"; };
-		8B11C7401D0D3B9F00693D78 /* ruby_xml_schema_type.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ruby_xml_schema_type.o; sourceTree = "<group>"; };
-		8B11C7411D0D3B9F00693D78 /* ruby_xml_version.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ruby_xml_version.h; sourceTree = "<group>"; };
-		8B11C7421D0D3B9F00693D78 /* ruby_xml_writer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ruby_xml_writer.c; sourceTree = "<group>"; };
-		8B11C7431D0D3B9F00693D78 /* ruby_xml_writer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ruby_xml_writer.h; sourceTree = "<group>"; };
-		8B11C7441D0D3B9F00693D78 /* ruby_xml_writer.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ruby_xml_writer.o; sourceTree = "<group>"; };
-		8B11C7451D0D3B9F00693D78 /* ruby_xml_xinclude.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ruby_xml_xinclude.c; sourceTree = "<group>"; };
-		8B11C7461D0D3B9F00693D78 /* ruby_xml_xinclude.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ruby_xml_xinclude.h; sourceTree = "<group>"; };
-		8B11C7471D0D3B9F00693D78 /* ruby_xml_xinclude.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ruby_xml_xinclude.o; sourceTree = "<group>"; };
-		8B11C7481D0D3B9F00693D78 /* ruby_xml_xpath.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ruby_xml_xpath.c; sourceTree = "<group>"; };
-		8B11C7491D0D3B9F00693D78 /* ruby_xml_xpath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ruby_xml_xpath.h; sourceTree = "<group>"; };
-		8B11C74A1D0D3B9F00693D78 /* ruby_xml_xpath.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ruby_xml_xpath.o; sourceTree = "<group>"; };
-		8B11C74B1D0D3B9F00693D78 /* ruby_xml_xpath_context.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ruby_xml_xpath_context.c; sourceTree = "<group>"; };
-		8B11C74C1D0D3B9F00693D78 /* ruby_xml_xpath_context.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ruby_xml_xpath_context.h; sourceTree = "<group>"; };
-		8B11C74D1D0D3B9F00693D78 /* ruby_xml_xpath_context.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ruby_xml_xpath_context.o; sourceTree = "<group>"; };
-		8B11C74E1D0D3B9F00693D78 /* ruby_xml_xpath_expression.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ruby_xml_xpath_expression.c; sourceTree = "<group>"; };
-		8B11C74F1D0D3B9F00693D78 /* ruby_xml_xpath_expression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ruby_xml_xpath_expression.h; sourceTree = "<group>"; };
-		8B11C7501D0D3B9F00693D78 /* ruby_xml_xpath_expression.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ruby_xml_xpath_expression.o; sourceTree = "<group>"; };
-		8B11C7511D0D3B9F00693D78 /* ruby_xml_xpath_object.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ruby_xml_xpath_object.c; sourceTree = "<group>"; };
-		8B11C7521D0D3B9F00693D78 /* ruby_xml_xpath_object.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ruby_xml_xpath_object.h; sourceTree = "<group>"; };
-		8B11C7531D0D3B9F00693D78 /* ruby_xml_xpath_object.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ruby_xml_xpath_object.o; sourceTree = "<group>"; };
-		8B11C7541D0D3B9F00693D78 /* ruby_xml_xpointer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ruby_xml_xpointer.c; sourceTree = "<group>"; };
-		8B11C7551D0D3B9F00693D78 /* ruby_xml_xpointer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ruby_xml_xpointer.h; sourceTree = "<group>"; };
-		8B11C7561D0D3B9F00693D78 /* ruby_xml_xpointer.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = ruby_xml_xpointer.o; sourceTree = "<group>"; };
+		C7F2B51F2B4B5AEC004E0A86 /* ruby_xml_parser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ruby_xml_parser.c; path = ../libxml/ruby_xml_parser.c; sourceTree = "<group>"; };
+		C7F2B5202B4B5AEC004E0A86 /* ruby_xml_namespace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ruby_xml_namespace.h; path = ../libxml/ruby_xml_namespace.h; sourceTree = "<group>"; };
+		C7F2B5212B4B5AEC004E0A86 /* ruby_xml_attr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ruby_xml_attr.c; path = ../libxml/ruby_xml_attr.c; sourceTree = "<group>"; };
+		C7F2B5222B4B5AEC004E0A86 /* ruby_xml_xinclude.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ruby_xml_xinclude.h; path = ../libxml/ruby_xml_xinclude.h; sourceTree = "<group>"; };
+		C7F2B5232B4B5AEC004E0A86 /* ruby_xml_parser_context.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ruby_xml_parser_context.c; path = ../libxml/ruby_xml_parser_context.c; sourceTree = "<group>"; };
+		C7F2B5242B4B5AEC004E0A86 /* ruby_xml_input_cbg.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ruby_xml_input_cbg.c; path = ../libxml/ruby_xml_input_cbg.c; sourceTree = "<group>"; };
+		C7F2B5252B4B5AEC004E0A86 /* ruby_xml_html_parser_options.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ruby_xml_html_parser_options.c; path = ../libxml/ruby_xml_html_parser_options.c; sourceTree = "<group>"; };
+		C7F2B5262B4B5AEC004E0A86 /* ruby_xml_html_parser_options.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ruby_xml_html_parser_options.h; path = ../libxml/ruby_xml_html_parser_options.h; sourceTree = "<group>"; };
+		C7F2B5272B4B5AEC004E0A86 /* ruby_xml_html_parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ruby_xml_html_parser.h; path = ../libxml/ruby_xml_html_parser.h; sourceTree = "<group>"; };
+		C7F2B5282B4B5AEC004E0A86 /* ruby_xml_xpath_context.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ruby_xml_xpath_context.h; path = ../libxml/ruby_xml_xpath_context.h; sourceTree = "<group>"; };
+		C7F2B5292B4B5AEC004E0A86 /* ruby_xml_io.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ruby_xml_io.c; path = ../libxml/ruby_xml_io.c; sourceTree = "<group>"; };
+		C7F2B52A2B4B5AED004E0A86 /* ruby_xml_schema_element.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ruby_xml_schema_element.c; path = ../libxml/ruby_xml_schema_element.c; sourceTree = "<group>"; };
+		C7F2B52B2B4B5AED004E0A86 /* ruby_xml_relaxng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ruby_xml_relaxng.h; path = ../libxml/ruby_xml_relaxng.h; sourceTree = "<group>"; };
+		C7F2B52C2B4B5AED004E0A86 /* ruby_xml_parser_context.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ruby_xml_parser_context.h; path = ../libxml/ruby_xml_parser_context.h; sourceTree = "<group>"; };
+		C7F2B52D2B4B5AED004E0A86 /* ruby_xml_node.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ruby_xml_node.c; path = ../libxml/ruby_xml_node.c; sourceTree = "<group>"; };
+		C7F2B52E2B4B5AED004E0A86 /* ruby_xml_attributes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ruby_xml_attributes.h; path = ../libxml/ruby_xml_attributes.h; sourceTree = "<group>"; };
+		C7F2B52F2B4B5AED004E0A86 /* ruby_xml_html_parser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ruby_xml_html_parser.c; path = ../libxml/ruby_xml_html_parser.c; sourceTree = "<group>"; };
+		C7F2B5302B4B5AED004E0A86 /* ruby_xml_input_cbg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ruby_xml_input_cbg.h; path = ../libxml/ruby_xml_input_cbg.h; sourceTree = "<group>"; };
+		C7F2B5322B4B5AED004E0A86 /* ruby_xml_xpath_expression.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ruby_xml_xpath_expression.c; path = ../libxml/ruby_xml_xpath_expression.c; sourceTree = "<group>"; };
+		C7F2B5332B4B5AED004E0A86 /* ruby_xml_sax_parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ruby_xml_sax_parser.h; path = ../libxml/ruby_xml_sax_parser.h; sourceTree = "<group>"; };
+		C7F2B5342B4B5AED004E0A86 /* ruby_xml_schema_element.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ruby_xml_schema_element.h; path = ../libxml/ruby_xml_schema_element.h; sourceTree = "<group>"; };
+		C7F2B5352B4B5AED004E0A86 /* ruby_xml_encoding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ruby_xml_encoding.h; path = ../libxml/ruby_xml_encoding.h; sourceTree = "<group>"; };
+		C7F2B5362B4B5AED004E0A86 /* ruby_xml_encoding.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ruby_xml_encoding.c; path = ../libxml/ruby_xml_encoding.c; sourceTree = "<group>"; };
+		C7F2B5372B4B5AED004E0A86 /* ruby_xml_writer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ruby_xml_writer.c; path = ../libxml/ruby_xml_writer.c; sourceTree = "<group>"; };
+		C7F2B5382B4B5AED004E0A86 /* ruby_xml_cbg.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ruby_xml_cbg.c; path = ../libxml/ruby_xml_cbg.c; sourceTree = "<group>"; };
+		C7F2B5392B4B5AED004E0A86 /* ruby_xml_schema_attribute.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ruby_xml_schema_attribute.h; path = ../libxml/ruby_xml_schema_attribute.h; sourceTree = "<group>"; };
+		C7F2B53A2B4B5AED004E0A86 /* ruby_xml.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ruby_xml.c; path = ../libxml/ruby_xml.c; sourceTree = "<group>"; };
+		C7F2B53B2B4B5AED004E0A86 /* ruby_xml_namespace.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ruby_xml_namespace.c; path = ../libxml/ruby_xml_namespace.c; sourceTree = "<group>"; };
+		C7F2B53C2B4B5AED004E0A86 /* ruby_xml_writer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ruby_xml_writer.h; path = ../libxml/ruby_xml_writer.h; sourceTree = "<group>"; };
+		C7F2B53D2B4B5AED004E0A86 /* ruby_xml_namespaces.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ruby_xml_namespaces.h; path = ../libxml/ruby_xml_namespaces.h; sourceTree = "<group>"; };
+		C7F2B53E2B4B5AED004E0A86 /* ruby_xml_schema.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ruby_xml_schema.h; path = ../libxml/ruby_xml_schema.h; sourceTree = "<group>"; };
+		C7F2B53F2B4B5AED004E0A86 /* ruby_xml_schema_type.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ruby_xml_schema_type.c; path = ../libxml/ruby_xml_schema_type.c; sourceTree = "<group>"; };
+		C7F2B5402B4B5AED004E0A86 /* ruby_xml_xpath.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ruby_xml_xpath.c; path = ../libxml/ruby_xml_xpath.c; sourceTree = "<group>"; };
+		C7F2B5412B4B5AED004E0A86 /* ruby_xml_html_parser_context.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ruby_xml_html_parser_context.c; path = ../libxml/ruby_xml_html_parser_context.c; sourceTree = "<group>"; };
+		C7F2B5422B4B5AED004E0A86 /* ruby_xml_parser_options.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ruby_xml_parser_options.c; path = ../libxml/ruby_xml_parser_options.c; sourceTree = "<group>"; };
+		C7F2B5432B4B5AED004E0A86 /* ruby_xml_error.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ruby_xml_error.h; path = ../libxml/ruby_xml_error.h; sourceTree = "<group>"; };
+		C7F2B5442B4B5AED004E0A86 /* ruby_xml_schema_type.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ruby_xml_schema_type.h; path = ../libxml/ruby_xml_schema_type.h; sourceTree = "<group>"; };
+		C7F2B5452B4B5AED004E0A86 /* ruby_xml_xpath_object.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ruby_xml_xpath_object.h; path = ../libxml/ruby_xml_xpath_object.h; sourceTree = "<group>"; };
+		C7F2B5462B4B5AED004E0A86 /* ruby_xml_sax2_handler.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ruby_xml_sax2_handler.c; path = ../libxml/ruby_xml_sax2_handler.c; sourceTree = "<group>"; };
+		C7F2B5472B4B5AED004E0A86 /* ruby_xml_parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ruby_xml_parser.h; path = ../libxml/ruby_xml_parser.h; sourceTree = "<group>"; };
+		C7F2B5482B4B5AED004E0A86 /* ruby_xml_attributes.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ruby_xml_attributes.c; path = ../libxml/ruby_xml_attributes.c; sourceTree = "<group>"; };
+		C7F2B5492B4B5AED004E0A86 /* ruby_xml_reader.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ruby_xml_reader.c; path = ../libxml/ruby_xml_reader.c; sourceTree = "<group>"; };
+		C7F2B54A2B4B5AED004E0A86 /* ruby_xml_attr_decl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ruby_xml_attr_decl.c; path = ../libxml/ruby_xml_attr_decl.c; sourceTree = "<group>"; };
+		C7F2B54B2B4B5AED004E0A86 /* ruby_xml_xpath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ruby_xml_xpath.h; path = ../libxml/ruby_xml_xpath.h; sourceTree = "<group>"; };
+		C7F2B54C2B4B5AED004E0A86 /* ruby_xml_schema.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ruby_xml_schema.c; path = ../libxml/ruby_xml_schema.c; sourceTree = "<group>"; };
+		C7F2B54D2B4B5AED004E0A86 /* ruby_xml_namespaces.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ruby_xml_namespaces.c; path = ../libxml/ruby_xml_namespaces.c; sourceTree = "<group>"; };
+		C7F2B54F2B4B5AED004E0A86 /* ruby_xml_attr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ruby_xml_attr.h; path = ../libxml/ruby_xml_attr.h; sourceTree = "<group>"; };
+		C7F2B5502B4B5AED004E0A86 /* ruby_xml_io.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ruby_xml_io.h; path = ../libxml/ruby_xml_io.h; sourceTree = "<group>"; };
+		C7F2B5512B4B5AED004E0A86 /* ruby_xml_xpath_context.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ruby_xml_xpath_context.c; path = ../libxml/ruby_xml_xpath_context.c; sourceTree = "<group>"; };
+		C7F2B5522B4B5AED004E0A86 /* ruby_xml_document.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ruby_xml_document.c; path = ../libxml/ruby_xml_document.c; sourceTree = "<group>"; };
+		C7F2B5532B4B5AED004E0A86 /* ruby_xml_dtd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ruby_xml_dtd.h; path = ../libxml/ruby_xml_dtd.h; sourceTree = "<group>"; };
+		C7F2B5542B4B5AEE004E0A86 /* ruby_libxml.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ruby_libxml.h; path = ../libxml/ruby_libxml.h; sourceTree = "<group>"; };
+		C7F2B5552B4B5AEE004E0A86 /* ruby_xml_xpath_object.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ruby_xml_xpath_object.c; path = ../libxml/ruby_xml_xpath_object.c; sourceTree = "<group>"; };
+		C7F2B5562B4B5AEE004E0A86 /* ruby_xml_schema_facet.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ruby_xml_schema_facet.c; path = ../libxml/ruby_xml_schema_facet.c; sourceTree = "<group>"; };
+		C7F2B5572B4B5AEE004E0A86 /* ruby_xml_schema_facet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ruby_xml_schema_facet.h; path = ../libxml/ruby_xml_schema_facet.h; sourceTree = "<group>"; };
+		C7F2B5582B4B5AEE004E0A86 /* ruby_xml_xinclude.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ruby_xml_xinclude.c; path = ../libxml/ruby_xml_xinclude.c; sourceTree = "<group>"; };
+		C7F2B5592B4B5AEE004E0A86 /* ruby_xml_error.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ruby_xml_error.c; path = ../libxml/ruby_xml_error.c; sourceTree = "<group>"; };
+		C7F2B55A2B4B5AEE004E0A86 /* ruby_xml.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ruby_xml.h; path = ../libxml/ruby_xml.h; sourceTree = "<group>"; };
+		C7F2B55B2B4B5AEE004E0A86 /* ruby_xml_node.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ruby_xml_node.h; path = ../libxml/ruby_xml_node.h; sourceTree = "<group>"; };
+		C7F2B55C2B4B5AEE004E0A86 /* ruby_xml_schema_attribute.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ruby_xml_schema_attribute.c; path = ../libxml/ruby_xml_schema_attribute.c; sourceTree = "<group>"; };
+		C7F2B55D2B4B5AEE004E0A86 /* ruby_xml_reader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ruby_xml_reader.h; path = ../libxml/ruby_xml_reader.h; sourceTree = "<group>"; };
+		C7F2B55E2B4B5AEE004E0A86 /* ruby_xml_sax_parser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ruby_xml_sax_parser.c; path = ../libxml/ruby_xml_sax_parser.c; sourceTree = "<group>"; };
+		C7F2B55F2B4B5AEE004E0A86 /* ruby_xml_version.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ruby_xml_version.h; path = ../libxml/ruby_xml_version.h; sourceTree = "<group>"; };
+		C7F2B5602B4B5AEE004E0A86 /* ruby_xml_document.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ruby_xml_document.h; path = ../libxml/ruby_xml_document.h; sourceTree = "<group>"; };
+		C7F2B5612B4B5AEE004E0A86 /* ruby_xml_xpath_expression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ruby_xml_xpath_expression.h; path = ../libxml/ruby_xml_xpath_expression.h; sourceTree = "<group>"; };
+		C7F2B5622B4B5AEE004E0A86 /* ruby_xml_dtd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ruby_xml_dtd.c; path = ../libxml/ruby_xml_dtd.c; sourceTree = "<group>"; };
+		C7F2B5632B4B5AEE004E0A86 /* ruby_xml_relaxng.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ruby_xml_relaxng.c; path = ../libxml/ruby_xml_relaxng.c; sourceTree = "<group>"; };
+		C7F2B5642B4B5AEE004E0A86 /* ruby_xml_attr_decl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ruby_xml_attr_decl.h; path = ../libxml/ruby_xml_attr_decl.h; sourceTree = "<group>"; };
+		C7F2B5652B4B5AEE004E0A86 /* libxml.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = libxml.c; path = ../libxml/libxml.c; sourceTree = "<group>"; };
+		C7F2B5662B4B5AEE004E0A86 /* ruby_xml_sax2_handler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ruby_xml_sax2_handler.h; path = ../libxml/ruby_xml_sax2_handler.h; sourceTree = "<group>"; };
+		C7F2B5672B4B5AEE004E0A86 /* ruby_xml_html_parser_context.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ruby_xml_html_parser_context.h; path = ../libxml/ruby_xml_html_parser_context.h; sourceTree = "<group>"; };
+		C7F2B5682B4B5AEE004E0A86 /* ruby_xml_parser_options.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ruby_xml_parser_options.h; path = ../libxml/ruby_xml_parser_options.h; sourceTree = "<group>"; };
+		C7F2B5922B4B5D38004E0A86 /* libruby.3.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libruby.3.2.dylib; path = ../../../../Cellar/ruby/3.2.2_1/lib/libruby.3.2.dylib; sourceTree = "<group>"; };
+		C7F2B59B2B4B608E004E0A86 /* libxml_ruby.bundle */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libxml_ruby.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
+		C7F2B59D2B4B608E004E0A86 /* libxml_ruby.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = libxml_ruby.h; sourceTree = "<group>"; };
+		C7F2B59F2B4B608E004E0A86 /* libxml_ruby.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = libxml_ruby.m; sourceTree = "<group>"; };
+		C7F2B5F02B4B63BA004E0A86 /* libxml2.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.2.dylib; path = ../../../../Cellar/libxml2/2.12.3/lib/libxml2.2.dylib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFrameworksBuildPhase section */
+		C7F2B5992B4B608E004E0A86 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C7F2B5F22B4B63E4004E0A86 /* libruby.3.2.dylib in Frameworks */,
+				C7F2B5F12B4B63BA004E0A86 /* libxml2.2.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
 /* Begin PBXGroup section */
-		8B11C6551D0D309100693D78 = {
+		C7F2B50D2B4B5A8B004E0A86 = {
 			isa = PBXGroup;
 			children = (
-				8B11C6E11D0D3B9E00693D78 /* libxml */,
-				8B11C65F1D0D309100693D78 /* Products */,
+				C7F2B5652B4B5AEE004E0A86 /* libxml.c */,
+				C7F2B5542B4B5AEE004E0A86 /* ruby_libxml.h */,
+				C7F2B54A2B4B5AED004E0A86 /* ruby_xml_attr_decl.c */,
+				C7F2B5642B4B5AEE004E0A86 /* ruby_xml_attr_decl.h */,
+				C7F2B5212B4B5AEC004E0A86 /* ruby_xml_attr.c */,
+				C7F2B54F2B4B5AED004E0A86 /* ruby_xml_attr.h */,
+				C7F2B5482B4B5AED004E0A86 /* ruby_xml_attributes.c */,
+				C7F2B52E2B4B5AED004E0A86 /* ruby_xml_attributes.h */,
+				C7F2B5382B4B5AED004E0A86 /* ruby_xml_cbg.c */,
+				C7F2B5522B4B5AED004E0A86 /* ruby_xml_document.c */,
+				C7F2B5602B4B5AEE004E0A86 /* ruby_xml_document.h */,
+				C7F2B5622B4B5AEE004E0A86 /* ruby_xml_dtd.c */,
+				C7F2B5532B4B5AED004E0A86 /* ruby_xml_dtd.h */,
+				C7F2B5362B4B5AED004E0A86 /* ruby_xml_encoding.c */,
+				C7F2B5352B4B5AED004E0A86 /* ruby_xml_encoding.h */,
+				C7F2B5592B4B5AEE004E0A86 /* ruby_xml_error.c */,
+				C7F2B5432B4B5AED004E0A86 /* ruby_xml_error.h */,
+				C7F2B5412B4B5AED004E0A86 /* ruby_xml_html_parser_context.c */,
+				C7F2B5672B4B5AEE004E0A86 /* ruby_xml_html_parser_context.h */,
+				C7F2B5252B4B5AEC004E0A86 /* ruby_xml_html_parser_options.c */,
+				C7F2B5262B4B5AEC004E0A86 /* ruby_xml_html_parser_options.h */,
+				C7F2B52F2B4B5AED004E0A86 /* ruby_xml_html_parser.c */,
+				C7F2B5272B4B5AEC004E0A86 /* ruby_xml_html_parser.h */,
+				C7F2B5242B4B5AEC004E0A86 /* ruby_xml_input_cbg.c */,
+				C7F2B5302B4B5AED004E0A86 /* ruby_xml_input_cbg.h */,
+				C7F2B5292B4B5AEC004E0A86 /* ruby_xml_io.c */,
+				C7F2B5502B4B5AED004E0A86 /* ruby_xml_io.h */,
+				C7F2B53B2B4B5AED004E0A86 /* ruby_xml_namespace.c */,
+				C7F2B5202B4B5AEC004E0A86 /* ruby_xml_namespace.h */,
+				C7F2B54D2B4B5AED004E0A86 /* ruby_xml_namespaces.c */,
+				C7F2B53D2B4B5AED004E0A86 /* ruby_xml_namespaces.h */,
+				C7F2B52D2B4B5AED004E0A86 /* ruby_xml_node.c */,
+				C7F2B55B2B4B5AEE004E0A86 /* ruby_xml_node.h */,
+				C7F2B5232B4B5AEC004E0A86 /* ruby_xml_parser_context.c */,
+				C7F2B52C2B4B5AED004E0A86 /* ruby_xml_parser_context.h */,
+				C7F2B5422B4B5AED004E0A86 /* ruby_xml_parser_options.c */,
+				C7F2B5682B4B5AEE004E0A86 /* ruby_xml_parser_options.h */,
+				C7F2B51F2B4B5AEC004E0A86 /* ruby_xml_parser.c */,
+				C7F2B5472B4B5AED004E0A86 /* ruby_xml_parser.h */,
+				C7F2B5492B4B5AED004E0A86 /* ruby_xml_reader.c */,
+				C7F2B55D2B4B5AEE004E0A86 /* ruby_xml_reader.h */,
+				C7F2B5632B4B5AEE004E0A86 /* ruby_xml_relaxng.c */,
+				C7F2B52B2B4B5AED004E0A86 /* ruby_xml_relaxng.h */,
+				C7F2B55E2B4B5AEE004E0A86 /* ruby_xml_sax_parser.c */,
+				C7F2B5332B4B5AED004E0A86 /* ruby_xml_sax_parser.h */,
+				C7F2B5462B4B5AED004E0A86 /* ruby_xml_sax2_handler.c */,
+				C7F2B5662B4B5AEE004E0A86 /* ruby_xml_sax2_handler.h */,
+				C7F2B55C2B4B5AEE004E0A86 /* ruby_xml_schema_attribute.c */,
+				C7F2B5392B4B5AED004E0A86 /* ruby_xml_schema_attribute.h */,
+				C7F2B52A2B4B5AED004E0A86 /* ruby_xml_schema_element.c */,
+				C7F2B5342B4B5AED004E0A86 /* ruby_xml_schema_element.h */,
+				C7F2B5562B4B5AEE004E0A86 /* ruby_xml_schema_facet.c */,
+				C7F2B5572B4B5AEE004E0A86 /* ruby_xml_schema_facet.h */,
+				C7F2B53F2B4B5AED004E0A86 /* ruby_xml_schema_type.c */,
+				C7F2B5442B4B5AED004E0A86 /* ruby_xml_schema_type.h */,
+				C7F2B54C2B4B5AED004E0A86 /* ruby_xml_schema.c */,
+				C7F2B53E2B4B5AED004E0A86 /* ruby_xml_schema.h */,
+				C7F2B55F2B4B5AEE004E0A86 /* ruby_xml_version.h */,
+				C7F2B5372B4B5AED004E0A86 /* ruby_xml_writer.c */,
+				C7F2B53C2B4B5AED004E0A86 /* ruby_xml_writer.h */,
+				C7F2B5582B4B5AEE004E0A86 /* ruby_xml_xinclude.c */,
+				C7F2B5222B4B5AEC004E0A86 /* ruby_xml_xinclude.h */,
+				C7F2B5512B4B5AED004E0A86 /* ruby_xml_xpath_context.c */,
+				C7F2B5282B4B5AEC004E0A86 /* ruby_xml_xpath_context.h */,
+				C7F2B5322B4B5AED004E0A86 /* ruby_xml_xpath_expression.c */,
+				C7F2B5612B4B5AEE004E0A86 /* ruby_xml_xpath_expression.h */,
+				C7F2B5552B4B5AEE004E0A86 /* ruby_xml_xpath_object.c */,
+				C7F2B5452B4B5AED004E0A86 /* ruby_xml_xpath_object.h */,
+				C7F2B5402B4B5AED004E0A86 /* ruby_xml_xpath.c */,
+				C7F2B54B2B4B5AED004E0A86 /* ruby_xml_xpath.h */,
+				C7F2B53A2B4B5AED004E0A86 /* ruby_xml.c */,
+				C7F2B55A2B4B5AEE004E0A86 /* ruby_xml.h */,
+				C7F2B59C2B4B608E004E0A86 /* libxml_ruby */,
+				C7F2B5172B4B5A8B004E0A86 /* Products */,
+				C7F2B5912B4B5D38004E0A86 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
-		8B11C65F1D0D309100693D78 /* Products */ = {
+		C7F2B5172B4B5A8B004E0A86 /* Products */ = {
 			isa = PBXGroup;
 			children = (
+				C7F2B59B2B4B608E004E0A86 /* libxml_ruby.bundle */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		8B11C6E11D0D3B9E00693D78 /* libxml */ = {
+		C7F2B5912B4B5D38004E0A86 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				8B11C6E21D0D3B9E00693D78 /* .gitignore */,
-				8B11C6E31D0D3B9E00693D78 /* extconf.h */,
-				8B11C6E41D0D3B9E00693D78 /* extconf.rb */,
-				8B11C6E51D0D3B9E00693D78 /* libxml.c */,
-				8B11C6E61D0D3B9E00693D78 /* libxml.o */,
-				8B11C6E71D0D3B9E00693D78 /* libxml_ruby.bundle */,
-				8B11C6E81D0D3B9F00693D78 /* libxml_ruby.def */,
-				8B11C6E91D0D3B9F00693D78 /* Makefile */,
-				8B11C6EA1D0D3B9F00693D78 /* ruby_libxml.h */,
-				8B11C6EB1D0D3B9F00693D78 /* ruby_xml.c */,
-				8B11C6EC1D0D3B9F00693D78 /* ruby_xml.h */,
-				8B11C6ED1D0D3B9F00693D78 /* ruby_xml.o */,
-				8B11C6EE1D0D3B9F00693D78 /* ruby_xml_attr.c */,
-				8B11C6EF1D0D3B9F00693D78 /* ruby_xml_attr.h */,
-				8B11C6F01D0D3B9F00693D78 /* ruby_xml_attr.o */,
-				8B11C6F11D0D3B9F00693D78 /* ruby_xml_attr_decl.c */,
-				8B11C6F21D0D3B9F00693D78 /* ruby_xml_attr_decl.h */,
-				8B11C6F31D0D3B9F00693D78 /* ruby_xml_attr_decl.o */,
-				8B11C6F41D0D3B9F00693D78 /* ruby_xml_attributes.c */,
-				8B11C6F51D0D3B9F00693D78 /* ruby_xml_attributes.h */,
-				8B11C6F61D0D3B9F00693D78 /* ruby_xml_attributes.o */,
-				8B11C6F71D0D3B9F00693D78 /* ruby_xml_cbg.c */,
-				8B11C6F81D0D3B9F00693D78 /* ruby_xml_cbg.o */,
-				8B11C6F91D0D3B9F00693D78 /* ruby_xml_document.c */,
-				8B11C6FA1D0D3B9F00693D78 /* ruby_xml_document.h */,
-				8B11C6FB1D0D3B9F00693D78 /* ruby_xml_document.o */,
-				8B11C6FC1D0D3B9F00693D78 /* ruby_xml_dtd.c */,
-				8B11C6FD1D0D3B9F00693D78 /* ruby_xml_dtd.h */,
-				8B11C6FE1D0D3B9F00693D78 /* ruby_xml_dtd.o */,
-				8B11C6FF1D0D3B9F00693D78 /* ruby_xml_encoding.c */,
-				8B11C7001D0D3B9F00693D78 /* ruby_xml_encoding.h */,
-				8B11C7011D0D3B9F00693D78 /* ruby_xml_encoding.o */,
-				8B11C7021D0D3B9F00693D78 /* ruby_xml_error.c */,
-				8B11C7031D0D3B9F00693D78 /* ruby_xml_error.h */,
-				8B11C7041D0D3B9F00693D78 /* ruby_xml_error.o */,
-				8B11C7051D0D3B9F00693D78 /* ruby_xml_html_parser.c */,
-				8B11C7061D0D3B9F00693D78 /* ruby_xml_html_parser.h */,
-				8B11C7071D0D3B9F00693D78 /* ruby_xml_html_parser.o */,
-				8B11C7081D0D3B9F00693D78 /* ruby_xml_html_parser_context.c */,
-				8B11C7091D0D3B9F00693D78 /* ruby_xml_html_parser_context.h */,
-				8B11C70A1D0D3B9F00693D78 /* ruby_xml_html_parser_context.o */,
-				8B11C70B1D0D3B9F00693D78 /* ruby_xml_html_parser_options.c */,
-				8B11C70C1D0D3B9F00693D78 /* ruby_xml_html_parser_options.h */,
-				8B11C70D1D0D3B9F00693D78 /* ruby_xml_html_parser_options.o */,
-				8B11C70E1D0D3B9F00693D78 /* ruby_xml_input_cbg.c */,
-				8B11C70F1D0D3B9F00693D78 /* ruby_xml_input_cbg.h */,
-				8B11C7101D0D3B9F00693D78 /* ruby_xml_input_cbg.o */,
-				8B11C7111D0D3B9F00693D78 /* ruby_xml_io.c */,
-				8B11C7121D0D3B9F00693D78 /* ruby_xml_io.h */,
-				8B11C7131D0D3B9F00693D78 /* ruby_xml_io.o */,
-				8B11C7141D0D3B9F00693D78 /* ruby_xml_namespace.c */,
-				8B11C7151D0D3B9F00693D78 /* ruby_xml_namespace.h */,
-				8B11C7161D0D3B9F00693D78 /* ruby_xml_namespace.o */,
-				8B11C7171D0D3B9F00693D78 /* ruby_xml_namespaces.c */,
-				8B11C7181D0D3B9F00693D78 /* ruby_xml_namespaces.h */,
-				8B11C7191D0D3B9F00693D78 /* ruby_xml_namespaces.o */,
-				8B11C71A1D0D3B9F00693D78 /* ruby_xml_node.c */,
-				8B11C71B1D0D3B9F00693D78 /* ruby_xml_node.h */,
-				8B11C71C1D0D3B9F00693D78 /* ruby_xml_node.o */,
-				8B11C71D1D0D3B9F00693D78 /* ruby_xml_parser.c */,
-				8B11C71E1D0D3B9F00693D78 /* ruby_xml_parser.h */,
-				8B11C71F1D0D3B9F00693D78 /* ruby_xml_parser.o */,
-				8B11C7201D0D3B9F00693D78 /* ruby_xml_parser_context.c */,
-				8B11C7211D0D3B9F00693D78 /* ruby_xml_parser_context.h */,
-				8B11C7221D0D3B9F00693D78 /* ruby_xml_parser_context.o */,
-				8B11C7231D0D3B9F00693D78 /* ruby_xml_parser_options.c */,
-				8B11C7241D0D3B9F00693D78 /* ruby_xml_parser_options.h */,
-				8B11C7251D0D3B9F00693D78 /* ruby_xml_parser_options.o */,
-				8B11C7261D0D3B9F00693D78 /* ruby_xml_reader.c */,
-				8B11C7271D0D3B9F00693D78 /* ruby_xml_reader.h */,
-				8B11C7281D0D3B9F00693D78 /* ruby_xml_reader.o */,
-				8B11C7291D0D3B9F00693D78 /* ruby_xml_relaxng.c */,
-				8B11C72A1D0D3B9F00693D78 /* ruby_xml_relaxng.h */,
-				8B11C72B1D0D3B9F00693D78 /* ruby_xml_relaxng.o */,
-				8B11C72C1D0D3B9F00693D78 /* ruby_xml_sax2_handler.c */,
-				8B11C72D1D0D3B9F00693D78 /* ruby_xml_sax2_handler.h */,
-				8B11C72E1D0D3B9F00693D78 /* ruby_xml_sax2_handler.o */,
-				8B11C72F1D0D3B9F00693D78 /* ruby_xml_sax_parser.c */,
-				8B11C7301D0D3B9F00693D78 /* ruby_xml_sax_parser.h */,
-				8B11C7311D0D3B9F00693D78 /* ruby_xml_sax_parser.o */,
-				8B11C7321D0D3B9F00693D78 /* ruby_xml_schema.c */,
-				8B11C7331D0D3B9F00693D78 /* ruby_xml_schema.h */,
-				8B11C7341D0D3B9F00693D78 /* ruby_xml_schema.o */,
-				8B11C7351D0D3B9F00693D78 /* ruby_xml_schema_attribute.c */,
-				8B11C7361D0D3B9F00693D78 /* ruby_xml_schema_attribute.h */,
-				8B11C7371D0D3B9F00693D78 /* ruby_xml_schema_attribute.o */,
-				8B11C7381D0D3B9F00693D78 /* ruby_xml_schema_element.c */,
-				8B11C7391D0D3B9F00693D78 /* ruby_xml_schema_element.h */,
-				8B11C73A1D0D3B9F00693D78 /* ruby_xml_schema_element.o */,
-				8B11C73B1D0D3B9F00693D78 /* ruby_xml_schema_facet.c */,
-				8B11C73C1D0D3B9F00693D78 /* ruby_xml_schema_facet.h */,
-				8B11C73D1D0D3B9F00693D78 /* ruby_xml_schema_facet.o */,
-				8B11C73E1D0D3B9F00693D78 /* ruby_xml_schema_type.c */,
-				8B11C73F1D0D3B9F00693D78 /* ruby_xml_schema_type.h */,
-				8B11C7401D0D3B9F00693D78 /* ruby_xml_schema_type.o */,
-				8B11C7411D0D3B9F00693D78 /* ruby_xml_version.h */,
-				8B11C7421D0D3B9F00693D78 /* ruby_xml_writer.c */,
-				8B11C7431D0D3B9F00693D78 /* ruby_xml_writer.h */,
-				8B11C7441D0D3B9F00693D78 /* ruby_xml_writer.o */,
-				8B11C7451D0D3B9F00693D78 /* ruby_xml_xinclude.c */,
-				8B11C7461D0D3B9F00693D78 /* ruby_xml_xinclude.h */,
-				8B11C7471D0D3B9F00693D78 /* ruby_xml_xinclude.o */,
-				8B11C7481D0D3B9F00693D78 /* ruby_xml_xpath.c */,
-				8B11C7491D0D3B9F00693D78 /* ruby_xml_xpath.h */,
-				8B11C74A1D0D3B9F00693D78 /* ruby_xml_xpath.o */,
-				8B11C74B1D0D3B9F00693D78 /* ruby_xml_xpath_context.c */,
-				8B11C74C1D0D3B9F00693D78 /* ruby_xml_xpath_context.h */,
-				8B11C74D1D0D3B9F00693D78 /* ruby_xml_xpath_context.o */,
-				8B11C74E1D0D3B9F00693D78 /* ruby_xml_xpath_expression.c */,
-				8B11C74F1D0D3B9F00693D78 /* ruby_xml_xpath_expression.h */,
-				8B11C7501D0D3B9F00693D78 /* ruby_xml_xpath_expression.o */,
-				8B11C7511D0D3B9F00693D78 /* ruby_xml_xpath_object.c */,
-				8B11C7521D0D3B9F00693D78 /* ruby_xml_xpath_object.h */,
-				8B11C7531D0D3B9F00693D78 /* ruby_xml_xpath_object.o */,
-				8B11C7541D0D3B9F00693D78 /* ruby_xml_xpointer.c */,
-				8B11C7551D0D3B9F00693D78 /* ruby_xml_xpointer.h */,
-				8B11C7561D0D3B9F00693D78 /* ruby_xml_xpointer.o */,
+				C7F2B5F02B4B63BA004E0A86 /* libxml2.2.dylib */,
+				C7F2B5922B4B5D38004E0A86 /* libruby.3.2.dylib */,
 			);
-			name = libxml;
-			path = ../libxml;
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		C7F2B59C2B4B608E004E0A86 /* libxml_ruby */ = {
+			isa = PBXGroup;
+			children = (
+				C7F2B59D2B4B608E004E0A86 /* libxml_ruby.h */,
+				C7F2B59F2B4B608E004E0A86 /* libxml_ruby.m */,
+			);
+			path = libxml_ruby;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
-/* Begin PBXLegacyTarget section */
-		8B11C6671D0D30C300693D78 /* libxml-ruby */ = {
-			isa = PBXLegacyTarget;
-			buildArgumentsString = "$(ACTION)";
-			buildConfigurationList = 8B11C6681D0D30C300693D78 /* Build configuration list for PBXLegacyTarget "libxml-ruby" */;
-			buildPhases = (
+/* Begin PBXHeadersBuildPhase section */
+		C7F2B5972B4B608E004E0A86 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C7F2B5A62B4B610C004E0A86 /* ruby_libxml.h in Headers */,
+				C7F2B5A72B4B610C004E0A86 /* ruby_xml_attr_decl.h in Headers */,
+				C7F2B5A82B4B610C004E0A86 /* ruby_xml_attr.h in Headers */,
+				C7F2B5A92B4B610C004E0A86 /* ruby_xml_attributes.h in Headers */,
+				C7F2B5AA2B4B610C004E0A86 /* ruby_xml_document.h in Headers */,
+				C7F2B5AB2B4B610C004E0A86 /* ruby_xml_dtd.h in Headers */,
+				C7F2B5AC2B4B610D004E0A86 /* ruby_xml_encoding.h in Headers */,
+				C7F2B5AD2B4B610D004E0A86 /* ruby_xml_error.h in Headers */,
+				C7F2B5AE2B4B610D004E0A86 /* ruby_xml_html_parser_context.h in Headers */,
+				C7F2B5AF2B4B610D004E0A86 /* ruby_xml_html_parser_options.h in Headers */,
+				C7F2B5B02B4B610D004E0A86 /* ruby_xml_html_parser.h in Headers */,
+				C7F2B5B12B4B610D004E0A86 /* ruby_xml_input_cbg.h in Headers */,
+				C7F2B5B22B4B610D004E0A86 /* ruby_xml_io.h in Headers */,
+				C7F2B5B32B4B610D004E0A86 /* ruby_xml_namespace.h in Headers */,
+				C7F2B5B42B4B610D004E0A86 /* ruby_xml_namespaces.h in Headers */,
+				C7F2B5B52B4B610D004E0A86 /* ruby_xml_node.h in Headers */,
+				C7F2B5B62B4B610D004E0A86 /* ruby_xml_parser_context.h in Headers */,
+				C7F2B5B72B4B610D004E0A86 /* ruby_xml_parser_options.h in Headers */,
+				C7F2B5B82B4B610D004E0A86 /* ruby_xml_parser.h in Headers */,
+				C7F2B5B92B4B610D004E0A86 /* ruby_xml_reader.h in Headers */,
+				C7F2B5BA2B4B610D004E0A86 /* ruby_xml_relaxng.h in Headers */,
+				C7F2B5BB2B4B610D004E0A86 /* ruby_xml_sax_parser.h in Headers */,
+				C7F2B5BC2B4B610D004E0A86 /* ruby_xml_sax2_handler.h in Headers */,
+				C7F2B5BD2B4B610D004E0A86 /* ruby_xml_schema_attribute.h in Headers */,
+				C7F2B5BE2B4B610D004E0A86 /* ruby_xml_schema_element.h in Headers */,
+				C7F2B5BF2B4B610D004E0A86 /* ruby_xml_schema_facet.h in Headers */,
+				C7F2B5C02B4B610D004E0A86 /* ruby_xml_schema_type.h in Headers */,
+				C7F2B5C12B4B610D004E0A86 /* ruby_xml_schema.h in Headers */,
+				C7F2B5C22B4B610D004E0A86 /* ruby_xml_version.h in Headers */,
+				C7F2B5C32B4B610D004E0A86 /* ruby_xml_writer.h in Headers */,
+				C7F2B5C42B4B610D004E0A86 /* ruby_xml_xinclude.h in Headers */,
+				C7F2B5C52B4B610D004E0A86 /* ruby_xml_xpath_context.h in Headers */,
+				C7F2B5C62B4B610D004E0A86 /* ruby_xml_xpath_expression.h in Headers */,
+				C7F2B5C72B4B610D004E0A86 /* ruby_xml_xpath_object.h in Headers */,
+				C7F2B5C82B4B610D004E0A86 /* ruby_xml_xpath.h in Headers */,
+				C7F2B5C92B4B610D004E0A86 /* ruby_xml.h in Headers */,
+				C7F2B59E2B4B608E004E0A86 /* libxml_ruby.h in Headers */,
 			);
-			buildToolPath = /usr/bin/make;
-			buildWorkingDirectory = ../libxml;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		C7F2B59A2B4B608E004E0A86 /* libxml_ruby */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C7F2B5A12B4B608E004E0A86 /* Build configuration list for PBXNativeTarget "libxml_ruby" */;
+			buildPhases = (
+				C7F2B5972B4B608E004E0A86 /* Headers */,
+				C7F2B5982B4B608E004E0A86 /* Sources */,
+				C7F2B5992B4B608E004E0A86 /* Frameworks */,
+				C7F2B5A42B4B6098004E0A86 /* CopyFiles */,
+			);
+			buildRules = (
+			);
 			dependencies = (
 			);
-			name = "libxml-ruby";
-			passBuildSettingsInEnvironment = 1;
-			productName = "libxml-ruby";
+			name = libxml_ruby;
+			productName = libxml_ruby;
+			productReference = C7F2B59B2B4B608E004E0A86 /* libxml_ruby.bundle */;
+			productType = "com.apple.product-type.library.dynamic";
 		};
-/* End PBXLegacyTarget section */
+/* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		8B11C6561D0D309100693D78 /* Project object */ = {
+		C7F2B50E2B4B5A8B004E0A86 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0730;
-				ORGANIZATIONNAME = Zerista;
+				BuildIndependentTargetsInParallel = 1;
+				LastUpgradeCheck = 1510;
 				TargetAttributes = {
-					8B11C6671D0D30C300693D78 = {
-						CreatedOnToolsVersion = 7.3.1;
+					C7F2B59A2B4B608E004E0A86 = {
+						CreatedOnToolsVersion = 15.1;
 					};
 				};
 			};
-			buildConfigurationList = 8B11C6591D0D309100693D78 /* Build configuration list for PBXProject "libxml-ruby" */;
-			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			buildConfigurationList = C7F2B5112B4B5A8B004E0A86 /* Build configuration list for PBXProject "libxml-ruby" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				Base,
 			);
-			mainGroup = 8B11C6551D0D309100693D78;
-			productRefGroup = 8B11C65F1D0D309100693D78 /* Products */;
+			mainGroup = C7F2B50D2B4B5A8B004E0A86;
+			productRefGroup = C7F2B5172B4B5A8B004E0A86 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				8B11C6671D0D30C300693D78 /* libxml-ruby */,
+				C7F2B59A2B4B608E004E0A86 /* libxml_ruby */,
 			);
 		};
 /* End PBXProject section */
 
+/* Begin PBXSourcesBuildPhase section */
+		C7F2B5982B4B608E004E0A86 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C7F2B5CC2B4B636C004E0A86 /* libxml.c in Sources */,
+				C7F2B5CD2B4B636C004E0A86 /* ruby_xml_attr_decl.c in Sources */,
+				C7F2B5CE2B4B636C004E0A86 /* ruby_xml_attr.c in Sources */,
+				C7F2B5CF2B4B636C004E0A86 /* ruby_xml_attributes.c in Sources */,
+				C7F2B5D02B4B636C004E0A86 /* ruby_xml_cbg.c in Sources */,
+				C7F2B5D12B4B636C004E0A86 /* ruby_xml_document.c in Sources */,
+				C7F2B5D22B4B636C004E0A86 /* ruby_xml_dtd.c in Sources */,
+				C7F2B5D32B4B636C004E0A86 /* ruby_xml_encoding.c in Sources */,
+				C7F2B5D42B4B636C004E0A86 /* ruby_xml_error.c in Sources */,
+				C7F2B5D52B4B636C004E0A86 /* ruby_xml_html_parser_context.c in Sources */,
+				C7F2B5D62B4B636C004E0A86 /* ruby_xml_html_parser_options.c in Sources */,
+				C7F2B5D72B4B636C004E0A86 /* ruby_xml_html_parser.c in Sources */,
+				C7F2B5D82B4B636C004E0A86 /* ruby_xml_input_cbg.c in Sources */,
+				C7F2B5D92B4B636C004E0A86 /* ruby_xml_io.c in Sources */,
+				C7F2B5DA2B4B636C004E0A86 /* ruby_xml_namespace.c in Sources */,
+				C7F2B5DB2B4B636C004E0A86 /* ruby_xml_namespaces.c in Sources */,
+				C7F2B5DC2B4B636C004E0A86 /* ruby_xml_node.c in Sources */,
+				C7F2B5DD2B4B636C004E0A86 /* ruby_xml_parser_context.c in Sources */,
+				C7F2B5DE2B4B636C004E0A86 /* ruby_xml_parser_options.c in Sources */,
+				C7F2B5DF2B4B636C004E0A86 /* ruby_xml_parser.c in Sources */,
+				C7F2B5E02B4B636C004E0A86 /* ruby_xml_reader.c in Sources */,
+				C7F2B5E12B4B636C004E0A86 /* ruby_xml_relaxng.c in Sources */,
+				C7F2B5E22B4B636C004E0A86 /* ruby_xml_sax_parser.c in Sources */,
+				C7F2B5E32B4B636C004E0A86 /* ruby_xml_sax2_handler.c in Sources */,
+				C7F2B5E42B4B636C004E0A86 /* ruby_xml_schema_attribute.c in Sources */,
+				C7F2B5E52B4B636C004E0A86 /* ruby_xml_schema_element.c in Sources */,
+				C7F2B5E62B4B636C004E0A86 /* ruby_xml_schema_facet.c in Sources */,
+				C7F2B5E72B4B636C004E0A86 /* ruby_xml_schema_type.c in Sources */,
+				C7F2B5E82B4B636C004E0A86 /* ruby_xml_schema.c in Sources */,
+				C7F2B5E92B4B636C004E0A86 /* ruby_xml_writer.c in Sources */,
+				C7F2B5EA2B4B636C004E0A86 /* ruby_xml_xinclude.c in Sources */,
+				C7F2B5EB2B4B636C004E0A86 /* ruby_xml_xpath_context.c in Sources */,
+				C7F2B5EC2B4B636C004E0A86 /* ruby_xml_xpath_expression.c in Sources */,
+				C7F2B5ED2B4B636C004E0A86 /* ruby_xml_xpath_object.c in Sources */,
+				C7F2B5EE2B4B636C004E0A86 /* ruby_xml_xpath.c in Sources */,
+				C7F2B5EF2B4B636C004E0A86 /* ruby_xml.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
 /* Begin XCBuildConfiguration section */
-		8B11C6621D0D309100693D78 /* Debug */ = {
+		C7F2B5182B4B5A8B004E0A86 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "-";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				EXECUTABLE_EXTENSION = "";
+				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -353,37 +498,61 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
-				MTL_ENABLE_DEBUG_INFO = YES;
+				HEADER_SEARCH_PATHS = (
+					"/usr/local/opt/ruby/include/ruby-3.2.0",
+					"/usr/local/opt/ruby/include/ruby-3.2.0/x86_64-darwin23",
+					/usr/local/opt/libxml2/include,
+				);
+				LIBRARY_SEARCH_PATHS = "";
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.1;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 			};
 			name = Debug;
 		};
-		8B11C6631D0D309100693D78 /* Release */ = {
+		C7F2B5192B4B5A8B004E0A86 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "-";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				EXECUTABLE_EXTENSION = "";
+				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -391,57 +560,72 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				HEADER_SEARCH_PATHS = (
+					"/usr/local/opt/ruby/include/ruby-3.2.0",
+					"/usr/local/opt/ruby/include/ruby-3.2.0/x86_64-darwin23",
+					/usr/local/opt/libxml2/include,
+				);
+				LIBRARY_SEARCH_PATHS = "";
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.1;
 				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
 				SDKROOT = macosx;
 			};
 			name = Release;
 		};
-		8B11C6691D0D30C300693D78 /* Debug */ = {
+		C7F2B5A22B4B608E004E0A86 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				DEBUGGING_SYMBOLS = YES;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "";
+				CODE_SIGN_STYLE = Automatic;
+				EXECUTABLE_EXTENSION = bundle;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/Cellar/libxml2/2.12.3/lib,
+					/usr/local/Cellar/ruby/3.2.2_1/lib,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
 			};
 			name = Debug;
 		};
-		8B11C66A1D0D30C300693D78 /* Release */ = {
+		C7F2B5A32B4B608E004E0A86 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "";
+				CODE_SIGN_STYLE = Automatic;
+				EXECUTABLE_EXTENSION = bundle;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/Cellar/libxml2/2.12.3/lib,
+					/usr/local/Cellar/ruby/3.2.2_1/lib,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		8B11C6591D0D309100693D78 /* Build configuration list for PBXProject "libxml-ruby" */ = {
+		C7F2B5112B4B5A8B004E0A86 /* Build configuration list for PBXProject "libxml-ruby" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				8B11C6621D0D309100693D78 /* Debug */,
-				8B11C6631D0D309100693D78 /* Release */,
+				C7F2B5182B4B5A8B004E0A86 /* Debug */,
+				C7F2B5192B4B5A8B004E0A86 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		8B11C6681D0D30C300693D78 /* Build configuration list for PBXLegacyTarget "libxml-ruby" */ = {
+		C7F2B5A12B4B608E004E0A86 /* Build configuration list for PBXNativeTarget "libxml_ruby" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				8B11C6691D0D30C300693D78 /* Debug */,
-				8B11C66A1D0D30C300693D78 /* Release */,
+				C7F2B5A22B4B608E004E0A86 /* Debug */,
+				C7F2B5A32B4B608E004E0A86 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = 8B11C6561D0D309100693D78 /* Project object */;
+	rootObject = C7F2B50E2B4B5A8B004E0A86 /* Project object */;
 }
