@@ -773,10 +773,6 @@ static VALUE rxml_node_line_num(VALUE self)
   long line_num;
   xnode = rxml_get_xnode(self);
 
-  if (!xmlLineNumbersDefaultValue)
-    rb_warn(
-        "Line numbers were not retained: use XML::Parser::default_line_numbers=true");
-
   line_num = xmlGetLineNo(xnode);
   if (line_num == -1)
     return (Qnil);
