@@ -1,5 +1,13 @@
 = Release History
 
+== 5.0.2 / 2024-01-08
+
+* Fix broken DTD creation (DTD name is not required)
+
+== 5.0.1 / 2024-01-08
+
+* Fix broken Document#io method that was broken by switching Parsers to use keyword arguments
+
 == 5.0.0 / 2024-01-07
 
 * This release is major version bump because it removes access to global parser options
