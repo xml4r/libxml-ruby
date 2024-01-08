@@ -160,9 +160,12 @@ static VALUE rxml_error_reset_handler(VALUE self)
 
 NORETURN(void rxml_raise(const xmlError *xerror))
 {
-  /* Wrap error up as Ruby object and send it off to ruby */
-  VALUE error = rxml_error_wrap(xerror);
-  rb_exc_raise(error);
+  if (xerror)
+  {
+    /* Wrap error up as Ruby object and send it off to ruby */
+    VALUE error = rxml_error_wrap(xerror);
+    rb_exc_raise(error);
+  }
 }
 
 void rxml_init_error(void)
