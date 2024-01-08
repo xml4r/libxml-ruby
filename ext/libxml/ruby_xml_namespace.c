@@ -59,7 +59,7 @@ static VALUE rxml_namespace_initialize(VALUE self, VALUE node, VALUE prefix,
   xns = xmlNewNs(xnode, (xmlChar*) StringValuePtr(href), xmlPrefix);
 
   if (!xns)
-    rxml_raise(&xmlLastError);
+    rxml_raise(xmlGetLastError());
 
   DATA_PTR(self) = xns;
   return self;

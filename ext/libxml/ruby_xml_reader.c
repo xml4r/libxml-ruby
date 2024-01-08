@@ -98,7 +98,7 @@ VALUE rxml_reader_document(VALUE klass, VALUE doc)
   xreader = xmlReaderWalker(xdoc);
 
   if (xreader == NULL)
-    rxml_raise(&xmlLastError);
+    rxml_raise(xmlGetLastError());
 
   return rxml_reader_wrap(xreader);
 }
@@ -149,7 +149,7 @@ static VALUE rxml_reader_file(int argc, VALUE *argv, VALUE klass)
   xreader = xmlReaderForFile(StringValueCStr(path), xencoding, xoptions);
 
   if (xreader == NULL)
-    rxml_raise(&xmlLastError);
+    rxml_raise(xmlGetLastError());
 
   return rxml_reader_wrap(xreader);
 }
@@ -207,7 +207,7 @@ static VALUE rxml_reader_io(int argc, VALUE *argv, VALUE klass)
                            xbaseurl, xencoding, xoptions);
 
   if (xreader == NULL)
-    rxml_raise(&xmlLastError);
+    rxml_raise(xmlGetLastError());
 
   result = rxml_reader_wrap(xreader);
 
@@ -269,7 +269,7 @@ static VALUE rxml_reader_string(int argc, VALUE *argv, VALUE klass)
                                xbaseurl, xencoding, xoptions);
 
   if (xreader == NULL)
-    rxml_raise(&xmlLastError);
+    rxml_raise(xmlGetLastError());
 
   return rxml_reader_wrap(xreader);
 }
@@ -472,7 +472,7 @@ static VALUE rxml_reader_read(VALUE self)
   switch(result)
   {
     case -1:
-      rxml_raise(&xmlLastError);
+      rxml_raise(xmlGetLastError());
       return Qnil;
       break;
     case 0:

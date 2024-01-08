@@ -167,7 +167,7 @@ static VALUE rxml_node_new_cdata(int argc, VALUE *argv, VALUE klass)
   }
 
   if (xnode == NULL)
-    rxml_raise(&xmlLastError);
+    rxml_raise(xmlGetLastError());
 
   return rxml_node_wrap(xnode);
 }
@@ -198,7 +198,7 @@ static VALUE rxml_node_new_comment(int argc, VALUE *argv, VALUE klass)
   }
 
   if (xnode == NULL)
-    rxml_raise(&xmlLastError);
+    rxml_raise(xmlGetLastError());
 
   return rxml_node_wrap(xnode);
 }
@@ -235,7 +235,7 @@ static VALUE rxml_node_new_pi(int argc, VALUE *argv, VALUE klass)
   }
 
   if (xnode == NULL)
-    rxml_raise(&xmlLastError);
+    rxml_raise(xmlGetLastError());
 
   return rxml_node_wrap(xnode);
 }
@@ -256,7 +256,7 @@ static VALUE rxml_node_new_text(VALUE klass, VALUE content)
   xnode = xmlNewText((xmlChar*) StringValueCStr(content));
 
   if (xnode == NULL)
-    rxml_raise(&xmlLastError);
+    rxml_raise(xmlGetLastError());
 
   return rxml_node_wrap(xnode);
 }
@@ -288,7 +288,7 @@ static VALUE rxml_node_initialize(int argc, VALUE *argv, VALUE self)
   xnode = xmlNewNode(xns, (xmlChar*) StringValuePtr(name));
 
   if (xnode == NULL)
-    rxml_raise(&xmlLastError);
+    rxml_raise(xmlGetLastError());
 
   // Link the ruby wrapper to the underlying libxml node
   RDATA(self)->data = xnode;
@@ -325,7 +325,7 @@ static VALUE rxml_node_modify_dom(VALUE self, VALUE target,
   xresult = xmlFunc(xnode, xtarget);
 
   if (!xresult)
-	  rxml_raise(&xmlLastError);
+	  rxml_raise(xmlGetLastError());
 
   /* Assume the target was freed, we need to fix up the ruby object to point to the
      newly returned node. */

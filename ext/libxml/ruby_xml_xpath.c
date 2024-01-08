@@ -89,7 +89,7 @@ VALUE rxml_xpath_to_value(xmlXPathContextPtr xctxt, xmlXPathObjectPtr xobject)
     /* xmlLastError is different than xctxt->lastError.  Use
      xmlLastError since it has the message set while xctxt->lastError
      does not. */
-    xmlErrorPtr xerror = xmlGetLastError();
+    const xmlError *xerror = xmlGetLastError();
     rxml_raise(xerror);
   }
 

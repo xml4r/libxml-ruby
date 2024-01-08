@@ -64,7 +64,7 @@ static VALUE rxml_xpath_expression_initialize(VALUE self, VALUE expression)
 
   if (compexpr == NULL)
   {
-    xmlErrorPtr xerror = xmlGetLastError();
+    const xmlError *xerror = xmlGetLastError();
     rxml_raise(xerror);
   }
 

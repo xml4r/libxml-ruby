@@ -243,7 +243,7 @@ static void start_element_ns_callback(void *ctx,
              namespaces);
 }
 
-static void structured_error_callback(void *ctx, xmlErrorPtr xerror)
+static void structured_error_callback(void *ctx, const xmlError *xerror)
 {
   /* Older versions of Libxml will pass a NULL context from the sax parser.  Fixed on
      Feb 23, 2011.  See:

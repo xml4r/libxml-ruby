@@ -181,7 +181,7 @@ static VALUE rxml_dtd_initialize(int argc, VALUE *argv, VALUE self)
         xdtd = xmlCreateIntSubset(xdoc, xname, xpublic, xsystem);
 
       if (xdtd == NULL)
-        rxml_raise(&xmlLastError);
+        rxml_raise(xmlGetLastError());
 
       /* Document will free this dtd now. */
       RDATA(self)->dfree = NULL;
@@ -201,7 +201,7 @@ static VALUE rxml_dtd_initialize(int argc, VALUE *argv, VALUE self)
         (xmlChar*) StringValuePtr(system));
 
     if (xdtd == NULL)
-      rxml_raise(&xmlLastError);
+      rxml_raise(xmlGetLastError());
 
     DATA_PTR(self) = xdtd;
 
@@ -221,7 +221,7 @@ static VALUE rxml_dtd_initialize(int argc, VALUE *argv, VALUE self)
     xdtd = xmlIOParseDTD(NULL, buffer, enc);
 
     if (xdtd == NULL)
-      rxml_raise(&xmlLastError);
+      rxml_raise(xmlGetLastError());
 
     xmlFree(new_string);
 

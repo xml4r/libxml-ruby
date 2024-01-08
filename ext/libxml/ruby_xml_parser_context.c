@@ -59,7 +59,7 @@ static VALUE rxml_parser_context_document(int argc, VALUE* argv, VALUE klass)
   xmlParserCtxtPtr ctxt = xmlCreateDocParserCtxt(buffer);
 
   if (!ctxt)
-    rxml_raise(&xmlLastError);
+    rxml_raise(xmlGetLastError());
 
   /* This is annoying, but xmlInitParserCtxt (called indirectly above) and 
      xmlCtxtUseOptionsInternal (called below) initialize slightly different
@@ -88,7 +88,7 @@ static VALUE rxml_parser_context_file(int argc, VALUE* argv, VALUE klass)
   xmlParserCtxtPtr ctxt = xmlCreateURLParserCtxt(StringValuePtr(file), 0);
 
   if (!ctxt)
-    rxml_raise(&xmlLastError);
+    rxml_raise(xmlGetLastError());
 
   /* This is annoying, but xmlInitParserCtxt (called indirectly above) and 
      xmlCtxtUseOptionsInternal (called below) initialize slightly different
@@ -122,7 +122,7 @@ static VALUE rxml_parser_context_string(int argc, VALUE* argv, VALUE klass)
   xmlParserCtxtPtr ctxt = xmlCreateMemoryParserCtxt(StringValuePtr(string), (int)RSTRING_LEN(string));
   
   if (!ctxt)
-    rxml_raise(&xmlLastError);
+    rxml_raise(xmlGetLastError());
 
   /* This is annoying, but xmlInitParserCtxt (called indirectly above) and 
      xmlCtxtUseOptionsInternal (called below) initialize slightly different
@@ -159,7 +159,7 @@ static VALUE rxml_parser_context_io(int argc, VALUE* argv, VALUE klass)
   if (!ctxt)
   {
     xmlFreeParserInputBuffer(input);
-    rxml_raise(&xmlLastError);
+    rxml_raise(xmlGetLastError());
   }
 
   /* This is annoying, but xmlInitParserCtxt (called indirectly above) and 
@@ -174,7 +174,7 @@ static VALUE rxml_parser_context_io(int argc, VALUE* argv, VALUE klass)
   {
     xmlFreeParserInputBuffer(input);
     xmlFreeParserCtxt(ctxt);
-    rxml_raise(&xmlLastError);
+    rxml_raise(xmlGetLastError());
   }
   inputPush(ctxt, stream);
   VALUE result = rxml_parser_context_wrap(ctxt);
@@ -385,7 +385,7 @@ static VALUE rxml_parser_context_encoding_set(VALUE self, VALUE encoding)
   result = xmlSwitchToEncoding(ctxt, hdlr);
 
   if (result != 0)
-    rxml_raise(&xmlLastError);
+    rxml_raise(xmlGetLastError());
 
   if (ctxt->encoding != NULL)
     xmlFree((xmlChar *) ctxt->encoding);

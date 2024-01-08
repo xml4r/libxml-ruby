@@ -50,7 +50,7 @@ static VALUE rxml_error_get_handler(VALUE self)
   return block;
 }
 
-VALUE rxml_error_wrap(xmlErrorPtr xerror)
+VALUE rxml_error_wrap(const xmlError *xerror)
 {
   VALUE result = Qnil;
 
@@ -97,7 +97,7 @@ VALUE rxml_error_wrap(xmlErrorPtr xerror)
 }
 
 /* Hook that receives xml error message */
-static void structuredErrorFunc(void *userData, xmlErrorPtr xerror)
+static void structuredErrorFunc(void *userData, const xmlError *xerror)
 {
   VALUE error = rxml_error_wrap(xerror);
 
@@ -158,7 +158,7 @@ static VALUE rxml_error_reset_handler(VALUE self)
   return self;
 }
 
-NORETURN(void rxml_raise(xmlErrorPtr xerror))
+NORETURN(void rxml_raise(const xmlError *xerror))
 {
   /* Wrap error up as Ruby object and send it off to ruby */
   VALUE error = rxml_error_wrap(xerror);

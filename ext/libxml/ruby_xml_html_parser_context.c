@@ -156,7 +156,7 @@ static VALUE rxml_html_parser_context_file(int argc, VALUE* argv, VALUE klass)
 
   htmlParserCtxtPtr ctxt = htmlCreateFileParserCtxt(StringValuePtr(file), NULL);
   if (!ctxt)
-    rxml_raise(&xmlLastError);
+    rxml_raise(xmlGetLastError());
 
   /* This is annoying, but xmlInitParserCtxt (called indirectly above) and 
      xmlCtxtUseOptionsInternal (called below) initialize slightly different
@@ -197,7 +197,7 @@ static VALUE rxml_html_parser_context_io(int argc, VALUE* argv, VALUE klass)
   if (!ctxt)
   {
     xmlFreeParserInputBuffer(input);
-    rxml_raise(&xmlLastError);
+    rxml_raise(xmlGetLastError());
   }
 
   /* This is annoying, but xmlInitParserCtxt (called indirectly above) and 
@@ -212,7 +212,7 @@ static VALUE rxml_html_parser_context_io(int argc, VALUE* argv, VALUE klass)
   {
     xmlFreeParserInputBuffer(input);
     xmlFreeParserCtxt(ctxt);
-    rxml_raise(&xmlLastError);
+    rxml_raise(xmlGetLastError());
   }
   inputPush(ctxt, stream);
   result = rxml_html_parser_context_wrap(ctxt);
@@ -247,7 +247,7 @@ static VALUE rxml_html_parser_context_string(int argc, VALUE* argv, VALUE klass)
   ctxt = xmlCreateMemoryParserCtxt(StringValuePtr(string),
                                    (int)RSTRING_LEN(string));
   if (!ctxt)
-    rxml_raise(&xmlLastError);
+    rxml_raise(xmlGetLastError());
 
   /* This is annoying, but xmlInitParserCtxt (called indirectly above) and 
      xmlCtxtUseOptionsInternal (called below) initialize slightly different

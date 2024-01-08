@@ -143,7 +143,7 @@ static VALUE rxml_schema_init(VALUE class, xmlSchemaParserCtxtPtr xparser)
   xmlSchemaFreeParserCtxt(xparser);
 
   if (!xschema)
-    rxml_raise(&xmlLastError);
+    rxml_raise(xmlGetLastError());
 
   return rxml_wrap_schema(xschema);
 }
@@ -163,7 +163,7 @@ static VALUE rxml_schema_init_from_uri(VALUE class, VALUE uri)
   xmlResetLastError();
   xparser = xmlSchemaNewParserCtxt(StringValuePtr(uri));
   if (!xparser)
-    rxml_raise(&xmlLastError);
+    rxml_raise(xmlGetLastError());
 
   return rxml_schema_init(class, xparser);
 }
@@ -184,7 +184,7 @@ static VALUE rxml_schema_init_from_document(VALUE class, VALUE document)
   xmlResetLastError();
   xparser = xmlSchemaNewDocParserCtxt(xdoc);
   if (!xparser)
-    rxml_raise(&xmlLastError);
+    rxml_raise(xmlGetLastError());
 
   return rxml_schema_init(class, xparser);
 }
@@ -204,7 +204,7 @@ static VALUE rxml_schema_init_from_string(VALUE class, VALUE schema_str)
   xmlResetLastError();
   xparser = xmlSchemaNewMemParserCtxt(StringValuePtr(schema_str), (int)strlen(StringValuePtr(schema_str)));
   if (!xparser)
-    rxml_raise(&xmlLastError);
+    rxml_raise(xmlGetLastError());
 
   return rxml_schema_init(class, xparser);
 }

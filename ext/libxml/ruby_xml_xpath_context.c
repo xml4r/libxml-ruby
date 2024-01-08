@@ -320,7 +320,7 @@ rxml_xpath_context_enable_cache(int argc,  VALUE *argv, VALUE self)
   }
 
   if (xmlXPathContextSetCache(xctxt, 1, value, 0) == -1)
-    rxml_raise(&xmlLastError);
+    rxml_raise(xmlGetLastError());
 
   return self;
 }
@@ -338,7 +338,7 @@ rxml_xpath_context_disable_cache(VALUE self)
   Data_Get_Struct(self, xmlXPathContext, xctxt);
 
   if (xmlXPathContextSetCache(xctxt, 0, 0, 0) == -1)
-    rxml_raise(&xmlLastError);
+    rxml_raise(xmlGetLastError());
 
   return self;
 }

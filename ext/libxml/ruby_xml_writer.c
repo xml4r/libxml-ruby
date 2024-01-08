@@ -116,11 +116,11 @@ static VALUE rxml_writer_io(VALUE klass, VALUE io)
     xmlCharEncodingHandlerPtr encodingHdlr = xmlFindCharEncodingHandler(rwo->encoding->name);
     if (NULL == (out = xmlOutputBufferCreateIO(rxml_writer_write_callback, NULL, (void*)rwo, encodingHdlr)))
     {
-        rxml_raise(&xmlLastError);
+        rxml_raise(xmlGetLastError());
     }
     if (NULL == (rwo->writer = xmlNewTextWriter(out)))
     {
-        rxml_raise(&xmlLastError);
+        rxml_raise(xmlGetLastError());
     }
 
     return rxml_writer_wrap(rwo);
@@ -145,7 +145,7 @@ static VALUE rxml_writer_file(VALUE klass, VALUE filename)
     rwo->output_type = RXMLW_OUTPUT_NONE;
     if (NULL == (rwo->writer = xmlNewTextWriterFilename(StringValueCStr(filename), 0)))
     {
-        rxml_raise(&xmlLastError);
+        rxml_raise(xmlGetLastError());
     }
 
     return rxml_writer_wrap(rwo);
@@ -167,12 +167,12 @@ static VALUE rxml_writer_string(VALUE klass)
     rwo->output_type = RXMLW_OUTPUT_STRING;
     if (NULL == (rwo->buffer = xmlBufferCreate()))
     {
-        rxml_raise(&xmlLastError);
+        rxml_raise(xmlGetLastError());
     }
     if (NULL == (rwo->writer = xmlNewTextWriterMemory(rwo->buffer, 0)))
     {
         xmlBufferFree(rwo->buffer);
-        rxml_raise(&xmlLastError);
+        rxml_raise(xmlGetLastError());
     }
 
     return rxml_writer_wrap(rwo);
@@ -196,7 +196,7 @@ static VALUE rxml_writer_doc(VALUE klass)
     rwo->output_type = RXMLW_OUTPUT_DOC;
     if (NULL == (rwo->writer = xmlNewTextWriterDoc(&doc, 0)))
     {
-        rxml_raise(&xmlLastError);
+        rxml_raise(xmlGetLastError());
     }
     rwo->output = rxml_document_wrap(doc);
 
@@ -224,7 +224,7 @@ static VALUE rxml_writer_flush(int argc, VALUE* argv, VALUE self)
     rwo = rxml_textwriter_get(self);
     if (-1 == (ret = xmlTextWriterFlush(rwo->writer)))
     {
-        rxml_raise(&xmlLastError);
+        rxml_raise(xmlGetLastError());
     }
 
     if (NULL != rwo->buffer)
@@ -260,7 +260,7 @@ static VALUE rxml_writer_result(VALUE self)
 
     if (bytesWritten == -1)
     {
-        rxml_raise(&xmlLastError);
+        rxml_raise(xmlGetLastError());
     }
 
     switch (rwo->output_type)

@@ -542,7 +542,7 @@ static VALUE rxml_document_import(VALUE self, VALUE node)
   xresult = xmlDocCopyNode(xnode, xdoc, 1);
 
   if (xresult == NULL)
-    rxml_raise(&xmlLastError);
+    rxml_raise(xmlGetLastError());
 
   return rxml_node_wrap(xresult);
 }
@@ -808,7 +808,7 @@ static VALUE rxml_document_save(int argc, VALUE *argv, VALUE self)
   length = xmlSaveFormatFileEnc(xfilename, xdoc, (const char*)xencoding, indent);
 
   if (length == -1)
-    rxml_raise(&xmlLastError);
+    rxml_raise(xmlGetLastError());
 
   return (INT2NUM(length));
 }
@@ -958,7 +958,7 @@ static VALUE rxml_document_xinclude(VALUE self)
   }
   else
   {
-    rxml_raise(&xmlLastError);
+    rxml_raise(xmlGetLastError());
     return Qnil;
   }
 #else
@@ -1007,7 +1007,7 @@ static VALUE rxml_document_validate_schema(VALUE self, VALUE schema)
   xmlSchemaFreeValidCtxt(vptr);
   if (is_invalid)
   {
-    rxml_raise(&xmlLastError);
+    rxml_raise(xmlGetLastError());
     return Qfalse;
   }
   else
@@ -1040,7 +1040,7 @@ static VALUE rxml_document_validate_relaxng(VALUE self, VALUE relaxng)
   xmlRelaxNGFreeValidCtxt(vptr);
   if (is_invalid)
   {
-    rxml_raise(&xmlLastError);
+    rxml_raise(xmlGetLastError());
     return Qfalse;
   }
   else
@@ -1075,7 +1075,7 @@ static VALUE rxml_document_validate_dtd(VALUE self, VALUE dtd)
   }
   else
   {
-    rxml_raise(&xmlLastError);
+    rxml_raise(xmlGetLastError());
     return Qfalse;
   }
 }
