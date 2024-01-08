@@ -3,6 +3,8 @@
 #ifndef __RXML_ATTRIBUTES__
 #define __RXML_ATTRIBUTES__
 
+#include <libxml/tree.h>
+
 extern VALUE cXMLAttributesibutes;
 
 void rxml_init_attributes(void);

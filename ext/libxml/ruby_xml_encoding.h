@@ -4,6 +4,8 @@
 #define __RXML_ENCODING__
 
 #include <ruby/encoding.h>
+#include <libxml/encoding.h>
+#include <libxml/xmlstring.h>
 
 extern VALUE mXMLEncoding;
 
