@@ -1,5 +1,19 @@
 = Release History
 
+== 5.0.0 / 2024-01-07
+
+* This release is major version bump because it removes access to global parser options
+  that libxml2 version 2.12.0 deprecated (see https://gitlab.gnome.org/GNOME/libxml2/-/releases/v2.12.0)
+  In the unlikely event your code uses these options, then you will need to update it.
+  Specifically, instead of setting global parser options, pass them directly to either Parsers
+  or ParserContexts when creating them. Options are defined as constants in
+  LibXML::XML::Parser::Options and LibXML::HTML::Parser::Options
+* Update Parser initialize methods to take named parameters instead of a hash table (you should *not*
+  have to update your code due to this change)
+* Fix broken compiliation with libxml2 version 2.12.0 (due to libxml2 header changes)
+* Add support for Ruby 3.3.*
+* Remove support for Ruby 2.7.* (gem should still work but is no longer tested)
+
 == 4.1.2 / 2023-11-04
 
 * Fix Ruby warnings about undefined allocators (yuuji.yaginuma, Christopher Sahnwaldt)
