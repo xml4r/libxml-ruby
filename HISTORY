@@ -8,9 +8,8 @@
   Specifically, instead of setting global parser options, pass them directly to either Parsers
   or ParserContexts when creating them. Options are defined as constants in
   LibXML::XML::Parser::Options and LibXML::HTML::Parser::Options
-* Update Parser initialize methods to take named parameters instead of a hash table (you should *not*
-  have to update your code due to this change)
-* Fix broken compiliation with libxml2 version 2.12.0 (due to libxml2 header changes)
+* Update Parser initialize methods to take keyword parameters instead of a hash table (you may have to update your code due to this change)
+* Fix broken compilation with libxml2 version 2.12.0 (due to libxml2 header changes)
 * Add support for Ruby 3.3.*
 * Remove support for Ruby 2.7.* (gem should still work but is no longer tested)
 
