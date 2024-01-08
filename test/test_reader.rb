@@ -60,9 +60,10 @@ class TestReader < Minitest::Test
   end
 
   def test_invalid_file
-    assert_raises(LibXML::XML::Error) do
+    error = assert_raises(Errno::ENOENT) do
       LibXML::XML::Reader.file('/does/not/exist')
     end
+    assert_equal("No such file or directory - /does/not/exist", error.message)
   end
 
   def test_string

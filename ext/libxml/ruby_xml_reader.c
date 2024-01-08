@@ -122,34 +122,31 @@ VALUE rxml_reader_document(VALUE klass, VALUE doc)
  */
 static VALUE rxml_reader_file(int argc, VALUE *argv, VALUE klass)
 {
-  xmlTextReaderPtr xreader;
   VALUE path;
   VALUE options;
-
-  const char *xencoding = NULL;
-  int xoptions = 0;
 
   rb_scan_args(argc, argv, "11", &path, &options);
   Check_Type(path, T_STRING);
 
+  const char* xencoding = NULL;
+  int xoptions = 0;
+
   if (!NIL_P(options))
   {
-    VALUE encoding = Qnil;
-    VALUE parserOptions = Qnil;
-
     Check_Type(options, T_HASH);
 
-    encoding = rb_hash_aref(options, BASE_URI_SYMBOL);
+    VALUE encoding = rb_hash_aref(options, BASE_URI_SYMBOL);
     xencoding = NIL_P(encoding) ? NULL : xmlGetCharEncodingName(NUM2INT(encoding));
 
-    parserOptions = rb_hash_aref(options, OPTIONS_SYMBOL);
+    VALUE parserOptions = rb_hash_aref(options, OPTIONS_SYMBOL);
     xoptions = NIL_P(parserOptions) ? 0 : NUM2INT(parserOptions);
   }
 
-  xreader = xmlReaderForFile(StringValueCStr(path), xencoding, xoptions);
+  xmlTextReaderPtr xreader = xmlReaderForFile(StringValueCStr(path), xencoding, xoptions);
 
+  // Unfortunately libxml2 does not set xmlLastError and just returns a null reader
   if (xreader == NULL)
-    rxml_raise(xmlGetLastError());
+    rb_syserr_fail(ENOENT, StringValueCStr(path));
 
   return rxml_reader_wrap(xreader);
 }
