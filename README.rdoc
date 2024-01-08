@@ -11,7 +11,7 @@ We think libxml-ruby is the best XML library for Ruby because:
 * Conformance - It passes all 1800+ tests from the OASIS XML Tests Suite
 
 == Requirements
-libxml-ruby requires Ruby 1.8.7 or higher.  It depends on libxml2 to
+libxml-ruby requires Ruby 3.0.0 or higher.  It depends on libxml2 to
 function properly.  libxml2, in turn, depends on:
 
 * libm      (math routines: very standard)
@@ -20,9 +20,9 @@ function properly.  libxml2, in turn, depends on:
 
 If you are running Linux or Unix you'll need a C compiler so the
 extension can be compiled when it is installed.  If you are running
-Windows, then install the x64-mingw32 gem or build it yourself using
-Devkit[http://rubyinstaller.org/add-ons/devkit/] or
-msys2[https://msys2.github.io/].
+Windows, then install the x64-mingw-ucr gem or build it yourself using (Ruby
+for Windows)[https://rubyinstaller.org/] or directly with msys2[https://msys2.github.io/]
+and ucrt64.
 
 == Installation
 The easiest way to install libxml-ruby is via RubyGems.  To install:
@@ -46,13 +46,9 @@ Or bundler:
 <tt>bundle install libxml-ruby</tt>
 
 If you are running Windows, then install the libxml-ruby-x64-mingw32 gem.
-The gem includes prebuilt extensions for Ruby 2.3.  These
-extensions are built using MinGW64 and libxml2 version 2.9.3,
-iconv version 1.14 and zlib version 1.2.8. Note these binaries
-are available in the <tt>lib\\libs</tt> directory.  To use them, put them
-on your <tt>PATH</tt>.
+The gem includes prebuilt extensions for Ruby 3.2 and 3.3.
 
-The gem also includes a Microsoft VC++ 2012 solution and XCode 5 project - these
+The gem also includes a Microsoft VC++ solution and XCode project - these
 are very useful for debugging.
 
 libxml-ruby's source codes lives on GitHub[https://github.com/xml4r/libxml-ruby].
@@ -128,11 +124,6 @@ For example:
 
 For simplicity's sake, the documentation uses the xml module in its examples.
 
-== Threading
-libxml-ruby fully supports native, background Ruby threads.  This of course
-only applies to Ruby 1.9.x and higher since earlier versions of Ruby do not
-support native threads.
-
 == Tests
 
 To run tests you first need to build the shared libary:
@@ -143,7 +134,7 @@ Once you have build the shared libary, you can then run tests using rake:
 
   rake test
 
-+Travis build status: {<img src="https://travis-ci.org/xml4r/libxml-ruby.svg?branch=master" alt="Build Status" />}[https://travis-ci.org/xml4r/libxml-ruby]
++Build status: {rdoc-image:https://github.com/xml4r/libxml-ruby/actions/workflows/mri.yml/badge.svg}[https://github.com/xml4r/libxml-ruby/actions/workflows/mri.yml]
 
 == Performance
 
