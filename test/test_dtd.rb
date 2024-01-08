@@ -106,13 +106,11 @@ class TestDtd < Minitest::Test
       errors << error
     end
 
-    LibXML::XML.default_load_external_dtd = false
     LibXML::XML::Parser.string(xml).parse
     assert_equal(0, errors.length)
 
     errors.clear
-    LibXML::XML.default_load_external_dtd = true
-    LibXML::XML::Parser.string(xml).parse
+    LibXML::XML::Parser.string(xml, options: LibXML::XML::Parser::Options::DTDLOAD).parse
     assert_equal(1, errors.length)
     assert_equal("Warning: failed to load external entity \"test.dtd\" at :1.",
                  errors[0].to_s)
@@ -123,7 +121,6 @@ class TestDtd < Minitest::Test
     assert_equal("Warning: failed to load external entity \"test.dtd\" at :1.",
                  errors[0].to_s)
   ensure
-    LibXML::XML.default_load_external_dtd = false
     LibXML::XML::Error.reset_handler
   end
 end

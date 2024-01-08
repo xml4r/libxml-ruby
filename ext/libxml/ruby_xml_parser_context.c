@@ -39,22 +39,24 @@ static VALUE rxml_parser_context_alloc(VALUE klass)
  *
  * Parameters:
  *
- *  document - An XML::Document instance.
+ *  document - An XML::Document instance
+ *  options - A or'ed together list of LibXML::XML::Parser::Options values
  */
-static VALUE rxml_parser_context_document(VALUE klass, VALUE document)
+static VALUE rxml_parser_context_document(int argc, VALUE* argv, VALUE klass)
 {
-  xmlParserCtxtPtr ctxt;
-  xmlDocPtr xdoc;
-  xmlChar *buffer; 
-  int length;
+  VALUE document, options;
+  rb_scan_args(argc, argv, "11", &document, &options);
 
   if (rb_obj_is_kind_of(document, cXMLDocument) == Qfalse)
     rb_raise(rb_eTypeError, "Must pass an LibXML::XML::Document object");
 
+  xmlDocPtr xdoc;
+  xmlChar *buffer;
+  int length;
   Data_Get_Struct(document, xmlDoc, xdoc);
   xmlDocDumpFormatMemoryEnc(xdoc, &buffer, &length, (const char*)xdoc->encoding, 0);
 
-  ctxt = xmlCreateDocParserCtxt(buffer);
+  xmlParserCtxtPtr ctxt = xmlCreateDocParserCtxt(buffer);
 
   if (!ctxt)
     rxml_raise(&xmlLastError);
@@ -63,7 +65,7 @@ static VALUE rxml_parser_context_document(VALUE klass, VALUE document)
      xmlCtxtUseOptionsInternal (called below) initialize slightly different
      context options, in particular XML_PARSE_NODICT which xmlInitParserCtxt
      sets to 0 and xmlCtxtUseOptionsInternal sets to 1.  So we have to call both. */
-  xmlCtxtUseOptions(ctxt, rxml_libxml_default_options());
+  xmlCtxtUseOptions(ctxt, options == Qnil ? 0 : NUM2INT(options));
 
   return rxml_parser_context_wrap(ctxt);
 }
@@ -75,10 +77,14 @@ static VALUE rxml_parser_context_document(VALUE klass, VALUE document)
  *
  * Parameters:
  *
- *  file - A filename or uri.
+ *  file - A filename or uri
+ *  options - A or'ed together list of LibXML::XML::Parser::Options values
 */
-static VALUE rxml_parser_context_file(VALUE klass, VALUE file)
+static VALUE rxml_parser_context_file(int argc, VALUE* argv, VALUE klass)
 {
+  VALUE file, options;
+  rb_scan_args(argc, argv, "11", &file, &options);
+
   xmlParserCtxtPtr ctxt = xmlCreateURLParserCtxt(StringValuePtr(file), 0);
 
   if (!ctxt)
@@ -88,7 +94,7 @@ static VALUE rxml_parser_context_file(VALUE klass, VALUE file)
      xmlCtxtUseOptionsInternal (called below) initialize slightly different
      context options, in particular XML_PARSE_NODICT which xmlInitParserCtxt
      sets to 0 and xmlCtxtUseOptionsInternal sets to 1.  So we have to call both. */
-  xmlCtxtUseOptions(ctxt, rxml_libxml_default_options());
+  xmlCtxtUseOptions(ctxt, options == Qnil ? 0 : NUM2INT(options));
 
   return rxml_parser_context_wrap(ctxt);
 }
@@ -100,17 +106,20 @@ static VALUE rxml_parser_context_file(VALUE klass, VALUE file)
  *
  * Parameters:
  *
- *  string - A string that contains the data to parse.
+ *  string - A string that contains the data to parse
+ *  options - A or'ed together list of LibXML::XML::Parser::Options values
 */
-static VALUE rxml_parser_context_string(VALUE klass, VALUE string)
+static VALUE rxml_parser_context_string(int argc, VALUE* argv, VALUE klass)
 {
-  xmlParserCtxtPtr ctxt;
+  VALUE string, options;
+  rb_scan_args(argc, argv, "11", &string, &options);
+
   Check_Type(string, T_STRING);
 
   if (RSTRING_LEN(string) == 0)
     rb_raise(rb_eArgError, "Must specify a string with one or more characters");
 
-  ctxt = xmlCreateMemoryParserCtxt(StringValuePtr(string), (int)RSTRING_LEN(string));
+  xmlParserCtxtPtr ctxt = xmlCreateMemoryParserCtxt(StringValuePtr(string), (int)RSTRING_LEN(string));
   
   if (!ctxt)
     rxml_raise(&xmlLastError);
@@ -119,7 +128,7 @@ static VALUE rxml_parser_context_string(VALUE klass, VALUE string)
      xmlCtxtUseOptionsInternal (called below) initialize slightly different
      context options, in particular XML_PARSE_NODICT which xmlInitParserCtxt
      sets to 0 and xmlCtxtUseOptionsInternal sets to 1.  So we have to call both. */
-  xmlCtxtUseOptions(ctxt, rxml_libxml_default_options());
+  xmlCtxtUseOptions(ctxt, options == Qnil ? 0 : NUM2INT(options));
 
   return rxml_parser_context_wrap(ctxt);
 }
@@ -131,22 +140,21 @@ static VALUE rxml_parser_context_string(VALUE klass, VALUE string)
  *
  * Parameters:
  *
- *  io - A ruby IO object.
+ *  io - A ruby IO object
+ *  options - A or'ed together list of LibXML::XML::Parser::Options values
 */
-static VALUE rxml_parser_context_io(VALUE klass, VALUE io)
+static VALUE rxml_parser_context_io(int argc, VALUE* argv, VALUE klass)
 {
-  VALUE result;
-  xmlParserCtxtPtr ctxt;
-  xmlParserInputBufferPtr input;
-  xmlParserInputPtr stream;
+  VALUE io, options;
+  rb_scan_args(argc, argv, "11", &io, &options);
 
   if (NIL_P(io))
     rb_raise(rb_eTypeError, "Must pass in an IO object");
 
-  input = xmlParserInputBufferCreateIO((xmlInputReadCallback) rxml_read_callback, NULL,
+  xmlParserInputBufferPtr input = xmlParserInputBufferCreateIO((xmlInputReadCallback) rxml_read_callback, NULL,
                                        (void*)io, XML_CHAR_ENCODING_NONE);
-    
-  ctxt = xmlNewParserCtxt();
+
+  xmlParserCtxtPtr ctxt = xmlNewParserCtxt();
 
   if (!ctxt)
   {
@@ -158,9 +166,9 @@ static VALUE rxml_parser_context_io(VALUE klass, VALUE io)
      xmlCtxtUseOptionsInternal (called below) initialize slightly different
      context options, in particular XML_PARSE_NODICT which xmlInitParserCtxt
      sets to 0 and xmlCtxtUseOptionsInternal sets to 1.  So we have to call both. */
-  xmlCtxtUseOptions(ctxt, rxml_libxml_default_options());
+  xmlCtxtUseOptions(ctxt, options == Qnil ? 0 : NUM2INT(options));
 
-  stream = xmlNewIOInputStream(ctxt, input, XML_CHAR_ENCODING_NONE);
+  xmlParserInputPtr stream = xmlNewIOInputStream(ctxt, input, XML_CHAR_ENCODING_NONE);
 
   if (!stream)
   {
@@ -169,7 +177,7 @@ static VALUE rxml_parser_context_io(VALUE klass, VALUE io)
     rxml_raise(&xmlLastError);
   }
   inputPush(ctxt, stream);
-  result = rxml_parser_context_wrap(ctxt);
+  VALUE result = rxml_parser_context_wrap(ctxt);
 
   /* Attach io object to parser so it won't get freed.*/
   rb_ivar_set(result, IO_ATTR, io);
@@ -950,10 +958,10 @@ void rxml_init_parser_context(void)
   cXMLParserContext = rb_define_class_under(cXMLParser, "Context", rb_cObject);
   rb_define_alloc_func(cXMLParserContext, rxml_parser_context_alloc);
 
-  rb_define_singleton_method(cXMLParserContext, "document", rxml_parser_context_document, 1);
-  rb_define_singleton_method(cXMLParserContext, "file", rxml_parser_context_file, 1);
-  rb_define_singleton_method(cXMLParserContext, "io", rxml_parser_context_io, 1);
-  rb_define_singleton_method(cXMLParserContext, "string", rxml_parser_context_string, 1);
+  rb_define_singleton_method(cXMLParserContext, "document", rxml_parser_context_document, -1);
+  rb_define_singleton_method(cXMLParserContext, "file", rxml_parser_context_file, -1);
+  rb_define_singleton_method(cXMLParserContext, "io", rxml_parser_context_io, -1);
+  rb_define_singleton_method(cXMLParserContext, "string", rxml_parser_context_string, -1);
 
   rb_define_method(cXMLParserContext, "base_uri", rxml_parser_context_base_uri_get, 0);
   rb_define_method(cXMLParserContext, "base_uri=", rxml_parser_context_base_uri_set, 1);

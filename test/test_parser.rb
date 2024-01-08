@@ -165,9 +165,7 @@ class TestParser < Minitest::Test
       </test>
     EOS
 
-    LibXML::XML::default_substitute_entities = false
-
-    # Parse normally
+    # Parse normally - entities won't be substituted
     parser = LibXML::XML::Parser.string(xml)
     doc = parser.parse
     assert_nil(doc.child.base_uri)
@@ -176,13 +174,13 @@ class TestParser < Minitest::Test
     node = doc.find_first('/test/cdata').child
     assert_equal(LibXML::XML::Node::CDATA_SECTION_NODE, node.node_type)
 
-    # Entities should not be subtituted
+    # Entities should not be substituted
     node = doc.find_first('/test/entity')
     assert_equal('&foo;', node.child.to_s)
 
     # Parse with options
-    parser = LibXML::XML::Parser.string(xml, :base_uri => 'http://libxml.rubyforge.org',
-                                     :options => LibXML::XML::Parser::Options::NOCDATA | LibXML::XML::Parser::Options::NOENT)
+    parser = LibXML::XML::Parser.string(xml, base_uri: 'http://libxml.rubyforge.org',
+                                             options: LibXML::XML::Parser::Options::NOCDATA | LibXML::XML::Parser::Options::NOENT)
     doc = parser.parse
     assert_equal(doc.child.base_uri, 'http://libxml.rubyforge.org')
 

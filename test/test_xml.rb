@@ -9,21 +9,6 @@ class TestXml < Minitest::Test
     assert(LibXML::XML.check_lib_versions)
   end
 
-  def test_debug_entities
-    original = LibXML::XML.debug_entities
-
-    LibXML::XML.debug_entities = false
-    refute(LibXML::XML.debug_entities)
-
-    LibXML::XML.debug_entities = true
-    assert(LibXML::XML.debug_entities)
-
-    LibXML::XML.debug_entities = false
-    refute(LibXML::XML.debug_entities)
-
-    LibXML::XML.debug_entities = original
-  end
-
   def test_default_compression
     return unless LibXML::XML.default_compression
 
@@ -52,52 +37,6 @@ class TestXml < Minitest::Test
     LibXML::XML.default_compression = original
   end
 
-  def test_default_keep_blanks
-    original = LibXML::XML.default_keep_blanks
-
-    LibXML::XML.default_keep_blanks = false
-    refute(LibXML::XML.default_keep_blanks)
-    assert_equal(LibXML::XML::Parser::Options::NOBLANKS, LibXML::XML.default_options)
-
-    LibXML::XML.default_keep_blanks = true
-    assert(LibXML::XML.default_keep_blanks)
-    assert_equal(0, LibXML::XML.default_options)
-
-    LibXML::XML.default_keep_blanks = original
-  end
-
-  def test_default_line_numbers
-    original = LibXML::XML.default_line_numbers
-
-    LibXML::XML.default_line_numbers = false
-    refute(LibXML::XML.default_line_numbers)
-
-    LibXML::XML.default_line_numbers = true
-    assert(LibXML::XML.default_line_numbers)
-
-    LibXML::XML.default_line_numbers = false
-    refute(LibXML::XML.default_line_numbers)
-
-    LibXML::XML.default_line_numbers = original
-  end
-
-  def test_default_substitute_entities
-    original = LibXML::XML.default_substitute_entities
-
-    LibXML::XML.default_substitute_entities = false
-    refute(LibXML::XML.default_substitute_entities)
-    assert_equal(0, LibXML::XML.default_options)
-
-    LibXML::XML.default_substitute_entities = true
-    assert(LibXML::XML.default_substitute_entities)
-    assert_equal(LibXML::XML::Parser::Options::NOENT, LibXML::XML.default_options)
-
-    LibXML::XML.default_substitute_entities = false
-    refute(LibXML::XML.default_substitute_entities)
-
-    LibXML::XML.default_substitute_entities = original
-  end
-
   def test_default_tree_indent_string
     original = LibXML::XML.default_tree_indent_string
 
@@ -114,40 +53,6 @@ class TestXml < Minitest::Test
     assert_equal('  ', s)
 
     LibXML::XML.default_tree_indent_string = original
-  end
-
-  def test_default_validity_checking
-    original = LibXML::XML.default_validity_checking
-
-    LibXML::XML.default_validity_checking = false
-    refute(LibXML::XML.default_validity_checking)
-    assert_equal(0, LibXML::XML.default_options)
-
-    LibXML::XML.default_validity_checking = true
-    assert(LibXML::XML.default_validity_checking)
-    assert_equal(LibXML::XML::Parser::Options::DTDVALID, LibXML::XML.default_options)
-
-    LibXML::XML.default_validity_checking = false
-    refute(LibXML::XML.default_validity_checking)
-
-    LibXML::XML.default_validity_checking = original
-  end
-
-  def test_default_warnings
-    original = LibXML::XML.default_warnings
-
-    LibXML::XML.default_warnings = false
-    refute(LibXML::XML.default_warnings)
-    assert_equal(LibXML::XML::Parser::Options::NOWARNING, LibXML::XML.default_options)
-
-    LibXML::XML.default_warnings = true
-    assert(LibXML::XML.default_warnings)
-    assert_equal(0, LibXML::XML.default_options)
-
-    LibXML::XML.default_warnings = false
-    refute(LibXML::XML.default_warnings)
-
-    LibXML::XML.default_warnings = original
   end
 
   def test_enabled_automata
@@ -247,10 +152,6 @@ class TestXml < Minitest::Test
 
   def test_vernum
     assert_instance_of(Integer, LibXML::XML::VERNUM)
-  end
-
-  def test_default_options
-    assert_equal(0, LibXML::XML.default_options)
   end
 
   def test_default_save_no_empty_tags

@@ -146,10 +146,14 @@ static VALUE rxml_html_parser_context_wrap(htmlParserCtxtPtr ctxt)
  *
  * Parameters:
  *
- *  file - A filename or uri.
+ *  file - A filename or uri
+ *  options - A or'ed together list of LibXML::XML::HTMLParser::Options values
 */
-static VALUE rxml_html_parser_context_file(VALUE klass, VALUE file)
+static VALUE rxml_html_parser_context_file(int argc, VALUE* argv, VALUE klass)
 {
+  VALUE file, options;
+  rb_scan_args(argc, argv, "11", &file, &options);
+
   htmlParserCtxtPtr ctxt = htmlCreateFileParserCtxt(StringValuePtr(file), NULL);
   if (!ctxt)
     rxml_raise(&xmlLastError);
@@ -158,7 +162,7 @@ static VALUE rxml_html_parser_context_file(VALUE klass, VALUE file)
      xmlCtxtUseOptionsInternal (called below) initialize slightly different
      context options, in particular XML_PARSE_NODICT which xmlInitParserCtxt
      sets to 0 and xmlCtxtUseOptionsInternal sets to 1.  So we have to call both. */
-  htmlCtxtUseOptions(ctxt, rxml_libxml_default_options());
+  htmlCtxtUseOptions(ctxt, options == Qnil ? 0 : NUM2INT(options));
 
   return rxml_html_parser_context_wrap(ctxt);
 }
@@ -170,10 +174,14 @@ static VALUE rxml_html_parser_context_file(VALUE klass, VALUE file)
  *
  * Parameters:
  *
- *  io - A ruby IO object.
+ *  io - A ruby IO object
+ *  options - A or'ed together list of LibXML::XML::HTMLParser::Options values
 */
-static VALUE rxml_html_parser_context_io(VALUE klass, VALUE io)
+static VALUE rxml_html_parser_context_io(int argc, VALUE* argv, VALUE klass)
 {
+  VALUE io, options;
+  rb_scan_args(argc, argv, "11", &io, &options);
+
   VALUE result;
   htmlParserCtxtPtr ctxt;
   xmlParserInputBufferPtr input;
@@ -196,7 +204,7 @@ static VALUE rxml_html_parser_context_io(VALUE klass, VALUE io)
      xmlCtxtUseOptionsInternal (called below) initialize slightly different
      context options, in particular XML_PARSE_NODICT which xmlInitParserCtxt
      sets to 0 and xmlCtxtUseOptionsInternal sets to 1.  So we have to call both. */
-  htmlCtxtUseOptions(ctxt, rxml_libxml_default_options());
+  htmlCtxtUseOptions(ctxt, options == Qnil ? 0 : NUM2INT(options));
 
   stream = xmlNewIOInputStream(ctxt, input, XML_CHAR_ENCODING_NONE);
 
@@ -222,10 +230,14 @@ static VALUE rxml_html_parser_context_io(VALUE klass, VALUE io)
  *
  * Parameters:
  *
- *  string - A string that contains the data to parse.
+ *  string - A string that contains the data to parse
+ *  options - A or'ed together list of LibXML::XML::HTMLParser::Options values
 */
-static VALUE rxml_html_parser_context_string(VALUE klass, VALUE string)
+static VALUE rxml_html_parser_context_string(int argc, VALUE* argv, VALUE klass)
 {
+  VALUE string, options;
+  rb_scan_args(argc, argv, "11", &string, &options);
+
   htmlParserCtxtPtr ctxt;
   Check_Type(string, T_STRING);
 
@@ -241,7 +253,7 @@ static VALUE rxml_html_parser_context_string(VALUE klass, VALUE string)
      xmlCtxtUseOptionsInternal (called below) initialize slightly different
      context options, in particular XML_PARSE_NODICT which xmlInitParserCtxt
      sets to 0 and xmlCtxtUseOptionsInternal sets to 1.  So we have to call both. */
-  htmlCtxtUseOptions(ctxt, rxml_libxml_default_options());
+  htmlCtxtUseOptions(ctxt, options == Qnil ? 0 : NUM2INT(options));
 
   if (ctxt->sax != NULL)
     memcpy(ctxt->sax, &htmlDefaultSAXHandler, sizeof(xmlSAXHandlerV1));
@@ -328,9 +340,9 @@ void rxml_init_html_parser_context(void)
   IO_ATTR = ID2SYM(rb_intern("@io"));
   cXMLHtmlParserContext = rb_define_class_under(cXMLHtmlParser, "Context", cXMLParserContext);
 
-  rb_define_singleton_method(cXMLHtmlParserContext, "file", rxml_html_parser_context_file, 1);
-  rb_define_singleton_method(cXMLHtmlParserContext, "io", rxml_html_parser_context_io, 1);
-  rb_define_singleton_method(cXMLHtmlParserContext, "string", rxml_html_parser_context_string, 1);
+  rb_define_singleton_method(cXMLHtmlParserContext, "file", rxml_html_parser_context_file, -1);
+  rb_define_singleton_method(cXMLHtmlParserContext, "io", rxml_html_parser_context_io, -1);
+  rb_define_singleton_method(cXMLHtmlParserContext, "string", rxml_html_parser_context_string, -1);
   rb_define_method(cXMLHtmlParserContext, "close", rxml_html_parser_context_close, 0);
   rb_define_method(cXMLHtmlParserContext, "disable_cdata=", rxml_html_parser_context_disable_cdata_set, 1);
   rb_define_method(cXMLHtmlParserContext, "options=", rxml_html_parser_context_options_set, 1);

@@ -256,7 +256,6 @@ class TestReader < Minitest::Test
   end
 
   def test_node
-    LibXML::XML.default_line_numbers = true
     reader = LibXML::XML::Reader.file(XML_FILE)
 
     # first try to get a node

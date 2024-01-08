@@ -7,13 +7,11 @@ class TestNode < Minitest::Test
     @file_name = "model/bands.utf-8.xml"
 
     # Strip spaces to make testing easier
-    LibXML::XML.default_keep_blanks = false
     file = File.join(File.dirname(__FILE__), @file_name)
-    @doc = LibXML::XML::Document.file(file)
+    @doc = LibXML::XML::Document.file(file, options: LibXML::XML::Parser::Options::NOBLANKS)
   end
   
   def teardown
-    LibXML::XML.default_keep_blanks = true
     @doc = nil
   end
 

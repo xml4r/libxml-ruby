@@ -5,31 +5,31 @@ module LibXML
     class HTMLParser
       # call-seq:
       #    XML::HTMLParser.file(path) -> XML::HTMLParser
-      #    XML::HTMLParser.file(path, :encoding => XML::Encoding::UTF_8,
-      #                           :options => XML::HTMLParser::Options::NOENT) -> XML::HTMLParser
+      #    XML::HTMLParser.file(path, encoding: XML::Encoding::UTF_8,
+      #                               options: XML::HTMLParser::Options::NOENT) -> XML::HTMLParser
       #
       # Creates a new parser by parsing the specified file or uri.
       #
-      # You may provide an optional hash table to control how the
-      # parsing is performed.  Valid options are:
+      # Parameters:
       #
+      #  path - Path to file to parse
       #  encoding - The document encoding, defaults to nil. Valid values
       #             are the encoding constants defined on XML::Encoding.
       #  options - Parser options.  Valid values are the constants defined on
       #            XML::HTMLParser::Options.  Mutliple options can be combined
       #            by using Bitwise OR (|).
-      def self.file(path, options = {})
+      def self.file(path, encoding: nil, options: nil)
         context = XML::HTMLParser::Context.file(path)
-        context.encoding = options[:encoding] if options[:encoding]
-        context.options = options[:options] if options[:options]
+        context.encoding = encoding if encoding
+        context.options = options if options
         self.new(context)
       end
 
       # call-seq:
       #    XML::HTMLParser.io(io) -> XML::HTMLParser
-      #    XML::HTMLParser.io(io, :encoding => XML::Encoding::UTF_8,
-      #                       :options => XML::HTMLParser::Options::NOENT
-      #                       :base_uri="http://libxml.org") -> XML::HTMLParser
+      #    XML::HTMLParser.io(io, encoding: XML::Encoding::UTF_8,
+      #                           options: XML::HTMLParser::Options::NOENT
+      #                           base_uri: "http://libxml.org") -> XML::HTMLParser
       #
       # Creates a new reader by parsing the specified io object.
       #
@@ -42,36 +42,36 @@ module LibXML
       #  options - Parser options.  Valid values are the constants defined on
       #            XML::HTMLParser::Options.  Mutliple options can be combined
       #            by using Bitwise OR (|).
-      def self.io(io, options = {})
+      def self.io(io, base_uri: nil, encoding: nil, options: nil)
         context = XML::HTMLParser::Context.io(io)
-        context.base_uri = options[:base_uri] if options[:base_uri]
-        context.encoding = options[:encoding] if options[:encoding]
-        context.options = options[:options] if options[:options]
+        context.base_uri = base_uri if base_uri
+        context.encoding = encoding if encoding
+        context.options = options if options
         self.new(context)
       end
 
       # call-seq:
       #    XML::HTMLParser.string(string)
-      #    XML::HTMLParser.string(string, :encoding => XML::Encoding::UTF_8,
-      #                               :options => XML::HTMLParser::Options::NOENT
-      #                               :base_uri="http://libxml.org") -> XML::HTMLParser
+      #    XML::HTMLParser.string(string, encoding: XML::Encoding::UTF_8,
+      #                                   options: XML::HTMLParser::Options::NOENT
+      #                                   base_uri: "http://libxml.org") -> XML::HTMLParser
       #
       # Creates a new parser by parsing the specified string.
       #
-      # You may provide an optional hash table to control how the
-      # parsing is performed.  Valid options are:
+      # Parameters:
       #
+      #  string - String to parse
       #  base_uri - The base url for the parsed document.
       #  encoding - The document encoding, defaults to nil. Valid values
       #             are the encoding constants defined on XML::Encoding.
       #  options - Parser options.  Valid values are the constants defined on
       #            XML::HTMLParser::Options.  Mutliple options can be combined
       #            by using Bitwise OR (|).
-      def self.string(string, options = {})
+      def self.string(string, base_uri: nil, encoding: nil, options: nil)
         context = XML::HTMLParser::Context.string(string)
-        context.base_uri = options[:base_uri] if options[:base_uri]
-        context.encoding = options[:encoding] if options[:encoding]
-        context.options = options[:options] if options[:options]
+        context.base_uri = base_uri if base_uri
+        context.encoding = encoding if encoding
+        context.options = options if options
         self.new(context)
       end
 

@@ -38,10 +38,7 @@ class TestEncoding < Minitest::Test
     @encoding = encoding
     file = file_for_encoding(encoding)
 
-    # Strip spaces to make testing easier
-    LibXML::XML.default_keep_blanks = false
-    @doc = LibXML::XML::Document.file(file)
-    LibXML::XML.default_keep_blanks = true
+    @doc = LibXML::XML::Document.file(file, options: LibXML::XML::Parser::Options::NOBLANKS)
   end
 
   def test_encoding

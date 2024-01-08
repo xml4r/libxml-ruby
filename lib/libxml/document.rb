@@ -17,21 +17,21 @@ module LibXML
 
       # call-seq:
       #    XML::Document.file(path) -> XML::Document
-      #    XML::Document.file(path, :encoding => XML::Encoding::UTF_8,
-      #                             :options => XML::Parser::Options::NOENT) -> XML::Document
+      #    XML::Document.file(path, encoding: XML::Encoding::UTF_8,
+      #                             options: XML::Parser::Options::NOENT) -> XML::Document
       #
       # Creates a new document from the specified file or uri.
       #
-      # You may provide an optional hash table to control how the
-      # parsing is performed.  Valid options are:
+      # Parameters:
       #
+      #  path - Path to file
       #  encoding - The document encoding, defaults to nil. Valid values
       #             are the encoding constants defined on XML::Encoding.
       #  options - Parser options.  Valid values are the constants defined on
       #            XML::Parser::Options.  Mutliple options can be combined
       #            by using Bitwise OR (|).
-      def self.file(value, options = {})
-        Parser.file(value, options).parse
+      def self.file(path, encoding: nil, options: nil)
+        Parser.file(path, encoding: encoding, options: options).parse
       end
 
       # call-seq:
@@ -57,23 +57,23 @@ module LibXML
 
       # call-seq:
       #    XML::Document.string(string) -> XML::Document
-      #    XML::Document.string(string, :encoding => XML::Encoding::UTF_8,
-      #                               :options => XML::Parser::Options::NOENT
-      #                               :base_uri="http://libxml.org") -> XML::Document
+      #    XML::Document.string(string, encoding: XML::Encoding::UTF_8,
+      #                                 options: XML::Parser::Options::NOENT
+      #                                 base_uri: "http://libxml.org") -> XML::Document
       #
       # Creates a new document from the specified string.
       #
-      # You may provide an optional hash table to control how the
-      # parsing is performed.  Valid options are:
+      # Parameters:
       #
+      #   string - String to parse
       #   base_uri - The base url for the parsed document.
       #   encoding - The document encoding, defaults to nil. Valid values
       #              are the encoding constants defined on XML::Encoding.
       #   options  - Parser options.  Valid values are the constants defined on
       #              XML::Parser::Options.  Mutliple options can be combined
       #              by using Bitwise OR (|).
-      def self.string(value, options = {})
-        Parser.string(value, options).parse
+      def self.string(value, base_uri: nil, encoding: nil, options: nil)
+        Parser.string(value, base_uri: base_uri, encoding: encoding, options: options).parse
       end
 
       # Returns a new XML::XPathContext for the document.

@@ -55,12 +55,20 @@ void rxml_init_parser_options(void)
   /* compact small text nodes */
   rb_define_const(mXMLParserOptions, "COMPACT", INT2NUM(XML_PARSE_COMPACT));
   /* parse using XML-1.0 before update 5 */
-  rb_define_const(mXMLParserOptions, "PARSE_OLD10", INT2NUM(XML_PARSE_OLD10));
+  rb_define_const(mXMLParserOptions, "OLD10", INT2NUM(XML_PARSE_OLD10));
   /* do not fixup XINCLUDE xml:base uris */
   rb_define_const(mXMLParserOptions, "NOBASEFIX", INT2NUM(XML_PARSE_NOBASEFIX));
 #endif
 #if LIBXML_VERSION >= 20703
   /* relax any hardcoded limit from the parser */
   rb_define_const(mXMLParserOptions, "HUGE", INT2NUM(XML_PARSE_HUGE));
+#endif
+#if LIBXML_VERSION >= 21106
+  /* parse using SAX2 interface before 2.7.0 */
+  rb_define_const(mXMLParserOptions, "OLDSAX", INT2NUM(XML_PARSE_OLDSAX));
+  /* ignore internal document encoding hint */
+  rb_define_const(mXMLParserOptions, "IGNORE_ENC", INT2NUM(XML_PARSE_IGNORE_ENC));
+  /* Store big lines numbers in text PSVI field */
+  rb_define_const(mXMLParserOptions, "BIG_LINES", INT2NUM(XML_PARSE_BIG_LINES));
 #endif
 }

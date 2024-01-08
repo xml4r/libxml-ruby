@@ -18,31 +18,33 @@ module LibXML
 
       # call-seq:
       #    XML::Parser.file(path) -> XML::Parser
-      #    XML::Parser.file(path, :encoding => XML::Encoding::UTF_8,
-      #                           :options => XML::Parser::Options::NOENT) -> XML::Parser
+      #    XML::Parser.file(path, encoding: XML::Encoding::UTF_8,
+      #                           options: XML::Parser::Options::NOENT) -> XML::Parser
       #
       # Creates a new parser for the specified file or uri.
       #
-      # You may provide an optional hash table to control how the
-      # parsing is performed.  Valid options are:
+      # Parameters:
       #
+      #  path - Path to file
+      #  base_uri - The base url for the parsed document.
       #  encoding - The document encoding, defaults to nil. Valid values
       #             are the encoding constants defined on XML::Encoding.
       #  options - Parser options.  Valid values are the constants defined on
       #            XML::Parser::Options.  Mutliple options can be combined
       #            by using Bitwise OR (|).
-      def self.file(path, options = {})
+      def self.file(path, base_uri: nil, encoding: nil, options: nil)
         context = XML::Parser::Context.file(path)
-        context.encoding = options[:encoding] if options[:encoding]
-        context.options = options[:options] if options[:options]
+        context.base_uri = base_uri if base_uri
+        context.encoding = encoding if encoding
+        context.options = options if options
         self.new(context)
       end
 
       # call-seq:
       #    XML::Parser.io(io) -> XML::Parser
-      #    XML::Parser.io(io, :encoding => XML::Encoding::UTF_8,
-      #                       :options => XML::Parser::Options::NOENT
-      #                       :base_uri="http://libxml.org") -> XML::Parser
+      #    XML::Parser.io(io, encoding: XML::Encoding::UTF_8,
+      #                       options: XML::Parser::Options::NOENT
+      #                       base_uri: "http://libxml.org") -> XML::Parser
       #
       # Creates a new parser for the specified io object.
       #
@@ -55,36 +57,36 @@ module LibXML
       #  options - Parser options.  Valid values are the constants defined on
       #            XML::Parser::Options.  Mutliple options can be combined
       #            by using Bitwise OR (|).
-      def self.io(io, options = {})
+      def self.io(io, base_uri: nil, encoding: nil, options: nil)
         context = XML::Parser::Context.io(io)
-        context.base_uri = options[:base_uri] if options[:base_uri]
-        context.encoding = options[:encoding] if options[:encoding]
-        context.options = options[:options] if options[:options]
+        context.base_uri = base_uri if base_uri
+        context.encoding = encoding if encoding
+        context.options = options if options
         self.new(context)
       end
 
       # call-seq:
       #    XML::Parser.string(string)
-      #    XML::Parser.string(string, :encoding => XML::Encoding::UTF_8,
-      #                               :options => XML::Parser::Options::NOENT
-      #                               :base_uri="http://libxml.org") -> XML::Parser
+      #    XML::Parser.string(string, encoding: XML::Encoding::UTF_8,
+      #                               options: XML::Parser::Options::NOENT
+      #                               base_uri: "http://libxml.org") -> XML::Parser
       #
       # Creates a new parser by parsing the specified string.
       #
-      # You may provide an optional hash table to control how the
-      # parsing is performed.  Valid options are:
+      # Parameters:
       #
+      #  string - The string to parse
       #  base_uri - The base url for the parsed document.
       #  encoding - The document encoding, defaults to nil. Valid values
       #             are the encoding constants defined on XML::Encoding.
       #  options - Parser options.  Valid values are the constants defined on
-      #            XML::Parser::Options.  Mutliple options can be combined
+      #            XML::Parser::Options.  Multiple options can be combined
       #            by using Bitwise OR (|).
-      def self.string(string, options = {})
+      def self.string(string, base_uri: nil, encoding: nil, options: nil)
         context = XML::Parser::Context.string(string)
-        context.base_uri = options[:base_uri] if options[:base_uri]
-        context.encoding = options[:encoding] if options[:encoding]
-        context.options = options[:options] if options[:options]
+        context.base_uri = base_uri if base_uri
+        context.encoding = encoding if encoding
+        context.options = options if options
         self.new(context)
       end
 
