@@ -132,8 +132,8 @@ static VALUE rxml_dtd_type(VALUE self)
  *   
  *   * The first usage creates a DTD from a string and requires 1 parameter.
  *   * The second usage loads and parses an external DTD and requires 2 parameters.
- *   * The third usage creates a new internal or external DTD and requires 3 parameters and 2 optional parameters.
- *     It then attaches the DTD to the specified document if it is not nil
+ *   * The third usage creates a new internal or external DTD and requires 2 parameters and 3 optional parameters.
+ *     The DTD is then attached to the specified document if it is not nil.
  * 
  * Parameters:
  * 
@@ -160,7 +160,7 @@ static VALUE rxml_dtd_initialize(int argc, VALUE *argv, VALUE self)
           xmlDocPtr xdoc = NULL;
 
           VALUE name, doc, internal;
-          rb_scan_args(argc, argv, "32", &external, &system, &name, &doc, &internal);
+          rb_scan_args(argc, argv, "23", &external, &system, &name, &doc, &internal);
 
           Check_Type(external, T_STRING);
           xpublic = (const xmlChar*) StringValuePtr(external);
@@ -168,8 +168,11 @@ static VALUE rxml_dtd_initialize(int argc, VALUE *argv, VALUE self)
           Check_Type(system, T_STRING);
           xsystem = (const xmlChar*) StringValuePtr(system);
 
-          Check_Type(name, T_STRING);
-          xname = (const xmlChar*) StringValuePtr(name);
+          if (name != Qnil)
+          {
+            Check_Type(name, T_STRING);
+            xname = (const xmlChar*)StringValuePtr(name);
+          }
 
           if (doc != Qnil)
           {
