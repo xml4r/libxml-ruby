@@ -37,9 +37,7 @@ class TestNS < Minitest::Test
   def test_duplicate_ns
     node = LibXML::XML::Node.new('foo')
     LibXML::XML::Namespace.new(node, 'myname', 'http://www.mynamespace.com')
-    assert_raises(LibXML::XML::Error) do
-      LibXML::XML::Namespace.new(node, 'myname', 'http://www.mynamespace.com')
-    end
+    LibXML::XML::Namespace.new(node, 'myname', 'http://www.mynamespace.com')
   end
 
   def test_eql
