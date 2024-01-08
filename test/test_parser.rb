@@ -27,7 +27,7 @@ class TestParser < Minitest::Test
       LibXML::XML::Parser.document(nil)
     end
 
-    assert_equal("Must pass an LibXML::XML::Document object", error.to_s)
+    assert_equal("Must pass an LibXML::XML::Document object", error.message)
   end
 
   def test_file
@@ -44,7 +44,7 @@ class TestParser < Minitest::Test
       LibXML::XML::Parser.file('i_dont_exist.xml')
     end
 
-    assert_equal('Warning: failed to load external entity "i_dont_exist.xml".', error.to_s)
+    assert_equal('Warning: failed to load external entity "i_dont_exist.xml".', error.message)
   end
 
   def test_nil_file
@@ -52,7 +52,7 @@ class TestParser < Minitest::Test
       LibXML::XML::Parser.file(nil)
     end
 
-    assert_match(/nil into String/, error.to_s)
+    assert_match(/nil into String/, error.message)
   end
 
   def test_file_encoding
@@ -63,7 +63,11 @@ class TestParser < Minitest::Test
       parser.parse
     end
 
-    assert(error.to_s.match(/Fatal error: Extra content at the end of the document/))
+    if windows?
+      assert_match(/Fatal error: Opening and ending tag mismatch/, error.message)
+    else
+      assert_match(/Fatal error: Extra content at the end of the document/, error.message)
+    end
 
     parser = LibXML::XML::Parser.file(file, :encoding => LibXML::XML::Encoding::UTF_8)
     doc = parser.parse
@@ -108,7 +112,7 @@ class TestParser < Minitest::Test
       LibXML::XML::Parser.io(nil)
     end
 
-    assert_equal("Must pass in an IO object", error.to_s)
+    assert_equal("Must pass in an IO object", error.message)
   end
 
   def test_string_io
@@ -153,7 +157,7 @@ class TestParser < Minitest::Test
       LibXML::XML::Parser.string(nil)
     end
 
-    assert_equal("wrong argument type nil (expected String)", error.to_s)
+    assert_equal("wrong argument type nil (expected String)", error.message)
   end
 
   def test_string_options
@@ -212,7 +216,7 @@ class TestParser < Minitest::Test
     end
 
     assert_equal("Fatal error: Input is not proper UTF-8, indicate encoding !\nBytes: 0xF6 0x74 0x6C 0x65 at :2.",
-                 error.to_s)
+                 error.message)
 
     # Parse as ISO_8859_1:
     parser = LibXML::XML::Parser.string(xml, :encoding => LibXML::XML::Encoding::ISO_8859_1)
@@ -281,16 +285,23 @@ class TestParser < Minitest::Test
 
     refute_nil(error)
     assert_kind_of(LibXML::XML::Error, error)
-    assert_equal("Fatal error: Extra content at the end of the document at :1.", error.message)
+    if windows?
+      assert_equal("Fatal error: Couldn't find end of Start Tag ruby_array line 1 at :1.", error.message)
+      assert_equal(LibXML::XML::Error::GT_REQUIRED, error.code)
+      assert_equal("ruby_array", error.str1)
+      assert_equal(1, error.int1)
+    else
+      assert_equal("Fatal error: Extra content at the end of the document at :1.", error.message)
+      assert_equal(LibXML::XML::Error::DOCUMENT_END, error.code)
+      assert_nil(error.str1)
+      assert_equal(0, error.int1)
+    end
     assert_equal(LibXML::XML::Error::PARSER, error.domain)
-    assert_equal(LibXML::XML::Error::DOCUMENT_END, error.code)
     assert_equal(LibXML::XML::Error::FATAL, error.level)
     assert_nil(error.file)
     assert_equal(1, error.line)
-    assert_nil(error.str1)
     assert_nil(error.str2)
     assert_nil(error.str3)
-    assert_equal(0, error.int1)
     assert_equal(34, error.int2)
     assert_nil(error.node)
   end

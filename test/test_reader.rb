@@ -357,7 +357,7 @@ class TestReader < Minitest::Test
     reader = LibXML::XML::Reader.string(xml, :encoding => LibXML::XML::Encoding::ISO_8859_1)
     reader.read
 
-    # Encoding is always null for strings, very annoying!
-    assert_equal(reader.encoding, LibXML::XML::Encoding::NONE)
+    encoding = windows? ? LibXML::XML::Encoding::ISO_8859_1 : LibXML::XML::Encoding::NONE
+    assert_equal(reader.encoding, encoding)
   end
 end

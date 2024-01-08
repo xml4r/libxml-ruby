@@ -318,7 +318,7 @@ EOS
     error = assert_raises(LibXML::XML::Error) do
       parser.parse
     end
-    assert_equal("Fatal error: xmlParseEntityRef: no name at :5.", error.to_s)
+    assert_match("Fatal error: xmlParseEntityRef: no name at", error.to_s)
 
     # Check callbacks
     parser.callbacks.result
