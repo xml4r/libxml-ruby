@@ -9,6 +9,6 @@ extern VALUE eXMLError;
 
 void rxml_init_error(void);
 VALUE rxml_error_wrap(const xmlError *xerror);
-NORETURN(void rxml_raise(const xmlError *xerror));
+void rxml_raise(const xmlError *xerror);
 
 #endif

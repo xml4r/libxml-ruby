@@ -158,7 +158,7 @@ static VALUE rxml_error_reset_handler(VALUE self)
   return self;
 }
 
-NORETURN(void rxml_raise(const xmlError *xerror))
+void rxml_raise(const xmlError *xerror)
 {
   if (xerror)
   {
