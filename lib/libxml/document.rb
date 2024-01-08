@@ -51,8 +51,8 @@ module LibXML
       #  options - Parser options.  Valid values are the constants defined on
       #            XML::Parser::Options.  Mutliple options can be combined
       #            by using Bitwise OR (|).
-      def self.io(value, options = {})
-        Parser.io(value, options).parse
+      def self.io(io, base_uri: nil, encoding: nil, options: nil)
+        Parser.io(io, base_uri: base_uri, encoding: encoding, options: options).parse
       end
 
       # call-seq:

@@ -129,4 +129,12 @@ class TestDocument < Minitest::Test
     file = File.join(File.dirname(__FILE__), 'model/atom.xml')
     schema_document = LibXML::XML::Document.file(file, options: LibXML::XML::Parser::Options::NONET)
   end
+
+  def test_io
+    File.open(File.join(File.dirname(__FILE__), 'model/rubynet.xml')) do |io|
+      doc = LibXML::XML::Document.io(io)
+      assert_instance_of(LibXML::XML::Document, doc)
+    end
+  end
+
 end
