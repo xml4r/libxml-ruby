@@ -58,9 +58,6 @@ static VALUE rxml_namespace_initialize(VALUE self, VALUE node, VALUE prefix,
   xmlPrefix = NIL_P(prefix) ? NULL : (xmlChar *)StringValuePtr(prefix);
   xns = xmlNewNs(xnode, (xmlChar*) StringValuePtr(href), xmlPrefix);
 
-  if (!xns)
-    rxml_raise(xmlGetLastError());
-
   DATA_PTR(self) = xns;
   return self;
 }

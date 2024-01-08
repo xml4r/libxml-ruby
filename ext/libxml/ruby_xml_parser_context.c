@@ -311,7 +311,7 @@ static VALUE rxml_parser_context_disable_cdata_set(VALUE self, VALUE value)
   if (value)
     ctxt->sax->cdataBlock = NULL;
   else
-    ctxt->sax->cdataBlock = xmlDefaultSAXHandler.cdataBlock;
+    ctxt->sax->cdataBlock = xmlSAX2CDataBlock;
 
   return value;
 }

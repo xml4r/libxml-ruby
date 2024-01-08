@@ -74,23 +74,15 @@ static VALUE rxml_sax_parser_initialize(int argc, VALUE *argv, VALUE self)
  */
 static VALUE rxml_sax_parser_parse(VALUE self)
 {
-  int status;
   VALUE context = rb_ivar_get(self, CONTEXT_ATTR);
   xmlParserCtxtPtr ctxt;
   Data_Get_Struct(context, xmlParserCtxt, ctxt);
 
   ctxt->sax2 = 1;
 	ctxt->userData = (void*)rb_ivar_get(self, CALLBACKS_ATTR);
-
-  if (ctxt->sax != (xmlSAXHandlerPtr) &xmlDefaultSAXHandler)
-    xmlFree(ctxt->sax);
-    
-  ctxt->sax = (xmlSAXHandlerPtr) xmlMalloc(sizeof(rxml_sax_handler));
-  if (ctxt->sax == NULL)
-    rb_fatal("Not enough memory.");
   memcpy(ctxt->sax, &rxml_sax_handler, sizeof(rxml_sax_handler));
     
-  status = xmlParseDocument(ctxt);
+  int status = xmlParseDocument(ctxt);
 
   /* Now check the parsing result*/
   if (status == -1 || !ctxt->wellFormed)

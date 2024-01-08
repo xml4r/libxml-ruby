@@ -238,13 +238,12 @@ static VALUE rxml_html_parser_context_string(int argc, VALUE* argv, VALUE klass)
   VALUE string, options;
   rb_scan_args(argc, argv, "11", &string, &options);
 
-  htmlParserCtxtPtr ctxt;
   Check_Type(string, T_STRING);
 
   if (RSTRING_LEN(string) == 0)
     rb_raise(rb_eArgError, "Must specify a string with one or more characters");
 
-  ctxt = xmlCreateMemoryParserCtxt(StringValuePtr(string),
+  htmlParserCtxtPtr ctxt = xmlCreateMemoryParserCtxt(StringValuePtr(string),
                                    (int)RSTRING_LEN(string));
   if (!ctxt)
     rxml_raise(xmlGetLastError());
@@ -255,8 +254,11 @@ static VALUE rxml_html_parser_context_string(int argc, VALUE* argv, VALUE klass)
      sets to 0 and xmlCtxtUseOptionsInternal sets to 1.  So we have to call both. */
   htmlCtxtUseOptions(ctxt, options == Qnil ? 0 : NUM2INT(options));
 
-  if (ctxt->sax != NULL)
-    memcpy(ctxt->sax, &htmlDefaultSAXHandler, sizeof(xmlSAXHandlerV1));
+  // Setup sax handler
+  // TODO - there must be a better way? The sax handler is initialized for XML, but we want
+  // to use HTML
+  memset(ctxt->sax, 0, sizeof(xmlSAXHandler));
+  xmlSAX2InitHtmlDefaultSAXHandler(ctxt->sax);
   
   return rxml_html_parser_context_wrap(ctxt);
 }
@@ -300,7 +302,7 @@ static VALUE rxml_html_parser_context_disable_cdata_set(VALUE self, VALUE value)
   if (value)
     ctxt->sax->cdataBlock = NULL;
   else
-    ctxt->sax->cdataBlock = htmlDefaultSAXHandler.cdataBlock;
+    ctxt->sax->cdataBlock = xmlSAX2CDataBlock;
 
   return value;
 }
