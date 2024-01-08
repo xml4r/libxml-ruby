@@ -4,6 +4,8 @@
 #include "ruby_libxml.h"
 #include "ruby_xml_reader.h"
 
+#include <errno.h>
+
 #include <libxml/xmlreader.h>
 #include <libxml/xmlschemas.h>
 
