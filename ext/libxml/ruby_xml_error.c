@@ -97,7 +97,7 @@ VALUE rxml_error_wrap(const xmlError *xerror)
 }
 
 /* Hook that receives xml error message */
-static void structuredErrorFunc(void *userData, const xmlError *xerror)
+static void structuredErrorFunc(void *userData, xmlError *xerror)
 {
   VALUE error = rxml_error_wrap(xerror);
 
