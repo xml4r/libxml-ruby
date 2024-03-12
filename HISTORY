@@ -1,5 +1,9 @@
 = Release History
 
+== 5.0.3 / 2024-03-11
+
+* Update xmlStructuredErrorFunc to be backwards compatible
+
 == 5.0.2 / 2024-01-08
 
 * Fix broken DTD creation (DTD name is not required)
