@@ -97,7 +97,7 @@ VALUE rxml_error_wrap(const xmlError *xerror)
 }
 
 /* Hook that receives xml error message */
-#if LIBXML_VERSION >= 212000
+#if LIBXML_VERSION >= 21200
 static void structuredErrorFunc(void *userData, const xmlError *xerror)
 #else
 static void structuredErrorFunc(void *userData, xmlErrorPtr xerror)
