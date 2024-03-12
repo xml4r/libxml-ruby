@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1510"
+   LastUpgradeVersion = "1530"
    version = "1.7">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "C7F2B59A2B4B608E004E0A86"
-               BuildableName = "liblibxml_ruby.dylib"
+               BuildableName = "libxml_ruby.bundle"
                BlueprintName = "libxml_ruby"
                ReferencedContainer = "container:libxml-ruby.xcodeproj">
             </BuildableReference>
@@ -64,7 +64,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "C7F2B59A2B4B608E004E0A86"
-            BuildableName = "liblibxml_ruby.dylib"
+            BuildableName = "libxml_ruby.bundle"
             BlueprintName = "libxml_ruby"
             ReferencedContainer = "container:libxml-ruby.xcodeproj">
          </BuildableReference>

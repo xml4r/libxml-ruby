@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C7A776E12BA00A4900768F25 /* libruby.3.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C7A776E02BA00A4900768F25 /* libruby.3.3.dylib */; };
 		C7F2B59E2B4B608E004E0A86 /* libxml_ruby.h in Headers */ = {isa = PBXBuildFile; fileRef = C7F2B59D2B4B608E004E0A86 /* libxml_ruby.h */; };
 		C7F2B5A62B4B610C004E0A86 /* ruby_libxml.h in Headers */ = {isa = PBXBuildFile; fileRef = C7F2B5542B4B5AEE004E0A86 /* ruby_libxml.h */; };
 		C7F2B5A72B4B610C004E0A86 /* ruby_xml_attr_decl.h in Headers */ = {isa = PBXBuildFile; fileRef = C7F2B5642B4B5AEE004E0A86 /* ruby_xml_attr_decl.h */; };
@@ -82,7 +83,6 @@
 		C7F2B5EE2B4B636C004E0A86 /* ruby_xml_xpath.c in Sources */ = {isa = PBXBuildFile; fileRef = C7F2B5402B4B5AED004E0A86 /* ruby_xml_xpath.c */; };
 		C7F2B5EF2B4B636C004E0A86 /* ruby_xml.c in Sources */ = {isa = PBXBuildFile; fileRef = C7F2B53A2B4B5AED004E0A86 /* ruby_xml.c */; };
 		C7F2B5F12B4B63BA004E0A86 /* libxml2.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C7F2B5F02B4B63BA004E0A86 /* libxml2.2.dylib */; };
-		C7F2B5F22B4B63E4004E0A86 /* libruby.3.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C7F2B5922B4B5D38004E0A86 /* libruby.3.2.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -99,6 +99,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		C7A776E02BA00A4900768F25 /* libruby.3.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libruby.3.3.dylib; path = ../../../../Cellar/ruby/3.3.0/lib/libruby.3.3.dylib; sourceTree = "<group>"; };
 		C7F2B51F2B4B5AEC004E0A86 /* ruby_xml_parser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ruby_xml_parser.c; path = ../libxml/ruby_xml_parser.c; sourceTree = "<group>"; };
 		C7F2B5202B4B5AEC004E0A86 /* ruby_xml_namespace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ruby_xml_namespace.h; path = ../libxml/ruby_xml_namespace.h; sourceTree = "<group>"; };
 		C7F2B5212B4B5AEC004E0A86 /* ruby_xml_attr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ruby_xml_attr.c; path = ../libxml/ruby_xml_attr.c; sourceTree = "<group>"; };
@@ -183,7 +184,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C7F2B5F22B4B63E4004E0A86 /* libruby.3.2.dylib in Frameworks */,
+				C7A776E12BA00A4900768F25 /* libruby.3.3.dylib in Frameworks */,
 				C7F2B5F12B4B63BA004E0A86 /* libxml2.2.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -283,6 +284,7 @@
 		C7F2B5912B4B5D38004E0A86 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				C7A776E02BA00A4900768F25 /* libruby.3.3.dylib */,
 				C7F2B5F02B4B63BA004E0A86 /* libxml2.2.dylib */,
 				C7F2B5922B4B5D38004E0A86 /* libruby.3.2.dylib */,
 			);
@@ -373,7 +375,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastUpgradeCheck = 1510;
+				LastUpgradeCheck = 1530;
 				TargetAttributes = {
 					C7F2B59A2B4B608E004E0A86 = {
 						CreatedOnToolsVersion = 15.1;
@@ -479,6 +481,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -499,9 +502,8 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
-					"/usr/local/opt/ruby/include/ruby-3.2.0",
-					"/usr/local/opt/ruby/include/ruby-3.2.0/x86_64-darwin23",
-					/usr/local/opt/libxml2/include,
+					"/usr/local/opt/ruby/include/ruby-3.3.0",
+					"/usr/local/opt/ruby/include/ruby-3.3.0/x86_64-darwin23",
 				);
 				LIBRARY_SEARCH_PATHS = "";
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
@@ -547,6 +549,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -561,9 +564,8 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
-					"/usr/local/opt/ruby/include/ruby-3.2.0",
-					"/usr/local/opt/ruby/include/ruby-3.2.0/x86_64-darwin23",
-					/usr/local/opt/libxml2/include,
+					"/usr/local/opt/ruby/include/ruby-3.3.0",
+					"/usr/local/opt/ruby/include/ruby-3.3.0/x86_64-darwin23",
 				);
 				LIBRARY_SEARCH_PATHS = "";
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
@@ -578,11 +580,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				EXECUTABLE_EXTENSION = bundle;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					/usr/local/Cellar/libxml2/2.12.3/lib,
 					/usr/local/Cellar/ruby/3.2.2_1/lib,
+					/usr/local/Cellar/ruby/3.3.0/lib,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -593,11 +597,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				EXECUTABLE_EXTENSION = bundle;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					/usr/local/Cellar/libxml2/2.12.3/lib,
 					/usr/local/Cellar/ruby/3.2.2_1/lib,
+					/usr/local/Cellar/ruby/3.3.0/lib,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
