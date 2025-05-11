@@ -283,133 +283,43 @@ static VALUE rxml_writer_result(VALUE self)
 }
 
 /* ===== private helpers ===== */
-
-static VALUE numeric_rxml_writer_void(VALUE obj, int (*fn)(xmlTextWriterPtr))
+static void encodeStrings(rb_encoding* encoding, int count, VALUE* strings, const xmlChar** encoded_strings)
 {
-    int ret;
-    rxml_writer_object* rwo;
-
-    rwo = rxml_textwriter_get(obj);
-    ret = fn(rwo->writer);
-
-    return (-1 == ret ? Qfalse : Qtrue);
-}
-
-#define numeric_rxml_writer_string(/*VALUE*/ obj, /*VALUE*/ name_or_content, /*int (**/fn/*)(xmlTextWriterPtr, const xmlChar *)*/) \
-    numeric_rxml_writer_va_strings(obj, Qundef, 1, fn, name_or_content)
-
-/**
- * This is quite ugly but thanks to libxml2 coding style, all xmlTextWriter*
- * calls can be redirected to a single function. This can be convenient to:
- * - avoid repeating yourself
- * - convert strings to UTF-8
- * - validate names
- * and so on
- **/
-#define XMLWRITER_MAX_STRING_ARGS 5
-static VALUE numeric_rxml_writer_va_strings(VALUE obj, VALUE pe, size_t strings_count, int (*fn)(ANYARGS), ...)
-{
-    va_list ap;
-    size_t argc;
-    int ret = -1;
-    rxml_writer_object* rwo;
-    const xmlChar* argv[XMLWRITER_MAX_STRING_ARGS];
-    VALUE utf8[XMLWRITER_MAX_STRING_ARGS], orig[XMLWRITER_MAX_STRING_ARGS];
-
-    if (strings_count > XMLWRITER_MAX_STRING_ARGS)
+    for (int i = 0; i < count; i++)
     {
-        rb_bug("more arguments than expected");
-    }
-    va_start(ap, fn);
-    rwo = rxml_textwriter_get(obj);
-    for (argc = 0; argc < strings_count; argc++)
-    {
-        VALUE arg;
+        VALUE string = strings[i];
 
-        arg = va_arg(ap, VALUE);
-        orig[argc] = arg;
-        if (NIL_P(arg))
+        if (NIL_P(string))
         {
-            utf8[argc] = Qnil;
-            argv[argc] = NULL;
+            encoded_strings[i] = NULL;
         }
         else
         {
-            utf8[argc] = rb_str_conv_enc(orig[argc], rb_enc_get(orig[argc]), rwo->encoding);
-            argv[argc] = BAD_CAST StringValueCStr(utf8[argc]);
+            VALUE encoded = rb_str_conv_enc(strings[i], rb_enc_get(string), encoding);
+            encoded_strings[i] = BAD_CAST StringValueCStr(encoded);
         }
     }
-    va_end(ap);
-
-    if (Qundef == pe)
-    {
-        switch (strings_count)
-        {
-        case 0:
-            ret = fn(rwo->writer);
-            break;
-        case 1:
-            ret = fn(rwo->writer, argv[0]);
-            break;
-        case 2:
-            ret = fn(rwo->writer, argv[0], argv[1]);
-            break;
-        case 3:
-            ret = fn(rwo->writer, argv[0], argv[1], argv[2]);
-            break;
-        case 4:
-            ret = fn(rwo->writer, argv[0], argv[1], argv[2], argv[3]);
-            break;
-        case 5:
-            ret = fn(rwo->writer, argv[0], argv[1], argv[2], argv[3], argv[4]);
-            break;
-        default:
-            break;
-        }
-    }
-    else
-    {
-        int xpe;
-
-        xpe = RTEST(pe);
-        switch (strings_count)
-        { /* strings_count doesn't include pe */
-        case 0:
-            ret = fn(rwo->writer, xpe);
-            break;
-        case 1:
-            ret = fn(rwo->writer, xpe, argv[0]);
-            break;
-        case 2:
-            ret = fn(rwo->writer, xpe, argv[0], argv[1]);
-            break;
-        case 3:
-            ret = fn(rwo->writer, xpe, argv[0], argv[1], argv[2]);
-            break;
-        case 4:
-            ret = fn(rwo->writer, xpe, argv[0], argv[1], argv[2], argv[3]);
-            break;
-        case 5:
-            ret = fn(rwo->writer, xpe, argv[0], argv[1], argv[2], argv[3], argv[4]);
-            break;
-        default:
-            break;
-        }
-    }
-
-    while (--strings_count > 0)
-    {
-        if (!NIL_P(orig[strings_count]))
-        {
-            if (orig[strings_count] != utf8[strings_count])
-            {
-                rb_str_free(utf8[strings_count]);
-            }
-        }
-    }
-
-    return (-1 == ret ? Qfalse : Qtrue);
 }
+
+static VALUE invoke_void_arg_function(VALUE self, int (*fn)(xmlTextWriterPtr))
+{
+    rxml_writer_object* rwo = rxml_textwriter_get(self);
+    int result = fn(rwo->writer);
+    return (result == -1 ? Qfalse : Qtrue);
+}
+
+static VALUE invoke_single_arg_function(VALUE self, int (*fn)(xmlTextWriterPtr, const xmlChar *), VALUE value)
+{
+    rxml_writer_object* rwo = rxml_textwriter_get(self);
+
+    VALUE rubyStrings[] = { value };
+    const xmlChar* xmlStrings[] = { NULL };
+    encodeStrings(rwo->encoding, sizeof(rubyStrings)/sizeof(VALUE), rubyStrings, xmlStrings);
+
+    int result = fn(rwo->writer, xmlStrings[0]);
+    return (result == -1 ? Qfalse : Qtrue);
+}
+
 
 /* ===== public instance methods ===== */
 
@@ -443,7 +353,7 @@ static VALUE rxml_writer_set_indent(VALUE self, VALUE indentation)
  */
 static VALUE rxml_writer_set_indent_string(VALUE self, VALUE indentation)
 {
-    return numeric_rxml_writer_string(self, indentation, xmlTextWriterSetIndentString);
+    return invoke_single_arg_function(self, xmlTextWriterSetIndentString, indentation);
 }
 #endif /* LIBXML_VERSION >= 20605 */
 
@@ -459,7 +369,7 @@ static VALUE rxml_writer_set_indent_string(VALUE self, VALUE indentation)
  */
 static VALUE rxml_writer_write_comment(VALUE self, VALUE content)
 {
-    return numeric_rxml_writer_string(self, content, xmlTextWriterWriteComment);
+    return invoke_single_arg_function(self, xmlTextWriterWriteComment, content);
 }
 
 /* call-seq:
@@ -470,7 +380,7 @@ static VALUE rxml_writer_write_comment(VALUE self, VALUE content)
  */
 static VALUE rxml_writer_write_cdata(VALUE self, VALUE content)
 {
-    return numeric_rxml_writer_string(self, content, xmlTextWriterWriteCDATA);
+    return invoke_single_arg_function(self, xmlTextWriterWriteCDATA, content);
 }
 
 static VALUE rxml_writer_start_element(VALUE, VALUE);
@@ -499,7 +409,13 @@ static VALUE rxml_writer_write_element(int argc, VALUE* argv, VALUE self)
     }
     else
     {
-        return numeric_rxml_writer_va_strings(self, Qundef, 2, xmlTextWriterWriteElement, name, content);
+        rxml_writer_object* rwo = rxml_textwriter_get(self);
+        VALUE rubyStrings[] =  {name, content};
+        const xmlChar* xmlStrings[] =  {NULL, NULL};
+        encodeStrings(rwo->encoding, sizeof(rubyStrings)/sizeof(VALUE), rubyStrings, xmlStrings);
+
+        int result = xmlTextWriterWriteElement(rwo->writer, xmlStrings[0], xmlStrings[1]);
+        return (result == -1 ? Qfalse : Qtrue);
     }
 }
 
@@ -537,7 +453,12 @@ static VALUE rxml_writer_write_element_ns(int argc, VALUE* argv, VALUE self)
     }
     else
     {
-        return numeric_rxml_writer_va_strings(self, Qundef, 4, xmlTextWriterWriteElementNS, prefix, name, namespaceURI, content);
+        rxml_writer_object* rwo = rxml_textwriter_get(self);
+        VALUE rubyStrings[] =  {prefix, name, namespaceURI, content};
+        const xmlChar* xmlStrings[] =  {NULL, NULL, NULL, NULL};
+        encodeStrings(rwo->encoding, sizeof(rubyStrings)/sizeof(VALUE), rubyStrings, xmlStrings);
+        int result = xmlTextWriterWriteElementNS(rwo->writer, xmlStrings[0], xmlStrings[1], xmlStrings[2], xmlStrings[3]);
+        return (result == -1 ? Qfalse : Qtrue);
     }
 }
 
@@ -549,7 +470,12 @@ static VALUE rxml_writer_write_element_ns(int argc, VALUE* argv, VALUE self)
  */
 static VALUE rxml_writer_write_attribute(VALUE self, VALUE name, VALUE content)
 {
-    return numeric_rxml_writer_va_strings(self, Qundef, 2, xmlTextWriterWriteAttribute, name, content);
+    rxml_writer_object* rwo = rxml_textwriter_get(self);
+    VALUE rubyStrings[] =  {name, content};
+    const xmlChar* xmlStrings[] =  {NULL, NULL};
+    encodeStrings(rwo->encoding, sizeof(rubyStrings)/sizeof(VALUE), rubyStrings, xmlStrings);
+    int result = xmlTextWriterWriteAttribute(rwo->writer, xmlStrings[0], xmlStrings[1]);
+    return (result == -1 ? Qfalse : Qtrue);
 }
 
 /* call-seq:
@@ -569,10 +495,14 @@ static VALUE rxml_writer_write_attribute(VALUE self, VALUE name, VALUE content)
 static VALUE rxml_writer_write_attribute_ns(int argc, VALUE* argv, VALUE self)
 {
     VALUE prefix, name, namespaceURI, content;
-
     rb_scan_args(argc, argv, "22", &prefix, &name, &namespaceURI, &content);
 
-    return numeric_rxml_writer_va_strings(self, Qundef, 4, xmlTextWriterWriteAttributeNS, prefix, name, namespaceURI, content);
+    rxml_writer_object* rwo = rxml_textwriter_get(self);
+    VALUE rubyStrings[] =  {prefix, name, namespaceURI, content};
+    const xmlChar* xmlStrings[] =  {NULL, NULL, NULL, NULL};
+    encodeStrings(rwo->encoding, sizeof(rubyStrings)/sizeof(VALUE), rubyStrings, xmlStrings);
+    int result = xmlTextWriterWriteAttributeNS(rwo->writer, xmlStrings[0], xmlStrings[1], xmlStrings[2], xmlStrings[3]);
+    return (result == -1 ? Qfalse : Qtrue);
 }
 
 /* call-seq:
@@ -583,7 +513,12 @@ static VALUE rxml_writer_write_attribute_ns(int argc, VALUE* argv, VALUE self)
  */
 static VALUE rxml_writer_write_pi(VALUE self, VALUE target, VALUE content)
 {
-    return numeric_rxml_writer_va_strings(self, Qundef, 2, xmlTextWriterWritePI, target, content);
+    rxml_writer_object* rwo = rxml_textwriter_get(self);
+    VALUE rubyStrings[] =  {target, content};
+    const xmlChar* xmlStrings[] =  {NULL, NULL};
+    encodeStrings(rwo->encoding, sizeof(rubyStrings)/sizeof(VALUE), rubyStrings, xmlStrings);
+    int result = xmlTextWriterWritePI(rwo->writer, xmlStrings[0], xmlStrings[1]);
+    return (result == -1 ? Qfalse : Qtrue);
 }
 
 /* ===== public start/end interface ===== */
@@ -597,7 +532,7 @@ static VALUE rxml_writer_write_pi(VALUE self, VALUE target, VALUE content)
  */
 static VALUE rxml_writer_write_string(VALUE self, VALUE content)
 {
-    return numeric_rxml_writer_string(self, content, xmlTextWriterWriteString);
+    return invoke_single_arg_function(self, xmlTextWriterWriteString, content);
 }
 
 /* call-seq:
@@ -609,7 +544,7 @@ static VALUE rxml_writer_write_string(VALUE self, VALUE content)
  */
 static VALUE rxml_writer_write_raw(VALUE self, VALUE content)
 {
-    return numeric_rxml_writer_string(self, content, xmlTextWriterWriteRaw);
+    return invoke_single_arg_function(self, xmlTextWriterWriteRaw, content);
 }
 
 /* call-seq:
@@ -619,7 +554,7 @@ static VALUE rxml_writer_write_raw(VALUE self, VALUE content)
  */
 static VALUE rxml_writer_start_attribute(VALUE self, VALUE name)
 {
-    return numeric_rxml_writer_string(self, name, xmlTextWriterStartAttribute);
+    return invoke_single_arg_function(self, xmlTextWriterStartAttribute, name);
 }
 
 /* call-seq:
@@ -635,10 +570,14 @@ static VALUE rxml_writer_start_attribute(VALUE self, VALUE name)
 static VALUE rxml_writer_start_attribute_ns(int argc, VALUE* argv, VALUE self)
 {
     VALUE prefix, name, namespaceURI;
-
     rb_scan_args(argc, argv, "21", &prefix, &name, &namespaceURI);
 
-    return numeric_rxml_writer_va_strings(self, Qundef, 3, xmlTextWriterStartAttributeNS, prefix, name, namespaceURI);
+    rxml_writer_object* rwo = rxml_textwriter_get(self);
+    VALUE rubyStrings[] =  {prefix, name, namespaceURI};
+    const xmlChar* xmlStrings[] =  {NULL, NULL, NULL};
+    encodeStrings(rwo->encoding, sizeof(rubyStrings)/sizeof(VALUE), rubyStrings, xmlStrings);
+    int result = xmlTextWriterStartAttributeNS(rwo->writer, xmlStrings[0], xmlStrings[1], xmlStrings[2]);
+    return (result == -1 ? Qfalse : Qtrue);
 }
 
 /* call-seq:
@@ -648,7 +587,7 @@ static VALUE rxml_writer_start_attribute_ns(int argc, VALUE* argv, VALUE self)
  */
 static VALUE rxml_writer_end_attribute(VALUE self)
 {
-    return numeric_rxml_writer_void(self, xmlTextWriterEndAttribute);
+    return invoke_void_arg_function(self, xmlTextWriterEndAttribute);
 }
 
 #if LIBXML_VERSION >= 20607
@@ -660,7 +599,7 @@ static VALUE rxml_writer_end_attribute(VALUE self)
  */
 static VALUE rxml_writer_start_comment(VALUE self)
 {
-    return numeric_rxml_writer_void(self, xmlTextWriterStartComment);
+    return invoke_void_arg_function(self, xmlTextWriterStartComment);
 }
 
 /* call-seq:
@@ -671,7 +610,7 @@ static VALUE rxml_writer_start_comment(VALUE self)
  */
 static VALUE rxml_writer_end_comment(VALUE self)
 {
-    return numeric_rxml_writer_void(self, xmlTextWriterEndComment);
+    return invoke_void_arg_function(self, xmlTextWriterEndComment);
 }
 #endif /* LIBXML_VERSION >= 20607 */
 
@@ -682,7 +621,7 @@ static VALUE rxml_writer_end_comment(VALUE self)
  */
 static VALUE rxml_writer_start_element(VALUE self, VALUE name)
 {
-    return numeric_rxml_writer_string(self, name, xmlTextWriterStartElement);
+    return invoke_single_arg_function(self, xmlTextWriterStartElement, name);
 }
 
 /* call-seq:
@@ -698,10 +637,14 @@ static VALUE rxml_writer_start_element(VALUE self, VALUE name)
 static VALUE rxml_writer_start_element_ns(int argc, VALUE* argv, VALUE self)
 {
     VALUE prefix, name, namespaceURI;
-
     rb_scan_args(argc, argv, "21", &prefix, &name, &namespaceURI);
 
-    return numeric_rxml_writer_va_strings(self, Qundef, 3, xmlTextWriterStartElementNS, prefix, name, namespaceURI);
+    rxml_writer_object* rwo = rxml_textwriter_get(self);
+    VALUE rubyStrings[] =  {prefix, name, namespaceURI};
+    const xmlChar* xmlStrings[] =  {NULL, NULL, NULL};
+    encodeStrings(rwo->encoding, sizeof(rubyStrings)/sizeof(VALUE), rubyStrings, xmlStrings);
+    int result = xmlTextWriterStartElementNS(rwo->writer, xmlStrings[0], xmlStrings[1], xmlStrings[2]);
+    return (result == -1 ? Qfalse : Qtrue);
 }
 
 /* call-seq:
@@ -711,7 +654,7 @@ static VALUE rxml_writer_start_element_ns(int argc, VALUE* argv, VALUE self)
  */
 static VALUE rxml_writer_end_element(VALUE self)
 {
-    return numeric_rxml_writer_void(self, xmlTextWriterEndElement);
+    return invoke_void_arg_function(self, xmlTextWriterEndElement);
 }
 
 /* call-seq:
@@ -723,7 +666,7 @@ static VALUE rxml_writer_end_element(VALUE self)
  */
 static VALUE rxml_writer_full_end_element(VALUE self)
 {
-    return numeric_rxml_writer_void(self, xmlTextWriterFullEndElement);
+    return invoke_void_arg_function(self, xmlTextWriterFullEndElement);
 }
 
 /* call-seq:
@@ -733,7 +676,7 @@ static VALUE rxml_writer_full_end_element(VALUE self)
  */
 static VALUE rxml_writer_start_cdata(VALUE self)
 {
-    return numeric_rxml_writer_void(self, xmlTextWriterStartCDATA);
+    return invoke_void_arg_function(self, xmlTextWriterStartCDATA);
 }
 
 /* call-seq:
@@ -743,7 +686,7 @@ static VALUE rxml_writer_start_cdata(VALUE self)
  */
 static VALUE rxml_writer_end_cdata(VALUE self)
 {
-    return numeric_rxml_writer_void(self, xmlTextWriterEndCDATA);
+    return invoke_void_arg_function(self, xmlTextWriterEndCDATA);
 }
 
 /* call-seq:
@@ -801,7 +744,7 @@ static VALUE rxml_writer_start_document(int argc, VALUE* argv, VALUE self)
  */
 static VALUE rxml_writer_end_document(VALUE self)
 {
-    return numeric_rxml_writer_void(self, xmlTextWriterEndDocument);
+    return invoke_void_arg_function(self, xmlTextWriterEndDocument);
 }
 
 /* call-seq:
@@ -811,7 +754,7 @@ static VALUE rxml_writer_end_document(VALUE self)
  */
 static VALUE rxml_writer_start_pi(VALUE self, VALUE target)
 {
-    return numeric_rxml_writer_string(self, target, xmlTextWriterStartPI);
+    return invoke_single_arg_function(self, xmlTextWriterStartPI, target);
 }
 
 /* call-seq:
@@ -821,7 +764,7 @@ static VALUE rxml_writer_start_pi(VALUE self, VALUE target)
  */
 static VALUE rxml_writer_end_pi(VALUE self)
 {
-    return numeric_rxml_writer_void(self, xmlTextWriterEndPI);
+    return invoke_void_arg_function(self, xmlTextWriterEndPI);
 }
 
 /* call-seq:
@@ -832,10 +775,14 @@ static VALUE rxml_writer_end_pi(VALUE self)
 static VALUE rxml_writer_start_dtd(int argc, VALUE* argv, VALUE self)
 {
     VALUE name, pubid, sysid;
-
     rb_scan_args(argc, argv, "12", &name, &pubid, &sysid);
 
-    return numeric_rxml_writer_va_strings(self, Qundef, 3, xmlTextWriterStartDTD, name, pubid, sysid);
+    rxml_writer_object* rwo = rxml_textwriter_get(self);
+    VALUE rubyStrings[] =  {name, pubid, sysid};
+    const xmlChar* xmlStrings[] =  {NULL, NULL, NULL};
+    encodeStrings(rwo->encoding, sizeof(rubyStrings)/sizeof(VALUE), rubyStrings, xmlStrings);
+    int result = xmlTextWriterStartDTD(rwo->writer, xmlStrings[0], xmlStrings[1], xmlStrings[2]);
+    return (result == -1 ? Qfalse : Qtrue);
 }
 
 /* call-seq:
@@ -845,7 +792,7 @@ static VALUE rxml_writer_start_dtd(int argc, VALUE* argv, VALUE self)
  */
 static VALUE rxml_writer_start_dtd_element(VALUE self, VALUE name)
 {
-    return numeric_rxml_writer_string(self, name, xmlTextWriterStartDTDElement);
+    return invoke_single_arg_function(self, xmlTextWriterStartDTDElement, name);
 }
 
 /* call-seq:
@@ -856,14 +803,14 @@ static VALUE rxml_writer_start_dtd_element(VALUE self, VALUE name)
 static VALUE rxml_writer_start_dtd_entity(int argc, VALUE* argv, VALUE self)
 {
     VALUE name, pe;
-
     rb_scan_args(argc, argv, "11", &name, &pe);
-    if (NIL_P(pe))
-    {
-        pe = Qfalse;
-    }
 
-    return numeric_rxml_writer_va_strings(self, pe, 1, xmlTextWriterStartDTDEntity, name);
+    rxml_writer_object* rwo = rxml_textwriter_get(self);
+    VALUE rubyStrings[] =  {name};
+    const xmlChar* xmlStrings[] =  {NULL};
+    encodeStrings(rwo->encoding, sizeof(rubyStrings)/sizeof(VALUE), rubyStrings, xmlStrings);
+    int result = xmlTextWriterStartDTDEntity(rwo->writer, RB_TEST(pe), xmlStrings[0]);
+    return (result == -1 ? Qfalse : Qtrue);
 }
 
 /* call-seq:
@@ -873,7 +820,7 @@ static VALUE rxml_writer_start_dtd_entity(int argc, VALUE* argv, VALUE self)
  */
 static VALUE rxml_writer_start_dtd_attlist(VALUE self, VALUE name)
 {
-    return numeric_rxml_writer_string(self, name, xmlTextWriterStartDTDAttlist);
+    return invoke_single_arg_function(self, xmlTextWriterStartDTDAttlist, name);
 }
 
 /* call-seq:
@@ -883,7 +830,7 @@ static VALUE rxml_writer_start_dtd_attlist(VALUE self, VALUE name)
  */
 static VALUE rxml_writer_end_dtd(VALUE self)
 {
-    return numeric_rxml_writer_void(self, xmlTextWriterEndDTD);
+    return invoke_void_arg_function(self, xmlTextWriterEndDTD);
 }
 
 /* call-seq:
@@ -893,7 +840,7 @@ static VALUE rxml_writer_end_dtd(VALUE self)
  */
 static VALUE rxml_writer_end_dtd_entity(VALUE self)
 {
-    return numeric_rxml_writer_void(self, xmlTextWriterEndDTDEntity);
+    return invoke_void_arg_function(self, xmlTextWriterEndDTDEntity);
 }
 
 /* call-seq:
@@ -903,7 +850,7 @@ static VALUE rxml_writer_end_dtd_entity(VALUE self)
  */
 static VALUE rxml_writer_end_dtd_attlist(VALUE self)
 {
-    return numeric_rxml_writer_void(self, xmlTextWriterEndDTDAttlist);
+    return invoke_void_arg_function(self, xmlTextWriterEndDTDAttlist);
 }
 
 /* call-seq:
@@ -913,7 +860,7 @@ static VALUE rxml_writer_end_dtd_attlist(VALUE self)
  */
 static VALUE rxml_writer_end_dtd_element(VALUE self)
 {
-    return numeric_rxml_writer_void(self, xmlTextWriterEndDTDElement);
+    return invoke_void_arg_function(self, xmlTextWriterEndDTDElement);
 }
 
 /* call-seq:
@@ -938,10 +885,14 @@ static VALUE rxml_writer_end_dtd_element(VALUE self)
 static VALUE rxml_writer_write_dtd(int argc, VALUE* argv, VALUE self)
 {
     VALUE name, pubid, sysid, subset;
-
     rb_scan_args(argc, argv, "13", &name, &pubid, &sysid, &subset);
 
-    return numeric_rxml_writer_va_strings(self, Qundef, 4, xmlTextWriterWriteDTD, name, pubid, sysid, subset);
+    rxml_writer_object* rwo = rxml_textwriter_get(self);
+    VALUE rubyStrings[] =  {name, pubid, sysid, subset};
+    const xmlChar* xmlStrings[] =  {NULL, NULL, NULL, NULL};
+    encodeStrings(rwo->encoding, sizeof(rubyStrings)/sizeof(VALUE), rubyStrings, xmlStrings);
+    int result = xmlTextWriterWriteDTD(rwo->writer, xmlStrings[0], xmlStrings[1], xmlStrings[2], xmlStrings[3]);
+    return (result == -1 ? Qfalse : Qtrue);
 }
 
 /* call-seq:
@@ -953,7 +904,12 @@ static VALUE rxml_writer_write_dtd(int argc, VALUE* argv, VALUE self)
  */
 static VALUE rxml_writer_write_dtd_attlist(VALUE self, VALUE name, VALUE content)
 {
-    return numeric_rxml_writer_va_strings(self, Qundef, 2, xmlTextWriterWriteDTDAttlist, name, content);
+    rxml_writer_object* rwo = rxml_textwriter_get(self);
+    VALUE rubyStrings[] =  {name, content};
+    const xmlChar* xmlStrings[] =  {NULL, NULL};
+    encodeStrings(rwo->encoding, sizeof(rubyStrings)/sizeof(VALUE), rubyStrings, xmlStrings);
+    int result = xmlTextWriterWriteDTDAttlist(rwo->writer, xmlStrings[0], xmlStrings[1]);
+    return (result == -1 ? Qfalse : Qtrue);
 }
 
 /* call-seq:
@@ -965,7 +921,12 @@ static VALUE rxml_writer_write_dtd_attlist(VALUE self, VALUE name, VALUE content
  */
 static VALUE rxml_writer_write_dtd_element(VALUE self, VALUE name, VALUE content)
 {
-    return numeric_rxml_writer_va_strings(self, Qundef, 2, xmlTextWriterWriteDTDElement, name, content);
+    rxml_writer_object* rwo = rxml_textwriter_get(self);
+    VALUE rubyStrings[] =  {name, content};
+    const xmlChar* xmlStrings[] =  {NULL, NULL};
+    encodeStrings(rwo->encoding, sizeof(rubyStrings)/sizeof(VALUE), rubyStrings, xmlStrings);
+    int result = xmlTextWriterWriteDTDElement(rwo->writer, xmlStrings[0], xmlStrings[1]);
+    return (result == -1 ? Qfalse : Qtrue);
 }
 
 /* call-seq:
@@ -975,7 +936,12 @@ static VALUE rxml_writer_write_dtd_element(VALUE self, VALUE name, VALUE content
  */
 static VALUE rxml_writer_write_dtd_entity(VALUE self, VALUE name, VALUE pubid, VALUE sysid, VALUE ndataid, VALUE content, VALUE pe)
 {
-    return numeric_rxml_writer_va_strings(self, pe, 5, xmlTextWriterWriteDTDEntity, name, pubid, sysid, ndataid, content);
+    rxml_writer_object* rwo = rxml_textwriter_get(self);
+    VALUE rubyStrings[] =  {name, pubid, sysid, ndataid, content};
+    const xmlChar* xmlStrings[] =  {NULL, NULL, NULL, NULL, NULL};
+    encodeStrings(rwo->encoding, sizeof(rubyStrings)/sizeof(VALUE), rubyStrings, xmlStrings);
+    int result = xmlTextWriterWriteDTDEntity(rwo->writer, RB_TEST(pe), xmlStrings[0], xmlStrings[1], xmlStrings[2], xmlStrings[3], xmlStrings[4]);
+    return (result == -1 ? Qfalse : Qtrue);
 }
 
 /* call-seq:
@@ -992,7 +958,12 @@ static VALUE rxml_writer_write_dtd_entity(VALUE self, VALUE name, VALUE pubid, V
  */
 static VALUE rxml_writer_write_dtd_external_entity(VALUE self, VALUE name, VALUE pubid, VALUE sysid, VALUE ndataid, VALUE pe)
 {
-    return numeric_rxml_writer_va_strings(self, pe, 4, xmlTextWriterWriteDTDExternalEntity, name, pubid, sysid, ndataid);
+    rxml_writer_object* rwo = rxml_textwriter_get(self);
+    VALUE rubyStrings[] =  {name, pubid, sysid, ndataid};
+    const xmlChar* xmlStrings[] =  {NULL, NULL, NULL, NULL};
+    encodeStrings(rwo->encoding, sizeof(rubyStrings)/sizeof(VALUE), rubyStrings, xmlStrings);
+    int result = xmlTextWriterWriteDTDExternalEntity(rwo->writer, RB_TEST(pe), xmlStrings[0], xmlStrings[1], xmlStrings[2], xmlStrings[3]);
+    return (result == -1 ? Qfalse : Qtrue);
 }
 
 /* call-seq:
@@ -1002,7 +973,12 @@ static VALUE rxml_writer_write_dtd_external_entity(VALUE self, VALUE name, VALUE
  */
 static VALUE rxml_writer_write_dtd_external_entity_contents(VALUE self, VALUE pubid, VALUE sysid, VALUE ndataid)
 {
-    return numeric_rxml_writer_va_strings(self, Qundef, 3, xmlTextWriterWriteDTDExternalEntityContents, pubid, sysid, ndataid);
+    rxml_writer_object* rwo = rxml_textwriter_get(self);
+    VALUE rubyStrings[] =  {pubid, sysid, ndataid,};
+    const xmlChar* xmlStrings[] =  {NULL, NULL, NULL};
+    encodeStrings(rwo->encoding, sizeof(rubyStrings)/sizeof(VALUE), rubyStrings, xmlStrings);
+    int result = xmlTextWriterWriteDTDExternalEntityContents(rwo->writer, xmlStrings[0], xmlStrings[1], xmlStrings[2]);
+    return (result == -1 ? Qfalse : Qtrue);
 }
 
 /* call-seq:
@@ -1018,7 +994,12 @@ static VALUE rxml_writer_write_dtd_external_entity_contents(VALUE self, VALUE pu
  */
 static VALUE rxml_writer_write_dtd_internal_entity(VALUE self, VALUE name, VALUE content, VALUE pe)
 {
-    return numeric_rxml_writer_va_strings(self, pe, 2, xmlTextWriterWriteDTDInternalEntity, name, content);
+    rxml_writer_object* rwo = rxml_textwriter_get(self);
+    VALUE rubyStrings[] =  {name, content};
+    const xmlChar* xmlStrings[] =  {NULL, NULL};
+    encodeStrings(rwo->encoding, sizeof(rubyStrings)/sizeof(VALUE), rubyStrings, xmlStrings);
+    int result = xmlTextWriterWriteDTDInternalEntity(rwo->writer, RB_TEST(pe), xmlStrings[0], xmlStrings[1]);
+    return (result == -1 ? Qfalse : Qtrue);
 }
 
 /* call-seq:
@@ -1028,7 +1009,12 @@ static VALUE rxml_writer_write_dtd_internal_entity(VALUE self, VALUE name, VALUE
  */
 static VALUE rxml_writer_write_dtd_notation(VALUE self, VALUE name, VALUE pubid, VALUE sysid)
 {
-    return numeric_rxml_writer_va_strings(self, Qundef, 3, xmlTextWriterWriteDTDNotation, name, pubid, sysid);
+    rxml_writer_object* rwo = rxml_textwriter_get(self);
+    VALUE rubyStrings[] =  {name, pubid, sysid};
+    const xmlChar* xmlStrings[] =  {NULL, NULL, NULL};
+    encodeStrings(rwo->encoding, sizeof(rubyStrings)/sizeof(VALUE), rubyStrings, xmlStrings);
+    int result = xmlTextWriterWriteDTDNotation(rwo->writer, xmlStrings[0], xmlStrings[1], xmlStrings[2]);
+    return (result == -1 ? Qfalse : Qtrue);
 }
 
 #if LIBXML_VERSION >= 20900
