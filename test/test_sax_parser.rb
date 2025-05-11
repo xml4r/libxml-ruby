@@ -79,24 +79,43 @@ class TestSaxParser < Minitest::Test
     assert_equal("startdoc", result[i+=1])
     assert_equal("pi: xml-stylesheet type=\"text/xsl\" href=\"my_stylesheet.xsl\"", result[i+=1])
     assert_equal("start_element: feed, attr: {}", result[i+=1])
-    assert_equal("start_element_ns: feed, attr: {}, prefix: , uri: http://www.w3.org/2005/Atom, ns: {nil=>\"http://www.w3.org/2005/Atom\"}", result[i+=1])
+    if Gem::Version.new(RUBY_VERSION) < Gem::Version.new('3.4')
+      assert_equal("start_element_ns: feed, attr: {}, prefix: , uri: http://www.w3.org/2005/Atom, ns: {nil=>\"http://www.w3.org/2005/Atom\"}", result[i+=1])
+    else
+      assert_equal("start_element_ns: feed, attr: {}, prefix: , uri: http://www.w3.org/2005/Atom, ns: {nil => \"http://www.w3.org/2005/Atom\"}", result[i+=1])
+    end
     assert_equal("characters: \n  ", result[i+=1])
     assert_equal("comment:  Not a valid atom entry ", result[i+=1])
     assert_equal("characters: \n  ", result[i+=1])
     assert_equal("start_element: entry, attr: {}", result[i+=1])
     assert_equal("start_element_ns: entry, attr: {}, prefix: , uri: http://www.w3.org/2005/Atom, ns: {}", result[i+=1])
     assert_equal("characters: \n    ", result[i+=1])
-    assert_equal("start_element: title, attr: {\"type\"=>\"html\"}", result[i+=1])
-    assert_equal("start_element_ns: title, attr: {\"type\"=>\"html\"}, prefix: , uri: http://www.w3.org/2005/Atom, ns: {}", result[i+=1])
+    if Gem::Version.new(RUBY_VERSION) < Gem::Version.new('3.4')
+      assert_equal("start_element: title, attr: {\"type\"=>\"html\"}", result[i+=1])
+      assert_equal("start_element_ns: title, attr: {\"type\"=>\"html\"}, prefix: , uri: http://www.w3.org/2005/Atom, ns: {}", result[i+=1])
+    else
+      assert_equal("start_element: title, attr: {\"type\" => \"html\"}", result[i+=1])
+      assert_equal("start_element_ns: title, attr: {\"type\" => \"html\"}, prefix: , uri: http://www.w3.org/2005/Atom, ns: {}", result[i+=1])
+    end
+
     assert_equal("cdata: <<strong>>", result[i+=1])
     assert_equal("end_element: title", result[i+=1])
     assert_equal("end_element_ns title, prefix: , uri: http://www.w3.org/2005/Atom", result[i+=1])
     assert_equal("characters: \n    ", result[i+=1])
-    assert_equal("start_element: content, attr: {\"type\"=>\"xhtml\"}", result[i+=1])
-    assert_equal("start_element_ns: content, attr: {\"type\"=>\"xhtml\"}, prefix: , uri: http://www.w3.org/2005/Atom, ns: {}", result[i+=1])
+    if Gem::Version.new(RUBY_VERSION) < Gem::Version.new('3.4')
+      assert_equal("start_element: content, attr: {\"type\"=>\"xhtml\"}", result[i+=1])
+      assert_equal("start_element_ns: content, attr: {\"type\"=>\"xhtml\"}, prefix: , uri: http://www.w3.org/2005/Atom, ns: {}", result[i+=1])
+    else
+      assert_equal("start_element: content, attr: {\"type\" => \"xhtml\"}", result[i+=1])
+      assert_equal("start_element_ns: content, attr: {\"type\" => \"xhtml\"}, prefix: , uri: http://www.w3.org/2005/Atom, ns: {}", result[i+=1])
+    end
     assert_equal("characters: \n      ", result[i+=1])
     assert_equal("start_element: xhtml:div, attr: {}", result[i+=1])
-    assert_equal("start_element_ns: div, attr: {}, prefix: xhtml, uri: http://www.w3.org/1999/xhtml, ns: {\"xhtml\"=>\"http://www.w3.org/1999/xhtml\"}", result[i+=1])
+    if Gem::Version.new(RUBY_VERSION) < Gem::Version.new('3.4')
+      assert_equal("start_element_ns: div, attr: {}, prefix: xhtml, uri: http://www.w3.org/1999/xhtml, ns: {\"xhtml\"=>\"http://www.w3.org/1999/xhtml\"}", result[i+=1])
+    else
+      assert_equal("start_element_ns: div, attr: {}, prefix: xhtml, uri: http://www.w3.org/1999/xhtml, ns: {\"xhtml\" => \"http://www.w3.org/1999/xhtml\"}", result[i+=1])
+    end
     assert_equal("characters: \n        ", result[i+=1])
     assert_equal("start_element: xhtml:p, attr: {}", result[i+=1])
     assert_equal("start_element_ns: p, attr: {}, prefix: xhtml, uri: http://www.w3.org/1999/xhtml, ns: {}", result[i+=1])
