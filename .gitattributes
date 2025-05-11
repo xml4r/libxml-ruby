@@ -1,0 +1,7 @@
+*.txt		text
+*.h         text
+*.c         text
+*.rb        text
+*.yml       text
+*.vcproj	text eol=crlf
+*.sh		text eol=lf
