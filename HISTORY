@@ -1,5 +1,16 @@
 = Release History
 
+== 5.0.4 / 2025-05-11
+
+* Fix compiling with latest libxml version
+* Fix compiling with latest C++ compilers
+
+== 5.0.3 / 2024-03-12
+
+* Update Xcode and Visual Studio projects
+* Fix check for availability of structuredErrorFunc
+* Fix #213. Last update was not backwards compatible.
+
 == 5.0.2 / 2024-01-08
 
 * Fix broken DTD creation (DTD name is not required)
