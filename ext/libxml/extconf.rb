@@ -63,5 +63,10 @@ if !found_header || !found_lib
     EOL
 end
 
+# Optional zlib support via libxml2; defines HAVE_ZLIB_H if available.
+unless have_header("zlib.h")
+  message "zlib not found: building without compression support\n"
+end
+
 create_header()
 create_makefile('libxml_ruby')
