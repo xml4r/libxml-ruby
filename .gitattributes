@@ -1,7 +1,7 @@
 *.txt		text
-*.h         text
-*.c         text
-*.rb        text
+*.h         text eol=lf
+*.c         text eol=lf
+*.rb        text eol=lf
 *.yml       text
 *.vcproj	text eol=crlf
 *.sh		text eol=lf
