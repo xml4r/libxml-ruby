@@ -1,5 +1,20 @@
 = Release History
 
+== 5.0.5 / 2025-07-30
+* Try to fix broken documentation link in Ruby Gems website
+* Update history file
+
+== 5.0.4 / 2025-05-12
+
+* Fix line ending inconsistencies across platforms
+* Set Git attributes for source files to keep LF line endings.
+* Add optional zlib support detection in extconf
+
+== 5.0.3 / 2024-03-12
+
+* Fix compiling against newer libxml versions
+* Fix version check
+
 == 5.0.2 / 2024-01-08
 
 * Fix broken DTD creation (DTD name is not required)
