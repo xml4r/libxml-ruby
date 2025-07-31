@@ -22,6 +22,7 @@ Gem::Specification.new do |spec|
   spec.platform = Gem::Platform::RUBY
   spec.bindir = 'bin'
   spec.extensions = ['ext/libxml/extconf.rb']
+  spec.metadata = {'documentation_uri' => 'https://xml4r.github.io/libxml-ruby/'}
   spec.files = Dir.glob(['HISTORY',
                          'LICENSE',
                          'libxml-ruby.gemspec',
