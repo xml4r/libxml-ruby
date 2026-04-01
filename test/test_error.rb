@@ -71,8 +71,11 @@ class TestError < Minitest::Test
     else
       LibXML::XML::Error.reset_handler
     end
-
-    assert_equal(LibXML::XML::Error.get_handler, saved_handler)
+    if saved_handler.nil?
+      assert_nil(LibXML::XML::get_handler)
+    else
+      assert_equal(LibXML::XML::Error.get_handler, saved_handler)
+    end
   end
 
   def test_verbose_handler

@@ -43,15 +43,16 @@ typedef struct
 
 static void rxml_writer_free(rxml_writer_object* rwo)
 {
-#if 0 /* seems to be done by xmlFreeTextWriter */
-    if (NULL != rwo->buffer)
-    {
-        xmlBufferFree(rwo->buffer);
-    }
-#endif
+    xmlBufferPtr buffer = rwo->buffer;
 
     rwo->closed = 1;
     xmlFreeTextWriter(rwo->writer);
+
+    if (NULL != buffer)
+    {
+        xmlBufferFree(buffer);
+    }
+
     xfree(rwo);
 }
 
@@ -1121,4 +1122,3 @@ void rxml_init_writer(void)
     rb_undef_method(CLASS_OF(cXMLWriter), "new");
 #endif
 }
-
