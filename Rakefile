@@ -20,7 +20,7 @@ Rake::ExtensionTask.new do |ext|
   ext.gem_spec = spec
   ext.name = SO_NAME
   ext.ext_dir = "ext/libxml"
-  ext.lib_dir = "lib/#{RUBY_VERSION.sub(/\.\d$/, '')}"
+  ext.lib_dir = "lib/#{RUBY_VERSION.sub(/\.\d+$/, '')}"
   if RUBY_PLATFORM.match(/mswin|mingw/)
     ext.config_options <<
       if (dir = ENV['WINDOWS_XML2_INCLUDE'])
