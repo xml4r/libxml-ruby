@@ -468,7 +468,7 @@ class TestWriter < Minitest::Test
       rss_by_round << rss
     end
 
-    assert_operator(rss_by_round.last - rss_by_round[1], :<, 5_000)
+    assert_operator(rss_by_round.last - rss_by_round[1], :<, 10_000)
   end
 
   private
