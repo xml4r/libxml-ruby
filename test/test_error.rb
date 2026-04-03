@@ -72,7 +72,7 @@ class TestError < Minitest::Test
       LibXML::XML::Error.reset_handler
     end
     if saved_handler.nil?
-      assert_nil(LibXML::XML::get_handler)
+      assert_nil(LibXML::XML::Error.get_handler)
     else
       assert_equal(LibXML::XML::Error.get_handler, saved_handler)
     end
