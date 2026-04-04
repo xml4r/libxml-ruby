@@ -4,6 +4,8 @@
 #define __RXML_NODE__
 
 extern VALUE cXMLNode;
+extern const rb_data_type_t rxml_node_data_type;
+extern const rb_data_type_t rxml_node_unmanaged_data_type;
 
 void rxml_init_node(void);
 void rxml_node_mark(xmlNodePtr xnode);

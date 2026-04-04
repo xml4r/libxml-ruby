@@ -5,6 +5,11 @@
 
 VALUE cXMLNamespaces;
 
+static const rb_data_type_t rxml_namespaces_type = {
+  "libxml/namespaces",
+  {NULL, NULL, NULL},
+};
+
 /* Document-class: LibXML::XML::Namespaces
  *
  * The XML::Namespaces class is used to access information about
@@ -38,7 +43,7 @@ VALUE cXMLNamespaces;
 
 static VALUE rxml_namespaces_alloc(VALUE klass)
 {
-  return Data_Wrap_Struct(klass, NULL, NULL, NULL);
+  return TypedData_Wrap_Struct(klass, &rxml_namespaces_type, NULL);
 }
 
 /*
@@ -58,10 +63,9 @@ static VALUE rxml_namespaces_initialize(VALUE self, VALUE node)
 {
   xmlNodePtr xnode;
 
-  Check_Type(node, T_DATA);
-  Data_Get_Struct(node, xmlNode, xnode);
+  TypedData_Get_Struct(node, xmlNode, &rxml_node_data_type, xnode);
 
-  DATA_PTR(self) = xnode;
+  RTYPEDDATA_DATA(self) = xnode;
   return self;
 }
 
@@ -83,7 +87,7 @@ static VALUE rxml_namespaces_definitions(VALUE self)
   xmlNsPtr xns;
   VALUE arr;
 
-  Data_Get_Struct(self, xmlNode, xnode);
+  TypedData_Get_Struct(self, xmlNode, &rxml_namespaces_type, xnode);
 
   arr = rb_ary_new();
   xns = xnode->nsDef;
@@ -117,7 +121,7 @@ static VALUE rxml_namespaces_each(VALUE self)
   xmlNodePtr xnode;
   xmlNsPtr *nsList, *xns;
 
-  Data_Get_Struct(self, xmlNode, xnode);
+  TypedData_Get_Struct(self, xmlNode, &rxml_namespaces_type, xnode);
 
   nsList = xmlGetNsList(xnode->doc, xnode);
 
@@ -157,7 +161,7 @@ static VALUE rxml_namespaces_find_by_href(VALUE self, VALUE href)
   xmlNsPtr xns;
 
   Check_Type(href, T_STRING);
-  Data_Get_Struct(self, xmlNode, xnode);
+  TypedData_Get_Struct(self, xmlNode, &rxml_namespaces_type, xnode);
 
   xns = xmlSearchNsByHref(xnode->doc, xnode, (xmlChar*) StringValuePtr(href));
   if (xns)
@@ -196,7 +200,7 @@ static VALUE rxml_namespaces_find_by_prefix(VALUE self, VALUE prefix)
     xprefix = (xmlChar*) StringValuePtr(prefix);
   }
 
-  Data_Get_Struct(self, xmlNode, xnode);
+  TypedData_Get_Struct(self, xmlNode, &rxml_namespaces_type, xnode);
   
   xns = xmlSearchNs(xnode->doc, xnode, xprefix);
   if (xns)
@@ -221,7 +225,7 @@ static VALUE rxml_namespaces_find_by_prefix(VALUE self, VALUE prefix)
 static VALUE rxml_namespaces_namespace_get(VALUE self)
 {
   xmlNodePtr xnode;
-  Data_Get_Struct(self, xmlNode, xnode);
+  TypedData_Get_Struct(self, xmlNode, &rxml_namespaces_type, xnode);
 
   if (xnode->ns)
     return rxml_namespace_wrap(xnode->ns);
@@ -253,10 +257,9 @@ static VALUE rxml_namespaces_namespace_set(VALUE self, VALUE ns)
   xmlNodePtr xnode;
   xmlNsPtr xns;
 
-  Data_Get_Struct(self, xmlNode, xnode);
+  TypedData_Get_Struct(self, xmlNode, &rxml_namespaces_type, xnode);
 
-  Check_Type(ns, T_DATA);
-  Data_Get_Struct(ns, xmlNs, xns);
+  TypedData_Get_Struct(ns, xmlNs, &rxml_namespace_type, xns);
 
   xmlSetNs(xnode, xns);
   return self;
@@ -271,7 +274,7 @@ static VALUE rxml_namespaces_namespace_set(VALUE self, VALUE ns)
 static VALUE rxml_namespaces_node_get(VALUE self)
 {
   xmlNodePtr xnode;
-  Data_Get_Struct(self, xmlNode, xnode);
+  TypedData_Get_Struct(self, xmlNode, &rxml_namespaces_type, xnode);
   return rxml_node_wrap(xnode);
 }
 

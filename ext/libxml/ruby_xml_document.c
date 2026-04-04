@@ -60,11 +60,19 @@
 
 VALUE cXMLDocument;
 
-void rxml_document_free(xmlDocPtr xdoc)
+void rxml_document_free(void* data)
 {
+  xmlDocPtr xdoc = (xmlDocPtr)data;
+  if (!xdoc) return;
   xdoc->_private = NULL;
   xmlFreeDoc(xdoc);
 }
+
+const rb_data_type_t rxml_document_data_type = {
+  .wrap_struct_name = "LibXML::XML::Document",
+  .function = { .dmark = NULL, .dfree = rxml_document_free },
+  .flags = RUBY_TYPED_FREE_IMMEDIATELY,
+};
 
 VALUE rxml_document_wrap(xmlDocPtr xdoc)
 {
@@ -77,7 +85,7 @@ VALUE rxml_document_wrap(xmlDocPtr xdoc)
   }
   else
   {
-    result = Data_Wrap_Struct(cXMLDocument, NULL, rxml_document_free, xdoc);
+    result = TypedData_Wrap_Struct(cXMLDocument, &rxml_document_data_type, xdoc);
     xdoc->_private = (void*)result;
   }
 
@@ -93,7 +101,7 @@ VALUE rxml_document_wrap(xmlDocPtr xdoc)
  */
 static VALUE rxml_document_alloc(VALUE klass)
 {
-  return Data_Wrap_Struct(klass, NULL, rxml_document_free, NULL);
+  return TypedData_Wrap_Struct(klass, &rxml_document_data_type, NULL);
 }
 
 /*
@@ -124,7 +132,7 @@ static VALUE rxml_document_initialize(int argc, VALUE *argv, VALUE self)
   xdoc = xmlNewDoc((xmlChar*) StringValuePtr(xmlver));
 
   // Link the ruby object to the document and the document to the ruby object
-  RDATA(self)->data = xdoc;
+  RTYPEDDATA_DATA(self) = xdoc;
   xdoc->_private = (void*)self;
 
   return self;
@@ -295,7 +303,7 @@ rxml_document_canonicalize(int argc, VALUE *argv, VALUE self)
         if (RTEST(list_in[i])) 
 		{
           xmlNodePtr node_ptr;
-          Data_Get_Struct(list_in[i], xmlNode, node_ptr);
+          TypedData_Get_Struct(list_in[i], xmlNode, &rxml_node_data_type, node_ptr);
           node_ptr_array[p] = node_ptr;
           p++;
         }
@@ -309,7 +317,7 @@ rxml_document_canonicalize(int argc, VALUE *argv, VALUE self)
     }
   }//option_hash
 
-  Data_Get_Struct(self, xmlDoc, xdoc);
+  TypedData_Get_Struct(self, xmlDoc, &rxml_document_data_type, xdoc);
   xmlC14NDocDumpMemory(xdoc,
                        (nodeset.nodeNr == 0 ? NULL : &nodeset),
                        c14n_mode,
@@ -339,7 +347,7 @@ static VALUE rxml_document_compression_get(VALUE self)
   xmlDocPtr xdoc;
 
   int compmode;
-  Data_Get_Struct(self, xmlDoc, xdoc);
+  TypedData_Get_Struct(self, xmlDoc, &rxml_document_data_type, xdoc);
 
   compmode = xmlGetDocCompressMode(xdoc);
   if (compmode == -1)
@@ -365,7 +373,7 @@ static VALUE rxml_document_compression_set(VALUE self, VALUE num)
 
   int compmode;
   Check_Type(num, T_FIXNUM);
-  Data_Get_Struct(self, xmlDoc, xdoc);
+  TypedData_Get_Struct(self, xmlDoc, &rxml_document_data_type, xdoc);
 
   if (xdoc == NULL)
   {
@@ -398,7 +406,7 @@ static VALUE rxml_document_compression_q(VALUE self)
 #ifdef HAVE_ZLIB_H
   xmlDocPtr xdoc;
 
-  Data_Get_Struct(self, xmlDoc, xdoc);
+  TypedData_Get_Struct(self, xmlDoc, &rxml_document_data_type, xdoc);
 
   if (xdoc->compression != -1)
   return(Qtrue);
@@ -419,7 +427,7 @@ static VALUE rxml_document_compression_q(VALUE self)
 static VALUE rxml_document_child_get(VALUE self)
 {
   xmlDocPtr xdoc;
-  Data_Get_Struct(self, xmlDoc, xdoc);
+  TypedData_Get_Struct(self, xmlDoc, &rxml_document_data_type, xdoc);
 
   if (xdoc->children == NULL)
     return (Qnil);
@@ -436,7 +444,7 @@ static VALUE rxml_document_child_get(VALUE self)
 static VALUE rxml_document_child_q(VALUE self)
 {
   xmlDocPtr xdoc;
-  Data_Get_Struct(self, xmlDoc, xdoc);
+  TypedData_Get_Struct(self, xmlDoc, &rxml_document_data_type, xdoc);
 
   if (xdoc->children == NULL)
     return (Qfalse);
@@ -456,7 +464,7 @@ static VALUE rxml_document_debug(VALUE self)
 {
 #ifdef LIBXML_DEBUG_ENABLED
   xmlDocPtr xdoc;
-  Data_Get_Struct(self, xmlDoc, xdoc);
+  TypedData_Get_Struct(self, xmlDoc, &rxml_document_data_type, xdoc);
   xmlDebugDumpDocument(NULL, xdoc);
   return Qtrue;
 #else
@@ -475,7 +483,7 @@ static VALUE rxml_document_encoding_get(VALUE self)
 {
   xmlDocPtr xdoc;
   const char *xencoding;
-  Data_Get_Struct(self, xmlDoc, xdoc);
+  TypedData_Get_Struct(self, xmlDoc, &rxml_document_data_type, xdoc);
 
   xencoding = (const char*)xdoc->encoding;
   return INT2NUM(xmlParseCharEncoding(xencoding));
@@ -493,7 +501,7 @@ static VALUE rxml_document_rb_encoding_get(VALUE self)
 {
   xmlDocPtr xdoc;
   rb_encoding* rbencoding;
-  Data_Get_Struct(self, xmlDoc, xdoc);
+  TypedData_Get_Struct(self, xmlDoc, &rxml_document_data_type, xdoc);
 
   rbencoding = rxml_xml_encoding_to_rb_encoding(mXMLEncoding, xmlParseCharEncoding((const char*)xdoc->encoding));
   return rb_enc_from_encoding(rbencoding);
@@ -510,7 +518,7 @@ static VALUE rxml_document_encoding_set(VALUE self, VALUE encoding)
   xmlDocPtr xdoc;
   const char* xencoding = xmlGetCharEncodingName((xmlCharEncoding)NUM2INT(encoding));
 
-  Data_Get_Struct(self, xmlDoc, xdoc);
+  TypedData_Get_Struct(self, xmlDoc, &rxml_document_data_type, xdoc);
 
   if (xdoc->encoding != NULL)
     xmlFree((xmlChar *) xdoc->encoding);
@@ -536,8 +544,8 @@ static VALUE rxml_document_import(VALUE self, VALUE node)
   xmlDocPtr xdoc;
   xmlNodePtr xnode, xresult;
 
-  Data_Get_Struct(self, xmlDoc, xdoc);
-  Data_Get_Struct(node, xmlNode, xnode);
+  TypedData_Get_Struct(self, xmlDoc, &rxml_document_data_type, xdoc);
+  TypedData_Get_Struct(node, xmlNode, &rxml_node_data_type, xnode);
 
   xresult = xmlDocCopyNode(xnode, xdoc, 1);
 
@@ -557,7 +565,7 @@ static VALUE rxml_document_last_get(VALUE self)
 {
   xmlDocPtr xdoc;
 
-  Data_Get_Struct(self, xmlDoc, xdoc);
+  TypedData_Get_Struct(self, xmlDoc, &rxml_document_data_type, xdoc);
 
   if (xdoc->last == NULL)
     return (Qnil);
@@ -575,7 +583,7 @@ static VALUE rxml_document_last_q(VALUE self)
 {
   xmlDocPtr xdoc;
 
-  Data_Get_Struct(self, xmlDoc, xdoc);
+  TypedData_Get_Struct(self, xmlDoc, &rxml_document_data_type, xdoc);
 
   if (xdoc->last == NULL)
     return (Qfalse);
@@ -593,7 +601,7 @@ static VALUE rxml_document_next_get(VALUE self)
 {
   xmlDocPtr xdoc;
 
-  Data_Get_Struct(self, xmlDoc, xdoc);
+  TypedData_Get_Struct(self, xmlDoc, &rxml_document_data_type, xdoc);
 
   if (xdoc->next == NULL)
     return (Qnil);
@@ -611,7 +619,7 @@ static VALUE rxml_document_next_q(VALUE self)
 {
   xmlDocPtr xdoc;
 
-  Data_Get_Struct(self, xmlDoc, xdoc);
+  TypedData_Get_Struct(self, xmlDoc, &rxml_document_data_type, xdoc);
 
   if (xdoc->next == NULL)
     return (Qfalse);
@@ -628,7 +636,7 @@ static VALUE rxml_document_next_q(VALUE self)
 static VALUE rxml_document_node_type(VALUE self)
 {
   xmlNodePtr xnode;
-  Data_Get_Struct(self, xmlNode, xnode);
+  TypedData_Get_Struct(self, xmlNode, &rxml_document_data_type, xnode);
   return (INT2NUM(xnode->type));
 }
 
@@ -642,7 +650,7 @@ static VALUE rxml_document_parent_get(VALUE self)
 {
   xmlDocPtr xdoc;
 
-  Data_Get_Struct(self, xmlDoc, xdoc);
+  TypedData_Get_Struct(self, xmlDoc, &rxml_document_data_type, xdoc);
 
   if (xdoc->parent == NULL)
     return (Qnil);
@@ -660,7 +668,7 @@ static VALUE rxml_document_parent_q(VALUE self)
 {
   xmlDocPtr xdoc;
 
-  Data_Get_Struct(self, xmlDoc, xdoc);
+  TypedData_Get_Struct(self, xmlDoc, &rxml_document_data_type, xdoc);
 
   if (xdoc->parent == NULL)
     return (Qfalse);
@@ -678,7 +686,7 @@ static VALUE rxml_document_prev_get(VALUE self)
 {
   xmlDocPtr xdoc;
 
-  Data_Get_Struct(self, xmlDoc, xdoc);
+  TypedData_Get_Struct(self, xmlDoc, &rxml_document_data_type, xdoc);
 
   if (xdoc->prev == NULL)
     return (Qnil);
@@ -696,7 +704,7 @@ static VALUE rxml_document_prev_q(VALUE self)
 {
   xmlDocPtr xdoc;
 
-  Data_Get_Struct(self, xmlDoc, xdoc);
+  TypedData_Get_Struct(self, xmlDoc, &rxml_document_data_type, xdoc);
 
   if (xdoc->prev == NULL)
     return (Qfalse);
@@ -715,7 +723,7 @@ static VALUE rxml_document_root_get(VALUE self)
   xmlDocPtr xdoc;
   xmlNodePtr root;
 
-  Data_Get_Struct(self, xmlDoc, xdoc);
+  TypedData_Get_Struct(self, xmlDoc, &rxml_document_data_type, xdoc);
   root = xmlDocGetRootElement(xdoc);
 
   if (root == NULL)
@@ -738,8 +746,8 @@ static VALUE rxml_document_root_set(VALUE self, VALUE node)
   if (rb_obj_is_kind_of(node, cXMLNode) == Qfalse)
     rb_raise(rb_eTypeError, "must pass an XML::Node type object");
 
-  Data_Get_Struct(self, xmlDoc, xdoc);
-  Data_Get_Struct(node, xmlNode, xnode);
+  TypedData_Get_Struct(self, xmlDoc, &rxml_document_data_type, xdoc);
+  TypedData_Get_Struct(node, xmlNode, &rxml_node_data_type, xnode);
 
   if (xnode->doc != NULL && xnode->doc != xdoc)
     rb_raise(eXMLError, "Nodes belong to different documents.  You must first import the node by calling LibXML::XML::Document.import");
@@ -784,7 +792,7 @@ static VALUE rxml_document_save(int argc, VALUE *argv, VALUE self)
   Check_Type(filename, T_STRING);
   xfilename = StringValuePtr(filename);
 
-  Data_Get_Struct(self, xmlDoc, xdoc);
+  TypedData_Get_Struct(self, xmlDoc, &rxml_document_data_type, xdoc);
   xencoding = xdoc->encoding;
 
   if (!NIL_P(options))
@@ -823,7 +831,7 @@ static VALUE rxml_document_standalone_q(VALUE self)
 {
   xmlDocPtr xdoc;
 
-  Data_Get_Struct(self, xmlDoc, xdoc);
+  TypedData_Get_Struct(self, xmlDoc, &rxml_document_data_type, xdoc);
   if (xdoc->standalone)
     return (Qtrue);
   else
@@ -877,7 +885,7 @@ static VALUE rxml_document_to_s(int argc, VALUE *argv, VALUE self)
     }
   }
 
-  Data_Get_Struct(self, xmlDoc, xdoc);
+  TypedData_Get_Struct(self, xmlDoc, &rxml_document_data_type, xdoc);
   xmlDocDumpFormatMemoryEnc(xdoc, &buffer, &length, (const char*)xencoding, indent);
 
   result = rxml_new_cstr(buffer, xencoding);
@@ -895,7 +903,7 @@ static VALUE rxml_document_url_get(VALUE self)
 {
   xmlDocPtr xdoc;
 
-  Data_Get_Struct(self, xmlDoc, xdoc);
+  TypedData_Get_Struct(self, xmlDoc, &rxml_document_data_type, xdoc);
   if (xdoc->URL == NULL)
     return (Qnil);
   else
@@ -912,7 +920,7 @@ static VALUE rxml_document_version_get(VALUE self)
 {
   xmlDocPtr xdoc;
 
-  Data_Get_Struct(self, xmlDoc, xdoc);
+  TypedData_Get_Struct(self, xmlDoc, &rxml_document_data_type, xdoc);
   if (xdoc->version == NULL)
     return (Qnil);
   else
@@ -929,7 +937,7 @@ static VALUE rxml_document_xhtml_q(VALUE self)
 {
   xmlDocPtr xdoc;
 	xmlDtdPtr xdtd;
-  Data_Get_Struct(self, xmlDoc, xdoc);
+  TypedData_Get_Struct(self, xmlDoc, &rxml_document_data_type, xdoc);
 	xdtd = xmlGetIntSubset(xdoc);
   if (xdtd != NULL && xmlIsXHTML(xdtd->SystemID, xdtd->ExternalID) > 0)
     return (Qtrue);
@@ -950,7 +958,7 @@ static VALUE rxml_document_xinclude(VALUE self)
 
   int ret;
 
-  Data_Get_Struct(self, xmlDoc, xdoc);
+  TypedData_Get_Struct(self, xmlDoc, &rxml_document_data_type, xdoc);
   ret = xmlXIncludeProcess(xdoc);
   if (ret >= 0)
   {
@@ -979,7 +987,7 @@ static VALUE rxml_document_order_elements(VALUE self)
 {
   xmlDocPtr xdoc;
 
-  Data_Get_Struct(self, xmlDoc, xdoc);
+  TypedData_Get_Struct(self, xmlDoc, &rxml_document_data_type, xdoc);
   return LONG2FIX(xmlXPathOrderDocElems(xdoc));
 }
 
@@ -998,8 +1006,8 @@ static VALUE rxml_document_validate_schema(VALUE self, VALUE schema)
   xmlSchemaPtr xschema;
   int is_invalid;
 
-  Data_Get_Struct(self, xmlDoc, xdoc);
-  Data_Get_Struct(schema, xmlSchema, xschema);
+  TypedData_Get_Struct(self, xmlDoc, &rxml_document_data_type, xdoc);
+  TypedData_Get_Struct(schema, xmlSchema, &rxml_schema_type, xschema);
 
   vptr = xmlSchemaNewValidCtxt(xschema);
 
@@ -1031,8 +1039,8 @@ static VALUE rxml_document_validate_relaxng(VALUE self, VALUE relaxng)
   xmlRelaxNGPtr xrelaxng;
   int is_invalid;
 
-  Data_Get_Struct(self, xmlDoc, xdoc);
-  Data_Get_Struct(relaxng, xmlRelaxNG, xrelaxng);
+  TypedData_Get_Struct(self, xmlDoc, &rxml_document_data_type, xdoc);
+  TypedData_Get_Struct(relaxng, xmlRelaxNG, &rxml_relaxng_data_type, xrelaxng);
 
   vptr = xmlRelaxNGNewValidCtxt(xrelaxng);
 
@@ -1063,8 +1071,8 @@ static VALUE rxml_document_validate_dtd(VALUE self, VALUE dtd)
   xmlDocPtr xdoc;
   xmlDtdPtr xdtd;
 
-  Data_Get_Struct(self, xmlDoc, xdoc);
-  Data_Get_Struct(dtd, xmlDtd, xdtd);
+  TypedData_Get_Struct(self, xmlDoc, &rxml_document_data_type, xdoc);
+  TypedData_Get_Struct(dtd, xmlDtd, &rxml_dtd_data_type, xdtd);
 
   /* Setup context */
   memset(&ctxt, 0, sizeof(xmlValidCtxt));

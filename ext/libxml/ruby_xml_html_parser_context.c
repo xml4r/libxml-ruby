@@ -129,14 +129,21 @@ static htmlParserCtxtPtr htmlNewParserCtxt(void)
 }
 #endif
 
-static void rxml_html_parser_context_free(htmlParserCtxtPtr ctxt)
+static void rxml_html_parser_context_free(void* data)
 {
+  htmlParserCtxtPtr ctxt = (htmlParserCtxtPtr)data;
   htmlFreeParserCtxt(ctxt);
 }
 
+const rb_data_type_t rxml_html_parser_context_type = {
+  "LibXML::XML::HTMLParser::Context",
+  {NULL, rxml_html_parser_context_free, NULL},
+  &rxml_parser_context_type, NULL, 0
+};
+
 static VALUE rxml_html_parser_context_wrap(htmlParserCtxtPtr ctxt)
 {
-  return Data_Wrap_Struct(cXMLHtmlParserContext, NULL, rxml_html_parser_context_free, ctxt);
+  return TypedData_Wrap_Struct(cXMLHtmlParserContext, &rxml_html_parser_context_type, ctxt);
 }
 
 /* call-seq:
@@ -275,7 +282,7 @@ static VALUE rxml_html_parser_context_close(VALUE self)
 {
   htmlParserCtxtPtr ctxt;
   xmlParserInputPtr xinput;
-  Data_Get_Struct(self, htmlParserCtxt, ctxt);
+  TypedData_Get_Struct(self, htmlParserCtxt, &rxml_html_parser_context_type, ctxt);
 
   while ((xinput = inputPop(ctxt)) != NULL)
   {
@@ -293,7 +300,7 @@ static VALUE rxml_html_parser_context_close(VALUE self)
 static VALUE rxml_html_parser_context_disable_cdata_set(VALUE self, VALUE value)
 {
   htmlParserCtxtPtr ctxt;
-  Data_Get_Struct(self, htmlParserCtxt, ctxt);
+  TypedData_Get_Struct(self, htmlParserCtxt, &rxml_html_parser_context_type, ctxt);
 
   if (ctxt->sax == NULL)
     rb_raise(rb_eRuntimeError, "Sax handler is not yet set");
@@ -322,7 +329,7 @@ static VALUE rxml_html_parser_context_options_set(VALUE self, VALUE options)
   htmlParserCtxtPtr ctxt;
   Check_Type(options, T_FIXNUM);
 
-  Data_Get_Struct(self, htmlParserCtxt, ctxt);
+  TypedData_Get_Struct(self, htmlParserCtxt, &rxml_html_parser_context_type, ctxt);
   htmlCtxtUseOptions(ctxt, xml_options);
 
 #if LIBXML_VERSION >= 20707
@@ -337,10 +344,17 @@ static VALUE rxml_html_parser_context_options_set(VALUE self, VALUE options)
   return self;
 }
 
+static VALUE rxml_html_parser_context_alloc(VALUE klass)
+{
+  xmlParserCtxtPtr ctxt = htmlNewParserCtxt();
+  return TypedData_Wrap_Struct(klass, &rxml_html_parser_context_type, ctxt);
+}
+
 void rxml_init_html_parser_context(void)
 {
   IO_ATTR = ID2SYM(rb_intern("@io"));
   cXMLHtmlParserContext = rb_define_class_under(cXMLHtmlParser, "Context", cXMLParserContext);
+  rb_define_alloc_func(cXMLHtmlParserContext, rxml_html_parser_context_alloc);
 
   rb_define_singleton_method(cXMLHtmlParserContext, "file", rxml_html_parser_context_file, -1);
   rb_define_singleton_method(cXMLHtmlParserContext, "io", rxml_html_parser_context_io, -1);

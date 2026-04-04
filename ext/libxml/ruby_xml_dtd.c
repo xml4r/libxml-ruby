@@ -28,16 +28,23 @@
  *  instance.validate(dtd)
  */
 
+#ifndef TYPED_DATA_EMBEDDED
+#define TYPED_DATA_EMBEDDED ((VALUE)1)
+#endif
+
 VALUE cXMLDtd;
 
-void rxml_dtd_free(xmlDtdPtr xdtd)
+static void rxml_dtd_free(void* data)
 {
+  xmlDtdPtr xdtd = (xmlDtdPtr)data;
+  if (!xdtd) return;
   if (xdtd->doc == NULL && xdtd->parent == NULL)
     xmlFreeDtd(xdtd);
 }
 
-void rxml_dtd_mark(xmlDtdPtr xdtd)
+static void rxml_dtd_mark(void* data)
 {
+  xmlDtdPtr xdtd = (xmlDtdPtr)data;
   if (xdtd && xdtd->doc)
   {
       VALUE doc = (VALUE)xdtd->doc->_private;
@@ -45,14 +52,27 @@ void rxml_dtd_mark(xmlDtdPtr xdtd)
   }
 }
 
+const rb_data_type_t rxml_dtd_data_type = {
+  .wrap_struct_name = "LibXML::XML::Dtd",
+  .function = { .dmark = rxml_dtd_mark, .dfree = NULL },
+  .flags = RUBY_TYPED_FREE_IMMEDIATELY,
+};
+
+static const rb_data_type_t rxml_dtd_managed_data_type = {
+  .wrap_struct_name = "LibXML::XML::Dtd (managed)",
+  .function = { .dmark = rxml_dtd_mark, .dfree = rxml_dtd_free },
+  .parent = &rxml_dtd_data_type,
+  .flags = RUBY_TYPED_FREE_IMMEDIATELY,
+};
+
 static VALUE rxml_dtd_alloc(VALUE klass)
 {
-  return Data_Wrap_Struct(klass, rxml_dtd_mark, rxml_dtd_free, NULL);
+  return TypedData_Wrap_Struct(klass, &rxml_dtd_managed_data_type, NULL);
 }
 
 VALUE rxml_dtd_wrap(xmlDtdPtr xdtd)
 {
-  return  Data_Wrap_Struct(cXMLDtd, NULL, NULL, xdtd);
+  return TypedData_Wrap_Struct(cXMLDtd, &rxml_dtd_data_type, xdtd);
 }
 
 /*
@@ -64,7 +84,7 @@ VALUE rxml_dtd_wrap(xmlDtdPtr xdtd)
 static VALUE rxml_dtd_external_id_get(VALUE self)
 {
   xmlDtdPtr xdtd;
-  Data_Get_Struct(self, xmlDtd, xdtd);
+  TypedData_Get_Struct(self, xmlDtd, &rxml_dtd_data_type, xdtd);
 
 
   if (xdtd->ExternalID == NULL)
@@ -82,7 +102,7 @@ static VALUE rxml_dtd_external_id_get(VALUE self)
 static VALUE rxml_dtd_name_get(VALUE self)
 {
   xmlDtdPtr xdtd;
-  Data_Get_Struct(self, xmlDtd, xdtd);
+  TypedData_Get_Struct(self, xmlDtd, &rxml_dtd_data_type, xdtd);
 
 
   if (xdtd->name == NULL)
@@ -101,7 +121,7 @@ static VALUE rxml_dtd_name_get(VALUE self)
 static VALUE rxml_dtd_uri_get(VALUE self)
 {
   xmlDtdPtr xdtd;
-  Data_Get_Struct(self, xmlDtd, xdtd);
+  TypedData_Get_Struct(self, xmlDtd, &rxml_dtd_data_type, xdtd);
 
   if (xdtd->SystemID == NULL)
     return (Qnil);
@@ -118,7 +138,7 @@ static VALUE rxml_dtd_uri_get(VALUE self)
 static VALUE rxml_dtd_type(VALUE self)
 {
   xmlDtdPtr xdtd;
-  Data_Get_Struct(self, xmlDtd, xdtd);
+  TypedData_Get_Struct(self, xmlDtd, &rxml_dtd_data_type, xdtd);
   return (INT2NUM(xdtd->type));
 }
 
@@ -178,7 +198,7 @@ static VALUE rxml_dtd_initialize(int argc, VALUE *argv, VALUE self)
           {
             if (rb_obj_is_kind_of(doc, cXMLDocument) == Qfalse)
               rb_raise(rb_eTypeError, "Must pass an LibXML::XML::Document object");
-            Data_Get_Struct(doc, xmlDoc, xdoc);
+            TypedData_Get_Struct(doc, xmlDoc, &rxml_document_data_type, xdoc);
           }
 
           if (internal == Qnil || internal == Qfalse)
@@ -190,8 +210,11 @@ static VALUE rxml_dtd_initialize(int argc, VALUE *argv, VALUE self)
             rxml_raise(xmlGetLastError());
 
           /* The document will free the dtd so Ruby should not */
-          RDATA(self)->dfree = NULL;
-          DATA_PTR(self) = xdtd;
+          {
+            VALUE *type_ptr = (VALUE *)&RTYPEDDATA(self)->type;
+            *type_ptr = (*type_ptr & TYPED_DATA_EMBEDDED) | (VALUE)&rxml_dtd_data_type;
+          }
+          RTYPEDDATA_DATA(self) = xdtd;
 
           xmlSetTreeDoc((xmlNodePtr) xdtd, xdoc);
         }
@@ -209,7 +232,7 @@ static VALUE rxml_dtd_initialize(int argc, VALUE *argv, VALUE self)
         if (xdtd == NULL)
           rxml_raise(xmlGetLastError());
 
-        DATA_PTR(self) = xdtd;
+        RTYPEDDATA_DATA(self) = xdtd;
 
         xmlSetTreeDoc((xmlNodePtr) xdtd, NULL);
         break;
@@ -234,7 +257,7 @@ static VALUE rxml_dtd_initialize(int argc, VALUE *argv, VALUE self)
 
         xmlFree(new_string);
 
-        DATA_PTR(self) = xdtd;
+        RTYPEDDATA_DATA(self) = xdtd;
         break;
       }
       default:

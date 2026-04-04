@@ -18,6 +18,7 @@ struct _xmlSchemaItemList {
     (slot == NULL) ? Qnil : rb_str_new2((const char *)slot)
 
 extern VALUE cXMLSchema;
+extern const rb_data_type_t rxml_schema_type;
 
 void rxml_init_schema(void);
 

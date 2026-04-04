@@ -28,20 +28,29 @@
 
 VALUE cXMLXPathContext;
 
-static void rxml_xpath_context_free(xmlXPathContextPtr ctxt)
+static void rxml_xpath_context_free(void *data)
 {
+  xmlXPathContextPtr ctxt = (xmlXPathContextPtr)data;
   xmlXPathFreeContext(ctxt);
 }
 
-static void rxml_xpath_context_mark(xmlXPathContextPtr ctxt)
+static void rxml_xpath_context_mark(void *data)
 {
+  xmlXPathContextPtr ctxt = (xmlXPathContextPtr)data;
+  if (ctxt == NULL) return;
   VALUE value = (VALUE)ctxt->doc->_private;
   rb_gc_mark(value);
 }
 
+static const rb_data_type_t rxml_xpath_context_data_type = {
+  .wrap_struct_name = "LibXML::XML::XPath::Context",
+  .function = { .dmark = rxml_xpath_context_mark, .dfree = rxml_xpath_context_free },
+  .flags = RUBY_TYPED_FREE_IMMEDIATELY,
+};
+
 static VALUE rxml_xpath_context_alloc(VALUE klass)
 {
-  return Data_Wrap_Struct(cXMLXPathContext, rxml_xpath_context_mark, rxml_xpath_context_free, NULL);
+  return TypedData_Wrap_Struct(cXMLXPathContext, &rxml_xpath_context_data_type, NULL);
 }
 
 /* call-seq:
@@ -64,8 +73,8 @@ static VALUE rxml_xpath_context_initialize(VALUE self, VALUE document)
     rb_raise(rb_eTypeError, "Supplied argument must be a document or node.");
   }
 
-  Data_Get_Struct(document, xmlDoc, xdoc);
-  DATA_PTR(self) = xmlXPathNewContext(xdoc);
+  TypedData_Get_Struct(document, xmlDoc, &rxml_document_data_type, xdoc);
+  RTYPEDDATA_DATA(self) = xmlXPathNewContext(xdoc);
 
   return self;
 }
@@ -80,8 +89,8 @@ static VALUE rxml_xpath_context_doc(VALUE self)
 {
   xmlDocPtr xdoc = NULL;
   xmlXPathContextPtr ctxt;
-  Data_Get_Struct(self, xmlXPathContext, ctxt);
-  
+  TypedData_Get_Struct(self, xmlXPathContext, &rxml_xpath_context_data_type, ctxt);
+
   xdoc = ctxt->doc;
   return rxml_document_wrap(xdoc);
 }
@@ -98,7 +107,7 @@ static VALUE rxml_xpath_context_doc(VALUE self)
 static VALUE rxml_xpath_context_register_namespace(VALUE self, VALUE prefix, VALUE uri)
 {
   xmlXPathContextPtr ctxt;
-  Data_Get_Struct(self, xmlXPathContext, ctxt);
+  TypedData_Get_Struct(self, xmlXPathContext, &rxml_xpath_context_data_type, ctxt);
 
   /* Prefix could be a symbol. */
   prefix = rb_obj_as_string(prefix);
@@ -132,17 +141,17 @@ static VALUE rxml_xpath_context_register_namespaces_from_node(VALUE self,
   xmlNodePtr xnode;
   xmlNsPtr *xnsArr;
 
-  Data_Get_Struct(self, xmlXPathContext, xctxt);
+  TypedData_Get_Struct(self, xmlXPathContext, &rxml_xpath_context_data_type, xctxt);
 
   if (rb_obj_is_kind_of(node, cXMLDocument) == Qtrue)
   {
     xmlDocPtr xdoc;
-    Data_Get_Struct(node, xmlDoc, xdoc);
+    TypedData_Get_Struct(node, xmlDoc, &rxml_document_data_type, xdoc);
     xnode = xmlDocGetRootElement(xdoc);
   }
   else if (rb_obj_is_kind_of(node, cXMLNode) == Qtrue)
   {
-    Data_Get_Struct(node, xmlNode, xnode);
+    TypedData_Get_Struct(node, xmlNode, &rxml_node_data_type, xnode);
   }
   else
   {
@@ -200,7 +209,7 @@ static VALUE rxml_xpath_context_register_namespaces(VALUE self, VALUE nslist)
   VALUE rprefix, ruri;
   xmlXPathContextPtr xctxt;
 
-  Data_Get_Struct(self, xmlXPathContext, xctxt);
+  TypedData_Get_Struct(self, xmlXPathContext, &rxml_xpath_context_data_type, xctxt);
 
   /* Need to loop through the 2nd argument and iterate through the
    * list of namespaces that we want to allow */
@@ -252,8 +261,8 @@ static VALUE rxml_xpath_context_node_set(VALUE self, VALUE node)
   xmlXPathContextPtr xctxt;
   xmlNodePtr xnode;
 
-  Data_Get_Struct(self, xmlXPathContext, xctxt);
-  Data_Get_Struct(node, xmlNode, xnode);
+  TypedData_Get_Struct(self, xmlXPathContext, &rxml_xpath_context_data_type, xctxt);
+  TypedData_Get_Struct(node, xmlNode, &rxml_node_data_type, xnode);
   xctxt->node = xnode;
   return node;
 }
@@ -272,7 +281,7 @@ static VALUE rxml_xpath_context_find(VALUE self, VALUE xpath_expr)
   xmlXPathObjectPtr xobject;
   xmlXPathCompExprPtr xcompexpr;
 
-  Data_Get_Struct(self, xmlXPathContext, xctxt);
+  TypedData_Get_Struct(self, xmlXPathContext, &rxml_xpath_context_data_type, xctxt);
 
   if (TYPE(xpath_expr) == T_STRING)
   {
@@ -281,7 +290,7 @@ static VALUE rxml_xpath_context_find(VALUE self, VALUE xpath_expr)
   }
   else if (rb_obj_is_kind_of(xpath_expr, cXMLXPathExpression))
   {
-    Data_Get_Struct(xpath_expr, xmlXPathCompExpr, xcompexpr);
+    TypedData_Get_Struct(xpath_expr, xmlXPathCompExpr, &rxml_xpath_expression_data_type, xcompexpr);
     xobject = xmlXPathCompiledEval(xcompexpr, xctxt);
   }
   else
@@ -312,7 +321,7 @@ rxml_xpath_context_enable_cache(int argc,  VALUE *argv, VALUE self)
   VALUE size;
   int value = -1;
 
-  Data_Get_Struct(self, xmlXPathContext, xctxt);
+  TypedData_Get_Struct(self, xmlXPathContext, &rxml_xpath_context_data_type, xctxt);
 
   if (rb_scan_args(argc, argv, "01", &size) == 1)
   {
@@ -335,7 +344,7 @@ static VALUE
 rxml_xpath_context_disable_cache(VALUE self)
 {
   xmlXPathContextPtr xctxt;
-  Data_Get_Struct(self, xmlXPathContext, xctxt);
+  TypedData_Get_Struct(self, xmlXPathContext, &rxml_xpath_context_data_type, xctxt);
 
   if (xmlXPathContextSetCache(xctxt, 0, 0, 0) == -1)
     rxml_raise(xmlGetLastError());

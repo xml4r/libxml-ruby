@@ -32,17 +32,26 @@
 
 VALUE cXMLAttributes;
 
-void rxml_attributes_mark(xmlNodePtr xnode)
+void rxml_attributes_mark(void *data)
 {
-  rxml_node_mark(xnode);
+  rxml_node_mark((xmlNodePtr)data);
 }
+
+static const rb_data_type_t rxml_attributes_data_type = {
+  .wrap_struct_name = "LibXML::XML::Attributes",
+  .function = {
+    .dmark = rxml_attributes_mark,
+    .dfree = NULL,
+  },
+  .flags = RUBY_TYPED_FREE_IMMEDIATELY,
+};
 
 /*
  * Creates a  new attributes instance.  Not exposed to ruby.
  */
 VALUE rxml_attributes_new(xmlNodePtr xnode)
 {
-  return Data_Wrap_Struct(cXMLAttributes, rxml_attributes_mark, NULL, xnode);
+  return TypedData_Wrap_Struct(cXMLAttributes, &rxml_attributes_data_type, xnode);
 }
 
 /*
@@ -56,7 +65,7 @@ VALUE rxml_attributes_new(xmlNodePtr xnode)
 VALUE rxml_attributes_node_get(VALUE self)
 {
   xmlNodePtr xnode;
-  Data_Get_Struct(self, xmlNode, xnode);
+  TypedData_Get_Struct(self, xmlNode, &rxml_attributes_data_type, xnode);
   return rxml_node_wrap(xnode);
 }
 
@@ -80,7 +89,7 @@ static VALUE rxml_attributes_get_attribute(VALUE self, VALUE name)
 
   name = rb_obj_as_string(name);
 
-  Data_Get_Struct(self, xmlNode, xnode);
+  TypedData_Get_Struct(self, xmlNode, &rxml_attributes_data_type, xnode);
 
   xattr = xmlHasProp(xnode, (xmlChar*) StringValuePtr(name));
 
@@ -114,7 +123,7 @@ static VALUE rxml_attributes_get_attribute_ns(VALUE self, VALUE namespace,
 
   name = rb_obj_as_string(name);
 
-  Data_Get_Struct(self, xmlNode, xnode);
+  TypedData_Get_Struct(self, xmlNode, &rxml_attributes_data_type, xnode);
 
   xattr = xmlHasNsProp(xnode, (xmlChar*) StringValuePtr(name),
                       (xmlChar*) StringValuePtr(namespace));
@@ -191,7 +200,7 @@ static VALUE rxml_attributes_each(VALUE self)
 {
   xmlNodePtr xnode;
   xmlAttrPtr xattr;
-  Data_Get_Struct(self, xmlNode, xnode);
+  TypedData_Get_Struct(self, xmlNode, &rxml_attributes_data_type, xnode);
 
   xattr = xnode->properties;
 
@@ -222,7 +231,7 @@ static VALUE rxml_attributes_length(VALUE self)
   int length = 0;
   xmlNodePtr xnode;
   xmlAttrPtr xattr;
-  Data_Get_Struct(self, xmlNode, xnode);
+  TypedData_Get_Struct(self, xmlNode, &rxml_attributes_data_type, xnode);
 
   xattr = xnode->properties;
 
@@ -246,7 +255,7 @@ static VALUE rxml_attributes_length(VALUE self)
 static VALUE rxml_attributes_first(VALUE self)
 {
   xmlNodePtr xnode;
-  Data_Get_Struct(self, xmlNode, xnode);
+  TypedData_Get_Struct(self, xmlNode, &rxml_attributes_data_type, xnode);
 
   if (xnode->type == XML_ELEMENT_NODE)
   {
