@@ -90,6 +90,8 @@ static VALUE rxml_xpath_context_initialize(VALUE self, VALUE document)
   if (wrapper == NULL)
   {
     wrapper = ALLOC(rxml_xpath_context);
+    wrapper->xctxt = NULL;
+    wrapper->document = document;
     RTYPEDDATA_DATA(self) = wrapper;
   }
   else if (wrapper->xctxt)
@@ -97,7 +99,6 @@ static VALUE rxml_xpath_context_initialize(VALUE self, VALUE document)
     xmlXPathFreeContext(wrapper->xctxt);
   }
 
-  wrapper->document = document;
   wrapper->xctxt = xmlXPathNewContext(xdoc);
 
   return self;

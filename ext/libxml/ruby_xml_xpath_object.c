@@ -73,6 +73,7 @@ static const rb_data_type_t rxml_xpath_object_data_type = {
 VALUE rxml_xpath_object_wrap(VALUE document, xmlDocPtr xdoc, xmlXPathObjectPtr xpop)
 {
   int i;
+  VALUE result;
   rxml_xpath_object *rxpopp = ALLOC(rxml_xpath_object);
 
   /* Make sure Ruby's GC can find the array in the stack */
@@ -106,7 +107,9 @@ VALUE rxml_xpath_object_wrap(VALUE document, xmlDocPtr xdoc, xmlXPathObjectPtr x
   }
 
   rxpopp->nsnodes = nsnodes;
-  return TypedData_Wrap_Struct(cXMLXPathObject, &rxml_xpath_object_data_type, rxpopp);
+  result = TypedData_Wrap_Struct(cXMLXPathObject, &rxml_xpath_object_data_type, rxpopp);
+  RB_GC_GUARD(nsnodes);
+  return result;
 }
 
 static VALUE rxml_xpath_object_tabref(xmlXPathObjectPtr xpop, int index)
