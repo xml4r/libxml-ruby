@@ -5,6 +5,7 @@ extern VALUE cXMLXPathObject;
 
 typedef struct rxml_xpath_object
 {
+  VALUE document;
   xmlDocPtr xdoc;
   xmlXPathObjectPtr xpop;
   VALUE nsnodes;
@@ -12,6 +13,6 @@ typedef struct rxml_xpath_object
 
 
 void rxml_init_xpath_object(void);
-VALUE rxml_xpath_object_wrap(xmlDocPtr xdoc, xmlXPathObjectPtr xpop);
+VALUE rxml_xpath_object_wrap(VALUE document, xmlDocPtr xdoc, xmlXPathObjectPtr xpop);
 
 #endif

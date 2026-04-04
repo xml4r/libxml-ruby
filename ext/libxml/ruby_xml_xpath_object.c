@@ -60,8 +60,7 @@ static const rb_data_type_t rxml_namespace_owned_data_type = {
 static void rxml_xpath_object_mark(void *data)
 {
   rxml_xpath_object *rxpop = (rxml_xpath_object *)data;
-  VALUE doc = (VALUE)rxpop->xdoc->_private;
-  rb_gc_mark(doc);
+  rb_gc_mark(rxpop->document);
   rb_gc_mark(rxpop->nsnodes);
 }
 
@@ -71,14 +70,15 @@ static const rb_data_type_t rxml_xpath_object_data_type = {
   .flags = RUBY_TYPED_FREE_IMMEDIATELY,
 };
 
-VALUE rxml_xpath_object_wrap(xmlDocPtr xdoc, xmlXPathObjectPtr xpop)
+VALUE rxml_xpath_object_wrap(VALUE document, xmlDocPtr xdoc, xmlXPathObjectPtr xpop)
 {
   int i;
   rxml_xpath_object *rxpopp = ALLOC(rxml_xpath_object);
 
   /* Make sure Ruby's GC can find the array in the stack */
   VALUE nsnodes = rb_ary_new();
-  rxpopp->xdoc =xdoc;
+  rxpopp->document = document;
+  rxpopp->xdoc = xdoc;
   rxpopp->xpop = xpop;
 
   /* Find all the extra namespace nodes and wrap them. */

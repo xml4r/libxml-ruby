@@ -79,7 +79,7 @@
 
 VALUE mXPath;
 
-VALUE rxml_xpath_to_value(xmlXPathContextPtr xctxt, xmlXPathObjectPtr xobject)
+VALUE rxml_xpath_to_value(VALUE document, xmlXPathContextPtr xctxt, xmlXPathObjectPtr xobject)
 {
   VALUE result;
   int type;
@@ -96,7 +96,7 @@ VALUE rxml_xpath_to_value(xmlXPathContextPtr xctxt, xmlXPathObjectPtr xobject)
   switch (type = xobject->type)
   {
     case XPATH_NODESET:
-      result = rxml_xpath_object_wrap(xctxt->doc, xobject);
+      result = rxml_xpath_object_wrap(document, xctxt->doc, xobject);
       break;
     case XPATH_BOOLEAN:
       result = (xobject->boolval != 0) ? Qtrue : Qfalse;
