@@ -1,5 +1,12 @@
 = Release History
 
+== 5.0.6 / 2026-04-03
+* Test fix - Make the memory leak test threshold more generous to avoid false positives
+* Test fix - Call get_handler on Error class instead of module
+* Fix XML::Writer.string buffer leak
+* Update assertion to comply with minitest deprecations
+* Allow libdir to match Rubies with double digit patch numbers
+
 == 5.0.5 / 2025-07-30
 * Try to fix broken documentation link in Ruby Gems website
 * Update history file
