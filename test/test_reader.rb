@@ -357,6 +357,10 @@ class TestReader < Minitest::Test
     reader = LibXML::XML::Reader.string(xml, :encoding => LibXML::XML::Encoding::ISO_8859_1)
     reader.read
 
-    assert_equal(LibXML::XML::Encoding::ISO_8859_1, reader.encoding)
+    if Gem::Version.new(LibXML::XML::LIBXML_VERSION) >= Gem::Version.new("2.12")
+      assert_equal(LibXML::XML::Encoding::ISO_8859_1, reader.encoding)
+    else
+      assert_equal(LibXML::XML::Encoding::NONE, reader.encoding)
+    end
   end
 end

@@ -281,17 +281,23 @@ class TestParser < Minitest::Test
 
     refute_nil(error)
     assert_kind_of(LibXML::XML::Error, error)
-    assert_equal("Fatal error: Couldn't find end of Start Tag ruby_array line 1 at :1.", error.message)
-    assert_equal(LibXML::XML::Error::GT_REQUIRED, error.code)
-    assert_equal("ruby_array", error.str1)
-    assert_equal(1, error.int1)
+    if Gem::Version.new(LibXML::XML::LIBXML_VERSION) >= Gem::Version.new("2.12")
+      assert_equal("Fatal error: Couldn't find end of Start Tag ruby_array line 1 at :1.", error.message)
+      assert_equal(LibXML::XML::Error::GT_REQUIRED, error.code)
+      assert_equal("ruby_array", error.str1)
+      assert_equal(1, error.int1)
+    else
+      assert_equal("Fatal error: Extra content at the end of the document at :1.", error.message)
+      assert_equal(LibXML::XML::Error::DOCUMENT_END, error.code)
+      assert_nil(error.str1)
+      assert_equal(0, error.int1)
+    end
     assert_equal(LibXML::XML::Error::PARSER, error.domain)
     assert_equal(LibXML::XML::Error::FATAL, error.level)
     assert_nil(error.file)
     assert_equal(1, error.line)
     assert_nil(error.str2)
     assert_nil(error.str3)
-    assert_equal(34, error.int2)
     assert_nil(error.node)
   end
 
