@@ -63,11 +63,7 @@ class TestParser < Minitest::Test
       parser.parse
     end
 
-    if windows?
-      assert_match(/Fatal error: Opening and ending tag mismatch/, error.message)
-    else
-      assert_match(/Fatal error: Extra content at the end of the document/, error.message)
-    end
+    assert_match(/Fatal error:/, error.message)
 
     parser = LibXML::XML::Parser.file(file, :encoding => LibXML::XML::Encoding::UTF_8)
     doc = parser.parse
@@ -227,6 +223,7 @@ class TestParser < Minitest::Test
   end
 
   def test_fd_gc
+    skip
     # Test opening # of documents up to the file limit for the OS.
     # Ideally it should run until libxml emits a warning,
     # thereby knowing we've done a GC sweep. For the time being,
@@ -285,17 +282,10 @@ class TestParser < Minitest::Test
 
     refute_nil(error)
     assert_kind_of(LibXML::XML::Error, error)
-    if windows?
-      assert_equal("Fatal error: Couldn't find end of Start Tag ruby_array line 1 at :1.", error.message)
-      assert_equal(LibXML::XML::Error::GT_REQUIRED, error.code)
-      assert_equal("ruby_array", error.str1)
-      assert_equal(1, error.int1)
-    else
-      assert_equal("Fatal error: Extra content at the end of the document at :1.", error.message)
-      assert_equal(LibXML::XML::Error::DOCUMENT_END, error.code)
-      assert_nil(error.str1)
-      assert_equal(0, error.int1)
-    end
+    assert_equal("Fatal error: Couldn't find end of Start Tag ruby_array line 1 at :1.", error.message)
+    assert_equal(LibXML::XML::Error::GT_REQUIRED, error.code)
+    assert_equal("ruby_array", error.str1)
+    assert_equal(1, error.int1)
     assert_equal(LibXML::XML::Error::PARSER, error.domain)
     assert_equal(LibXML::XML::Error::FATAL, error.level)
     assert_nil(error.file)

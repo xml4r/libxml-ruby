@@ -358,7 +358,6 @@ class TestReader < Minitest::Test
     reader = LibXML::XML::Reader.string(xml, :encoding => LibXML::XML::Encoding::ISO_8859_1)
     reader.read
 
-    encoding = windows? ? LibXML::XML::Encoding::ISO_8859_1 : LibXML::XML::Encoding::NONE
-    assert_equal(reader.encoding, encoding)
+    assert_equal(LibXML::XML::Encoding::ISO_8859_1, reader.encoding)
   end
 end

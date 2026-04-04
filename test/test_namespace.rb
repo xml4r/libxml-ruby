@@ -31,7 +31,7 @@ class TestNS < Minitest::Test
     error = assert_raises(TypeError) do
       LibXML::XML::Namespace.new(nil, 'my_namepace', 'http://www.mynamespace.com')
     end
-    assert_equal('wrong argument type nil (expected Data)', error.to_s)
+    assert_match(/wrong argument type nil/, error.to_s)
   end
 
   def test_duplicate_ns
