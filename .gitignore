@@ -19,3 +19,5 @@ ext/libxml/libxml_ruby.bundle
 /ext/vc/*.suo
 Gemfile.lock
 lib/*/libxml_ruby.so
+/ext/vc/libxml_ruby/x64
+/ext/vc/libxml_ruby/libxml_ruby.vcxproj.user
