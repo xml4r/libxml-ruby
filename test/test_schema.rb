@@ -38,6 +38,7 @@ class TestSchema < Minitest::Test
   end
 
   def test_schema_load_from_uri
+    skip("HTTP support not available") unless LibXML::XML.enabled_http?
     xlink_schema = LibXML::XML::Schema.new('http://www.w3.org/1999/xlink.xsd')
     assert_instance_of(LibXML::XML::Schema, xlink_schema)
     assert_instance_of(LibXML::XML::Schema::Element, xlink_schema.elements['title'])

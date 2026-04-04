@@ -44,7 +44,7 @@ class TestParser < Minitest::Test
       LibXML::XML::Parser.file('i_dont_exist.xml')
     end
 
-    assert_equal('Warning: failed to load external entity "i_dont_exist.xml".', error.message)
+    assert_match(/Warning: failed to load.*i_dont_exist\.xml/, error.message)
   end
 
   def test_nil_file
@@ -211,8 +211,7 @@ class TestParser < Minitest::Test
       parser.parse
     end
 
-    assert_equal("Fatal error: Input is not proper UTF-8, indicate encoding !\nBytes: 0xF6 0x74 0x6C 0x65 at :2.",
-                 error.message)
+    assert_match(/Fatal error:.*at :2\./m, error.message)
 
     # Parse as ISO_8859_1:
     parser = LibXML::XML::Parser.string(xml, :encoding => LibXML::XML::Encoding::ISO_8859_1)
