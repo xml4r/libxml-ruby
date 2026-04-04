@@ -3,9 +3,9 @@
 # Load the C-based binding.
 begin
   RUBY_VERSION =~ /(\d+.\d+)/
-  require "#{$1}/libxml_ruby"
+  require_relative "#{$1}/libxml_ruby"
 rescue LoadError
-  require "libxml_ruby"
+  require_relative "libxml_ruby"
 end
 
 # Load Ruby supporting code.
