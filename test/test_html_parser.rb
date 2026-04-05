@@ -21,7 +21,7 @@ class HTMLParserTest < Minitest::Test
       LibXML::XML::HTMLParser.file('i_dont_exist.xml')
     end
 
-    assert_equal('Warning: failed to load external entity "i_dont_exist.xml".', error.to_s)
+    assert_match(/Warning: failed to load.*i_dont_exist\.xml/, error.to_s)
   end
 
   def test_nil_file
@@ -138,6 +138,7 @@ class HTMLParserTest < Minitest::Test
   end
 
   def test_no_implied
+    skip("NOIMPLIED behavior changed in libxml2 2.14+") if Gem::Version.new(LibXML::XML::LIBXML_VERSION) >= Gem::Version.new("2.14")
     html = "hello world"
     parser = LibXML::XML::HTMLParser.string(html, :options => LibXML::XML::HTMLParser::Options::NOIMPLIED)
     doc = parser.parse

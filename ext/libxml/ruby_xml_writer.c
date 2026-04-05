@@ -41,8 +41,9 @@ typedef struct
     int closed;
 } rxml_writer_object;
 
-static void rxml_writer_free(rxml_writer_object* rwo)
+static void rxml_writer_free(void* data)
 {
+    rxml_writer_object* rwo = (rxml_writer_object*)data;
     xmlBufferPtr buffer = rwo->buffer;
 
     rwo->closed = 1;
@@ -56,24 +57,31 @@ static void rxml_writer_free(rxml_writer_object* rwo)
     xfree(rwo);
 }
 
-static void rxml_writer_mark(rxml_writer_object* rwo)
+static void rxml_writer_mark(void* data)
 {
+    rxml_writer_object* rwo = (rxml_writer_object*)data;
     if (!NIL_P(rwo->output))
     {
         rb_gc_mark(rwo->output);
     }
 }
 
+static const rb_data_type_t rxml_writer_data_type = {
+    .wrap_struct_name = "LibXML::XML::Writer",
+    .function = { .dmark = rxml_writer_mark, .dfree = rxml_writer_free },
+    .flags = RUBY_TYPED_FREE_IMMEDIATELY,
+};
+
 static VALUE rxml_writer_wrap(rxml_writer_object* rwo)
 {
-    return Data_Wrap_Struct(cXMLWriter, rxml_writer_mark, rxml_writer_free, rwo);
+    return TypedData_Wrap_Struct(cXMLWriter, &rxml_writer_data_type, rwo);
 }
 
 static rxml_writer_object* rxml_textwriter_get(VALUE obj)
 {
     rxml_writer_object* rwo;
 
-    Data_Get_Struct(obj, rxml_writer_object, rwo);
+    TypedData_Get_Struct(obj, rxml_writer_object, &rxml_writer_data_type, rwo);
 
     return rwo;
 }

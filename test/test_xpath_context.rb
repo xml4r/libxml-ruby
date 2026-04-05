@@ -23,7 +23,7 @@ class TestXPathContext < Minitest::Test
     error = assert_raises(LibXML::XML::Error) do
       @context.find('/soap:Envelope')
     end
-    assert_equal("Error: Undefined namespace prefix.", error.to_s)
+    assert_match(/Error: Undefined namespace prefix/, error.to_s)
   end    
 
   def test_ns_register

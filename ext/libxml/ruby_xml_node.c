@@ -8,6 +8,10 @@
 
 VALUE cXMLNode;
 
+#ifndef TYPED_DATA_EMBEDDED
+#define TYPED_DATA_EMBEDDED ((VALUE)1)
+#endif
+
 /* Document-class: LibXML::XML::Node
  *
  * Nodes are the primary objects that make up an XML document.
@@ -46,10 +50,13 @@ VALUE cXMLNode;
  * and are no longer in scope (since if they were the document would not be freed).
  */
 
-static void rxml_node_free(xmlNodePtr xnode)
+static void rxml_node_free(void *data)
 {
+  xmlNodePtr xnode = (xmlNodePtr)data;
+  if (!xnode) return;
+
   /* The ruby object wrapping the xml object no longer exists and this
-     is a standalone node without a document or parent so ruby is 
+     is a standalone node without a document or parent so ruby is
      responsible for freeing the underlying node.*/
   if (xnode->doc == NULL && xnode->parent == NULL)
   {
@@ -59,15 +66,55 @@ static void rxml_node_free(xmlNodePtr xnode)
   }
 }
 
+/* Three TypedData types are used for nodes, all sharing rxml_node_data_type
+ * as the parent type so that TypedData_Get_Struct type checks pass for any
+ * variant:
+ *
+ *   rxml_node_data_type       - Default. Marks the owning document to prevent
+ *                               GC from collecting it. No free function since
+ *                               libxml owns the node memory.
+ *
+ *   rxml_node_unmanaged_data_type - No mark, no free. Used for transient nodes
+ *                               whose lifetime is not controlled by Ruby (e.g.
+ *                               nodes returned by xmlTextReaderExpand that are
+ *                               freed on the next reader read call).
+ *
+ *   rxml_node_managed_data_type - Marks the document and frees standalone nodes
+ *                               (no doc, no parent) when the Ruby wrapper is
+ *                               collected. Used for nodes created from Ruby
+ *                               that have not yet been inserted into a document.
+ */
+const rb_data_type_t rxml_node_data_type = {
+  .wrap_struct_name = "LibXML::XML::Node",
+  .function = { .dmark = (RUBY_DATA_FUNC)rxml_node_mark, .dfree = NULL },
+  .flags = RUBY_TYPED_FREE_IMMEDIATELY,
+};
+
+const rb_data_type_t rxml_node_unmanaged_data_type = {
+  .wrap_struct_name = "LibXML::XML::Node (unmanaged)",
+  .function = { .dmark = NULL, .dfree = NULL },
+  .parent = &rxml_node_data_type,
+  .flags = RUBY_TYPED_FREE_IMMEDIATELY,
+};
+
+static const rb_data_type_t rxml_node_managed_data_type = {
+  .wrap_struct_name = "LibXML::XML::Node (managed)",
+  .function = { .dmark = (RUBY_DATA_FUNC)rxml_node_mark, .dfree = rxml_node_free },
+  .parent = &rxml_node_data_type,
+  .flags = RUBY_TYPED_FREE_IMMEDIATELY,
+};
+
 void rxml_node_manage(xmlNodePtr xnode, VALUE node)
 {
-  RDATA(node)->dfree = (RUBY_DATA_FUNC)rxml_node_free;
+  VALUE *type_ptr = (VALUE *)&RTYPEDDATA(node)->type;
+  *type_ptr = (*type_ptr & TYPED_DATA_EMBEDDED) | (VALUE)&rxml_node_managed_data_type;
   xnode->_private = (void*)node;
 }
 
 void rxml_node_unmanage(xmlNodePtr xnode, VALUE node)
 {
-  RDATA(node)->dfree = NULL;
+  VALUE *type_ptr = (VALUE *)&RTYPEDDATA(node)->type;
+  *type_ptr = (*type_ptr & TYPED_DATA_EMBEDDED) | (VALUE)&rxml_node_data_type;
   xnode->_private = NULL;
 }
 
@@ -88,10 +135,10 @@ void rxml_node_mark(xmlNodePtr xnode)
    if (xnode->doc)
    {
      if (xnode->doc->_private)
-	 {
-	   VALUE doc = (VALUE)xnode->doc->_private;
-	   rb_gc_mark(doc);
-	 }
+	   {
+	     VALUE doc = (VALUE)xnode->doc->_private;
+	     rb_gc_mark(doc);
+	   }
    }
    else if (xnode->parent)
    {
@@ -115,7 +162,7 @@ VALUE rxml_node_wrap(xmlNodePtr xnode)
   }
   else
   {
-    result = Data_Wrap_Struct(cXMLNode, rxml_node_mark, NULL, xnode);
+    result = TypedData_Wrap_Struct(cXMLNode, &rxml_node_data_type, xnode);
   }
 
   if (!xnode->doc && !xnode->parent)
@@ -128,13 +175,13 @@ VALUE rxml_node_wrap(xmlNodePtr xnode)
 static VALUE rxml_node_alloc(VALUE klass)
 {
   // This node was created from Ruby so we are responsible for freeing it not libxml
-  return Data_Wrap_Struct(klass, rxml_node_mark, rxml_node_free, NULL);
+  return TypedData_Wrap_Struct(klass, &rxml_node_data_type, NULL);
 }
 
 static xmlNodePtr rxml_get_xnode(VALUE node)
 {
    xmlNodePtr result;
-   Data_Get_Struct(node, xmlNode, result);
+   TypedData_Get_Struct(node, xmlNode, &rxml_node_data_type, result);
 
    if (!result)
     rb_raise(rb_eRuntimeError, "This node has already been freed.");
@@ -283,7 +330,7 @@ static VALUE rxml_node_initialize(int argc, VALUE *argv, VALUE self)
   name = rb_obj_as_string(name);
 
   if (!NIL_P(ns))
-    Data_Get_Struct(ns, xmlNs, xns);
+    TypedData_Get_Struct(ns, xmlNs, &rxml_namespace_type, xns);
 
   xnode = xmlNewNode(xns, (xmlChar*) StringValuePtr(name));
 
@@ -291,7 +338,7 @@ static VALUE rxml_node_initialize(int argc, VALUE *argv, VALUE self)
     rxml_raise(xmlGetLastError());
 
   // Link the ruby wrapper to the underlying libxml node
-  RDATA(self)->data = xnode;
+  RTYPEDDATA_DATA(self) = xnode;
 
   // Ruby is in charge of managing this node's memory
   rxml_node_manage(xnode, self);
@@ -329,7 +376,7 @@ static VALUE rxml_node_modify_dom(VALUE self, VALUE target,
 
   /* Assume the target was freed, we need to fix up the ruby object to point to the
      newly returned node. */
-  RDATA(target)->data = xresult;
+  RTYPEDDATA_DATA(target) = xresult;
 
   return target;
 }

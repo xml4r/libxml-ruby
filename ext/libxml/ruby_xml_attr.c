@@ -32,22 +32,29 @@
 
 VALUE cXMLAttr;
 
-void rxml_attr_mark(xmlAttrPtr xattr)
+static void rxml_attr_mark(void *data)
 {
+  xmlAttrPtr xattr = (xmlAttrPtr) data;
   /* This can happen if Ruby does a GC run after creating the
      new attribute but before initializing it. */
   if (xattr != NULL)
     rxml_node_mark((xmlNodePtr) xattr);
 }
 
+const rb_data_type_t rxml_attr_type = {
+  "LibXML::XML::Attr",
+  {rxml_attr_mark, NULL, 0},
+  &rxml_node_data_type, 0, RUBY_TYPED_FREE_IMMEDIATELY
+};
+
 VALUE rxml_attr_wrap(xmlAttrPtr xattr)
 {
-  return Data_Wrap_Struct(cXMLAttr, rxml_attr_mark, NULL, xattr);
+  return TypedData_Wrap_Struct(cXMLAttr, &rxml_attr_type, xattr);
 }
 
 static VALUE rxml_attr_alloc(VALUE klass)
 {
-  return Data_Wrap_Struct(klass, rxml_attr_mark, NULL, NULL);
+  return TypedData_Wrap_Struct(klass, &rxml_attr_type, NULL);
 }
 
 /*
@@ -78,7 +85,7 @@ static VALUE rxml_attr_initialize(int argc, VALUE *argv, VALUE self)
   Check_Type(name, T_STRING);
   Check_Type(value, T_STRING);
 
-  Data_Get_Struct(node, xmlNode, xnode);
+  TypedData_Get_Struct(node, xmlNode, &rxml_node_data_type, xnode);
 
   if (xnode->type != XML_ELEMENT_NODE)
     rb_raise(rb_eArgError, "Attributes can only be created on element nodes.");
@@ -90,14 +97,14 @@ static VALUE rxml_attr_initialize(int argc, VALUE *argv, VALUE self)
   else
   {
     xmlNsPtr xns;
-    Data_Get_Struct(ns, xmlNs, xns);
+    TypedData_Get_Struct(ns, xmlNs, &rxml_namespace_type, xns);
     xattr = xmlNewNsProp(xnode, xns, (xmlChar*)StringValuePtr(name), (xmlChar*)StringValuePtr(value));
   }
 
   if (!xattr)
     rb_raise(rb_eRuntimeError, "Could not create attribute.");
 
-  DATA_PTR( self) = xattr;
+  RTYPEDDATA_DATA( self) = xattr;
   return self;
 }
 
@@ -110,7 +117,7 @@ static VALUE rxml_attr_initialize(int argc, VALUE *argv, VALUE self)
 static VALUE rxml_attr_child_get(VALUE self)
 {
   xmlAttrPtr xattr;
-  Data_Get_Struct(self, xmlAttr, xattr);
+  TypedData_Get_Struct(self, xmlAttr, &rxml_attr_type, xattr);
   if (xattr->children == NULL)
     return Qnil;
   else
@@ -129,7 +136,7 @@ static VALUE rxml_attr_child_get(VALUE self)
 static VALUE rxml_attr_doc_get(VALUE self)
 {
   xmlAttrPtr xattr;
-  Data_Get_Struct(self, xmlAttr, xattr);
+  TypedData_Get_Struct(self, xmlAttr, &rxml_attr_type, xattr);
   if (xattr->doc == NULL)
     return Qnil;
   else
@@ -145,7 +152,7 @@ static VALUE rxml_attr_doc_get(VALUE self)
 static VALUE rxml_attr_last_get(VALUE self)
 {
   xmlAttrPtr xattr;
-  Data_Get_Struct(self, xmlAttr, xattr);
+  TypedData_Get_Struct(self, xmlAttr, &rxml_attr_type, xattr);
   if (xattr->last == NULL)
     return Qnil;
   else
@@ -161,7 +168,7 @@ static VALUE rxml_attr_last_get(VALUE self)
 static VALUE rxml_attr_name_get(VALUE self)
 {
   xmlAttrPtr xattr;
-  Data_Get_Struct(self, xmlAttr, xattr);
+  TypedData_Get_Struct(self, xmlAttr, &rxml_attr_type, xattr);
 
   if (xattr->name == NULL)
     return Qnil;
@@ -178,7 +185,7 @@ static VALUE rxml_attr_name_get(VALUE self)
 static VALUE rxml_attr_next_get(VALUE self)
 {
   xmlAttrPtr xattr;
-  Data_Get_Struct(self, xmlAttr, xattr);
+  TypedData_Get_Struct(self, xmlAttr, &rxml_attr_type, xattr);
   if (xattr->next == NULL)
     return Qnil;
   else
@@ -194,7 +201,7 @@ static VALUE rxml_attr_next_get(VALUE self)
 static VALUE rxml_attr_node_type(VALUE self)
 {
   xmlAttrPtr xattr;
-  Data_Get_Struct(self, xmlAttr, xattr);
+  TypedData_Get_Struct(self, xmlAttr, &rxml_attr_type, xattr);
   return INT2NUM(xattr->type);
 }
 
@@ -207,7 +214,7 @@ static VALUE rxml_attr_node_type(VALUE self)
 static VALUE rxml_attr_ns_get(VALUE self)
 {
   xmlAttrPtr xattr;
-  Data_Get_Struct(self, xmlAttr, xattr);
+  TypedData_Get_Struct(self, xmlAttr, &rxml_attr_type, xattr);
   if (xattr->ns == NULL)
     return Qnil;
   else
@@ -223,7 +230,7 @@ static VALUE rxml_attr_ns_get(VALUE self)
 static VALUE rxml_attr_parent_get(VALUE self)
 {
   xmlAttrPtr xattr;
-  Data_Get_Struct(self, xmlAttr, xattr);
+  TypedData_Get_Struct(self, xmlAttr, &rxml_attr_type, xattr);
   if (xattr->parent == NULL)
     return Qnil;
   else
@@ -239,7 +246,7 @@ static VALUE rxml_attr_parent_get(VALUE self)
 static VALUE rxml_attr_prev_get(VALUE self)
 {
   xmlAttrPtr xattr;
-  Data_Get_Struct(self, xmlAttr, xattr);
+  TypedData_Get_Struct(self, xmlAttr, &rxml_attr_type, xattr);
   if (xattr->prev == NULL)
     return Qnil;
   else
@@ -258,12 +265,10 @@ static VALUE rxml_attr_prev_get(VALUE self)
 static VALUE rxml_attr_remove_ex(VALUE self)
 {
   xmlAttrPtr xattr;
-  Data_Get_Struct(self, xmlAttr, xattr);
+  TypedData_Get_Struct(self, xmlAttr, &rxml_attr_type, xattr);
   xmlRemoveProp(xattr);
 
-  RDATA(self)->data = NULL;
-  RDATA(self)->dfree = NULL;
-  RDATA(self)->dmark = NULL;
+  RTYPEDDATA_DATA(self) = NULL;
 
   return Qnil;
 }
@@ -280,7 +285,7 @@ VALUE rxml_attr_value_get(VALUE self)
   xmlChar *value;
   VALUE result = Qnil;
 
-  Data_Get_Struct(self, xmlAttr, xattr);
+  TypedData_Get_Struct(self, xmlAttr, &rxml_attr_type, xattr);
   value = xmlNodeGetContent((xmlNodePtr)xattr);
 
   if (value != NULL)
@@ -302,7 +307,7 @@ VALUE rxml_attr_value_set(VALUE self, VALUE val)
   xmlAttrPtr xattr;
 
   Check_Type(val, T_STRING);
-  Data_Get_Struct(self, xmlAttr, xattr);
+  TypedData_Get_Struct(self, xmlAttr, &rxml_attr_type, xattr);
 
   if (xattr->ns)
     xmlSetNsProp(xattr->parent, xattr->ns, xattr->name,

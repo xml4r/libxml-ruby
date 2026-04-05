@@ -4,6 +4,7 @@
 #define __RXML_ATTR__
 
 extern VALUE cXMLAttr;
+extern const rb_data_type_t rxml_attr_type;
 
 void rxml_init_attr(void);
 VALUE rxml_attr_wrap(xmlAttrPtr xattr);

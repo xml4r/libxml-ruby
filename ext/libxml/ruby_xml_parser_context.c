@@ -15,21 +15,28 @@ static ID IO_ATTR;
  * a document is parsed.
  */
 
-static void rxml_parser_context_free(xmlParserCtxtPtr ctxt)
+static void rxml_parser_context_free(void* data)
 {
+  xmlParserCtxtPtr ctxt = (xmlParserCtxtPtr)data;
   xmlFreeParserCtxt(ctxt);
 }
 
+const rb_data_type_t rxml_parser_context_type = {
+  "LibXML::XML::Parser::Context",
+  {NULL, rxml_parser_context_free, NULL},
+  NULL, NULL, 0
+};
+
 static VALUE rxml_parser_context_wrap(xmlParserCtxtPtr ctxt)
 {
-  return Data_Wrap_Struct(cXMLParserContext, NULL, rxml_parser_context_free, ctxt);
+  return TypedData_Wrap_Struct(cXMLParserContext, &rxml_parser_context_type, ctxt);
 }
 
 
 static VALUE rxml_parser_context_alloc(VALUE klass)
 {
   xmlParserCtxtPtr ctxt = xmlNewParserCtxt();
-  return Data_Wrap_Struct(klass, NULL, rxml_parser_context_free, ctxt);
+  return TypedData_Wrap_Struct(klass, &rxml_parser_context_type, ctxt);
 }
 
 /* call-seq:
@@ -53,7 +60,7 @@ static VALUE rxml_parser_context_document(int argc, VALUE* argv, VALUE klass)
   xmlDocPtr xdoc;
   xmlChar *buffer;
   int length;
-  Data_Get_Struct(document, xmlDoc, xdoc);
+  TypedData_Get_Struct(document, xmlDoc, &rxml_document_data_type, xdoc);
   xmlDocDumpFormatMemoryEnc(xdoc, &buffer, &length, (const char*)xdoc->encoding, 0);
 
   xmlParserCtxtPtr ctxt = xmlCreateDocParserCtxt(buffer);
@@ -194,7 +201,7 @@ static VALUE rxml_parser_context_io(int argc, VALUE* argv, VALUE klass)
 static VALUE rxml_parser_context_base_uri_get(VALUE self)
 {
   xmlParserCtxtPtr ctxt;
-  Data_Get_Struct(self, xmlParserCtxt, ctxt);
+  TypedData_Get_Struct(self, xmlParserCtxt, &rxml_parser_context_type, ctxt);
 
   if (ctxt->input && ctxt->input->filename)
     return rxml_new_cstr((const xmlChar*)ctxt->input->filename, ctxt->encoding);
@@ -211,7 +218,7 @@ static VALUE rxml_parser_context_base_uri_get(VALUE self)
 static VALUE rxml_parser_context_base_uri_set(VALUE self, VALUE url)
 {
   xmlParserCtxtPtr ctxt;
-  Data_Get_Struct(self, xmlParserCtxt, ctxt);
+  TypedData_Get_Struct(self, xmlParserCtxt, &rxml_parser_context_type, ctxt);
 
   Check_Type(url, T_STRING);
 
@@ -235,7 +242,7 @@ static VALUE rxml_parser_context_close(VALUE self)
 {
   xmlParserCtxtPtr ctxt;
   xmlParserInputPtr xinput;
-  Data_Get_Struct(self, xmlParserCtxt, ctxt);
+  TypedData_Get_Struct(self, xmlParserCtxt, &rxml_parser_context_type, ctxt);
 
   while ((xinput = inputPop(ctxt)) != NULL)
   {
@@ -253,7 +260,7 @@ static VALUE rxml_parser_context_close(VALUE self)
 static VALUE rxml_parser_context_data_directory_get(VALUE self)
 {
   xmlParserCtxtPtr ctxt;
-  Data_Get_Struct(self, xmlParserCtxt, ctxt);
+  TypedData_Get_Struct(self, xmlParserCtxt, &rxml_parser_context_type, ctxt);
 
   if (ctxt->directory == NULL)
     return (Qnil);
@@ -270,7 +277,7 @@ static VALUE rxml_parser_context_data_directory_get(VALUE self)
 static VALUE rxml_parser_context_depth_get(VALUE self)
 {
   xmlParserCtxtPtr ctxt;
-  Data_Get_Struct(self, xmlParserCtxt, ctxt);
+  TypedData_Get_Struct(self, xmlParserCtxt, &rxml_parser_context_type, ctxt);
 
   return (INT2NUM(ctxt->depth));
 }
@@ -284,7 +291,7 @@ static VALUE rxml_parser_context_depth_get(VALUE self)
 static VALUE rxml_parser_context_disable_cdata_q(VALUE self)
 {
   xmlParserCtxtPtr ctxt;
-  Data_Get_Struct(self, xmlParserCtxt, ctxt);
+  TypedData_Get_Struct(self, xmlParserCtxt, &rxml_parser_context_type, ctxt);
 
   /* LibXML controls this internally with the default SAX handler. */
   if (ctxt->sax && ctxt->sax->cdataBlock)
@@ -302,7 +309,7 @@ static VALUE rxml_parser_context_disable_cdata_q(VALUE self)
 static VALUE rxml_parser_context_disable_cdata_set(VALUE self, VALUE value)
 {
   xmlParserCtxtPtr ctxt;
-  Data_Get_Struct(self, xmlParserCtxt, ctxt);
+  TypedData_Get_Struct(self, xmlParserCtxt, &rxml_parser_context_type, ctxt);
 
   if (ctxt->sax == NULL)
     rb_raise(rb_eRuntimeError, "Sax handler is not yet set");
@@ -326,7 +333,7 @@ static VALUE rxml_parser_context_disable_cdata_set(VALUE self, VALUE value)
 static VALUE rxml_parser_context_disable_sax_q(VALUE self)
 {
   xmlParserCtxtPtr ctxt;
-  Data_Get_Struct(self, xmlParserCtxt, ctxt);
+  TypedData_Get_Struct(self, xmlParserCtxt, &rxml_parser_context_type, ctxt);
 
   if (ctxt->disableSAX)
     return (Qtrue);
@@ -343,7 +350,7 @@ static VALUE rxml_parser_context_disable_sax_q(VALUE self)
 static VALUE rxml_parser_context_docbook_q(VALUE self)
 {
   xmlParserCtxtPtr ctxt;
-  Data_Get_Struct(self, xmlParserCtxt, ctxt);
+  TypedData_Get_Struct(self, xmlParserCtxt, &rxml_parser_context_type, ctxt);
 
   if (ctxt->html == 2) // TODO check this
     return (Qtrue);
@@ -361,7 +368,7 @@ static VALUE rxml_parser_context_docbook_q(VALUE self)
 static VALUE rxml_parser_context_encoding_get(VALUE self)
 {
   xmlParserCtxtPtr ctxt;
-  Data_Get_Struct(self, xmlParserCtxt, ctxt);
+  TypedData_Get_Struct(self, xmlParserCtxt, &rxml_parser_context_type, ctxt);
   return INT2NUM(xmlParseCharEncoding((const char*)ctxt->encoding));
 }
 
@@ -381,7 +388,7 @@ static VALUE rxml_parser_context_encoding_set(VALUE self, VALUE encoding)
   if (!hdlr)
     rb_raise(rb_eArgError, "Unknown encoding: %i", NUM2INT(encoding));
 
-  Data_Get_Struct(self, xmlParserCtxt, ctxt);
+  TypedData_Get_Struct(self, xmlParserCtxt, &rxml_parser_context_type, ctxt);
   result = xmlSwitchToEncoding(ctxt, hdlr);
 
   if (result != 0)
@@ -403,7 +410,7 @@ static VALUE rxml_parser_context_encoding_set(VALUE self, VALUE encoding)
 static VALUE rxml_parser_context_errno_get(VALUE self)
 {
   xmlParserCtxtPtr ctxt;
-  Data_Get_Struct(self, xmlParserCtxt, ctxt);
+  TypedData_Get_Struct(self, xmlParserCtxt, &rxml_parser_context_type, ctxt);
 
   return (INT2NUM(ctxt->errNo));
 }
@@ -417,7 +424,7 @@ static VALUE rxml_parser_context_errno_get(VALUE self)
 static VALUE rxml_parser_context_html_q(VALUE self)
 {
   xmlParserCtxtPtr ctxt;
-  Data_Get_Struct(self, xmlParserCtxt, ctxt);
+  TypedData_Get_Struct(self, xmlParserCtxt, &rxml_parser_context_type, ctxt);
 
   if (ctxt->html == 1)
     return (Qtrue);
@@ -436,7 +443,7 @@ static VALUE rxml_parser_context_io_max_num_streams_get(VALUE self)
 {
   // TODO alias to max_streams and dep this?
   xmlParserCtxtPtr ctxt;
-  Data_Get_Struct(self, xmlParserCtxt, ctxt);
+  TypedData_Get_Struct(self, xmlParserCtxt, &rxml_parser_context_type, ctxt);
 
   return (INT2NUM(ctxt->inputMax));
 }
@@ -451,7 +458,7 @@ static VALUE rxml_parser_context_io_max_num_streams_get(VALUE self)
 static VALUE rxml_parser_context_io_num_streams_get(VALUE self)
 {
   xmlParserCtxtPtr ctxt;
-  Data_Get_Struct(self, xmlParserCtxt, ctxt);
+  TypedData_Get_Struct(self, xmlParserCtxt, &rxml_parser_context_type, ctxt);
 
   return (INT2NUM(ctxt->inputNr));
 }
@@ -466,7 +473,7 @@ static VALUE rxml_parser_context_io_num_streams_get(VALUE self)
 static VALUE rxml_parser_context_keep_blanks_q(VALUE self)
 {
   xmlParserCtxtPtr ctxt;
-  Data_Get_Struct(self, xmlParserCtxt, ctxt);
+  TypedData_Get_Struct(self, xmlParserCtxt, &rxml_parser_context_type, ctxt);
 
   if (ctxt->keepBlanks)
     return (Qtrue);
@@ -483,7 +490,7 @@ static VALUE rxml_parser_context_keep_blanks_q(VALUE self)
 static VALUE rxml_parser_context_name_depth_get(VALUE self)
 {
   xmlParserCtxtPtr ctxt;
-  Data_Get_Struct(self, xmlParserCtxt, ctxt);
+  TypedData_Get_Struct(self, xmlParserCtxt, &rxml_parser_context_type, ctxt);
 
   return (INT2NUM(ctxt->nameNr));
 }
@@ -497,7 +504,7 @@ static VALUE rxml_parser_context_name_depth_get(VALUE self)
 static VALUE rxml_parser_context_name_depth_max_get(VALUE self)
 {
   xmlParserCtxtPtr ctxt;
-  Data_Get_Struct(self, xmlParserCtxt, ctxt);
+  TypedData_Get_Struct(self, xmlParserCtxt, &rxml_parser_context_type, ctxt);
 
   return (INT2NUM(ctxt->nameMax));
 }
@@ -511,7 +518,7 @@ static VALUE rxml_parser_context_name_depth_max_get(VALUE self)
 static VALUE rxml_parser_context_name_node_get(VALUE self)
 {
   xmlParserCtxtPtr ctxt;
-  Data_Get_Struct(self, xmlParserCtxt, ctxt);
+  TypedData_Get_Struct(self, xmlParserCtxt, &rxml_parser_context_type, ctxt);
 
   if (ctxt->name == NULL)
     return (Qnil);
@@ -531,7 +538,7 @@ static VALUE rxml_parser_context_name_tab_get(VALUE self)
   xmlParserCtxtPtr ctxt;
   VALUE tab_ary;
 
-  Data_Get_Struct(self, xmlParserCtxt, ctxt);
+  TypedData_Get_Struct(self, xmlParserCtxt, &rxml_parser_context_type, ctxt);
 
   if (ctxt->nameTab == NULL)
     return (Qnil);
@@ -558,7 +565,7 @@ static VALUE rxml_parser_context_name_tab_get(VALUE self)
 static VALUE rxml_parser_context_node_depth_get(VALUE self)
 {
   xmlParserCtxtPtr ctxt;
-  Data_Get_Struct(self, xmlParserCtxt, ctxt);
+  TypedData_Get_Struct(self, xmlParserCtxt, &rxml_parser_context_type, ctxt);
 
   return (INT2NUM(ctxt->nodeNr));
 }
@@ -572,7 +579,7 @@ static VALUE rxml_parser_context_node_depth_get(VALUE self)
 static VALUE rxml_parser_context_node_get(VALUE self)
 {
   xmlParserCtxtPtr ctxt;
-  Data_Get_Struct(self, xmlParserCtxt, ctxt);
+  TypedData_Get_Struct(self, xmlParserCtxt, &rxml_parser_context_type, ctxt);
 
   if (ctxt->node == NULL)
     return (Qnil);
@@ -589,7 +596,7 @@ static VALUE rxml_parser_context_node_get(VALUE self)
 static VALUE rxml_parser_context_node_depth_max_get(VALUE self)
 {
   xmlParserCtxtPtr ctxt;
-  Data_Get_Struct(self, xmlParserCtxt, ctxt);
+  TypedData_Get_Struct(self, xmlParserCtxt, &rxml_parser_context_type, ctxt);
 
   return (INT2NUM(ctxt->nodeMax));
 }
@@ -603,7 +610,7 @@ static VALUE rxml_parser_context_node_depth_max_get(VALUE self)
 static VALUE rxml_parser_context_num_chars_get(VALUE self)
 {
   xmlParserCtxtPtr ctxt;
-  Data_Get_Struct(self, xmlParserCtxt, ctxt);
+  TypedData_Get_Struct(self, xmlParserCtxt, &rxml_parser_context_type, ctxt);
 
   return (LONG2NUM(ctxt->nbChars));
 }
@@ -619,7 +626,7 @@ static VALUE rxml_parser_context_num_chars_get(VALUE self)
 static VALUE rxml_parser_context_options_get(VALUE self)
 {
   xmlParserCtxtPtr ctxt;
-  Data_Get_Struct(self, xmlParserCtxt, ctxt);
+  TypedData_Get_Struct(self, xmlParserCtxt, &rxml_parser_context_type, ctxt);
 
   return INT2NUM(ctxt->options);
 }
@@ -638,7 +645,7 @@ static VALUE rxml_parser_context_options_set(VALUE self, VALUE options)
   xmlParserCtxtPtr ctxt;
   Check_Type(options, T_FIXNUM);
 
-  Data_Get_Struct(self, xmlParserCtxt, ctxt);
+  TypedData_Get_Struct(self, xmlParserCtxt, &rxml_parser_context_type, ctxt);
   xmlCtxtUseOptions(ctxt, NUM2INT(options));
 
   return self;
@@ -654,7 +661,7 @@ static VALUE rxml_parser_context_options_set(VALUE self, VALUE options)
 static VALUE rxml_parser_context_recovery_q(VALUE self)
 {
   xmlParserCtxtPtr ctxt;
-  Data_Get_Struct(self, xmlParserCtxt, ctxt);
+  TypedData_Get_Struct(self, xmlParserCtxt, &rxml_parser_context_type, ctxt);
 
   if (ctxt->recovery)
     return (Qtrue);
@@ -672,7 +679,7 @@ static VALUE rxml_parser_context_recovery_q(VALUE self)
 static VALUE rxml_parser_context_recovery_set(VALUE self, VALUE value)
 {
   xmlParserCtxtPtr ctxt;
-  Data_Get_Struct(self, xmlParserCtxt, ctxt);
+  TypedData_Get_Struct(self, xmlParserCtxt, &rxml_parser_context_type, ctxt);
 
   if (value == Qfalse)
   {
@@ -696,7 +703,7 @@ static VALUE rxml_parser_context_recovery_set(VALUE self, VALUE value)
 static VALUE rxml_parser_context_replace_entities_q(VALUE self)
 {
   xmlParserCtxtPtr ctxt;
-  Data_Get_Struct(self, xmlParserCtxt, ctxt);
+  TypedData_Get_Struct(self, xmlParserCtxt, &rxml_parser_context_type, ctxt);
 
   if (ctxt->replaceEntities)
     return (Qtrue);
@@ -714,7 +721,7 @@ static VALUE rxml_parser_context_replace_entities_q(VALUE self)
 static VALUE rxml_parser_context_replace_entities_set(VALUE self, VALUE value)
 {
   xmlParserCtxtPtr ctxt;
-  Data_Get_Struct(self, xmlParserCtxt, ctxt);
+  TypedData_Get_Struct(self, xmlParserCtxt, &rxml_parser_context_type, ctxt);
 
   if (value == Qfalse)
   {
@@ -737,7 +744,7 @@ static VALUE rxml_parser_context_replace_entities_set(VALUE self, VALUE value)
 static VALUE rxml_parser_context_space_depth_get(VALUE self)
 {
   xmlParserCtxtPtr ctxt;
-  Data_Get_Struct(self, xmlParserCtxt, ctxt);
+  TypedData_Get_Struct(self, xmlParserCtxt, &rxml_parser_context_type, ctxt);
 
   return (INT2NUM(ctxt->spaceNr));
 }
@@ -751,7 +758,7 @@ static VALUE rxml_parser_context_space_depth_get(VALUE self)
 static VALUE rxml_parser_context_space_depth_max_get(VALUE self)
 {
   xmlParserCtxtPtr ctxt;
-  Data_Get_Struct(self, xmlParserCtxt, ctxt);
+  TypedData_Get_Struct(self, xmlParserCtxt, &rxml_parser_context_type, ctxt);
 
   return (INT2NUM(ctxt->spaceMax));
 }
@@ -766,7 +773,7 @@ static VALUE rxml_parser_context_space_depth_max_get(VALUE self)
 static VALUE rxml_parser_context_subset_external_q(VALUE self)
 {
   xmlParserCtxtPtr ctxt;
-  Data_Get_Struct(self, xmlParserCtxt, ctxt);
+  TypedData_Get_Struct(self, xmlParserCtxt, &rxml_parser_context_type, ctxt);
 
   if (ctxt->inSubset == 2)
     return (Qtrue);
@@ -784,7 +791,7 @@ static VALUE rxml_parser_context_subset_external_q(VALUE self)
 static VALUE rxml_parser_context_subset_internal_q(VALUE self)
 {
   xmlParserCtxtPtr ctxt;
-  Data_Get_Struct(self, xmlParserCtxt, ctxt);
+  TypedData_Get_Struct(self, xmlParserCtxt, &rxml_parser_context_type, ctxt);
 
   if (ctxt->inSubset == 1)
     return (Qtrue);
@@ -803,7 +810,7 @@ static VALUE rxml_parser_context_subset_internal_q(VALUE self)
 static VALUE rxml_parser_context_subset_name_get(VALUE self)
 {
   xmlParserCtxtPtr ctxt;
-  Data_Get_Struct(self, xmlParserCtxt, ctxt);
+  TypedData_Get_Struct(self, xmlParserCtxt, &rxml_parser_context_type, ctxt);
 
   if (ctxt->intSubName == NULL)
     return (Qnil);
@@ -822,7 +829,7 @@ static VALUE rxml_parser_context_subset_name_get(VALUE self)
 static VALUE rxml_parser_context_subset_external_uri_get(VALUE self)
 {
   xmlParserCtxtPtr ctxt;
-  Data_Get_Struct(self, xmlParserCtxt, ctxt);
+  TypedData_Get_Struct(self, xmlParserCtxt, &rxml_parser_context_type, ctxt);
 
   if (ctxt->extSubURI == NULL)
     return (Qnil);
@@ -841,7 +848,7 @@ static VALUE rxml_parser_context_subset_external_uri_get(VALUE self)
 static VALUE rxml_parser_context_subset_external_system_id_get(VALUE self)
 {
   xmlParserCtxtPtr ctxt;
-  Data_Get_Struct(self, xmlParserCtxt, ctxt);
+  TypedData_Get_Struct(self, xmlParserCtxt, &rxml_parser_context_type, ctxt);
 
   if (ctxt->extSubSystem == NULL)
     return (Qnil);
@@ -858,7 +865,7 @@ static VALUE rxml_parser_context_subset_external_system_id_get(VALUE self)
 static VALUE rxml_parser_context_standalone_q(VALUE self)
 {
   xmlParserCtxtPtr ctxt;
-  Data_Get_Struct(self, xmlParserCtxt, ctxt);
+  TypedData_Get_Struct(self, xmlParserCtxt, &rxml_parser_context_type, ctxt);
 
   if (ctxt->standalone)
     return (Qtrue);
@@ -875,7 +882,7 @@ static VALUE rxml_parser_context_standalone_q(VALUE self)
 static VALUE rxml_parser_context_stats_q(VALUE self)
 {
   xmlParserCtxtPtr ctxt;
-  Data_Get_Struct(self, xmlParserCtxt, ctxt);
+  TypedData_Get_Struct(self, xmlParserCtxt, &rxml_parser_context_type, ctxt);
 
   if (ctxt->record_info)
     return (Qtrue);
@@ -892,7 +899,7 @@ static VALUE rxml_parser_context_stats_q(VALUE self)
 static VALUE rxml_parser_context_valid_q(VALUE self)
 {
   xmlParserCtxtPtr ctxt;
-  Data_Get_Struct(self, xmlParserCtxt, ctxt);
+  TypedData_Get_Struct(self, xmlParserCtxt, &rxml_parser_context_type, ctxt);
 
   if (ctxt->valid)
     return (Qtrue);
@@ -909,7 +916,7 @@ static VALUE rxml_parser_context_valid_q(VALUE self)
 static VALUE rxml_parser_context_validate_q(VALUE self)
 {
   xmlParserCtxtPtr ctxt;
-  Data_Get_Struct(self, xmlParserCtxt, ctxt);
+  TypedData_Get_Struct(self, xmlParserCtxt, &rxml_parser_context_type, ctxt);
 
   if (ctxt->validate)
     return (Qtrue);
@@ -926,7 +933,7 @@ static VALUE rxml_parser_context_validate_q(VALUE self)
 static VALUE rxml_parser_context_version_get(VALUE self)
 {
   xmlParserCtxtPtr ctxt;
-  Data_Get_Struct(self, xmlParserCtxt, ctxt);
+  TypedData_Get_Struct(self, xmlParserCtxt, &rxml_parser_context_type, ctxt);
 
   if (ctxt->version == NULL)
     return (Qnil);
@@ -943,7 +950,7 @@ static VALUE rxml_parser_context_version_get(VALUE self)
 static VALUE rxml_parser_context_well_formed_q(VALUE self)
 {
   xmlParserCtxtPtr ctxt;
-  Data_Get_Struct(self, xmlParserCtxt, ctxt);
+  TypedData_Get_Struct(self, xmlParserCtxt, &rxml_parser_context_type, ctxt);
 
   if (ctxt->wellFormed)
     return (Qtrue);

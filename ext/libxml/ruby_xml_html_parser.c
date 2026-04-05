@@ -64,7 +64,7 @@ static VALUE rxml_html_parser_parse(VALUE self)
   xmlParserCtxtPtr ctxt;
   VALUE context = rb_ivar_get(self, CONTEXT_ATTR);
   
-  Data_Get_Struct(context, xmlParserCtxt, ctxt);
+  TypedData_Get_Struct(context, xmlParserCtxt, &rxml_html_parser_context_type, ctxt);
 
   if (htmlParseDocument(ctxt) == -1 && ! ctxt->recovery)
   {

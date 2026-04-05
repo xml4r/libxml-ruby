@@ -20,7 +20,6 @@ class AttrNodeTest < Minitest::Test
                   gml:remoteSchema="city.xsd#xpointer(//complexType[@name='RoadType'])"/>
     </CityModel>
     EOS
-    
     @doc = xp.parse
   end
   

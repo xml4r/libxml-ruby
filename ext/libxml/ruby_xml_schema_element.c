@@ -4,11 +4,18 @@
 
 VALUE cXMLSchemaElement;
 
-static void rxml_schema_element_free(xmlSchemaElementPtr xschema_element)
+static void rxml_schema_element_free(void *data)
 {
+  xmlSchemaElementPtr xschema_element = (xmlSchemaElementPtr)data;
   xschema_element = NULL;
   xmlFree(xschema_element);
 }
+
+static const rb_data_type_t rxml_schema_element_type = {
+  "XML::Schema::Element",
+  {NULL, rxml_schema_element_free, NULL},
+  NULL, NULL, 0
+};
 
 VALUE rxml_wrap_schema_element(xmlSchemaElementPtr xelem)
 {
@@ -17,7 +24,7 @@ VALUE rxml_wrap_schema_element(xmlSchemaElementPtr xelem)
   if (!xelem)
     rb_raise(rb_eArgError, "XML::Schema::Element is required!");
 
-  result = Data_Wrap_Struct(cXMLSchemaElement, NULL, rxml_schema_element_free, xelem);
+  result = TypedData_Wrap_Struct(cXMLSchemaElement, &rxml_schema_element_type, xelem);
 
   rb_iv_set(result, "@name", QNIL_OR_STRING(xelem->name));
   rb_iv_set(result, "@value", QNIL_OR_STRING(xelem->value));
@@ -31,7 +38,7 @@ static VALUE rxml_schema_element_node(VALUE self)
 {
   xmlSchemaElementPtr xelem;
 
-  Data_Get_Struct(self, xmlSchemaElement, xelem);
+  TypedData_Get_Struct(self, xmlSchemaElement, &rxml_schema_element_type, xelem);
 
   return rxml_node_wrap(xelem->node);
 }
@@ -41,7 +48,7 @@ static VALUE rxml_schema_element_annot(VALUE self)
   xmlSchemaElementPtr xelem;
   VALUE annotation = Qnil;
 
-  Data_Get_Struct(self, xmlSchemaElement, xelem);
+  TypedData_Get_Struct(self, xmlSchemaElement, &rxml_schema_element_type, xelem);
 
   if ((xelem->annot != NULL) && (xelem->annot->content != NULL))
   {

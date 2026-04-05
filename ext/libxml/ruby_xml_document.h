@@ -4,6 +4,7 @@
 #define __RXML_DOCUMENT__
 
 extern VALUE cXMLDocument;
+extern const rb_data_type_t rxml_document_data_type;
 void rxml_init_document(void);
 VALUE rxml_document_wrap(xmlDocPtr xnode);
 

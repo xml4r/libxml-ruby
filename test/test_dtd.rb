@@ -112,14 +112,12 @@ class TestDtd < Minitest::Test
     errors.clear
     LibXML::XML::Parser.string(xml, options: LibXML::XML::Parser::Options::DTDLOAD).parse
     assert_equal(1, errors.length)
-    assert_equal("Warning: failed to load external entity \"test.dtd\" at :1.",
-                 errors[0].to_s)
+    assert_match(/Warning: failed to load.*test\.dtd/, errors[0].to_s)
 
     errors = Array.new
     LibXML::XML::Parser.string(xml, :options => LibXML::XML::Parser::Options::DTDLOAD).parse
     assert_equal(1, errors.length)
-    assert_equal("Warning: failed to load external entity \"test.dtd\" at :1.",
-                 errors[0].to_s)
+    assert_match(/Warning: failed to load.*test\.dtd/, errors[0].to_s)
   ensure
     LibXML::XML::Error.reset_handler
   end

@@ -109,10 +109,17 @@ struct _xmlSchemaImport {
 
 VALUE cXMLSchema;
 
-static void rxml_schema_free(xmlSchemaPtr xschema)
+static void rxml_schema_free(void *data)
 {
+  xmlSchemaPtr xschema = (xmlSchemaPtr)data;
   xmlSchemaFree(xschema);
 }
+
+const rb_data_type_t rxml_schema_type = {
+  "XML::Schema",
+  {NULL, rxml_schema_free, NULL},
+  NULL, NULL, 0
+};
 
 VALUE rxml_wrap_schema(xmlSchemaPtr xschema)
 {
@@ -121,7 +128,7 @@ VALUE rxml_wrap_schema(xmlSchemaPtr xschema)
   if (!xschema)
     rb_raise(rb_eArgError, "XML::Schema is required!");
 
-  result = Data_Wrap_Struct(cXMLSchema, NULL, rxml_schema_free, xschema);
+  result = TypedData_Wrap_Struct(cXMLSchema, &rxml_schema_type, xschema);
 
   /*
    * Create these as instance variables to provide the output of inspect/to_str some
@@ -179,7 +186,7 @@ static VALUE rxml_schema_init_from_document(VALUE class, VALUE document)
   xmlDocPtr xdoc;
   xmlSchemaParserCtxtPtr xparser;
 
-  Data_Get_Struct(document, xmlDoc, xdoc);
+  TypedData_Get_Struct(document, xmlDoc, &rxml_document_data_type, xdoc);
 
   xmlResetLastError();
   xparser = xmlSchemaNewDocParserCtxt(xdoc);
@@ -219,7 +226,7 @@ static VALUE rxml_schema_document(VALUE self)
 {
   xmlSchemaPtr xschema;
 
-  Data_Get_Struct(self, xmlSchema, xschema);
+  TypedData_Get_Struct(self, xmlSchema, &rxml_schema_type, xschema);
 
   return rxml_node_wrap(xmlDocGetRootElement(xschema->doc));
 }
@@ -254,7 +261,7 @@ static VALUE rxml_schema_namespaces(VALUE self)
   VALUE result;
   xmlSchemaPtr xschema;
 
-  Data_Get_Struct(self, xmlSchema, xschema);
+  TypedData_Get_Struct(self, xmlSchema, &rxml_schema_type, xschema);
 
   result = rb_ary_new();
   xmlHashScan(xschema->schemasImports, (xmlHashScanner)scan_namespaces, (void *)result);
@@ -273,7 +280,7 @@ static VALUE rxml_schema_elements(VALUE self)
   VALUE result = rb_hash_new();
   xmlSchemaPtr xschema;
 
-  Data_Get_Struct(self, xmlSchema, xschema);
+  TypedData_Get_Struct(self, xmlSchema, &rxml_schema_type, xschema);
   xmlHashScan(xschema->elemDecl, (xmlHashScanner)scan_schema_element, (void *)result);
 
   return result;
@@ -300,7 +307,7 @@ static VALUE rxml_schema_imported_ns_elements(VALUE self)
   xmlSchemaPtr xschema;
   VALUE result = rb_hash_new();
 
-  Data_Get_Struct(self, xmlSchema, xschema);
+  TypedData_Get_Struct(self, xmlSchema, &rxml_schema_type, xschema);
 
   if (xschema)
   {
@@ -321,7 +328,7 @@ static VALUE rxml_schema_types(VALUE self)
   VALUE result = rb_hash_new();
   xmlSchemaPtr xschema;
 
-  Data_Get_Struct(self, xmlSchema, xschema);
+  TypedData_Get_Struct(self, xmlSchema, &rxml_schema_type, xschema);
 
   if (xschema != NULL && xschema->typeDecl != NULL)
   {
@@ -350,7 +357,7 @@ static VALUE rxml_schema_imported_types(VALUE self)
   xmlSchemaPtr xschema;
   VALUE result = rb_hash_new();
 
-  Data_Get_Struct(self, xmlSchema, xschema);
+  TypedData_Get_Struct(self, xmlSchema, &rxml_schema_type, xschema);
 
   if (xschema)
   {
@@ -381,7 +388,7 @@ static VALUE rxml_schema_imported_ns_types(VALUE self)
   xmlSchemaPtr xschema;
   VALUE result = rb_hash_new();
 
-  Data_Get_Struct(self, xmlSchema, xschema);
+  TypedData_Get_Struct(self, xmlSchema, &rxml_schema_type, xschema);
 
   if (xschema)
   {

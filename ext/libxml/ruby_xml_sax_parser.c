@@ -76,7 +76,7 @@ static VALUE rxml_sax_parser_parse(VALUE self)
 {
   VALUE context = rb_ivar_get(self, CONTEXT_ATTR);
   xmlParserCtxtPtr ctxt;
-  Data_Get_Struct(context, xmlParserCtxt, ctxt);
+  TypedData_Get_Struct(context, xmlParserCtxt, &rxml_parser_context_type, ctxt);
 
   ctxt->sax2 = 1;
 	ctxt->userData = (void*)rb_ivar_get(self, CALLBACKS_ATTR);

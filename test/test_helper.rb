@@ -17,4 +17,5 @@ end
 STDOUT.write "\nlibxml2: #{LibXML::XML::LIBXML_VERSION}\n#{RUBY_DESCRIPTION}\n\n"
 
 require 'minitest/autorun'
+Minitest.load_plugins
 

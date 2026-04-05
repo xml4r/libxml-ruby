@@ -46,11 +46,18 @@ a group definition, a XML_SCHEMA_EXTRA_QNAMEREF (if a reference),
 
 VALUE cXMLSchemaType;
 
-static void rxml_schema_type_free(xmlSchemaTypePtr xschema_type)
+static void rxml_schema_type_free(void *data)
 {
+  xmlSchemaTypePtr xschema_type = (xmlSchemaTypePtr)data;
   xschema_type = NULL;
   xmlFree(xschema_type);
 }
+
+static const rb_data_type_t rxml_schema_type_type = {
+  "XML::Schema::Type",
+  {NULL, rxml_schema_type_free, NULL},
+  NULL, NULL, 0
+};
 
 VALUE rxml_wrap_schema_type(xmlSchemaTypePtr xtype)
 {
@@ -59,7 +66,7 @@ VALUE rxml_wrap_schema_type(xmlSchemaTypePtr xtype)
   if (!xtype)
     rb_raise(rb_eArgError, "XML::Schema::Type required!");
 
-  result = Data_Wrap_Struct(cXMLSchemaType, NULL, rxml_schema_type_free, xtype);
+  result = TypedData_Wrap_Struct(cXMLSchemaType, &rxml_schema_type_type, xtype);
 
   rb_iv_set(result, "@name", QNIL_OR_STRING(xtype->name));
   rb_iv_set(result, "@namespace", QNIL_OR_STRING(xtype->targetNamespace));
@@ -72,7 +79,7 @@ static VALUE rxml_schema_type_base(VALUE self)
 {
   xmlSchemaTypePtr xtype;
 
-  Data_Get_Struct(self, xmlSchemaType, xtype);
+  TypedData_Get_Struct(self, xmlSchemaType, &rxml_schema_type_type, xtype);
 
   return (xtype->baseType != xtype) ? rxml_wrap_schema_type(xtype->baseType) : Qnil;
 }
@@ -81,7 +88,7 @@ static VALUE rxml_schema_type_node(VALUE self)
 {
   xmlSchemaTypePtr xtype;
 
-  Data_Get_Struct(self, xmlSchemaType, xtype);
+  TypedData_Get_Struct(self, xmlSchemaType, &rxml_schema_type_type, xtype);
 
   return (xtype->node != NULL) ? rxml_node_wrap(xtype->node) : Qnil;
 }
@@ -93,7 +100,7 @@ static VALUE rxml_schema_type_facets(VALUE self)
   VALUE result = rb_ary_new();
   VALUE facet;
 
-  Data_Get_Struct(self, xmlSchemaType, xtype);
+  TypedData_Get_Struct(self, xmlSchemaType, &rxml_schema_type_type, xtype);
 
   xfacet = xtype->facets;
 
@@ -112,7 +119,7 @@ static VALUE rxml_schema_type_annot(VALUE self)
   VALUE result = Qnil;
   xmlSchemaTypePtr xtype;
 
-  Data_Get_Struct(self, xmlSchemaType, xtype);
+  TypedData_Get_Struct(self, xmlSchemaType, &rxml_schema_type_type, xtype);
 
   if(xtype != NULL && xtype->annot != NULL && xtype->annot->content != NULL)
   {
@@ -198,7 +205,7 @@ static VALUE rxml_schema_type_elements(VALUE self)
   VALUE result = rb_hash_new();
   xmlSchemaTypePtr xtype;
 
-  Data_Get_Struct(self, xmlSchemaType, xtype);
+  TypedData_Get_Struct(self, xmlSchemaType, &rxml_schema_type_type, xtype);
   rxmlSchemaCollectElements((xmlSchemaParticlePtr) xtype->subtypes, result);
 
   return result;
@@ -212,7 +219,7 @@ static VALUE rxml_schema_type_attributes(VALUE self)
   xmlSchemaItemListPtr xuses;
   int i;
 
-  Data_Get_Struct(self, xmlSchemaType, xtype);
+  TypedData_Get_Struct(self, xmlSchemaType, &rxml_schema_type_type, xtype);
   xuses = xtype->attrUses;
 
   if (xuses != NULL)

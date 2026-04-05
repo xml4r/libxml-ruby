@@ -4,6 +4,7 @@
 #define __RXML_XPATH_EXPRESSION__
 
 extern VALUE cXMLXPathExpression;
+extern const rb_data_type_t rxml_xpath_expression_data_type;
 
 void rxml_init_xpath_expression(void);
 

@@ -50,11 +50,18 @@ struct _xmlSchemaAttributeUseProhib {
 
 VALUE cXMLSchemaAttribute;
 
-static void rxml_schema_attribute_free(xmlSchemaAttributeUsePtr attr)
+static void rxml_schema_attribute_free(void *data)
 {
+  xmlSchemaAttributeUsePtr attr = (xmlSchemaAttributeUsePtr)data;
   attr = NULL;
   xmlFree(attr);
 }
+
+static const rb_data_type_t rxml_schema_attribute_type = {
+  "XML::Schema::Attribute",
+  {NULL, rxml_schema_attribute_free, NULL},
+  NULL, NULL, 0
+};
 
 VALUE rxml_wrap_schema_attribute(xmlSchemaAttributeUsePtr attr)
 {
@@ -64,7 +71,7 @@ VALUE rxml_wrap_schema_attribute(xmlSchemaAttributeUsePtr attr)
   if (!attr)
     rb_raise(rb_eArgError, "XML::Schema::Attribute required!");
 
-  result = Data_Wrap_Struct(cXMLSchemaAttribute, NULL, rxml_schema_attribute_free, attr);
+  result = TypedData_Wrap_Struct(cXMLSchemaAttribute, &rxml_schema_attribute_type, attr);
 
   if (attr->type == XML_SCHEMA_EXTRA_ATTR_USE_PROHIB) {
     tns_str = ((xmlSchemaAttributeUseProhibPtr) attr)->targetNamespace;
@@ -89,7 +96,7 @@ static VALUE rxml_schema_attribute_node(VALUE self)
 {
   xmlSchemaAttributeUsePtr attr;
 
-  Data_Get_Struct(self, xmlSchemaAttributeUse, attr);
+  TypedData_Get_Struct(self, xmlSchemaAttributeUse, &rxml_schema_attribute_type, attr);
 
   return rxml_node_wrap(attr->node);
 }

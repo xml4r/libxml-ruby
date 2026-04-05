@@ -9,7 +9,7 @@ extern VALUE mXPath;
 
 void rxml_init_xpath(void);
 
-VALUE rxml_xpath_to_value(xmlXPathContextPtr, xmlXPathObjectPtr);
+VALUE rxml_xpath_to_value(VALUE, xmlXPathContextPtr, xmlXPathObjectPtr);
 xmlXPathObjectPtr rxml_xpath_from_value(VALUE);
 
 #endif

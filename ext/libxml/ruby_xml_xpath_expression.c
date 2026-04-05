@@ -21,15 +21,21 @@
 
 VALUE cXMLXPathExpression;
 
-static void rxml_xpath_expression_free(xmlXPathCompExprPtr expr)
+static void rxml_xpath_expression_free(void *expr)
 {
-  xmlXPathFreeCompExpr(expr);
+  xmlXPathCompExprPtr compexpr = (xmlXPathCompExprPtr)expr;
+  xmlXPathFreeCompExpr(compexpr);
 }
+
+const rb_data_type_t rxml_xpath_expression_data_type = {
+  .wrap_struct_name = "LibXML::XML::XPath::Expression",
+  .function = { .dmark = NULL, .dfree = rxml_xpath_expression_free },
+  .flags = RUBY_TYPED_FREE_IMMEDIATELY,
+};
 
 static VALUE rxml_xpath_expression_alloc(VALUE klass)
 {
-  return Data_Wrap_Struct(cXMLXPathExpression, NULL,
-      rxml_xpath_expression_free, NULL);
+  return TypedData_Wrap_Struct(cXMLXPathExpression, &rxml_xpath_expression_data_type, NULL);
 }
 
 /* call-seq:
@@ -68,7 +74,7 @@ static VALUE rxml_xpath_expression_initialize(VALUE self, VALUE expression)
     rxml_raise(xerror);
   }
 
-  DATA_PTR( self) = compexpr;
+  RTYPEDDATA_DATA(self) = compexpr;
   return self;
 }
 

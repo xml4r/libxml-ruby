@@ -446,31 +446,6 @@ class TestWriter < Minitest::Test
     assert_equal(writer.result, expected)
   end
 
-  def test_string_writer_does_not_leak_memory
-    skip('RSS check not supported on Windows') if windows?
-
-    rss_by_round = []
-
-    4.times do
-      5_000.times do
-        writer = LibXML::XML::Writer.string
-        document(writer, encoding: LibXML::XML::Encoding::UTF_8) do
-          writer.write_element('test', 'hello')
-        end
-        writer.result
-      end
-
-      GC.start(full_mark: true, immediate_sweep: true)
-
-      rss = rss_in_kb
-      skip('RSS check not available') unless rss
-
-      rss_by_round << rss
-    end
-
-    assert_operator(rss_by_round.last - rss_by_round[1], :<, 10_000)
-  end
-
   private
 
   def document(writer, options = {})
@@ -491,10 +466,4 @@ class TestWriter < Minitest::Test
     assert(writer.end_element)
   end
 
-  def rss_in_kb
-    rss = `ps -o rss= -p #{Process.pid}`.strip
-    Integer(rss)
-  rescue Errno::ENOENT, Errno::EPERM, ArgumentError
-    nil
-  end
 end

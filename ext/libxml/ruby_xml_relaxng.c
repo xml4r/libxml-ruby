@@ -34,10 +34,17 @@
 
 VALUE cXMLRelaxNG;
 
-static void rxml_relaxng_free(xmlRelaxNGPtr xrelaxng)
+static void rxml_relaxng_free(void* data)
 {
+  xmlRelaxNGPtr xrelaxng = (xmlRelaxNGPtr)data;
   xmlRelaxNGFree(xrelaxng);
 }
+
+const rb_data_type_t rxml_relaxng_data_type = {
+  .wrap_struct_name = "LibXML::XML::RelaxNG",
+  .function = { .dmark = NULL, .dfree = rxml_relaxng_free },
+  .flags = RUBY_TYPED_FREE_IMMEDIATELY,
+};
 
 /*
  * call-seq:
@@ -56,7 +63,7 @@ static VALUE rxml_relaxng_init_from_uri(VALUE class, VALUE uri)
   xrelaxng = xmlRelaxNGParse(xparser);
   xmlRelaxNGFreeParserCtxt(xparser);
 
-  return Data_Wrap_Struct(cXMLRelaxNG, NULL, rxml_relaxng_free, xrelaxng);
+  return TypedData_Wrap_Struct(cXMLRelaxNG, &rxml_relaxng_data_type, xrelaxng);
 }
 
 /*
@@ -71,13 +78,13 @@ static VALUE rxml_relaxng_init_from_document(VALUE class, VALUE document)
   xmlRelaxNGPtr xrelaxng;
   xmlRelaxNGParserCtxtPtr xparser;
 
-  Data_Get_Struct(document, xmlDoc, xdoc);
+  TypedData_Get_Struct(document, xmlDoc, &rxml_document_data_type, xdoc);
 
   xparser = xmlRelaxNGNewDocParserCtxt(xdoc);
   xrelaxng = xmlRelaxNGParse(xparser);
   xmlRelaxNGFreeParserCtxt(xparser);
 
-  return Data_Wrap_Struct(cXMLRelaxNG, NULL, rxml_relaxng_free, xrelaxng);
+  return TypedData_Wrap_Struct(cXMLRelaxNG, &rxml_relaxng_data_type, xrelaxng);
 }
 
 /*
@@ -97,7 +104,7 @@ static VALUE rxml_relaxng_init_from_string(VALUE self, VALUE relaxng_str)
   xrelaxng = xmlRelaxNGParse(xparser);
   xmlRelaxNGFreeParserCtxt(xparser);
 
-  return Data_Wrap_Struct(cXMLRelaxNG, NULL, rxml_relaxng_free, xrelaxng);
+  return TypedData_Wrap_Struct(cXMLRelaxNG, &rxml_relaxng_data_type, xrelaxng);
 }
 
 void rxml_init_relaxng(void)

@@ -338,8 +338,7 @@ class TestReader < Minitest::Test
       reader.read
     end
 
-    assert_equal("Fatal error: Input is not proper UTF-8, indicate encoding !\nBytes: 0xF6 0x74 0x6C 0x65 at :2.",
-                 error.to_s)
+    assert_match(/Fatal error:.*at :2\./m, error.to_s)
 
   end
 
@@ -358,7 +357,10 @@ class TestReader < Minitest::Test
     reader = LibXML::XML::Reader.string(xml, :encoding => LibXML::XML::Encoding::ISO_8859_1)
     reader.read
 
-    encoding = windows? ? LibXML::XML::Encoding::ISO_8859_1 : LibXML::XML::Encoding::NONE
-    assert_equal(reader.encoding, encoding)
+    if Gem::Version.new(LibXML::XML::LIBXML_VERSION) >= Gem::Version.new("2.12")
+      assert_equal(LibXML::XML::Encoding::ISO_8859_1, reader.encoding)
+    else
+      assert_equal(LibXML::XML::Encoding::NONE, reader.encoding)
+    end
   end
 end

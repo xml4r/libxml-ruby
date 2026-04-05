@@ -5,6 +5,11 @@
 
 VALUE cXMLNamespace;
 
+const rb_data_type_t rxml_namespace_type = {
+  "libxml/namespace",
+  {NULL, NULL, NULL},
+};
+
 /* Document-class: LibXML::XML::Namespace
  *
  * The Namespace class represents an XML namespace.
@@ -26,12 +31,12 @@ VALUE cXMLNamespace;
 
 static VALUE rxml_namespace_alloc(VALUE klass)
 {
-  return Data_Wrap_Struct(klass, NULL, NULL, NULL);
+  return TypedData_Wrap_Struct(klass, &rxml_namespace_type, NULL);
 }
 
 VALUE rxml_namespace_wrap(xmlNsPtr xns)
 {
-  return Data_Wrap_Struct(cXMLNamespace, NULL, NULL, xns);
+  return TypedData_Wrap_Struct(cXMLNamespace, &rxml_namespace_type, xns);
 }
 
 
@@ -50,15 +55,14 @@ static VALUE rxml_namespace_initialize(VALUE self, VALUE node, VALUE prefix,
   xmlChar *xmlPrefix;
   xmlNsPtr xns;
 
-  Check_Type(node, T_DATA);
-  Data_Get_Struct(node, xmlNode, xnode);
+  TypedData_Get_Struct(node, xmlNode, &rxml_node_data_type, xnode);
   xmlResetLastError();
 
   /* Prefix can be null - that means its the default namespace */
   xmlPrefix = NIL_P(prefix) ? NULL : (xmlChar *)StringValuePtr(prefix);
   xns = xmlNewNs(xnode, (xmlChar*) StringValuePtr(href), xmlPrefix);
 
-  DATA_PTR(self) = xns;
+  RTYPEDDATA_DATA(self) = xns;
   return self;
 }
 
@@ -75,7 +79,7 @@ static VALUE rxml_namespace_initialize(VALUE self, VALUE node, VALUE prefix,
 static VALUE rxml_namespace_href_get(VALUE self)
 {
   xmlNsPtr xns;
-  Data_Get_Struct(self, xmlNs, xns);
+  TypedData_Get_Struct(self, xmlNs, &rxml_namespace_type, xns);
   if (xns->href == NULL)
     return Qnil;
   else
@@ -91,7 +95,7 @@ static VALUE rxml_namespace_href_get(VALUE self)
 static VALUE rxml_namespace_node_type(VALUE self)
 {
   xmlNsPtr xns;
-  Data_Get_Struct(self, xmlNs, xns);
+  TypedData_Get_Struct(self, xmlNs, &rxml_namespace_type, xns);
   return INT2NUM(xns->type);
 }
 
@@ -110,7 +114,7 @@ static VALUE rxml_namespace_node_type(VALUE self)
 static VALUE rxml_namespace_prefix_get(VALUE self)
 {
   xmlNsPtr xns;
-  Data_Get_Struct(self, xmlNs, xns);
+  TypedData_Get_Struct(self, xmlNs, &rxml_namespace_type, xns);
   if (xns->prefix == NULL)
     return Qnil;
   else
@@ -132,7 +136,7 @@ static VALUE rxml_namespace_prefix_get(VALUE self)
 static VALUE rxml_namespace_next(VALUE self)
 {
   xmlNsPtr xns;
-  Data_Get_Struct(self, xmlNs, xns);
+  TypedData_Get_Struct(self, xmlNs, &rxml_namespace_type, xns);
   if (xns == NULL || xns->next == NULL)
     return (Qnil);
   else

@@ -9,6 +9,7 @@
 #include <libxml/xmlreader.h>
 #include <libxml/xmlschemas.h>
 
+
 /*
  * Document-class: LibXML::XML::Reader
  *
@@ -59,28 +60,39 @@ static ID ENCODING_SYMBOL;
 static ID IO_ATTR;
 static ID OPTIONS_SYMBOL;
 
-static void rxml_reader_free(xmlTextReaderPtr xreader)
+static void rxml_reader_free(void* data)
 {
+  xmlTextReaderPtr xreader = (xmlTextReaderPtr)data;
   xmlFreeTextReader(xreader);
 }
 
-static void rxml_reader_mark(xmlTextReaderPtr xreader)
+static void rxml_reader_mark(void* data)
 {
+  xmlTextReaderPtr xreader = (xmlTextReaderPtr)data;
   xmlDocPtr xdoc = xmlTextReaderCurrentDoc(xreader);
-  VALUE doc = (VALUE)xdoc->_private;
-  rb_gc_mark(doc);
+  if (xdoc && xdoc->_private)
+  {
+    VALUE doc = (VALUE)xdoc->_private;
+    rb_gc_mark(doc);
+  }
 }
+
+static const rb_data_type_t rxml_reader_data_type = {
+  .wrap_struct_name = "LibXML::XML::Reader",
+  .function = { .dmark = rxml_reader_mark, .dfree = rxml_reader_free },
+  .flags = RUBY_TYPED_FREE_IMMEDIATELY,
+};
 
 static VALUE rxml_reader_wrap(xmlTextReaderPtr xreader)
 {
-  return Data_Wrap_Struct(cXMLReader, NULL, rxml_reader_free, xreader);
+  return TypedData_Wrap_Struct(cXMLReader, &rxml_reader_data_type, xreader);
 }
 
 
 static xmlTextReaderPtr rxml_text_reader_get(VALUE obj)
 {
   xmlTextReaderPtr xreader;
-  Data_Get_Struct(obj, xmlTextReader, xreader);
+  TypedData_Get_Struct(obj, xmlTextReader, &rxml_reader_data_type, xreader);
   return xreader;
 }
 
@@ -95,7 +107,7 @@ VALUE rxml_reader_document(VALUE klass, VALUE doc)
   xmlDocPtr xdoc;
   xmlTextReaderPtr xreader;
 
-  Data_Get_Struct(doc, xmlDoc, xdoc);
+  TypedData_Get_Struct(doc, xmlDoc, &rxml_document_data_type, xdoc);
 
   xreader = xmlReaderWalker(xdoc);
 
@@ -606,7 +618,7 @@ static VALUE rxml_reader_relax_ng_validate(VALUE self, VALUE rng)
   xmlTextReaderPtr xreader = rxml_text_reader_get(self);
   xmlRelaxNGPtr xrelax;
   int status;
-  Data_Get_Struct(rng, xmlRelaxNG, xrelax);
+  TypedData_Get_Struct(rng, xmlRelaxNG, &rxml_relaxng_data_type, xrelax);
   
   status = xmlTextReaderRelaxNGSetSchema(xreader, xrelax);
   return (status == 0 ? Qtrue : Qfalse);
@@ -631,7 +643,7 @@ rxml_reader_schema_validate(VALUE self, VALUE xsd)
   xmlSchemaPtr xschema;
   int status;
 
-  Data_Get_Struct(xsd, xmlSchema, xschema);
+  TypedData_Get_Struct(xsd, xmlSchema, &rxml_schema_type, xschema);
   status = xmlTextReaderSetSchema(xreader, xschema);
   return (status == 0 ? Qtrue : Qfalse);
 }
@@ -997,12 +1009,12 @@ static VALUE rxml_reader_expand(VALUE self)
   }
   else
   {
-	  /* We cannot call rxml_node_wrap here because its sets up a mark function
+	  /* We cannot call rxml_node_wrap here because it sets up a mark function
 	   for the node. But according to the libxml docs (http://xmlsoft.org/html/libxml-xmlreader.html#xmlTextReaderExpand)
 	   this is only valid until the next xmlTextReaderRead call.  At that point the node is freed (from reading
-	   the libxml2 source code.  So don't set a mark or free function, because they will get called in the next
+	   the libxml2 source code).  So don't set a mark or free function, because they will get called in the next
 	   garbage collection run and cause a segfault.*/
-	return Data_Wrap_Struct(cXMLNode, NULL, NULL, xnode);
+	return TypedData_Wrap_Struct(cXMLNode, &rxml_node_unmanaged_data_type, xnode);
   }
 }
 
@@ -1026,9 +1038,6 @@ static VALUE rxml_reader_doc(VALUE self)
     rb_raise(rb_eRuntimeError, "The reader does not have a document.  Did you forget to call read?");
 
   result = rxml_document_wrap(xdoc);
-
-  // And now hook in a mark function to keep the document alive as long as the reader is valid
-  RDATA(self)->dmark = (RUBY_DATA_FUNC)rxml_reader_mark;
 
   return result;
 }

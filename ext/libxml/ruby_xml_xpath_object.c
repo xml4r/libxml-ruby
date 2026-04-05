@@ -28,8 +28,9 @@ VALUE cXMLXPathObject;
    and wraps them in Ruby objects.  When the Ruby objects go out of scope
    then the namespace nodes are freed. */
 
-static void rxml_xpath_object_free(rxml_xpath_object *rxpop)
+static void rxml_xpath_object_free(void *data)
 {
+  rxml_xpath_object *rxpop = (rxml_xpath_object *)data;
   /* We positively, absolutely cannot let libxml iterate over
      the nodeTab since if the underlying document has been
      freed the majority of entries are invalid, resulting in
@@ -44,27 +45,42 @@ static void rxml_xpath_object_free(rxml_xpath_object *rxpop)
 }
 
 /* Custom free function for copied namespace nodes */
-static void rxml_xpath_namespace_free(xmlNsPtr xns)
+static void rxml_xpath_namespace_free(void *data)
 {
+  xmlNsPtr xns = (xmlNsPtr)data;
   xmlFreeNs(xns);
 }
 
-static void rxml_xpath_object_mark(rxml_xpath_object *rxpop)
+static const rb_data_type_t rxml_namespace_owned_data_type = {
+  .wrap_struct_name = "LibXML::XML::Namespace (owned)",
+  .function = { .dmark = NULL, .dfree = rxml_xpath_namespace_free },
+  .flags = RUBY_TYPED_FREE_IMMEDIATELY,
+};
+
+static void rxml_xpath_object_mark(void *data)
 {
-  VALUE doc = (VALUE)rxpop->xdoc->_private;
-  rb_gc_mark(doc);
+  rxml_xpath_object *rxpop = (rxml_xpath_object *)data;
+  rb_gc_mark(rxpop->document);
   rb_gc_mark(rxpop->nsnodes);
 }
 
-VALUE rxml_xpath_object_wrap(xmlDocPtr xdoc, xmlXPathObjectPtr xpop)
+static const rb_data_type_t rxml_xpath_object_data_type = {
+  .wrap_struct_name = "LibXML::XML::XPath::Object",
+  .function = { .dmark = rxml_xpath_object_mark, .dfree = rxml_xpath_object_free },
+  .flags = RUBY_TYPED_FREE_IMMEDIATELY,
+};
+
+VALUE rxml_xpath_object_wrap(VALUE document, xmlDocPtr xdoc, xmlXPathObjectPtr xpop)
 {
   int i;
-  rxml_xpath_object *rxpop = ALLOC(rxml_xpath_object);
+  VALUE result;
+  rxml_xpath_object *rxpopp = ALLOC(rxml_xpath_object);
 
   /* Make sure Ruby's GC can find the array in the stack */
   VALUE nsnodes = rb_ary_new();
-  rxpop->xdoc =xdoc;
-  rxpop->xpop = xpop;
+  rxpopp->document = document;
+  rxpopp->xdoc = xdoc;
+  rxpopp->xpop = xpop;
 
   /* Find all the extra namespace nodes and wrap them. */
   if (xpop->nodesetval && xpop->nodesetval->nodeNr)
@@ -84,15 +100,16 @@ VALUE rxml_xpath_object_wrap(xmlDocPtr xdoc, xmlXPathObjectPtr xpop)
 
         /* Specify a custom free function here since by default
            namespace nodes will not be freed */
-        ns = rxml_namespace_wrap((xmlNsPtr)xnode);
-        RDATA(ns)->dfree = (RUBY_DATA_FUNC)rxml_xpath_namespace_free;
+        ns = TypedData_Wrap_Struct(cXMLNamespace, &rxml_namespace_owned_data_type, (xmlNsPtr)xnode);
         rb_ary_push(nsnodes, ns);
       }
     }
   }
 
-  rxpop->nsnodes = nsnodes;
-  return Data_Wrap_Struct(cXMLXPathObject, rxml_xpath_object_mark, rxml_xpath_object_free, rxpop);
+  rxpopp->nsnodes = nsnodes;
+  result = TypedData_Wrap_Struct(cXMLXPathObject, &rxml_xpath_object_data_type, rxpopp);
+  RB_GC_GUARD(nsnodes);
+  return result;
 }
 
 static VALUE rxml_xpath_object_tabref(xmlXPathObjectPtr xpop, int index)
@@ -125,12 +142,12 @@ static VALUE rxml_xpath_object_tabref(xmlXPathObjectPtr xpop, int index)
 static VALUE rxml_xpath_object_to_a(VALUE self)
 {
   VALUE set_ary, nodeobj;
-  rxml_xpath_object *rxpop;
+  rxml_xpath_object *rxpopp;
   xmlXPathObjectPtr xpop;
   int i;
 
-  Data_Get_Struct(self, rxml_xpath_object, rxpop);
-  xpop = rxpop->xpop;
+  TypedData_Get_Struct(self, rxml_xpath_object, &rxml_xpath_object_data_type, rxpopp);
+  xpop = rxpopp->xpop;
 
   set_ary = rb_ary_new();
 
@@ -154,13 +171,13 @@ static VALUE rxml_xpath_object_to_a(VALUE self)
  */
 static VALUE rxml_xpath_object_empty_q(VALUE self)
 {
-  rxml_xpath_object *rxpop;
-  Data_Get_Struct(self, rxml_xpath_object, rxpop);
+  rxml_xpath_object *rxpopp;
+  TypedData_Get_Struct(self, rxml_xpath_object, &rxml_xpath_object_data_type, rxpopp);
 
-  if (rxpop->xpop->type != XPATH_NODESET)
+  if (rxpopp->xpop->type != XPATH_NODESET)
     return Qnil;
 
-  return (rxpop->xpop->nodesetval == NULL || rxpop->xpop->nodesetval->nodeNr <= 0) ? Qtrue
+  return (rxpopp->xpop->nodesetval == NULL || rxpopp->xpop->nodesetval->nodeNr <= 0) ? Qtrue
       : Qfalse;
 }
 
@@ -172,17 +189,17 @@ static VALUE rxml_xpath_object_empty_q(VALUE self)
  */
 static VALUE rxml_xpath_object_each(VALUE self)
 {
-  rxml_xpath_object *rxpop;
+  rxml_xpath_object *rxpopp;
   int i;
 
   if (rxml_xpath_object_empty_q(self) == Qtrue)
     return Qnil;
 
-  Data_Get_Struct(self, rxml_xpath_object, rxpop);
+  TypedData_Get_Struct(self, rxml_xpath_object, &rxml_xpath_object_data_type, rxpopp);
 
-  for (i = 0; i < rxpop->xpop->nodesetval->nodeNr; i++)
+  for (i = 0; i < rxpopp->xpop->nodesetval->nodeNr; i++)
   {
-    rb_yield(rxml_xpath_object_tabref(rxpop->xpop, i));
+    rb_yield(rxml_xpath_object_tabref(rxpopp->xpop, i));
   }
   return (self);
 }
@@ -195,13 +212,13 @@ static VALUE rxml_xpath_object_each(VALUE self)
  */
 static VALUE rxml_xpath_object_first(VALUE self)
 {
-  rxml_xpath_object *rxpop;
+  rxml_xpath_object *rxpopp;
 
   if (rxml_xpath_object_empty_q(self) == Qtrue)
     return Qnil;
 
-  Data_Get_Struct(self, rxml_xpath_object, rxpop);
-  return rxml_xpath_object_tabref(rxpop->xpop, 0);
+  TypedData_Get_Struct(self, rxml_xpath_object, &rxml_xpath_object_data_type, rxpopp);
+  return rxml_xpath_object_tabref(rxpopp->xpop, 0);
 }
 
 /*
@@ -212,13 +229,13 @@ static VALUE rxml_xpath_object_first(VALUE self)
  */
 static VALUE rxml_xpath_object_last(VALUE self)
 {
-  rxml_xpath_object *rxpop;
+  rxml_xpath_object *rxpopp;
 
   if (rxml_xpath_object_empty_q(self) == Qtrue)
     return Qnil;
 
-  Data_Get_Struct(self, rxml_xpath_object, rxpop);
-  return rxml_xpath_object_tabref(rxpop->xpop, -1);
+  TypedData_Get_Struct(self, rxml_xpath_object, &rxml_xpath_object_data_type, rxpopp);
+  return rxml_xpath_object_tabref(rxpopp->xpop, -1);
 }
 
 /*
@@ -229,13 +246,13 @@ static VALUE rxml_xpath_object_last(VALUE self)
  */
 static VALUE rxml_xpath_object_aref(VALUE self, VALUE aref)
 {
-  rxml_xpath_object *rxpop;
+  rxml_xpath_object *rxpopp;
 
   if (rxml_xpath_object_empty_q(self) == Qtrue)
     return Qnil;
 
-  Data_Get_Struct(self, rxml_xpath_object, rxpop);
-  return rxml_xpath_object_tabref(rxpop->xpop, NUM2INT(aref));
+  TypedData_Get_Struct(self, rxml_xpath_object, &rxml_xpath_object_data_type, rxpopp);
+  return rxml_xpath_object_tabref(rxpopp->xpop, NUM2INT(aref));
 }
 
 /*
@@ -246,13 +263,13 @@ static VALUE rxml_xpath_object_aref(VALUE self, VALUE aref)
  */
 static VALUE rxml_xpath_object_length(VALUE self)
 {
-  rxml_xpath_object *rxpop;
+  rxml_xpath_object *rxpopp;
 
   if (rxml_xpath_object_empty_q(self) == Qtrue)
     return INT2FIX(0);
 
-  Data_Get_Struct(self, rxml_xpath_object, rxpop);
-  return INT2NUM(rxpop->xpop->nodesetval->nodeNr);
+  TypedData_Get_Struct(self, rxml_xpath_object, &rxml_xpath_object_data_type, rxpopp);
+  return INT2NUM(rxpopp->xpop->nodesetval->nodeNr);
 }
 
 /*
@@ -276,9 +293,9 @@ static VALUE rxml_xpath_object_length(VALUE self)
  */
 static VALUE rxml_xpath_object_get_type(VALUE self)
 {
-  rxml_xpath_object *rxpop;
-  Data_Get_Struct(self, rxml_xpath_object, rxpop);
-  return INT2FIX(rxpop->xpop->type);
+  rxml_xpath_object *rxpopp;
+  TypedData_Get_Struct(self, rxml_xpath_object, &rxml_xpath_object_data_type, rxpopp);
+  return INT2FIX(rxpopp->xpop->type);
 }
 
 /*
@@ -289,14 +306,14 @@ static VALUE rxml_xpath_object_get_type(VALUE self)
  */
 static VALUE rxml_xpath_object_string(VALUE self)
 {
-  rxml_xpath_object *rxpop;
+  rxml_xpath_object *rxpopp;
 
-  Data_Get_Struct(self, rxml_xpath_object, rxpop);
+  TypedData_Get_Struct(self, rxml_xpath_object, &rxml_xpath_object_data_type, rxpopp);
 
-  if (rxpop->xpop->stringval == NULL)
+  if (rxpopp->xpop->stringval == NULL)
     return Qnil;
 
-  return rxml_new_cstr( rxpop->xpop->stringval, rxpop->xdoc->encoding);
+  return rxml_new_cstr( rxpopp->xpop->stringval, rxpopp->xdoc->encoding);
 }
 
 /*
@@ -309,9 +326,9 @@ static VALUE rxml_xpath_object_string(VALUE self)
 static VALUE rxml_xpath_object_debug(VALUE self)
 {
 #ifdef LIBXML_DEBUG_ENABLED
-  rxml_xpath_object *rxpop;
-  Data_Get_Struct(self, rxml_xpath_object, rxpop);
-  xmlXPathDebugDumpObject(stdout, rxpop->xpop, 0);
+  rxml_xpath_object *rxpopp;
+  TypedData_Get_Struct(self, rxml_xpath_object, &rxml_xpath_object_data_type, rxpopp);
+  xmlXPathDebugDumpObject(stdout, rxpopp->xpop, 0);
   return Qtrue;
 #else
   rb_warn("libxml was compiled without debugging support.");
