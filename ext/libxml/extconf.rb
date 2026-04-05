@@ -23,32 +23,46 @@ if xc
   end
 else
   dir_config('xml2')
+  pkg_config('libxml-2.0')
 end
 
-found_header = find_header('libxml/xmlversion.h',
-                           '/opt/include/libxml2',
-                           '/opt/local/include/libxml2',
-                           '/opt/homebrew/opt/libxml2/include/libxml2',
-                           '/usr/local/include/libxml2',
-                           '/usr/include/libxml2',
-                           '/usr/local/include',
-                           '/usr/local/opt/libxml2/include/libxml2')
+include_dirs = []
+lib_dirs = []
+
+if (msystem_prefix = ENV['MSYSTEM_PREFIX']) && !msystem_prefix.empty?
+  include_dirs.concat([
+    "#{msystem_prefix}/include/libxml2",
+    "#{msystem_prefix}/include"
+  ])
+  lib_dirs << "#{msystem_prefix}/lib"
+end
+
+include_dirs.concat([
+  '/opt/include/libxml2',
+  '/opt/local/include/libxml2',
+  '/opt/homebrew/opt/libxml2/include/libxml2',
+  '/usr/local/include/libxml2',
+  '/usr/include/libxml2',
+  '/usr/local/include',
+  '/usr/local/opt/libxml2/include/libxml2'
+])
+
+lib_dirs.concat([
+  '/opt/lib',
+  '/opt/local/lib',
+  '/opt/homebrew/opt/libxml2/lib',
+  '/usr/lib',
+  '/usr/local/lib',
+  '/usr/local/opt/libxml2/lib'
+])
+
+found_header = find_header('libxml/xmlversion.h', *include_dirs)
 
 found_lib = find_library('xml2', 'xmlParseDoc',
-                           '/opt/lib',
-                           '/opt/local/lib',
-                           '/opt/homebrew/opt/libxml2/lib',
-                           '/usr/lib',
-                           '/usr/local/lib',
-                           '/usr/local/opt/libxml2/lib')
+                         *lib_dirs)
 
 found_lib ||= find_library('libxml2', 'xmlParseDoc',
-                           '/opt/lib',
-                           '/opt/local/lib',
-                           '/opt/homebrew/opt/libxml2/lib',
-                           '/usr/lib',
-                           '/usr/local/lib',
-                           '/usr/local/opt/libxml2/lib')
+                           *lib_dirs)
 
 if !found_header || !found_lib
     crash(<<~EOL)
