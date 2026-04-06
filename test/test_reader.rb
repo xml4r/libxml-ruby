@@ -363,4 +363,21 @@ class TestReader < Minitest::Test
       assert_equal(LibXML::XML::Encoding::NONE, reader.encoding)
     end
   end
+
+  def test_expand_gc_after_advance
+    GC.stress = true
+    expand_and_advance
+  ensure
+    GC.stress = false
+  end
+
+  private
+
+  def expand_and_advance
+    reader = LibXML::XML::Reader.string("<root><a/><b/></root>")
+    reader.read # root
+    reader.read # a
+    reader.expand
+    reader.next
+  end
 end

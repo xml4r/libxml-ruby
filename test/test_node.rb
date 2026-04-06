@@ -232,4 +232,20 @@ class TestNode < Minitest::Test
     assert_equal("unescaped & string", node.content)
     assert_equal("<test>unescaped &amp; string</test>", node.to_s)
   end
+
+  def test_document_node_marks_document
+    GC.stress = true
+    node = create_document_child
+    assert_equal("child", node.name)
+    refute_nil(node.doc)
+  ensure
+    GC.stress = false
+  end
+
+  private
+
+  def create_document_child
+    doc = LibXML::XML::Document.string("<root><child/></root>")
+    doc.root.children.first
+  end
 end
