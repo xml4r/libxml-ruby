@@ -221,10 +221,10 @@ rxml_document_canonicalize(int argc, VALUE *argv, VALUE self)
   // Do stuff if ruby hash passed as argument
   if (!NIL_P(option_hash)) 
   {
-	VALUE o_comments = Qnil;
-	VALUE o_mode = Qnil;
-	VALUE o_i_ns_prefixes = Qnil;
-		
+    VALUE o_comments = Qnil;
+    VALUE o_mode = Qnil;
+    VALUE o_i_ns_prefixes = Qnil;
+    
     Check_Type(option_hash, T_HASH);
 
     o_comments = rb_hash_aref(option_hash, ID2SYM(rb_intern("comments")));
@@ -232,7 +232,7 @@ rxml_document_canonicalize(int argc, VALUE *argv, VALUE self)
 
     o_mode = rb_hash_aref(option_hash, ID2SYM(rb_intern("mode")));
     if (!NIL_P(o_mode)) 
-	{
+    {
       Check_Type(o_mode, T_FIXNUM);
       c14n_mode = NUM2INT(o_mode);
       //TODO: clean this up
@@ -242,25 +242,25 @@ rxml_document_canonicalize(int argc, VALUE *argv, VALUE self)
 
     o_i_ns_prefixes = rb_hash_aref(option_hash, ID2SYM(rb_intern("inclusive_ns_prefixes")));
     if (!NIL_P(o_i_ns_prefixes)) 
-	{
+    {
       int i;
       int p = 0; //pointer array index
       VALUE *list_in = NULL;
       long list_size = 0;
 
-	  Check_Type(o_i_ns_prefixes, T_ARRAY);
+      Check_Type(o_i_ns_prefixes, T_ARRAY);
       list_in = RARRAY_PTR(o_i_ns_prefixes);
       list_size = RARRAY_LEN(o_i_ns_prefixes);
 
       if (list_size > 0) 
-	  {
+      {
         for(i=0; i < list_size; ++i) {
           if (p >= C14N_NS_LIMIT) { break; }
 
           if (RTEST(list_in[i])) 
-		  {
+          {
             if (TYPE(list_in[i]) == T_STRING) 
-			{
+            {
               inc_ns_prefixes_ptr[p] = (xmlChar *)StringValueCStr(list_in[i]);
               p++;
             }
@@ -279,29 +279,29 @@ rxml_document_canonicalize(int argc, VALUE *argv, VALUE self)
 
     o_nodes = rb_hash_aref(option_hash, ID2SYM(rb_intern("nodes")));
     if (!NIL_P(o_nodes)) 
-	{
+    {
       int i;
       int p = 0; // index of pointer array
       VALUE * list_in = NULL;
       long node_list_size = 0;
 
-	  if (CLASS_OF(o_nodes) == cXMLXPathObject)
-	  {
-		  o_nodes = rb_funcall(o_nodes, rb_intern("to_a"), 0);
-	  }
-	  else
-	  {
-		  Check_Type(o_nodes, T_ARRAY);
-	  }
+      if (CLASS_OF(o_nodes) == cXMLXPathObject)
+      {
+        o_nodes = rb_funcall(o_nodes, rb_intern("to_a"), 0);
+      }
+      else
+      {
+        Check_Type(o_nodes, T_ARRAY);
+      }
       list_in = RARRAY_PTR(o_nodes);
       node_list_size = RARRAY_LEN(o_nodes);
 
       for (i=0; i < node_list_size; ++i)
-	  {
+      {
         if (p >= C14N_NODESET_LIMIT) { break; }
 
         if (RTEST(list_in[i])) 
-		{
+        {
           xmlNodePtr node_ptr;
           TypedData_Get_Struct(list_in[i], xmlNode, &rxml_node_data_type, node_ptr);
           node_ptr_array[p] = node_ptr;
@@ -936,9 +936,9 @@ static VALUE rxml_document_version_get(VALUE self)
 static VALUE rxml_document_xhtml_q(VALUE self)
 {
   xmlDocPtr xdoc;
-	xmlDtdPtr xdtd;
+  xmlDtdPtr xdtd;
   TypedData_Get_Struct(self, xmlDoc, &rxml_document_data_type, xdoc);
-	xdtd = xmlGetIntSubset(xdoc);
+  xdtd = xmlGetIntSubset(xdoc);
   if (xdtd != NULL && xmlIsXHTML(xdtd->SystemID, xdtd->ExternalID) > 0)
     return (Qtrue);
   else
