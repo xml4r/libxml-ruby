@@ -196,6 +196,7 @@ static VALUE rxml_writer_doc(VALUE klass)
 {
     xmlDocPtr doc;
     rxml_writer_object* rwo;
+    VALUE output, result;
 
     rwo = ALLOC(rxml_writer_object);
     rwo->buffer = NULL;
@@ -207,9 +208,12 @@ static VALUE rxml_writer_doc(VALUE klass)
     {
         rxml_raise(xmlGetLastError());
     }
-    rwo->output = rxml_document_wrap(doc);
+    output = rxml_document_wrap(doc);
+    rwo->output = output;
 
-    return rxml_writer_wrap(rwo);
+    result = rxml_writer_wrap(rwo);
+    RB_GC_GUARD(output);
+    return result;
 }
 
 /* ===== public instance methods ===== */
