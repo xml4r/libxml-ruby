@@ -54,21 +54,21 @@ desc 'Generate rdoc documentation'
 RDoc::Task.new("rdoc") do |rdoc|
   rdoc.rdoc_dir = 'rdoc'
   rdoc.title    = 'LibXML'
-  rdoc.generator = 'hanna'
+  rdoc.generator = 'aliki'
 
   # Show source inline with line numbers
   rdoc.options << '--line-numbers'
   rdoc.options << '--charset=utf-8'
   # Make the readme file the start page for the generated html
-  rdoc.main = 'README.rdoc'
-  rdoc.rdoc_files.include('doc/*.rdoc',
-                          'ext/**/libxml.c',
+  rdoc.main = 'README.md'
+  rdoc.rdoc_files.include('ext/**/libxml.c',
                           'ext/**/ruby_xml.c',
                           'ext/**/*.c',
                           'lib/**/*.rb',
-                          'README.rdoc',
-                          'HISTORY',
+                          'README.md',
+                          'CHANGELOG.md',
                           'LICENSE')
+  rdoc.rdoc_files.exclude('lib/xml.rb', 'lib/xml/libxml.rb')
 end
 
 # Test Task
