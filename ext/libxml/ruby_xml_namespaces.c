@@ -116,10 +116,31 @@ static VALUE rxml_namespaces_definitions(VALUE self)
  *     ..
  *   end
  */
+static VALUE rxml_namespaces_each_yield(VALUE data)
+{
+  xmlNsPtr*nsList = (xmlNsPtr*)data;
+  xmlNsPtr*xns;
+
+  for (xns = nsList; *xns != NULL; xns++)
+  {
+    VALUE ns = rxml_namespace_wrap(*xns);
+    rb_yield(ns);
+  }
+
+  return Qnil;
+}
+
+static VALUE rxml_namespaces_free_list(VALUE data)
+{
+  xmlNsPtr*nsList = (xmlNsPtr*)data;
+  xmlFree(nsList);
+  return Qnil;
+}
+
 static VALUE rxml_namespaces_each(VALUE self)
 {
   xmlNodePtr xnode;
-  xmlNsPtr *nsList, *xns;
+  xmlNsPtr*nsList;
 
   TypedData_Get_Struct(self, xmlNode, &rxml_namespaces_type, xnode);
 
@@ -128,12 +149,8 @@ static VALUE rxml_namespaces_each(VALUE self)
   if (nsList == NULL)
     return (Qnil);
 
-  for (xns = nsList; *xns != NULL; xns++)
-  {
-    VALUE ns = rxml_namespace_wrap(*xns);
-    rb_yield(ns);
-  }
-  xmlFree(nsList);
+  rb_ensure(rxml_namespaces_each_yield, (VALUE)nsList,
+            rxml_namespaces_free_list, (VALUE)nsList);
 
   return Qnil;
 }
