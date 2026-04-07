@@ -63,6 +63,9 @@ static VALUE rxml_relaxng_init_from_uri(VALUE class, VALUE uri)
   xrelaxng = xmlRelaxNGParse(xparser);
   xmlRelaxNGFreeParserCtxt(xparser);
 
+  if (!xrelaxng)
+    rxml_raise(xmlGetLastError());
+
   return TypedData_Wrap_Struct(cXMLRelaxNG, &rxml_relaxng_data_type, xrelaxng);
 }
 
@@ -84,6 +87,9 @@ static VALUE rxml_relaxng_init_from_document(VALUE class, VALUE document)
   xrelaxng = xmlRelaxNGParse(xparser);
   xmlRelaxNGFreeParserCtxt(xparser);
 
+  if (!xrelaxng)
+    rxml_raise(xmlGetLastError());
+
   return TypedData_Wrap_Struct(cXMLRelaxNG, &rxml_relaxng_data_type, xrelaxng);
 }
 
@@ -103,6 +109,9 @@ static VALUE rxml_relaxng_init_from_string(VALUE self, VALUE relaxng_str)
   xparser = xmlRelaxNGNewMemParserCtxt(StringValuePtr(relaxng_str), (int)strlen(StringValuePtr(relaxng_str)));
   xrelaxng = xmlRelaxNGParse(xparser);
   xmlRelaxNGFreeParserCtxt(xparser);
+
+  if (!xrelaxng)
+    rxml_raise(xmlGetLastError());
 
   return TypedData_Wrap_Struct(cXMLRelaxNG, &rxml_relaxng_data_type, xrelaxng);
 }
