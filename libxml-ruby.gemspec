@@ -41,7 +41,7 @@ Gem::Specification.new do |spec|
                          'test/**/*'])
 
   spec.test_files = Dir.glob('test/test_*.rb')
-  spec.required_ruby_version = '>= 2.5'
+  spec.required_ruby_version = '>= 3.2'
   spec.date = DateTime.now
   spec.add_development_dependency('logger')
   spec.add_development_dependency('rake-compiler')
