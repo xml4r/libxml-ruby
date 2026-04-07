@@ -1,0 +1,97 @@
+[project]
+
+site_name = "libxml-ruby"
+site_description = "Ruby language bindings for the GNOME Libxml2 XML toolkit"
+site_url = "https://xml4r.github.io/libxml-ruby/"
+
+repo_url = "https://github.com/xml4r/libxml-ruby"
+repo_name = "xml4r/libxml-ruby"
+
+nav = [
+  { "Home" = [
+    "index.md",
+    { "Installation" = "installation.md" },
+    { "Getting Started" = "getting_started.md" },
+    { "Changelog" = "changelog.md" },
+  ]},
+  { "Parsing" = [
+    { "Overview" = "parsing/overview.md" },
+    { "DOM Parser" = "parsing/dom.md" },
+    { "Reader" = "parsing/reader.md" },
+    { "SAX Parser" = "parsing/sax.md" },
+    { "HTML Parser" = "parsing/html.md" },
+  ]},
+  { "Working with XML" = [
+    { "Documents" = "xml/documents.md" },
+    { "Nodes" = "xml/nodes.md" },
+    { "Attributes" = "xml/attributes.md" },
+    { "Namespaces" = "xml/namespaces.md" },
+    { "Writer" = "xml/writer.md" },
+    { "Encoding" = "xml/encoding.md" },
+    { "Error Handling" = "xml/errors.md" },
+  ]},
+  { "XPath" = [
+    { "Overview" = "xpath/overview.md" },
+    { "Namespaces" = "xpath/namespaces.md" },
+    { "Context" = "xpath/context.md" },
+  ]},
+  { "Validation" = [
+    { "DTD" = "validation/dtd.md" },
+    { "RelaxNG" = "validation/relaxng.md" },
+    { "XML Schema" = "validation/schema.md" },
+  ]},
+  { "Architecture" = [
+    { "Memory Management" = "architecture/memory.md" },
+    { "Pointer Registry" = "architecture/registry.md" },
+  ]},
+  { "API Reference" = "reference/" },
+]
+
+[project.theme]
+
+variant = "classic"
+
+features = [
+  "navigation.tabs",
+  "navigation.tabs.sticky",
+  "navigation.top",
+  "search.highlight",
+  "content.code.copy",
+  "toc.integrate",
+]
+
+# Palette toggle for light mode
+[[project.theme.palette]]
+scheme = "default"
+primary = "deep-purple"
+accent = "deep-purple"
+toggle.icon = "lucide/sun"
+toggle.name = "Switch to dark mode"
+
+# Palette toggle for dark mode
+[[project.theme.palette]]
+scheme = "slate"
+primary = "deep-purple"
+accent = "deep-purple"
+toggle.icon = "lucide/moon"
+toggle.name = "Switch to light mode"
+
+# Extensions
+[project.markdown_extensions.admonition]
+
+[project.markdown_extensions.pymdownx.details]
+
+[project.markdown_extensions.pymdownx.superfences]
+custom_fences = [
+  { name = "mermaid", class = "mermaid", format = "pymdownx.superfences.fence_code_format" },
+]
+
+[project.markdown_extensions.pymdownx.highlight]
+anchor_linenums = true
+
+[project.markdown_extensions.pymdownx.inlinehilite]
+
+[project.markdown_extensions.tables]
+
+[project.markdown_extensions.toc]
+permalink = true
