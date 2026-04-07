@@ -7,16 +7,9 @@
 
 VALUE cXMLSchemaFacet;
 
-static void rxml_schema_facet_free(void *data)
-{
-  xmlSchemaFacetPtr facet = (xmlSchemaFacetPtr)data;
-  facet = NULL;
-  xmlFree(facet);
-}
-
 static const rb_data_type_t rxml_schema_facet_type = {
   "XML::Schema::Facet",
-  {NULL, rxml_schema_facet_free, NULL},
+  {NULL, NULL, NULL},
   NULL, NULL, 0
 };
 

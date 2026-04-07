@@ -46,16 +46,9 @@ a group definition, a XML_SCHEMA_EXTRA_QNAMEREF (if a reference),
 
 VALUE cXMLSchemaType;
 
-static void rxml_schema_type_free(void *data)
-{
-  xmlSchemaTypePtr xschema_type = (xmlSchemaTypePtr)data;
-  xschema_type = NULL;
-  xmlFree(xschema_type);
-}
-
 static const rb_data_type_t rxml_schema_type_type = {
   "XML::Schema::Type",
-  {NULL, rxml_schema_type_free, NULL},
+  {NULL, NULL, NULL},
   NULL, NULL, 0
 };
 

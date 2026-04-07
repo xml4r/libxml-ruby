@@ -4,16 +4,9 @@
 
 VALUE cXMLSchemaElement;
 
-static void rxml_schema_element_free(void *data)
-{
-  xmlSchemaElementPtr xschema_element = (xmlSchemaElementPtr)data;
-  xschema_element = NULL;
-  xmlFree(xschema_element);
-}
-
 static const rb_data_type_t rxml_schema_element_type = {
   "XML::Schema::Element",
-  {NULL, rxml_schema_element_free, NULL},
+  {NULL, NULL, NULL},
   NULL, NULL, 0
 };
 
