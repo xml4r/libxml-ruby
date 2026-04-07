@@ -1,5 +1,31 @@
 = Release History
 
+== 6.0.0 / 2026-04-08
+
+This release is a major refresh of libxml-ruby. The most important changes include:
+
+* Migration to Ruby's modern TypedData API which replaces the old Data_Wrap_Struct API
+* libxml-ruby no longer uses libxml2's _private field. Instead, it now uses an internal registry. This removes a long-standing compatibility issue where libxml-ruby's use of _private could collide with other libxml2 consumers
+* Brand-new documentation site available at https://xml4r.github.io/libxml-ruby/ with guides on parsing, XPath, validation, the Writer API, and the internal architecture
+* Updated reference documentation to Ruby's new Aliki theme
+* Expanded tests
+
+The release also include a number of smaller improvements, including:
+
+* Support Ruby 4.0 (no changes were required)
+* Fix RelaxNG factories to raise on parse failure instead of wrapping NULL
+* Fix read callback to clamp to buffer size, preventing overflow
+* Fix write callback to use len parameter instead of strlen for StringIO
+* Fix Schema @version ivar reading name instead of version
+* Remove no-op free functions from Schema::Type, Element, Attribute, Facet
+* Fix incorrect types in TypedData_Get_Struct for attr_decl and document node_type
+* Remove dead Check_Type after NUM2INT in HTML parser context
+* Use rb_ensure in namespaces.each to free nsList on exception
+* Remove dead Float::INFINITY definition for Ruby 1.8.7
+* Add mswin CI job using vcpkg for libxml2
+* Minimum Ruby version is now 3.2
+* Rename HISTORY to CHANGELOG.md, README.rdoc to README.md
+
 == 5.0.6 / 2026-04-03
 * Test fix - Make the memory leak test threshold more generous to avoid false positives
 * Test fix - Call get_handler on Error class instead of module
