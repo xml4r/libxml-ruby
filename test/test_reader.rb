@@ -172,9 +172,40 @@ class TestReader < Minitest::Test
 
     # Read a node
     node = reader.expand
-    refute_nil(node.doc)
+    # node.doc is nil until reader.doc is called to wrap the document
+    assert_nil(node.doc)
     assert_equal('feed', node.name)
     assert_equal(::Encoding::UTF_8, node.name.encoding) if defined?(::Encoding)
+  end
+
+  def test_expand_attribute_doc_requires_reader_doc
+    reader = LibXML::XML::Reader.string('<root a="1"/>')
+    reader.read
+
+    node = reader.expand
+    attr = node.attributes.get_attribute('a')
+
+    assert_nil(node.doc)
+    assert_nil(attr.doc)
+
+    doc = reader.doc
+    assert_same(doc, node.doc)
+    assert_same(doc, attr.doc)
+  ensure
+    begin
+      reader.doc if reader
+    rescue StandardError
+    end
+  end
+
+  def test_expand_attribute_doc
+    reader = LibXML::XML::Reader.string('<root a="1"/>')
+    reader.read
+
+    node = reader.expand
+    attr = node.attributes.get_attribute('a')
+
+    assert_nil(attr.doc)
   end
 
   def test_expand_find
@@ -229,7 +260,6 @@ class TestReader < Minitest::Test
     while reader.read
       node = reader.expand
       refute_nil(node)
-      refute_nil(node.doc)
 
       # NOTE - DO NOT do this in real code, these nodes are invalid after the next read. This *will* cause
       # a segmentation fault next time the garbage collector runs.  The reason is the parent node will be
@@ -362,5 +392,22 @@ class TestReader < Minitest::Test
     else
       assert_equal(LibXML::XML::Encoding::NONE, reader.encoding)
     end
+  end
+
+  def test_expand_gc_after_advance
+    GC.stress = true
+    expand_and_advance
+  ensure
+    GC.stress = false
+  end
+
+  private
+
+  def expand_and_advance
+    reader = LibXML::XML::Reader.string("<root><a/><b/></root>")
+    reader.read # root
+    reader.read # a
+    reader.expand
+    reader.next
   end
 end

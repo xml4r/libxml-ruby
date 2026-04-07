@@ -43,7 +43,7 @@ static VALUE rxml_attr_decl_doc_get(VALUE self)
   if (xattr->doc == NULL)
     return Qnil;
   else
-    return rxml_document_wrap(xattr->doc);
+    return rxml_registry_lookup(xattr->doc);
 }
 
 

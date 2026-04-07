@@ -30,9 +30,9 @@ VALUE cXMLNode;
  * have a parent and do not belong to a document). In these cases,
  * the bindings manage the memory.  They do this by installing a free
  * function and storing a back pointer to the Ruby object from the xmlnode
- * using the _private member on libxml structures.  When the Ruby object
- * goes out of scope, the underlying libxml structure is freed.  Libxml
- * itself then frees all child node (recursively).
+ * using a pointer-keyed registry (see ruby_xml_registry.c).  When the
+ * Ruby object goes out of scope, the underlying libxml structure is freed.
+ * Libxml itself then frees all child node (recursively).
  *
  * For all other nodes (the vast majority), the bindings create temporary
  * Ruby objects that get freed once they go out of scope. Thus there can be
@@ -60,8 +60,7 @@ static void rxml_node_free(void *data)
      responsible for freeing the underlying node.*/
   if (xnode->doc == NULL && xnode->parent == NULL)
   {
-    // Remove the back linkage from libxml to Ruby
-    xnode->_private = NULL;
+    rxml_registry_unregister(xnode);
     xmlFreeNode(xnode);
   }
 }
@@ -108,14 +107,14 @@ void rxml_node_manage(xmlNodePtr xnode, VALUE node)
 {
   VALUE *type_ptr = (VALUE *)&RTYPEDDATA(node)->type;
   *type_ptr = (*type_ptr & TYPED_DATA_EMBEDDED) | (VALUE)&rxml_node_managed_data_type;
-  xnode->_private = (void*)node;
+  rxml_registry_register(xnode, node);
 }
 
 void rxml_node_unmanage(xmlNodePtr xnode, VALUE node)
 {
   VALUE *type_ptr = (VALUE *)&RTYPEDDATA(node)->type;
   *type_ptr = (*type_ptr & TYPED_DATA_EMBEDDED) | (VALUE)&rxml_node_data_type;
-  xnode->_private = NULL;
+  rxml_registry_unregister(xnode);
 }
 
 xmlNodePtr rxml_node_root(xmlNodePtr xnode)
@@ -134,20 +133,16 @@ void rxml_node_mark(xmlNodePtr xnode)
 {
    if (xnode->doc)
    {
-     if (xnode->doc->_private)
-	   {
-	     VALUE doc = (VALUE)xnode->doc->_private;
-	     rb_gc_mark(doc);
-	   }
+     VALUE doc = rxml_registry_lookup(xnode->doc);
+     if (!NIL_P(doc))
+       rb_gc_mark(doc);
    }
    else if (xnode->parent)
    {
      xmlNodePtr root = rxml_node_root(xnode);
-     if (root->_private)
-     {
-       VALUE node = (VALUE)root->_private;
+     VALUE node = rxml_registry_lookup(root);
+     if (!NIL_P(node))
        rb_gc_mark(node);
-     }
    }
 }
 
@@ -156,11 +151,8 @@ VALUE rxml_node_wrap(xmlNodePtr xnode)
   VALUE result = Qnil;
 
   // Is this node already wrapped?
-  if (xnode->_private)
-  {
-    result = (VALUE)xnode->_private;
-  }
-  else
+  result = rxml_registry_lookup(xnode);
+  if (NIL_P(result))
   {
     result = TypedData_Wrap_Struct(cXMLNode, &rxml_node_data_type, xnode);
   }
@@ -580,7 +572,7 @@ static VALUE rxml_node_doc(VALUE self)
   if (xdoc == NULL)
     return (Qnil);
 
-  return (VALUE)xdoc->_private;
+  return rxml_registry_lookup(xdoc);
 }
 
 /*

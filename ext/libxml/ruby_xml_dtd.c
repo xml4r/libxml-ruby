@@ -47,8 +47,9 @@ static void rxml_dtd_mark(void* data)
   xmlDtdPtr xdtd = (xmlDtdPtr)data;
   if (xdtd && xdtd->doc)
   {
-      VALUE doc = (VALUE)xdtd->doc->_private;
-      rb_gc_mark(doc);
+      VALUE doc = rxml_registry_lookup(xdtd->doc);
+      if (!NIL_P(doc))
+        rb_gc_mark(doc);
   }
 }
 

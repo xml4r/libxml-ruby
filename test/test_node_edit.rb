@@ -155,4 +155,22 @@ class TestNodeEdit < Minitest::Test
     assert_equal("<test xml:base=\"http://www.rubynet.org/\">\n  <num>one</num>\n  <num>two</num>\n  <num>three</num>\n</test>",
                  @doc.root.to_s)
   end
+
+  def test_detached_subtree_keeps_root_alive
+    GC.stress = true
+    node = create_detached_subtree_leaf
+    assert_equal("leaf", node.name)
+  ensure
+    GC.stress = false
+  end
+
+  private
+
+  def create_detached_subtree_leaf
+    root = LibXML::XML::Node.new("root")
+    mid = LibXML::XML::Node.new("mid")
+    root << mid
+    mid << LibXML::XML::Node.new("leaf")
+    root.children.first.children.first
+  end
 end

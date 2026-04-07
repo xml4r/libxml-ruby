@@ -46,6 +46,7 @@ void Init_libxml_ruby(void)
   mLibXML = rb_define_module("LibXML");
 
   rxml_init_memory();
+  rxml_init_registry();
   rxml_init_xml();
   rxml_init_io();
   rxml_init_error();

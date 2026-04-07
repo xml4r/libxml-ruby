@@ -70,10 +70,11 @@ static void rxml_reader_mark(void* data)
 {
   xmlTextReaderPtr xreader = (xmlTextReaderPtr)data;
   xmlDocPtr xdoc = xmlTextReaderCurrentDoc(xreader);
-  if (xdoc && xdoc->_private)
+  if (xdoc)
   {
-    VALUE doc = (VALUE)xdoc->_private;
-    rb_gc_mark(doc);
+    VALUE doc = rxml_registry_lookup(xdoc);
+    if (!NIL_P(doc))
+      rb_gc_mark(doc);
   }
 }
 
