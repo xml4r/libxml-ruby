@@ -64,7 +64,7 @@ void rxml_document_free(void* data)
 {
   xmlDocPtr xdoc = (xmlDocPtr)data;
   if (!xdoc) return;
-  xdoc->_private = NULL;
+  rxml_registry_unregister(xdoc);
   xmlFreeDoc(xdoc);
 }
 
@@ -78,15 +78,12 @@ VALUE rxml_document_wrap(xmlDocPtr xdoc)
 {
   VALUE result = Qnil;
 
-  // Is this node is already wrapped?
-  if (xdoc->_private != NULL)
-  {
-    result = (VALUE)xdoc->_private;
-  }
-  else
+  // Is this document already wrapped?
+  result = rxml_registry_lookup(xdoc);
+  if (NIL_P(result))
   {
     result = TypedData_Wrap_Struct(cXMLDocument, &rxml_document_data_type, xdoc);
-    xdoc->_private = (void*)result;
+    rxml_registry_register(xdoc, result);
   }
 
   return result;
@@ -133,7 +130,7 @@ static VALUE rxml_document_initialize(int argc, VALUE *argv, VALUE self)
 
   // Link the ruby object to the document and the document to the ruby object
   RTYPEDDATA_DATA(self) = xdoc;
-  xdoc->_private = (void*)self;
+  rxml_registry_register(xdoc, self);
 
   return self;
 }
