@@ -632,9 +632,9 @@ static VALUE rxml_document_next_q(VALUE self)
  */
 static VALUE rxml_document_node_type(VALUE self)
 {
-  xmlDocPtr xdoc;
-  TypedData_Get_Struct(self, xmlDoc, &rxml_document_data_type, xdoc);
-  return (INT2NUM(xdoc->type));
+  xmlNodePtr xnode;
+  TypedData_Get_Struct(self, xmlNode, &rxml_document_data_type, xnode);
+  return (INT2NUM(xnode->type));
 }
 
 /*

@@ -88,8 +88,8 @@ static VALUE rxml_attr_decl_next_get(VALUE self)
  */
 static VALUE rxml_attr_decl_node_type(VALUE self)
 {
-  xmlAttributePtr xattr;
-  TypedData_Get_Struct(self, xmlAttribute, &rxml_attr_decl_type, xattr);
+  xmlAttrPtr xattr;
+  TypedData_Get_Struct(self, xmlAttr, &rxml_attr_decl_type, xattr);
   return INT2NUM(xattr->type);
 }
 
