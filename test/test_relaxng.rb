@@ -26,6 +26,12 @@ class TestRelaxNG < Minitest::Test
     assert(@doc.validate_relaxng(relaxng))
   end
   
+  def test_parse_failure_raises
+    assert_raises(LibXML::XML::Error) do
+      LibXML::XML::RelaxNG.new("<invalid/>")
+    end
+  end
+
   def test_invalid
     new_node = LibXML::XML::Node.new('invalid', 'this will mess up validation')
     @doc.root << new_node

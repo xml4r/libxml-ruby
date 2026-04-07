@@ -1,17 +1,17 @@
-= LibXML Ruby
+# LibXML Ruby
 
-== Overview
+## Overview
 The libxml gem provides Ruby language bindings for GNOME's Libxml2
 XML toolkit. It is free software, released under the MIT License.
 
 We think libxml-ruby is the best XML library for Ruby because:
 
-* Speed - Its much faster than REXML and Hpricot
-* Features - It provides an amazing number of featues
+* Speed - It's much faster than REXML
+* Features - It provides an amazing number of features
 * Conformance - It passes all 1800+ tests from the OASIS XML Tests Suite
 
-== Requirements
-libxml-ruby requires Ruby 3.0.0 or higher.  It depends on libxml2 to
+## Requirements
+libxml-ruby requires Ruby 3.2 or higher.  It depends on libxml2 to
 function properly.  libxml2, in turn, depends on:
 
 * libm      (math routines: very standard)
@@ -20,30 +20,35 @@ function properly.  libxml2, in turn, depends on:
 
 If you are running Linux or Unix you'll need a C compiler so the
 extension can be compiled when it is installed.  If you are running
-Windows, then install the x64-mingw-ucr gem or build it yourself using (Ruby
-for Windows)[https://rubyinstaller.org/] or directly with msys2[https://msys2.github.io/]
-and ucrt64.
+Windows, then install the x64-mingw-ucr gem or build it yourself using
+[Ruby for Windows](https://rubyinstaller.org/) or directly with
+[msys2](https://msys2.github.io/) and ucrt64.
 
-== Installation
+## Installation
 The easiest way to install libxml-ruby is via RubyGems.  To install:
 
-<tt>gem install libxml-ruby</tt>
+```
+gem install libxml-ruby
+```
 
 If the extension compile process cannot find libxml2, you may need to indicate
 the location of the libxml2 configuration utility as it is used to find the
 required header and include files.  (If you need to indicate a location for the
-libxml2 library or header files different than reported by <tt>xml2-config</tt>,
+libxml2 library or header files different than reported by `xml2-config`,
 see the additional configuration options.)
 
 This may be done with RubyGems:
 
-<tt>gem install libxml-ruby -- --with-xml2-dir=/path/to/xml2-config</tt>
+```
+gem install libxml-ruby -- --with-xml2-dir=/path/to/xml2-config
+```
 
 Or bundler:
 
-<tt>bundle config build.libxml-ruby --with-xml2-config=/path/to/xml2-config</tt>
-
-<tt>bundle install libxml-ruby</tt>
+```
+bundle config build.libxml-ruby --with-xml2-config=/path/to/xml2-config
+bundle install libxml-ruby
+```
 
 If you are running Windows, then install the libxml-ruby-x64-mingw32 gem.
 The gem includes prebuilt extensions for Ruby 3.2 and 3.3.
@@ -51,158 +56,109 @@ The gem includes prebuilt extensions for Ruby 3.2 and 3.3.
 The gem also includes a Microsoft VC++ solution and XCode project - these
 are very useful for debugging.
 
-libxml-ruby's source codes lives on GitHub[https://github.com/xml4r/libxml-ruby].
+libxml-ruby's source code lives on [GitHub](https://github.com/xml4r/libxml-ruby).
 
-== Getting Started
+## Getting Started
 Using libxml is easy. First decide what parser you want to use:
 
-* Generally you'll want to use the LibXML::XML::Parser which provides a tree based API.
-* For larger documents that don't fit into memory, or if you prefer an input based API, use the LibXML::XML::Reader.
-* To parse HTML files use LibXML::XML::HTMLParser.
-* If you are masochistic, then use the LibXML::XML::SaxParser, which provides a callback API.
+* Generally you'll want to use the `LibXML::XML::Parser` which provides a tree based API.
+* For larger documents that don't fit into memory, or if you prefer an input based API, use the `LibXML::XML::Reader`.
+* To parse HTML files use `LibXML::XML::HTMLParser`.
+* If you are masochistic, then use the `LibXML::XML::SaxParser`, which provides a callback API.
 
 Once you have chosen a parser, choose a datasource.  Libxml can parse files, strings, URIs
-and IO streams.  For each data source you can specify an LibXML::XML::Encoding, a base uri and
-various parser options.  For more information, refer the LibXML::XML::Parser.document,
-LibXML::XML::Parser.file, LibXML::XML::Parser.io or LibXML:::XML::Parser.string methods (the
+and IO streams.  For each data source you can specify an `LibXML::XML::Encoding`, a base uri and
+various parser options.  For more information, refer the `LibXML::XML::Parser.document`,
+`LibXML::XML::Parser.file`, `LibXML::XML::Parser.io` or `LibXML::XML::Parser.string` methods (the
 same methods are defined on all four parser classes).
 
-== Advanced Functionality
+## Advanced Functionality
 Beyond the basics of parsing and processing XML and HTML documents,
 libxml provides a wealth of additional functionality.
 
-Most commonly, you'll want to use its LibXML::XML::XPath support, which makes
+Most commonly, you'll want to use its `LibXML::XML::XPath` support, which makes
 it easy to find data inside an XML document.  Although not as popular,
-LibXML::XML::XPointer provides another API for finding data inside an XML document.
+`LibXML::XML::XPointer` provides another API for finding data inside an XML document.
 
 Often times you'll need to validate data before processing it. For example,
 if you accept user generated content submitted over the Web, you'll
 want to verify that it does not contain malicious code such as embedded scripts.
 This can be done using libxml's powerful set of validators:
 
-* DTDs (LibXML::XML::Dtd)
-* Relax Schemas (LibXML::XML::RelaxNG)
-* XML Schema (LibXML::XML::Schema)
+* DTDs (`LibXML::XML::Dtd`)
+* Relax Schemas (`LibXML::XML::RelaxNG`)
+* XML Schema (`LibXML::XML::Schema`)
 
 Finally, if you'd like to use XSL Transformations to process data, then install
-the {libxslt gem}[https://github.com/xml4r/libxslt-rubygem].
+the [libxslt gem](https://github.com/xml4r/libxslt-ruby).
 
-== Usage
+## Usage
 For information about using libxml-ruby please refer to its
-documentation[https://xml4r.github.io/libxml-ruby]. Some tutorials are also
-available[https://github.com/xml4r/libxml-ruby/wiki].
+[documentation](https://xml4r.github.io/libxml-ruby/).
 
-All libxml classes are in the LibXML::XML module. The easiest
-way to use libxml is to <tt>require 'xml'</tt>.  This will mixin
+All libxml classes are in the `LibXML::XML` module. The easiest
+way to use libxml is to `require 'xml'`.  This will mixin
 the LibXML module into the global namespace, allowing you to
 write code like this:
 
-  require 'xml'
-  document = XML::Document.new
+```ruby
+require 'xml'
+document = XML::Document.new
+```
 
 However, when creating an application or library you plan to
 redistribute, it is best to not add the LibXML module to the global
 namespace, in which case you can either write your code like this:
 
-  require 'libxml'
-  document = LibXML::XML::Document.new
+```ruby
+require 'libxml'
+document = LibXML::XML::Document.new
+```
 
 Or you can utilize a namespace for your own work and include LibXML into it.
 For example:
 
-  require 'libxml'
+```ruby
+require 'libxml'
 
-  module MyApplication
-    include LibXML
+module MyApplication
+  include LibXML
 
-    class MyClass
-      def some_method
-        document = XML::Document.new
-      end
+  class MyClass
+    def some_method
+      document = XML::Document.new
     end
   end
+end
+```
 
 For simplicity's sake, the documentation uses the xml module in its examples.
 
-== Tests
+## Tests
 
-To run tests you first need to build the shared libary:
+To run tests you first need to build the shared library:
 
-  rake compile
+```
+rake compile
+```
 
-Once you have build the shared libary, you can then run tests using rake:
+Once you have built the shared library, you can then run tests using rake:
 
-  rake test
+```
+rake test
+```
 
-+Build status: {rdoc-image:https://github.com/xml4r/libxml-ruby/actions/workflows/mri.yml/badge.svg}[https://github.com/xml4r/libxml-ruby/actions/workflows/mri.yml]
+[![Build Status](https://github.com/xml4r/libxml-ruby/actions/workflows/mri.yml/badge.svg)](https://github.com/xml4r/libxml-ruby/actions/workflows/mri.yml)
 
-== Performance
+## Documentation
+Documentation is available at [xml4r.github.io/libxml-ruby](https://xml4r.github.io/libxml-ruby/).
 
-In addition to being feature rich and conformation, the main reason
-people use libxml-ruby is for performance.  Here are the results
-of a couple simple benchmarks recently blogged about on the
-Web (you can find them in the benchmark directory of the
-libxml distribution).
+API reference documentation is generated via rdoc and is available at
+[xml4r.github.io/libxml-ruby/reference](https://xml4r.github.io/libxml-ruby/reference/).
 
-From http://depixelate.com/2008/4/23/ruby-xml-parsing-benchmarks
-
-               user     system      total        real
- libxml    0.032000   0.000000   0.032000 (  0.031000)
- Hpricot   0.640000   0.031000   0.671000 (  0.890000)
- REXML     1.813000   0.047000   1.860000 (  2.031000)
-
-From https://svn.concord.org/svn/projects/trunk/common/ruby/xml_benchmarks/
-
-               user     system      total        real
- libxml    0.641000   0.031000   0.672000 (  0.672000)
- hpricot   5.359000   0.062000   5.421000 (  5.516000)
- rexml    22.859000   0.047000  22.906000 ( 23.203000) 
-
-
-== Documentation
-Documentation is available via rdoc, and is installed automatically with the
-gem.
-
-libxml-ruby's {online
-documentation}[https://xml4r.github.io/libxml-ruby/rdoc/index.html] is generated
-using Hanna, which is a development gem dependency.
-
-Note that older versions of Rdoc, which ship with Ruby 1.8.x, will report
-a number of errors.  To avoid them, install Rdoc 2.1 or higher.  Once you have
-installed the gem, you'll have to disable the version of Rdoc that Ruby 1.8.x
-includes.  An easy way to do that is rename the directory
-<tt>ruby/lib/ruby/1.8/rdoc</tt> to
-<tt>ruby/lib/ruby/1.8/rdoc_old</tt>.
-
-== Support
+## Support
 If you have any questions about using libxml-ruby, please report an issue
-on GitHub[https://github.com/xml4r/libxml-ruby/issues].
+on [GitHub](https://github.com/xml4r/libxml-ruby/issues).
 
-== Memory Management
-libxml-ruby automatically manages memory associated with the
-underlying libxml2 library.  The bindings create a one-to-one mapping between
-Ruby objects and libxml documents and libxml parent nodes (ie, nodes that do not
-have a parent and do not belong to a document).  In these cases,
-the bindings manage the memory.  They do this by installing a free
-function and storing a back pointer to the Ruby object from the xmlnode
-using the _private member on libxml structures.  When the Ruby object
-goes out of scope, the underlying libxml structure is freed.  Libxml
-itself then frees all child nodes (recursively).
-
-For all other nodes (the vast majority), the bindings create temporary
-Ruby objects that get freed once they go out of scope. Thus there can be
-more than one Ruby object pointing to the same xml node. To mostly hide
-this from a programmer on the Ruby side, the <tt>#eql?</tt> and <tt>#==</tt> methods are
-overriden to check if two Ruby objects wrap the same xmlnode.  If they do,
-then the methods return true.  During the mark phase, each of these temporary
-objects marks its owning document, thereby keeping the Ruby document object
-alive and thus the xmldoc tree.
-
-In the sweep phase of the garbage collector, or when a program ends,
-there is no order to how Ruby objects are freed.  In fact, the Ruby document
-object is almost always freed before any Ruby objects that wrap child nodes.
-However, this is ok because those Ruby objects do not have a free function
-and are no longer in scope (since if they were the document would not be freed).
-
-== License
-See LICENSE for license information.
+## License
+See [LICENSE](LICENSE) for license information.

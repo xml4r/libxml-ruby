@@ -137,7 +137,7 @@ VALUE rxml_wrap_schema(xmlSchemaPtr xschema)
   rb_iv_set(result, "@target_namespace", QNIL_OR_STRING(xschema->targetNamespace));
   rb_iv_set(result, "@name", QNIL_OR_STRING(xschema->name));
   rb_iv_set(result, "@id", QNIL_OR_STRING(xschema->id));
-  rb_iv_set(result, "@version", QNIL_OR_STRING(xschema->name));
+  rb_iv_set(result, "@version", QNIL_OR_STRING(xschema->version));
 
   return result;
 }

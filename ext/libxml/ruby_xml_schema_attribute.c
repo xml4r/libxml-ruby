@@ -50,16 +50,9 @@ struct _xmlSchemaAttributeUseProhib {
 
 VALUE cXMLSchemaAttribute;
 
-static void rxml_schema_attribute_free(void *data)
-{
-  xmlSchemaAttributeUsePtr attr = (xmlSchemaAttributeUsePtr)data;
-  attr = NULL;
-  xmlFree(attr);
-}
-
 static const rb_data_type_t rxml_schema_attribute_type = {
   "XML::Schema::Attribute",
-  {NULL, rxml_schema_attribute_free, NULL},
+  {NULL, NULL, NULL},
   NULL, NULL, 0
 };
 

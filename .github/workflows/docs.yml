@@ -1,0 +1,66 @@
+name: Deploy Docs
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'docs/**'
+      - 'lib/**'
+      - 'ext/**'
+      - 'zensical.toml'
+      - '.github/workflows/docs.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '4.0'
+          bundler-cache: false
+
+      - name: Install zensical
+        run: pip install zensical
+
+      - name: Copy changelog to docs
+        run: cp CHANGELOG.md docs/changelog.md
+
+      - name: Build guide docs
+        run: zensical build --clean
+
+      - name: Build API reference
+        run: rdoc --format aliki --output site/reference --title 'LibXML Ruby API' --line-numbers --charset=utf-8 --exclude lib/xml.rb --exclude lib/xml/libxml.rb --main README.md ext/**/libxml.c ext/**/ruby_xml.c ext/**/*.c lib/**/*.rb README.md
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

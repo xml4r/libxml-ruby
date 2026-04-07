@@ -19,6 +19,8 @@ int rxml_read_callback(void *context, char *buffer, int len)
     return 0;
 
   size = RSTRING_LEN(string);
+  if (size > (size_t)len)
+    size = (size_t)len;
   memcpy(buffer, StringValuePtr(string), size);
 
   return (int)size;
@@ -30,7 +32,7 @@ int rxml_write_callback(VALUE io, const char *buffer, int len)
     {
         // Could be StringIO
         VALUE written, string;
-        string = rb_external_str_new_with_enc(buffer, (long)strlen(buffer), rb_enc_get(io));
+        string = rb_external_str_new_with_enc(buffer, (long)len, rb_enc_get(io));
         written = rb_funcall(io, WRITE_METHOD, 1, string);
         return NUM2INT(written);
     }
