@@ -327,7 +327,6 @@ static VALUE rxml_html_parser_context_options_set(VALUE self, VALUE options)
 {
   int xml_options = NUM2INT(options);
   htmlParserCtxtPtr ctxt;
-  Check_Type(options, T_FIXNUM);
 
   TypedData_Get_Struct(self, htmlParserCtxt, &rxml_html_parser_context_type, ctxt);
   htmlCtxtUseOptions(ctxt, xml_options);
