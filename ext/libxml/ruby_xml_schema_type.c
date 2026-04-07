@@ -229,13 +229,6 @@ static VALUE rxml_schema_type_attributes(VALUE self)
 
 void rxml_init_schema_type(void)
 {
-  /* Add in infinity support for ruby 1.8.7 */
-  #if !defined(RUBY_VM) && defined(INFINITY)
-  ID infinityId = rb_intern("INFINITY");
-  if (rb_const_defined(rb_cFloat, infinityId) == Qfalse)
-    rb_define_const(rb_cFloat, "INFINITY", rb_float_new(INFINITY));
-  #endif
-
   cXMLSchemaType = rb_define_class_under(cXMLSchema, "Type", rb_cObject);
   rb_undef_alloc_func(cXMLSchemaType);
 
