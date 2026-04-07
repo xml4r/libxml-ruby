@@ -19,6 +19,8 @@ int rxml_read_callback(void *context, char *buffer, int len)
     return 0;
 
   size = RSTRING_LEN(string);
+  if (size > (size_t)len)
+    size = (size_t)len;
   memcpy(buffer, StringValuePtr(string), size);
 
   return (int)size;

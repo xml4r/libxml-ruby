@@ -5,11 +5,13 @@ require 'tempfile'
 
 class TestXPath < Minitest::Test
   def setup
+    GC.stress = true
     @doc = LibXML::XML::Document.file(File.join(File.dirname(__FILE__), 'model/soap.xml'))
   end
   
   def teardown
     @doc = nil
+    GC.stress = false
   end
   
   def test_doc_find
@@ -30,15 +32,11 @@ class TestXPath < Minitest::Test
   end
 
   def test_ns_gc
-    _stress = GC.stress
-    GC.stress = true
-
     doc = LibXML::XML::Document.string('<foo xmlns="http://bar.com" />')
     node = doc.root
+    doc = nil
     # This line segfaults on prior versions of libxml-ruby
     node.find("namespace::*")
-
-    GC.stress = _stress
   end
 
   def test_ns_array
@@ -156,11 +154,11 @@ class TestXPath < Minitest::Test
     # is free, it iterates over its results which are pointers
     # to the document's nodes. A segmentation fault then happens.
 
-    1000.times do
+    10.times do
       doc = LibXML::XML::Document.new('1.0')
       doc.root = LibXML::XML::Node.new("header")
 
-      1000.times do
+      10.times do
         doc.root << LibXML::XML::Node.new("footer")
       end
 

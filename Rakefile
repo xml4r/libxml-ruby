@@ -3,6 +3,7 @@
 require "rubygems"
 require "rake/extensiontask"
 require "rake/testtask"
+require "ruby_memcheck"
 require "rubygems/package_task"
 require "rdoc/task"
 require "yaml"
@@ -14,6 +15,14 @@ SO_NAME  = "libxml_ruby"
 spec = Gem::Specification.load("#{GEM_NAME}.gemspec")
 
 task :default => [:test]
+
+test_config = lambda do |t|
+  t.libs << "test"
+  t.test_files = FileList['test/test*.rb'] - ['test/test_suite.rb']
+  t.verbose = true
+end
+
+RubyMemcheck.config(binary_name: SO_NAME)
 
 # Setup compile tasks
 Rake::ExtensionTask.new do |ext|
@@ -72,8 +81,8 @@ RDoc::Task.new("rdoc") do |rdoc|
 end
 
 # Test Task
-Rake::TestTask.new do |t|
-  t.libs << "test"
-  t.test_files = FileList['test/test*.rb'] - ['test/test_suite.rb']
-  t.verbose = true
+Rake::TestTask.new(&test_config)
+
+namespace :test do
+  RubyMemcheck::TestTask.new(valgrind: :compile, &test_config)
 end
