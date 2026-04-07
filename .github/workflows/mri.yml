@@ -37,3 +37,36 @@ jobs:
         run: bundle exec rake compile
       - name: Test
         run: bundle exec rake test
+
+  mswin:
+    name: windows-latest mswin
+    env:
+      TESTOPTS: -v
+    runs-on: windows-latest
+    if: |
+      !(   contains(github.event.pull_request.title,  '[ci skip]')
+        || contains(github.event.pull_request.title,  '[skip ci]'))
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ilammy/msvc-dev-cmd@v1
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: mswin
+          bundler-cache: true
+        timeout-minutes: 10
+      - name: Install libxml2 via vcpkg
+        shell: pwsh
+        run: |
+          git clone https://github.com/microsoft/vcpkg.git "$env:RUNNER_TEMP\vcpkg"
+          & "$env:RUNNER_TEMP\vcpkg\bootstrap-vcpkg.bat"
+          & "$env:RUNNER_TEMP\vcpkg\vcpkg.exe" install libxml2:x64-windows-release
+          echo "VCPKG_ROOT=$env:RUNNER_TEMP\vcpkg" >> $env:GITHUB_ENV
+          echo "$env:RUNNER_TEMP\vcpkg\installed\x64-windows-release\bin" >> $env:GITHUB_PATH
+      - name: Build
+        shell: pwsh
+        run: |
+          $vcpkg = "$env:RUNNER_TEMP\vcpkg\installed\x64-windows-release"
+          bundle exec rake compile -- --with-xml2-dir="$vcpkg" --with-xml2-include="$vcpkg\include\libxml2"
+      - name: Test
+        run: bundle exec rake test
