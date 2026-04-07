@@ -23,12 +23,12 @@ Gem::Specification.new do |spec|
   spec.bindir = 'bin'
   spec.extensions = ['ext/libxml/extconf.rb']
   spec.metadata = {'documentation_uri' => 'https://xml4r.github.io/libxml-ruby/'}
-  spec.files = Dir.glob(['HISTORY',
+  spec.files = Dir.glob(['CHANGELOG.md',
                          'LICENSE',
                          'libxml-ruby.gemspec',
                          'MANIFEST',
                          'Rakefile',
-                         'README.rdoc',
+                         'README.md',
                          'setup.rb',
                          'ext/libxml/*.def',
                          'ext/libxml/*.h',
