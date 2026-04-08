@@ -29,11 +29,12 @@ Gem::Specification.new do |spec|
                          'ext/libxml/*.h',
                          'ext/libxml/*.c',
                          'ext/libxml/*.rb',
-                         'ext/vc/*.sln',
-                         'ext/vc/*.vcprojx',
+                         'ext/vc/**/*.sln',
+                         'ext/vc/**/*.vcxproj',
                          'ext/xcode/**/*',
                          'lib/**/*.rb',
-                         'test/**/*'])
+                         'test/**/*']) -
+                Dir.glob(['ext/libxml/extconf.h'])
 
   spec.test_files = Dir.glob('test/test_*.rb')
   spec.required_ruby_version = '>= 3.2'
