@@ -44,6 +44,16 @@ class TestDtd < Minitest::Test
 		assert_equal "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd", xhtml_dtd.system_id
   end
 
+  def test_internal_subset_nil_ids
+    doc = LibXML::XML::Document.new
+    doc.root = LibXML::XML::Node.new('test')
+    dtd = LibXML::XML::Dtd.new(nil, nil, 'test', doc, true)
+    assert_equal('test', dtd.name)
+    assert_nil(dtd.external_id)
+    assert_nil(dtd.uri)
+    assert_equal("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE test>\n<test/>\n", doc.to_s)
+  end
+
   def test_external_subset
     xhtml_dtd = LibXML::XML::Dtd.new("-//W3C//DTD XHTML 1.0 Transitional//EN", "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd", nil)
 		assert xhtml_dtd.name.nil?

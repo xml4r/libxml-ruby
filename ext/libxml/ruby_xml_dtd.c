@@ -183,11 +183,17 @@ static VALUE rxml_dtd_initialize(int argc, VALUE *argv, VALUE self)
           VALUE name, doc, internal;
           rb_scan_args(argc, argv, "23", &external, &system, &name, &doc, &internal);
 
-          Check_Type(external, T_STRING);
-          xpublic = (const xmlChar*) StringValuePtr(external);
+          if (external != Qnil)
+          {
+            Check_Type(external, T_STRING);
+            xpublic = (const xmlChar*) StringValuePtr(external);
+          }
 
-          Check_Type(system, T_STRING);
-          xsystem = (const xmlChar*) StringValuePtr(system);
+          if (system != Qnil)
+          {
+            Check_Type(system, T_STRING);
+            xsystem = (const xmlChar*) StringValuePtr(system);
+          }
 
           if (name != Qnil)
           {
