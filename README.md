@@ -40,7 +40,7 @@ Or bundler:
 
 ```
 bundle config build.libxml-ruby --with-xml2-config=/path/to/xml2-config
-bundle install libxml-ruby
+bundle install
 ```
 
 Full documentation is available at [xml4r.github.io/libxml-ruby](https://xml4r.github.io/libxml-ruby/) including a [getting started](https://xml4r.github.io/libxml-ruby/getting_started/) guide.
