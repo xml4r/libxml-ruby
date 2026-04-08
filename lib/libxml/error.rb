@@ -23,7 +23,7 @@ module LibXML
           map[const_get(code)] = code
         end
       end
-      
+
       # Verbose error handler
       VERBOSE_HANDLER = lambda do |error|
         STDERR << error.to_s << "\n"
@@ -33,11 +33,20 @@ module LibXML
       # Quiet error handler
       QUIET_HANDLER = lambda do |error|
       end
-      
+
+      # call-seq:
+      #   error == other -> true or false
+      #
+      # Returns whether two errors have the same attributes.
       def ==(other)
         eql?(other)
       end
-      
+
+      # call-seq:
+      #   error.eql?(other) -> true or false
+      #
+      # Returns whether two errors have identical code, domain, message,
+      # level, file, line, and all other attributes.
       def eql?(other)
         self.code == other.code and
         self.domain == other.domain and
@@ -56,6 +65,11 @@ module LibXML
         false
       end
 
+      # call-seq:
+      #   error.level_to_s -> String
+      #
+      # Returns a human-readable string for the error level:
+      # "Warning:", "Error:", "Fatal error:", or "".
       def level_to_s
         case self.level
           when NONE
@@ -69,14 +83,27 @@ module LibXML
         end
       end
 
+      # call-seq:
+      #   error.domain_to_s -> String
+      #
+      # Returns the name of the error domain (e.g. "PARSER", "XPATH").
       def domain_to_s
         DOMAIN_CODE_MAP[self.domain].to_s
       end
 
+      # call-seq:
+      #   error.code_to_s -> String
+      #
+      # Returns the name of the error code constant.
       def code_to_s
         ERROR_CODE_MAP[self.code].to_s
       end
 
+      # call-seq:
+      #   error.to_s -> String
+      #
+      # Returns a formatted error string including the level, message,
+      # and file/line when available.
       def to_s
         msg = super
         msg = msg ? msg.strip: ''

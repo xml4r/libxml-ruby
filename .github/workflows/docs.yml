@@ -7,6 +7,7 @@ on:
       - 'docs/**'
       - 'lib/**'
       - 'ext/**'
+      - 'CHANGELOG.md'
       - 'zensical.toml'
       - '.github/workflows/docs.yml'
   workflow_dispatch:
@@ -47,7 +48,7 @@ jobs:
         run: zensical build --clean
 
       - name: Build API reference
-        run: rdoc --format aliki --output site/reference --title 'LibXML Ruby API' --line-numbers --charset=utf-8 --exclude lib/xml.rb --exclude lib/xml/libxml.rb --main README.md ext/**/libxml.c ext/**/ruby_xml.c ext/**/*.c lib/**/*.rb README.md
+        run: rdoc --format aliki --output site/reference --title 'LibXML Ruby API' --line-numbers --charset=utf-8 --main README.md ext/**/libxml.c ext/**/ruby_xml.c ext/**/*.c lib/**/*.rb README.md
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

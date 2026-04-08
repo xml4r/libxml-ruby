@@ -138,11 +138,14 @@ class HTMLParserTest < Minitest::Test
   end
 
   def test_no_implied
-    skip("NOIMPLIED behavior changed in libxml2 2.14+") if Gem::Version.new(LibXML::XML::LIBXML_VERSION) >= Gem::Version.new("2.14")
     html = "hello world"
     parser = LibXML::XML::HTMLParser.string(html, :options => LibXML::XML::HTMLParser::Options::NOIMPLIED)
     doc = parser.parse
-    assert_equal("<p>#{html}</p>", doc.root.to_s)
+    if Gem::Version.new(LibXML::XML::LIBXML_VERSION) >= Gem::Version.new("2.14")
+      assert_nil(doc.root)
+    else
+      assert_equal("<p>#{html}</p>", doc.root.to_s)
+    end
   end
 
   def test_comment

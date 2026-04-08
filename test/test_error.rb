@@ -154,7 +154,7 @@ class TestError < Minitest::Test
   end
 
   def test_double_parse_register_handler
-    LibXML::XML::Parser.register_error_handler(lambda {|msg| nil })
+    LibXML::XML::Error.set_handler {|msg| nil }
     parser = LibXML::XML::Parser.string("<test>something</test>")
     parser.parse
 

@@ -8,8 +8,38 @@
  * Support for adding custom scheme handlers. */
 
 static ic_scheme *first_scheme = 0;
+static int input_callbacks_registered = 0;
 
-int ic_match(char const *filename)
+static int ic_match(char const *filename);
+static void* ic_open(char const *filename);
+static int ic_read(void *context, char *buffer, int len);
+static int ic_close(void *context);
+
+static void input_callbacks_register_once(void)
+{
+  if (input_callbacks_registered)
+    return;
+
+  xmlRegisterInputCallbacks(ic_match, ic_open, ic_read, ic_close);
+  input_callbacks_registered = 1;
+}
+
+static char *ic_strdup(const char *string)
+{
+  size_t length = strlen(string) + 1;
+  char *copy = ruby_xmalloc(length);
+  memcpy(copy, string, length);
+  return copy;
+}
+
+static void ic_scheme_free(ic_scheme *scheme)
+{
+  rb_gc_unregister_address(&scheme->class);
+  ruby_xfree(scheme->scheme_name);
+  ruby_xfree(scheme);
+}
+
+static int ic_match(char const *filename)
 {
   ic_scheme *scheme;
 
@@ -27,7 +57,7 @@ int ic_match(char const *filename)
   return 0;
 }
 
-void* ic_open(char const *filename)
+static void* ic_open(char const *filename)
 {
   ic_doc_context *ic_doc;
   ic_scheme *scheme;
@@ -38,12 +68,11 @@ void* ic_open(char const *filename)
   {
     if (!xmlStrncasecmp(BAD_CAST filename, BAD_CAST scheme->scheme_name, scheme->name_len))
     {
-      ic_doc = (ic_doc_context*) malloc(sizeof(ic_doc_context));
-
       res = rb_funcall(scheme->class, rb_intern("document_query"), 1,
           rb_str_new2(filename));
 
-      ic_doc->buffer = strdup(StringValuePtr(res));
+      ic_doc = ALLOC(ic_doc_context);
+      ic_doc->buffer = ic_strdup(StringValueCStr(res));
 
       ic_doc->bpos = ic_doc->buffer;
       ic_doc->remaining = (int)strlen(ic_doc->buffer);
@@ -54,7 +83,7 @@ void* ic_open(char const *filename)
   return 0;
 }
 
-int ic_read(void *context, char *buffer, int len)
+static int ic_read(void *context, char *buffer, int len)
 {
   ic_doc_context *ic_doc;
   int ret_len;
@@ -75,7 +104,7 @@ int ic_read(void *context, char *buffer, int len)
   return ret_len;
 }
 
-int ic_close(void *context)
+static int ic_close(void *context)
 {
   ruby_xfree(((ic_doc_context*) context)->buffer);
   ruby_xfree(context);
@@ -90,7 +119,7 @@ int ic_close(void *context)
  */
 static VALUE input_callbacks_register_input_callbacks(VALUE self)
 {
-  xmlRegisterInputCallbacks(ic_match, ic_open, ic_read, ic_close);
+  input_callbacks_register_once();
   return (Qtrue);
 }
 
@@ -107,11 +136,14 @@ static VALUE input_callbacks_add_scheme(VALUE self, VALUE scheme_name,
 
   Check_Type(scheme_name, T_STRING);
 
-  scheme = (ic_scheme*) malloc(sizeof(ic_scheme));
+  input_callbacks_register_once();
+
+  scheme = ALLOC(ic_scheme);
   scheme->next_scheme = 0;
-  scheme->scheme_name = strdup(StringValuePtr(scheme_name)); /* TODO alloc, dealloc */
+  scheme->scheme_name = ic_strdup(StringValueCStr(scheme_name));
   scheme->name_len = (int)strlen(scheme->scheme_name);
-  scheme->class = class; /* TODO alloc, dealloc */
+  scheme->class = class;
+  rb_gc_register_address(&scheme->class);
 
   //fprintf( stderr, "registered: %s, %d, %s\n", scheme->scheme_name, scheme->name_len, scheme->class );
 
@@ -150,9 +182,7 @@ static VALUE input_callbacks_remove_scheme(VALUE self, VALUE scheme_name)
   {
     save_scheme = first_scheme->next_scheme;
 
-    ruby_xfree(first_scheme->scheme_name);
-    ruby_xfree(first_scheme);
-
+    ic_scheme_free(first_scheme);
     first_scheme = save_scheme;
     return Qtrue;
   }
@@ -165,9 +195,7 @@ static VALUE input_callbacks_remove_scheme(VALUE self, VALUE scheme_name)
     {
       save_scheme = scheme->next_scheme->next_scheme;
 
-      ruby_xfree(scheme->next_scheme->scheme_name);
-      ruby_xfree(scheme->next_scheme);
-
+      ic_scheme_free(scheme->next_scheme);
       scheme->next_scheme = save_scheme;
       return Qtrue;
     }

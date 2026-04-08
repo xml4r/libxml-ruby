@@ -194,7 +194,6 @@
     <ClCompile Include="..\..\libxml\ruby_xml_attr.c" />
     <ClCompile Include="..\..\libxml\ruby_xml_attr_decl.c" />
     <ClCompile Include="..\..\libxml\ruby_xml_attributes.c" />
-    <ClCompile Include="..\..\libxml\ruby_xml_cbg.c" />
     <ClCompile Include="..\..\libxml\ruby_xml_document.c" />
     <ClCompile Include="..\..\libxml\ruby_xml_dtd.c" />
     <ClCompile Include="..\..\libxml\ruby_xml_encoding.c" />
@@ -211,6 +210,7 @@
     <ClCompile Include="..\..\libxml\ruby_xml_parser_context.c" />
     <ClCompile Include="..\..\libxml\ruby_xml_parser_options.c" />
     <ClCompile Include="..\..\libxml\ruby_xml_reader.c" />
+    <ClCompile Include="..\..\libxml\ruby_xml_registry.c" />
     <ClCompile Include="..\..\libxml\ruby_xml_relaxng.c" />
     <ClCompile Include="..\..\libxml\ruby_xml_sax2_handler.c" />
     <ClCompile Include="..\..\libxml\ruby_xml_sax_parser.c" />
@@ -248,6 +248,7 @@
     <ClInclude Include="..\..\libxml\ruby_xml_parser_context.h" />
     <ClInclude Include="..\..\libxml\ruby_xml_parser_options.h" />
     <ClInclude Include="..\..\libxml\ruby_xml_reader.h" />
+    <ClInclude Include="..\..\libxml\ruby_xml_registry.h" />
     <ClInclude Include="..\..\libxml\ruby_xml_relaxng.h" />
     <ClInclude Include="..\..\libxml\ruby_xml_sax2_handler.h" />
     <ClInclude Include="..\..\libxml\ruby_xml_sax_parser.h" />

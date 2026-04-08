@@ -2,22 +2,14 @@
 
 ## Requiring the Library
 
-There are several ways to load libxml-ruby:
-
 ```ruby
-# Recommended - keeps everything under the LibXML namespace
 require 'libxml-ruby'
 document = LibXML::XML::Document.new
 ```
 
-```ruby
-# Convenience - mixes LibXML into the global namespace
-require 'xml'
-document = XML::Document.new
-```
+If you prefer shorter names, include the LibXML module in your own namespace:
 
 ```ruby
-# In your own namespace
 require 'libxml-ruby'
 
 module MyApp

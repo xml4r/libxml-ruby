@@ -235,4 +235,31 @@ class TestSchema < Minitest::Test
     assert_equal('1', attribute.default)
     assert_equal('integer', attribute.type.name)
   end
+
+  def test_anonymous_subtypes
+    type = @schema.types['shiporderType']
+    anon = type.anonymous_subtypes
+
+    assert_instance_of(Hash, anon)
+    assert_equal(2, anon.length)
+    assert_includes(anon.keys, 'shipto')
+    assert_includes(anon.keys, 'item')
+
+    anon.each_value do |element|
+      assert_instance_of(LibXML::XML::Schema::Element, element)
+      assert_nil(element.type.name)
+    end
+  end
+
+  def test_anonymous_subtypes_recursively
+    type = @schema.types['shiporderType']
+    result = type.anonymous_subtypes_recursively
+
+    assert_instance_of(Array, result)
+    assert_operator(result.length, :>=, 2)
+
+    keys = result.select { |r| r.is_a?(Hash) }.flat_map(&:keys)
+    assert_includes(keys, 'shipto')
+    assert_includes(keys, 'item')
+  end
 end

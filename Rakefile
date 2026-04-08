@@ -68,7 +68,6 @@ RDoc::Task.new("rdoc") do |rdoc|
                           'README.md',
                           'CHANGELOG.md',
                           'LICENSE')
-  rdoc.rdoc_files.exclude('lib/xml.rb', 'lib/xml/libxml.rb')
 end
 
 # Test Task

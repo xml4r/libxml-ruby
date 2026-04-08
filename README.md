@@ -33,14 +33,14 @@ see the additional configuration options.)
 This may be done with RubyGems:
 
 ```
-gem install libxml-ruby -- --with-xml2-dir=/path/to/xml2-config
+gem install libxml-ruby -- --with-xml2-config=/path/to/xml2-config
 ```
 
 Or bundler:
 
 ```
 bundle config build.libxml-ruby --with-xml2-config=/path/to/xml2-config
-bundle install libxml-ruby
+bundle install
 ```
 
 Full documentation is available at [xml4r.github.io/libxml-ruby](https://xml4r.github.io/libxml-ruby/) including a [getting started](https://xml4r.github.io/libxml-ruby/getting_started/) guide.

@@ -137,10 +137,14 @@ static VALUE rxml_namespace_next(VALUE self)
 {
   xmlNsPtr xns;
   TypedData_Get_Struct(self, xmlNs, &rxml_namespace_type, xns);
-  if (xns == NULL || xns->next == NULL)
+  /* Guard against libxml2's XPath hack where xns->next stores a parent
+     element pointer instead of the next namespace (see xmlXPathNodeSetAddNs
+     in xpath.c).  xmlNs.type and xmlNode.type share the same struct offset,
+     so checking the type is safe even when next points to an xmlNode. */
+  if (xns == NULL || xns->next == NULL || xns->next->type != XML_LOCAL_NAMESPACE)
     return (Qnil);
-  else
-    return rxml_namespace_wrap(xns->next);
+
+  return rxml_namespace_wrap(xns->next);
 }
 
 void rxml_init_namespace(void)

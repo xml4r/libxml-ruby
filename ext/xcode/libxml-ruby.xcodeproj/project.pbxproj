@@ -50,7 +50,6 @@
 		C7F2B5CD2B4B636C004E0A86 /* ruby_xml_attr_decl.c in Sources */ = {isa = PBXBuildFile; fileRef = C7F2B54A2B4B5AED004E0A86 /* ruby_xml_attr_decl.c */; };
 		C7F2B5CE2B4B636C004E0A86 /* ruby_xml_attr.c in Sources */ = {isa = PBXBuildFile; fileRef = C7F2B5212B4B5AEC004E0A86 /* ruby_xml_attr.c */; };
 		C7F2B5CF2B4B636C004E0A86 /* ruby_xml_attributes.c in Sources */ = {isa = PBXBuildFile; fileRef = C7F2B5482B4B5AED004E0A86 /* ruby_xml_attributes.c */; };
-		C7F2B5D02B4B636C004E0A86 /* ruby_xml_cbg.c in Sources */ = {isa = PBXBuildFile; fileRef = C7F2B5382B4B5AED004E0A86 /* ruby_xml_cbg.c */; };
 		C7F2B5D12B4B636C004E0A86 /* ruby_xml_document.c in Sources */ = {isa = PBXBuildFile; fileRef = C7F2B5522B4B5AED004E0A86 /* ruby_xml_document.c */; };
 		C7F2B5D22B4B636C004E0A86 /* ruby_xml_dtd.c in Sources */ = {isa = PBXBuildFile; fileRef = C7F2B5622B4B5AEE004E0A86 /* ruby_xml_dtd.c */; };
 		C7F2B5D32B4B636C004E0A86 /* ruby_xml_encoding.c in Sources */ = {isa = PBXBuildFile; fileRef = C7F2B5362B4B5AED004E0A86 /* ruby_xml_encoding.c */; };
@@ -124,7 +123,6 @@
 		C7F2B5352B4B5AED004E0A86 /* ruby_xml_encoding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ruby_xml_encoding.h; path = ../libxml/ruby_xml_encoding.h; sourceTree = "<group>"; };
 		C7F2B5362B4B5AED004E0A86 /* ruby_xml_encoding.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ruby_xml_encoding.c; path = ../libxml/ruby_xml_encoding.c; sourceTree = "<group>"; };
 		C7F2B5372B4B5AED004E0A86 /* ruby_xml_writer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ruby_xml_writer.c; path = ../libxml/ruby_xml_writer.c; sourceTree = "<group>"; };
-		C7F2B5382B4B5AED004E0A86 /* ruby_xml_cbg.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ruby_xml_cbg.c; path = ../libxml/ruby_xml_cbg.c; sourceTree = "<group>"; };
 		C7F2B5392B4B5AED004E0A86 /* ruby_xml_schema_attribute.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ruby_xml_schema_attribute.h; path = ../libxml/ruby_xml_schema_attribute.h; sourceTree = "<group>"; };
 		C7F2B53A2B4B5AED004E0A86 /* ruby_xml.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ruby_xml.c; path = ../libxml/ruby_xml.c; sourceTree = "<group>"; };
 		C7F2B53B2B4B5AED004E0A86 /* ruby_xml_namespace.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ruby_xml_namespace.c; path = ../libxml/ruby_xml_namespace.c; sourceTree = "<group>"; };
@@ -203,7 +201,6 @@
 				C7F2B54F2B4B5AED004E0A86 /* ruby_xml_attr.h */,
 				C7F2B5482B4B5AED004E0A86 /* ruby_xml_attributes.c */,
 				C7F2B52E2B4B5AED004E0A86 /* ruby_xml_attributes.h */,
-				C7F2B5382B4B5AED004E0A86 /* ruby_xml_cbg.c */,
 				C7F2B5522B4B5AED004E0A86 /* ruby_xml_document.c */,
 				C7F2B5602B4B5AEE004E0A86 /* ruby_xml_document.h */,
 				C7F2B5622B4B5AEE004E0A86 /* ruby_xml_dtd.c */,
@@ -409,7 +406,6 @@
 				C7F2B5CD2B4B636C004E0A86 /* ruby_xml_attr_decl.c in Sources */,
 				C7F2B5CE2B4B636C004E0A86 /* ruby_xml_attr.c in Sources */,
 				C7F2B5CF2B4B636C004E0A86 /* ruby_xml_attributes.c in Sources */,
-				C7F2B5D02B4B636C004E0A86 /* ruby_xml_cbg.c in Sources */,
 				C7F2B5D12B4B636C004E0A86 /* ruby_xml_document.c in Sources */,
 				C7F2B5D22B4B636C004E0A86 /* ruby_xml_dtd.c in Sources */,
 				C7F2B5D32B4B636C004E0A86 /* ruby_xml_encoding.c in Sources */,

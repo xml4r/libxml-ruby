@@ -75,22 +75,6 @@ module LibXML
         self.new(context)
       end
 
-      # :enddoc:
-
-      def file=(value)
-        warn("XML::HTMLParser#file is deprecated.  Use XML::HTMLParser.file instead")
-        @context = XML::HTMLParser::Context.file(value)
-      end
-
-      def io=(value)
-        warn("XML::HTMLParser#io is deprecated.  Use XML::HTMLParser.io instead")
-        @context = XML::HTMLParser::Context.io(value)
-      end
-
-      def string=(value)
-        warn("XML::HTMLParser#string is deprecated.  Use XML::HTMLParser.string instead")
-        @context = XML::HTMLParser::Context.string(value)
-      end
     end
   end
 end

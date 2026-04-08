@@ -64,7 +64,7 @@ static void rxml_xpath_object_mark(void *data)
   rb_gc_mark(rxpop->nsnodes);
 }
 
-static const rb_data_type_t rxml_xpath_object_data_type = {
+const rb_data_type_t rxml_xpath_object_data_type = {
   .wrap_struct_name = "LibXML::XML::XPath::Object",
   .function = { .dmark = rxml_xpath_object_mark, .dfree = rxml_xpath_object_free },
   .flags = RUBY_TYPED_FREE_IMMEDIATELY,
@@ -82,7 +82,11 @@ VALUE rxml_xpath_object_wrap(VALUE document, xmlDocPtr xdoc, xmlXPathObjectPtr x
   rxpopp->xdoc = xdoc;
   rxpopp->xpop = xpop;
 
-  /* Find all the extra namespace nodes and wrap them. */
+  /* Find all the extra namespace nodes and wrap them.  In XPath results,
+     libxml2 stores the parent element pointer in xns->next (a hack -- see
+     xmlXPathNodeSetAddNs in xpath.c).  We leave that pointer intact so
+     that xmlC14NIsNodeInNodeset can match namespace nodes for C14N.
+     Namespace#next is guarded to detect this hack and return nil. */
   if (xpop->nodesetval && xpop->nodesetval->nodeNr)
   {
     for (i = 0; i < xpop->nodesetval->nodeNr; i++)
@@ -91,12 +95,6 @@ VALUE rxml_xpath_object_wrap(VALUE document, xmlDocPtr xdoc, xmlXPathObjectPtr x
       if (xnode != NULL && xnode->type == XML_NAMESPACE_DECL)
       {
         VALUE ns = Qnil;
-        xmlNsPtr xns = (xmlNsPtr)xnode;
-
-        /* Get rid of libxml's -> next hack.  The issue here is
-           the rxml_namespace code assumes that ns->next refers
-           to another namespace. */
-        xns->next = NULL;
 
         /* Specify a custom free function here since by default
            namespace nodes will not be freed */
