@@ -9,18 +9,6 @@
 
 VALUE mLibXML;
 
-static void rxml_init_memory(void)
-{
- /* Disable for now - broke attributes. 
-  xmlGcMemSetup(
-      (xmlFreeFunc)ruby_xfree,
-      (xmlMallocFunc)ruby_xmalloc,
-      (xmlMallocFunc)ruby_xmalloc,
-      (xmlReallocFunc)ruby_xrealloc,
-      (xmlStrdupFunc)ruby_strdup
-  );*/
-}
-
 void Init_libxml_ruby(void)
 {
 /* The libxml gem provides Ruby language bindings for GNOME's Libxml2
@@ -40,12 +28,11 @@ void Init_libxml_ruby(void)
  * copyright and distribution information.
  */
 
-  // Seutp for threading. http://xmlsoft.org/threads.html
+  // Setup for threading. http://xmlsoft.org/threads.html
   xmlInitParser();
 
   mLibXML = rb_define_module("LibXML");
 
-  rxml_init_memory();
   rxml_init_registry();
   rxml_init_xml();
   rxml_init_io();
