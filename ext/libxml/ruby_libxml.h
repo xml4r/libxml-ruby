@@ -24,7 +24,6 @@
 #include "ruby_xml_html_parser_options.h"
 #include "ruby_xml_html_parser_context.h"
 #include "ruby_xml_reader.h"
-#include "ruby_xml_writer.h"
 #include "ruby_xml_sax2_handler.h"
 #include "ruby_xml_sax_parser.h"
 #include "ruby_xml_writer.h"
