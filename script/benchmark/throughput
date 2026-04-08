@@ -2,7 +2,7 @@
 
 require 'rubygems'
 require 'hpricot'
-require 'xml'
+require 'libxml-ruby'
 require 'rexml/document'
 
 ITERATIONS = 3

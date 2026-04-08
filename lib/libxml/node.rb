@@ -313,9 +313,7 @@ module LibXML
 
       def create_string_io(xml)
         result = StringIO.new("")
-        if defined?(::Encoding)
-          result.set_encoding(xml.encoding)
-        end
+        result.set_encoding(xml.encoding)
         result
       end
     end

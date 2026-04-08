@@ -31,6 +31,7 @@ Gem::Specification.new do |spec|
                          'ext/libxml/*.rb',
                          'ext/vc/*.sln',
                          'ext/vc/*.vcprojx',
+                         'ext/xcode/**/*',
                          'lib/**/*.rb',
                          'script/**/*',
                          'test/**/*'])
