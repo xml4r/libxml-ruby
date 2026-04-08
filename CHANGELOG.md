@@ -9,7 +9,7 @@ This release is a major refresh of libxml-ruby. The most important changes inclu
 * Brand-new documentation site available at https://xml4r.github.io/libxml-ruby/ with guides on parsing, XPath, validation, the Writer API, and the internal architecture
 * Updated reference documentation to Ruby's new Aliki theme
 * Expanded tests
-* Finally removed require 'xml' which has been deprecated for a very long time
+  * Finally removed require 'xml' which has been deprecated for a very long time 
 
 Breaking changes:
 
@@ -172,11 +172,10 @@ The release also includes a number of smaller improvements, including:
   (Charlie Savage)
 
 * Change XML::Reader.expand API. Previously it would automatically instantiate a reader document so
-  the an xpath expression could be used to search the returned node.  Now you should first call
+  an xpath expression could be used to search the returned node.  Now you should first call
   reader.doc  (Charlie Savage)
 
 * Update Visual Studio project for Visual Studio 15 - requires ruby 2.4+ (Charlie Savage)
-
 * Remove APIs that have been deprecated for several years (Charlie Savage)
 
 == 2.9.0 / 2016-06-13 Charlie Savage
@@ -184,10 +183,10 @@ The release also includes a number of smaller improvements, including:
 * Revamp libxml-ruby's memory management to not cause crashes when used with Nokogiri (James Laird-Wah)
 * Fix garbage collection issue that sometimes caused the library to hang (Charlie Savage)
 * Improved multi-threading support (Charlie Savage)
-* Fix crash sometimes caused by a xml node being being freed twice (Charlie Savage)
+* Fix crash sometimes caused by an xml node being freed twice (Charlie Savage)
 * Fix memory leak when setting the text content of a node (Charlie Savage)
 * Set a default task in the Rakefile - use "test" (Robert Haines)
-* Add "hanna_gudao" gem and add "rake-compiler" to develpoment dependencies (Robert Haines)
+* Add "hanna_gudao" gem and add "rake-compiler" to development dependencies (Robert Haines)
 * Use Process.getrlimit instead of `ulimit` in the tests (Robert Haines)
 * Build on smartos (Steven Williamson)
 * Fix compiler warnings (Charlie Savage)
@@ -238,12 +237,10 @@ The release also includes a number of smaller improvements, including:
 == 2.4.0 / 2012-12-14 Charlie Savage
 
 * Support libxml 2.9.0 (Daniel Veillard)
-
-* Extensive new interfaces for xml schema functionality including suppor for
-  schemal elements, types, facets and attributes (Anton Sozontov)
+* Extensive new interfaces for xml schema functionality including support for
+  schema elements, types, facets and attributes (Anton Sozontov)
 
 * Fix Encoding#from_s bug and update docs (Nikita Afanasenko)
-
 * Node#content= encoding (Nikita Afanasenko)
 
 == 2.3.3 / 2012-07-01 Charlie Savage
@@ -263,7 +260,6 @@ The release also includes a number of smaller improvements, including:
 == 2.3.0 / 2012-03-18 Charlie Savage
 
 * Add ability to insert new PI-nodes into the xmltree (Axel Struebing).
-
 * Added full pass-through access to libxml2 xmlC14NDocDumpMemory method via
   LibXML::XML::Document#canonicalize method with optional arguments.
 
@@ -290,7 +286,7 @@ Fixes GitHub issue #30.
   allow the underlying io stream (file, string, etc) to be closed.  Once a
   parser is done parsing its data, it now calls one of these methods.
   This means that if you parse thousands of files at the same time,
-  without running Ruby's garbage colllector, you won't get a too
+  without running Ruby's garbage collector, you won't get a too
   many files open error.  Fixes GitHub issue #29.
 
 * Fixed bug where Node#inner_xml caused an error when it had no child nodes.
@@ -323,17 +319,13 @@ Fixes GitHub issue #30.
 
 == 2.1.0 / 2011-07-31 Charlie Savage
 
-* Ruby 1.9.3 compatability (Charlie Savage).
-
+* Ruby 1.9.3 compatibility (Charlie Savage).
 * Added XPath expression <-> Ruby value conversion methods (Jens Wille).
-
 * Extracted rxml_xpath_to_value from rxml_xpath_context_find (Jens Wille).
-
 * Adapted rxml_xpath_from_value from Gregoire Lejeune's ruby-xslt
   library, see https://github.com/glejeune/ruby-xslt (Jens Wille).
 
 * Allow calling #find on nodes returned from Reader (Charlie Savage).
-
 * Change document handling in XPath::Context to address segmentation fault on
   Ruby Enterprise Edition (Charlie Savage).
 
@@ -341,7 +333,6 @@ Fixes GitHub issue #30.
   repository to be used as gem (Charlie Savage).
 
 * Support gem buld (Charlie Savage).
-
 * Simplify memory management of attributes namespaces to fix
   segmentation faults that occurred when using Ruby 1.9.3 (Charlie Savage).
 
@@ -349,7 +340,6 @@ Fixes GitHub issue #30.
 == 2.0.8 / 2011-06-23 Charlie Savage
 
 * Add in 2 new HTML Parser constants - NODEFDTD and NOIMPLIED.
-
 * Fix compile issue on Ruby 1.9.3
 
 == 2.0.6 / 2011-05-23 Charlie Savage
@@ -389,26 +379,17 @@ Fixes GitHub issue #30.
   segmentation faults caused by freeing a node twice (Charlie Savage).
 
 * Add support for Document#canonicalization (Victor Lin).
-
 * Fix memory leak in Reader#lookup_namespace (Charlie Savage).
-
 * Fix memory leak in Reader#[] (Nathan Kriege).
-
 * Fix usage of @io instance variable (Jeffrey Taylor)
-
 * Removed old sax error handling code that has been fixed in newer
   versions of libxml (Charlie Savage).
 
 * Code cleanup - remove unused variables and commented out code (Charlie Savage)
-
 * Minor text changes and documentation fixes (Charlie Savage).
-
 * Fix documentation error (fixes RubyForge #26888).
-
 * Update documentation for Document#validation* methods (fixes RubyForge #24833).
-
 * Update documentation and test (fixes Ruby Forge Issue #28770).
-
 * Updated documentation in README (Anurag Priyam):
 1. rake doc does not work; use rake rdoc.
 2. gem mislav-hanna does not exist; use hanna.
@@ -417,13 +398,11 @@ Fixes GitHub issue #30.
 5. Point to the github (gh-pages) site for docs
 
 * Add tc_error to test suite (Charlie Savage).
-
 * Add sax test (Stanislav O.Pogrebnyak).
 
 == 2.0.2 / 2011-04-17 Charlie Savage
 
 * Added binaries for windows (Charlie Savage).
-
 * Update Ruby 1.9 encoding handling to support libxml versions older than
   version 2.6.26 which was released on June 6, 2006 (Charlie Savage).
 
@@ -431,16 +410,12 @@ Fixes GitHub issue #30.
   website and docs (Anurag Priyam).
 
 * Correctly copy the documentation directory (Anurag Priyam)
-
 * Use relative link for rdoc so the links are correct on
   both rubyforge and github (Anurag Priyam).
 
 * Update Rakefile to use Hanna RDco template (Charlie Savage).
-
 * Update dates on license file (Charlie Savage).
-
 * Add api to allow setting of attribute namespaces.  Fixes issue #10 (Charlie Savage).
-
 * Remove old hack to call the on_error method.  This hack isn't needed anymore
   since a better workaround was put in place in the parser context. Fixes
   This fixes issue #12  (Charlie Savage).
@@ -450,7 +425,6 @@ Fixes GitHub issue #30.
   issue #6 (Charlie Savage).
 
 * Fix up comment in Document and Node.  See issue #8 (Charlie Savage).
-
 * Update website text (Charlie Savage).
 
 == 2.0.0 / 2011-04-16 Charlie Savage
@@ -459,23 +433,16 @@ Fixes GitHub issue #30.
   Strings returned by the libxml bindings are now set to the encoding
   of the underlying xml document (Charlie Savage).
 
-* Rubinius compatability. Removed unnecessary use of RHASH_TBL (Aman Gupta)
-
+* Rubinius compatibility. Removed unnecessary use of RHASH_TBL (Aman Gupta)
 * Added .gemspec file (Dudley Flanders).
-
 * Updated Windows checks to take into account mingw32 (Yaohan Chen).
-
 * Fix memory leak in Reader#Expand (Szymon Nowak).
-
 * Fix memory leaks in Reader#read_string, Reader#read_inner_xml
   and Reader#read_outer_xml (Sean Geoghegan).
 
 * Node#space_preserve= was backwards (Dudley Flanders)
-
 * Fixed typo in readme, added rdoc extension (Loren Sands-Ramshaw).
-
 * Switched to Rake Compiler (Charlie Savage).
-
 * Use xmlMalloc() memory for ctxt->sax structure.  Sometimes the ctxt->sax pointer
   may not be zeroed in rxml_sax_parser_parse(), for example when exception is raised
   in one of callbacks.  This lets xmlFreeParserCtxt() clean this up (Alexey I. Froloff).
@@ -492,16 +459,12 @@ Fixes GitHub issue #30.
   feature that allows parsers to reuse previously parsed strings.
 
 * Fix XML::Node#remove! to work correctly with libxml's dictionary feature.
-
 * Correctly set up parser context options.
-
 * Simplify DOM modification code (Node#next=, Node#prev=, Node#sibling=) and
   update documentation.
 
 * Deprecated Node#add_child and Node#child=, use Node#<< instead
-
 * Fix documentation for Node#<<
-
 * Added Document#import to enable moving nodes from one document
   to another document.
 
@@ -509,7 +472,6 @@ Fixes GitHub issue #30.
 == 1.1.2 / 2009-03-12 Charlie Savage
 
 * Added XML::Node#inner_xml helper method.
-
 * Fix segmentation that could occur when calling the mark function on a
   previously freed node.
 
@@ -533,9 +495,9 @@ Fixes GitHub issue #30.
 
 == 0.9.9 / 2009-03-05 Charlie Savage
 
-* Ruby 1.9.1 support (Charlie Savage). libxml-ruby now compiles and runs on either
+* Ruby 1.9.1 support (Charlie Savage). libxml-ruby now compiles and runs on
   1.8.6 and 1.9.1.  With 1.8.6 all tests should pass while on 1.9.1 all but
-  for encoding tests pass.  The port to Ruby 1.9.1 revealed two memory
+  encoding tests pass.  The port to Ruby 1.9.1 revealed two memory
   allocation bugs (one with dtds, one with nodes) which are now fixed.
 
 * Better OS X support (Joe Khoobyar).  The default version of libxml2
@@ -553,11 +515,8 @@ Fixes GitHub issue #30.
   See http://rubyforge.org/pipermail/libxml-devel/2009-February/001375.html.
 
 * Add Document#xhtml? and document#node_type methods (Joe Khoobyar)
-
 * Add XPath::Object#last (Joe Khoobyar)
-
 * Provide finer control over CDATA nodes on a parser by parser basis  (Joe Khoobyar).
-
 * Bug fix - Namespaces were incorrectly merged with attributes in the new sax2
   handler (Charlie Savage).
 
@@ -565,11 +524,8 @@ Fixes GitHub issue #30.
   that call remove! (Charlie Savage)
 
 * Bug fix - If reader.node is NULL, return nil instead of crashing (Charlie Savage)
-
 * Bug fix - Dtd's owned by documents were freed twice in some circumstances (Joe Khoobyar).
-
 * Bug fix - Fix output escaping on attributes nodes (Joe Khoobyar).
-
 * Bug fix - Make sure IO objects are not garbage collected when used
   as parser sources (Charlie Savage).
 
@@ -611,13 +567,9 @@ Fixes GitHub issue #30.
   segmentation faults when the error is reraised.
 
 * Added XML::Reader#node method.
-
 * Fixed compile errors on OS X which uses an older version of libxml.
-
 * Fixed memory leak when performing XPath searches.
-
 * Fixed rdocs.
-
 * Don't override libxml's default settings for entity substitution and
   loading external DTDs.  This may break some code - you may need to
   add in a call to XML.default_substitute_entities = true or
@@ -646,7 +598,6 @@ Fixes GitHub issue #30.
   for more information.
 
 * Fix compilation bugs on Solaris.
-
 * Fix Rdoc compilation bug.
 
 
@@ -670,18 +621,15 @@ Fixes GitHub issue #30.
   its unlikely anyone is using it.
 
 * Rationalized XML::Document#debug, XML::Node#debug, XML::XPath::XPathObject#Debug.
-
 * Deprecated a number of duplicate dump* and debug_* methods in
   XML::Document and XML::Node.
 
-* Additional Ruby 1.9.1 compatability fixes.
-
+* Additional Ruby 1.9.1 compatibility fixes.
 * Cleaned up header file guards.
 
 == 0.9.5 / 2008-11-29 Charlie Savage
 
-* Ruby 1.9.1 preview release compatability (Felipe Contreras)
-
+* Ruby 1.9.1 preview release compatibility (Felipe Contreras)
 * Update Node#remove! to return the removed node and to set
   its document to nil.  This allows the node to be either
   moved to another document, another part of the same document
@@ -692,11 +640,8 @@ Fixes GitHub issue #30.
   RegExp#compile.
 
 * Update Node to use standard ruby allocators and initializers.
-
 * Update HTML parser to be more forgiving of invalid documents.
-
 * Update include paths for Darwin Ports on OS X.
-
 * Updated C code base to use BSD/Allman style
 
 
@@ -706,7 +651,6 @@ Fixes GitHub issue #30.
   streams.
 
 * Update HTML parser to support user specified encodings.
-
 * Additional C code cleanup.
 
 == 0.9.3 / 2008-11-22 Charlie Savage
@@ -715,9 +659,7 @@ Fixes GitHub issue #30.
   before xpath results that referenced the document (take 2).
 
 * Allowed sax parser to use io stream
-
 * Combined encoding and input classes
-
 * Cleaned up C code - removed remaining legacy structures,
   added static to most methods, changed C namespace from ruby_xml
   to rxml
@@ -725,13 +667,11 @@ Fixes GitHub issue #30.
 == 0.9.2 / 2008-11-19 Charlie Savage
 
 * Add support for compiled XPath expressions (donated by Pavel Valodzka)
-
 * Fixes for compiling on OS X 10.5.4 and 10.5.5
 
 == 0.9.1 / 2008-11-18 Charlie Savage
 
 * Expose LibXML's encoding support via a new Encoding object.
-
 * Revamp error handling to be much easier to use.  Errors are now
   wrapped by the new XML::Error class and are thrown as exceptions
   when it is appropriate.
@@ -740,9 +680,7 @@ Fixes GitHub issue #30.
   before xpath results that referenced the document.
 
 * Add Node#register_default_namespace to simplify default namespace handling.
-
 * Significantly improve documentation
-
 * A number of bug fixes and patches.
 
 == 0.9.0 / 2008-11-18 Charlie Savage
@@ -763,83 +701,54 @@ Fixes GitHub issue #30.
   from 0.8.0 and 0.8.1 and may require updating your code.
 
 * Support RelaxNG validation (thanks to Morus Walter)
-
 * Support passing IO objects to XmlReaders (thanks to Tom Hughes)
-
 * Fix segmentation fault caused by adding an attribute to a CDATA node
-
 * Moved node checking functions from C to Ruby
-
 * Improved Windows support - libxml-ruby should now work out of the box.
-
 * Improved Windows support - turned on libxml's zlib and iconv support.
 
 
 == 0.8.1 / 2008-07-09 Charlie Savage
 
-* Reimplmented Node#each_attr for backwards compatability
-
+* Reimplemented Node#each_attr for backwards compatibility
 * Moved node type test to Ruby.
 
 
 == 0.8.0 / 2008-07-09 Charlie Savage
 
 * Fixed bug in returning attributes from XPath results
-
 * Fixed DOM traversal methods
-
 * Changed Node#children to return an array of nodes
-
 * Fixed bug in returning attributes from XPath results
-
 * Refactored XPath support, providing more user hooks in the XPath::Context class
-
 * Added Node#properties for backwards compatibility
-
 * Updated setup.rb
-
 * Added more tests
-
 * Updated rdocs and README file
-
 * Moved libxml into LibXML namespace
 
 
 == 0.7.0 / 2008-07-09 Charlie Savage
 
 * Added new attributes class to provide a more natural way of working with attributes
-
 * Fixed XML::Attr to better support namespaces
-
 * Added documentation on how to use namespaces with XPath
-
 * Removed allocation of extraneous structures used to wrap nodes, namespaces and attributes
-
 * Cleaned up tests and added new test suite
-
 * Updated rdocs and README file
-
 * Cleaned out most of the bug list
 
 
 == 0.6.0 / 2008-07-01 Charlie Savage
 
 * Fixed memory allocation errors in Windows.  On Windows, it is essential that the same library that allocates memory must free it. Thus ALLOC calls must be matched to ruby_xfree calls, which they were not.  In addition, in one case Ruby was allocating memory to be freed by libxml.  On Windows, that's a segmentation fault.  On Linux it might fly, but still seems like a bad idea.
-
 * Fixed segmentation fault in xml reader expand (same xml tree freed twice)
-
 * Applied a number of patches from Tom Bagby, including fixes for xpath segmentation faults and fixes for various memory leaks
-
 * Cleaned up a number of compiler warnings
-
 * Renamed libxml_so.so to libxml_ruby.so (same for xslt).  That wasn't actually my original intention, but um, it kind of sort of happened.  It should not be noticeable from an end-user perspective.
-
 * Added rake files for building with MingW
-
 * Added rake files for packing gems.  Note that I did this outside the existing rake tasks because I didn't see how they were actually building the gems.
-
 * Cleaned up the tests and added a few more based on bug reports from the Tracker and mailing list.
-
 * Cleaned out the patch queue and went through about 1/2 the bug list
 
 
@@ -952,7 +861,7 @@ Fixes GitHub issue #30.
 === 2003-12-30 "Martin Povolny" <martin@solnet.cz>
 
 * ruby_xml_dtd.c, ruby_xml_dtd.h, ruby_xml_schema.c, ruby_xml_schema.h:
-  prelimitary support for dtd and schema validation
+  preliminary support for dtd and schema validation
 
 === 2003-09-15 "Martin Povolny" <martin@solnet.cz>
 
@@ -964,6 +873,3 @@ Fixes GitHub issue #30.
 
 * ruby_xml_document.c: corrected argument handling in ruby_xml_document_find
 * ruby_xml_node.c: corrected argument handling in ruby_xml_node_find
-
-
-
