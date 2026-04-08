@@ -9,6 +9,7 @@ This release is a major refresh of libxml-ruby. The most important changes inclu
 * Brand-new documentation site available at https://xml4r.github.io/libxml-ruby/ with guides on parsing, XPath, validation, the Writer API, and the internal architecture
 * Updated reference documentation to Ruby's new Aliki theme
 * Expanded tests
+* Finally removed require 'xml' which has been deprecated for a very long time
 
 Breaking changes:
 
