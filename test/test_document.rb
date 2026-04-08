@@ -43,12 +43,12 @@ class TestDocument < Minitest::Test
       end
 
       10.upto(20) do |i|
-        # assert_equal(9, @doc.compression = i)
-        assert_equal(i, @doc.compression = i) # This works around a bug in Ruby 1.8
+        assert_equal(i, @doc.compression = i)
         assert_equal(9, @doc.compression)
       end
 
       -1.downto(-10) do |i|
+        @doc.compression = i
         assert_equal(0, @doc.compression)
       end
     end
