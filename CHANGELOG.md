@@ -15,7 +15,7 @@ Breaking changes:
 * Remove deprecated Document methods: dump, format_dump, debug_dump, debug_dump_head, debug_format_dump, reader
 * Remove deprecated Parser.register_error_handler (use Error.set_handler)
 * Remove deprecated HTMLParser#file=, #io=, #string= (use class methods HTMLParser.file, .io, .string)
-* Remove deprecated require paths: require 'libxml' and require 'xml/libxml' (use require 'libxml-ruby')
+* Remove deprecated require paths: require 'libxml', require 'xml/libxml', and require 'xml' (use require 'libxml-ruby')
 * Fix misspelled Schema::Type#annonymus_subtypes -> anonymous_subtypes
 
 The release also includes a number of smaller improvements, including:
@@ -32,6 +32,10 @@ The release also includes a number of smaller improvements, including:
 * Remove dead Float::INFINITY definition for Ruby 1.8.7
 * Add mswin CI job using vcpkg for libxml2
 * Minimum Ruby version is now 3.2
+* Revert require_relative back to require for loading the C extension (fixes #226)
+* Allow nil for external and system IDs when creating a DTD (fixes #215)
+* Fix C14N document subset canonicalization with namespace nodes
+* Enable W3C C14N spec tests 3.5 (entity references) and 3.7 (document subsets)
 * Rename HISTORY to CHANGELOG.md, README.rdoc to README.md
 
 == 5.0.6 / 2026-04-03
