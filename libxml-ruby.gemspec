@@ -33,7 +33,6 @@ Gem::Specification.new do |spec|
                          'ext/vc/*.vcprojx',
                          'ext/xcode/**/*',
                          'lib/**/*.rb',
-                         'script/**/*',
                          'test/**/*'])
 
   spec.test_files = Dir.glob('test/test_*.rb')
