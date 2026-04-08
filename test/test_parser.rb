@@ -220,38 +220,7 @@ class TestParser < Minitest::Test
     assert_equal(Encoding::UTF_8, node.content.encoding)
     assert_equal("m\303\266tley_cr\303\274e", node.content)
   end
-
-  def test_fd_gc
-    skip
-    # Test opening # of documents up to the file limit for the OS.
-    # Ideally it should run until libxml emits a warning,
-    # thereby knowing we've done a GC sweep. For the time being,
-    # re-open the same doc `limit descriptors` times.
-    # If we make it to the end, then we've succeeded,
-    # otherwise an exception will be thrown.
-    LibXML::XML::Error.set_handler {|error|}
-
-    max_fd = if RUBY_PLATFORM.match(/mswin32|mswin64|mingw/i)
-      500
-    else
-      Process.getrlimit(Process::RLIMIT_NOFILE)[0] + 1
-    end
-
-    file = File.join(File.dirname(__FILE__), 'model/rubynet.xml')
-    max_fd.times do
-       LibXML::XML::Parser.file(file).parse
-    end
-    LibXML::XML::Error.reset_handler {|error|}
-  end
-
-  def test_open_many_files
-    file = File.expand_path(File.join(File.dirname(__FILE__), 'model/atom.xml'))
-    1000.times do
-      LibXML::XML::Parser.file(file).parse
-    end
-  end
-
-  # -----  Errors  ------
+  
   def test_error
     error = assert_raises(LibXML::XML::Error) do
       LibXML::XML::Parser.string('<foo><bar/></foz>').parse

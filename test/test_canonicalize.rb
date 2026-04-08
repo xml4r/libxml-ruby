@@ -24,8 +24,7 @@ class TestCanonicalize < Minitest::Test
     expected_1_1_without_comments = IO.read(self.path('c14n/result/1-1-without-comments/example-1'))
     mode = LibXML::XML::Document::XML_C14N_1_1
     assert_equal(expected_1_1_without_comments, given_doc.canonicalize(:mode => mode))
-  end#test_canonicalize_with_w3c_c14n_3_1
-
+  end
 
   # (www.w3.org) 3.2 Whitespace in Document Content
   # http://www.w3.org/TR/xml-c14n#Example-WhitespaceInContent
@@ -106,15 +105,15 @@ class TestCanonicalize < Minitest::Test
   # http://www.w3.org/TR/xml-c14n#Example-DocSubsets
   def test_canonicalize_with_w3c_c14n_3_7
     # Non Canonicalized Document
-    # given_doc = LibXML::XML::Document.file(self.path('c14n/given/example-7.xml'))
-    #expected = IO.read(self.path('c14n/result/without-comments/example-7'))
+    given_doc = LibXML::XML::Document.file(self.path('c14n/given/example-7.xml'))
+    expected = IO.read(self.path('c14n/result/without-comments/example-7'))
 
-    # e1_node = given_doc.find_first('ietf:e1', 'ietf:http://www.ietf.org')
+    e1_node = given_doc.find_first('ietf:e1', 'ietf:http://www.ietf.org')
 
     # Select current node, all child nodes, all attributes and namespace nodes
-    #subdoc_nodes = e1_node.find("(.//.|.//@id|namespace::*)")
+    subdoc_nodes = e1_node.find("(.//.|.//@id|namespace::*)")
 
     # TODO - This fails because the namespace nodes aren't taken into account
-    # assert_equal(expected, given_doc.canonicalize(:nodes => subdoc_nodes))
+    assert_equal(expected, given_doc.canonicalize(:nodes => subdoc_nodes))
   end
 end

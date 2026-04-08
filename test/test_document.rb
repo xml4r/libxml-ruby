@@ -49,8 +49,6 @@ class TestDocument < Minitest::Test
       end
 
       -1.downto(-10) do |i|
-        # assert_equal(0, @doc.compression = i)
-        assert_equal(i, @doc.compression = i) # FIXME This bug should get fixed ASAP
         assert_equal(0, @doc.compression)
       end
     end
