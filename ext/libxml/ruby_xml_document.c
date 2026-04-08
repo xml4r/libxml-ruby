@@ -275,42 +275,50 @@ rxml_document_canonicalize(int argc, VALUE *argv, VALUE self)
     //o_ns_prefixes will free at end of block
 
     o_nodes = rb_hash_aref(option_hash, ID2SYM(rb_intern("nodes")));
-    if (!NIL_P(o_nodes)) 
+    if (!NIL_P(o_nodes))
     {
-      int i;
-      int p = 0; // index of pointer array
-      VALUE * list_in = NULL;
-      long node_list_size = 0;
-
       if (CLASS_OF(o_nodes) == cXMLXPathObject)
       {
-        o_nodes = rb_funcall(o_nodes, rb_intern("to_a"), 0);
+        /* Use the raw xmlNodeSet directly to preserve namespace nodes
+           which cannot survive a roundtrip through Ruby objects */
+        rxml_xpath_object *rxpop;
+        TypedData_Get_Struct(o_nodes, rxml_xpath_object, &rxml_xpath_object_data_type, rxpop);
+        if (rxpop->xpop->nodesetval)
+        {
+          nodeset.nodeNr = rxpop->xpop->nodesetval->nodeNr;
+          nodeset.nodeMax = rxpop->xpop->nodesetval->nodeMax;
+          nodeset.nodeTab = rxpop->xpop->nodesetval->nodeTab;
+        }
       }
       else
       {
+        int i;
+        int p = 0;
+        VALUE *list_in = NULL;
+        long node_list_size = 0;
+
         Check_Type(o_nodes, T_ARRAY);
-      }
-      list_in = RARRAY_PTR(o_nodes);
-      node_list_size = RARRAY_LEN(o_nodes);
+        list_in = RARRAY_PTR(o_nodes);
+        node_list_size = RARRAY_LEN(o_nodes);
 
-      for (i=0; i < node_list_size; ++i)
-      {
-        if (p >= C14N_NODESET_LIMIT) { break; }
-
-        if (RTEST(list_in[i])) 
+        for (i=0; i < node_list_size; ++i)
         {
-          xmlNodePtr node_ptr;
-          TypedData_Get_Struct(list_in[i], xmlNode, &rxml_node_data_type, node_ptr);
-          node_ptr_array[p] = node_ptr;
-          p++;
-        }
-      }
+          if (p >= C14N_NODESET_LIMIT) { break; }
 
-      // Need to set values in nodeset struct
-      nodeset.nodeNr = (node_list_size > C14N_NODESET_LIMIT ?
-                        C14N_NODESET_LIMIT :
-                        (int)node_list_size);
-      nodeset.nodeTab = node_ptr_array;
+          if (RTEST(list_in[i]))
+          {
+            xmlNodePtr node_ptr;
+            TypedData_Get_Struct(list_in[i], xmlNode, &rxml_node_data_type, node_ptr);
+            node_ptr_array[p] = node_ptr;
+            p++;
+          }
+        }
+
+        nodeset.nodeNr = (node_list_size > C14N_NODESET_LIMIT ?
+                          C14N_NODESET_LIMIT :
+                          (int)node_list_size);
+        nodeset.nodeTab = node_ptr_array;
+      }
     }
   }//option_hash
 

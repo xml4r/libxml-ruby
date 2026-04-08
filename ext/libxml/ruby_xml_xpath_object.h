@@ -2,6 +2,7 @@
 #define __RXML_XPATH_OBJECT__
 
 extern VALUE cXMLXPathObject;
+extern const rb_data_type_t rxml_xpath_object_data_type;
 
 typedef struct rxml_xpath_object
 {
