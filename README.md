@@ -33,7 +33,7 @@ see the additional configuration options.)
 This may be done with RubyGems:
 
 ```
-gem install libxml-ruby -- --with-xml2-dir=/path/to/xml2-config
+gem install libxml-ruby -- --with-xml2-config=/path/to/xml2-config
 ```
 
 Or bundler:
