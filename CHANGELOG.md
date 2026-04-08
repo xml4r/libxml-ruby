@@ -10,7 +10,15 @@ This release is a major refresh of libxml-ruby. The most important changes inclu
 * Updated reference documentation to Ruby's new Aliki theme
 * Expanded tests
 
-The release also include a number of smaller improvements, including:
+Breaking changes:
+
+* Remove deprecated Document methods: dump, format_dump, debug_dump, debug_dump_head, debug_format_dump, reader
+* Remove deprecated Parser.register_error_handler (use Error.set_handler)
+* Remove deprecated HTMLParser#file=, #io=, #string= (use class methods HTMLParser.file, .io, .string)
+* Remove deprecated require paths: require 'libxml' and require 'xml/libxml' (use require 'libxml-ruby')
+* Fix misspelled Schema::Type#annonymus_subtypes -> anonymous_subtypes
+
+The release also includes a number of smaller improvements, including:
 
 * Support Ruby 4.0 (no changes were required)
 * Fix RelaxNG factories to raise on parse failure instead of wrapping NULL

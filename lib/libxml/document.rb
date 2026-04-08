@@ -160,35 +160,6 @@ module LibXML
         node_type == XML::Node::HTML_DOCUMENT_NODE
       end
 
-      def dump
-        warn('Document#dump is deprecated.  Use Document#to_s instead.')
-        self.to_s
-      end
-
-      def format_dump
-        warn('Document#format_dump is deprecated.  Use Document#to_s instead.')
-        self.to_s
-      end
-
-      def debug_dump
-        warn('Document#debug_dump is deprecated.  Use Document#debug instead.')
-        self.debug
-      end
-
-      def debug_dump_head
-        warn('Document#debug_dump_head is deprecated.  Use Document#debug instead.')
-        self.debug
-      end
-
-      def debug_format_dump
-        warn('Document#debug_format_dump is deprecated.  Use Document#to_s instead.')
-        self.to_s
-      end
-
-      def reader
-        warn('Document#reader is deprecated.  Use XML::Reader.document(self) instead.')
-        XML::Reader.document(self)
-      end
     end
   end
 end  
