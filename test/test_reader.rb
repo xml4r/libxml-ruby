@@ -88,6 +88,18 @@ class TestReader < Minitest::Test
     assert(reader.read)
   end
 
+  # libxml2 keeps the read context and calls the read callback on each read.
+  # GC compaction moves the io object, so the context must not be a raw
+  # address. The reader stays in a heap container, not in a local variable,
+  # so that compaction can move it.
+  def test_io_gc_compaction
+    holder = [LibXML::XML::Reader.io(StringIO.new(File.read(XML_FILE)))]
+
+    compact_heap
+
+    verify_simple(holder[0])
+  end
+
   def test_string_io
     data = File.read(XML_FILE)
     string_io = StringIO.new(data)

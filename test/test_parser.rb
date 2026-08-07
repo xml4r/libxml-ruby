@@ -103,6 +103,18 @@ class TestParser < Minitest::Test
     assert(parser.parse)
   end
 
+  # libxml2 keeps the read context and calls the read callback at parse time.
+  # GC compaction moves the io object, so the context must not be a raw
+  # address. The parser stays in a heap container, not in a local variable,
+  # so that compaction can move it.
+  def test_io_gc_compaction
+    holder = [LibXML::XML::Parser.io(StringIO.new('<root><child/></root>'))]
+
+    compact_heap
+
+    assert_equal('root', holder[0].parse.root.name)
+  end
+
   def test_nil_io
     error = assert_raises(TypeError) do
       LibXML::XML::Parser.io(nil)

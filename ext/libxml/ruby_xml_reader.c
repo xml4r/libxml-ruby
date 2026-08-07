@@ -57,24 +57,52 @@ VALUE cXMLReader;
 
 static ID BASE_URI_SYMBOL;
 static ID ENCODING_SYMBOL;
-static ID IO_ATTR;
 static ID OPTIONS_SYMBOL;
+
+/* An xmlTextReader is opaque, so there is no field in it for Ruby data. The
+   Ruby object therefore wraps this struct instead of the reader itself.
+
+   XML::Reader.io gives libxml2 the address of io_context. libxml2 keeps that
+   address and calls the read callback much later. The mark function marks
+   io_context.io, which keeps the io object alive and stops GC compaction
+   from moving it. */
+typedef struct
+{
+  xmlTextReaderPtr xreader;
+  rxml_io_context io_context;
+} rxml_reader_object;
+
+static rxml_reader_object* rxml_reader_object_alloc(void)
+{
+  rxml_reader_object* rro = ALLOC(rxml_reader_object);
+  rro->xreader = NULL;
+  rxml_io_context_init(&rro->io_context, Qnil);
+  return rro;
+}
 
 static void rxml_reader_free(void* data)
 {
-  xmlTextReaderPtr xreader = (xmlTextReaderPtr)data;
-  xmlFreeTextReader(xreader);
+  rxml_reader_object* rro = (rxml_reader_object*)data;
+  if (rro->xreader)
+    xmlFreeTextReader(rro->xreader);
+  xfree(rro);
 }
 
 static void rxml_reader_mark(void* data)
 {
-  xmlTextReaderPtr xreader = (xmlTextReaderPtr)data;
-  xmlDocPtr xdoc = xmlTextReaderCurrentDoc(xreader);
-  if (xdoc)
+  rxml_reader_object* rro = (rxml_reader_object*)data;
+
+  rxml_io_context_mark(&rro->io_context);
+
+  if (rro->xreader)
   {
-    VALUE doc = rxml_registry_lookup(xdoc);
-    if (!NIL_P(doc))
-      rb_gc_mark(doc);
+    xmlDocPtr xdoc = xmlTextReaderCurrentDoc(rro->xreader);
+    if (xdoc)
+    {
+      VALUE doc = rxml_registry_lookup(xdoc);
+      if (!NIL_P(doc))
+        rb_gc_mark(doc);
+    }
   }
 }
 
@@ -84,17 +112,24 @@ static const rb_data_type_t rxml_reader_data_type = {
   .flags = RUBY_TYPED_FREE_IMMEDIATELY,
 };
 
-static VALUE rxml_reader_wrap(xmlTextReaderPtr xreader)
+static VALUE rxml_reader_wrap(rxml_reader_object* rro)
 {
-  return TypedData_Wrap_Struct(cXMLReader, &rxml_reader_data_type, xreader);
+  return TypedData_Wrap_Struct(cXMLReader, &rxml_reader_data_type, rro);
 }
 
+/* Wraps a reader that does not read from a Ruby object. */
+static VALUE rxml_reader_wrap_xreader(xmlTextReaderPtr xreader)
+{
+  rxml_reader_object* rro = rxml_reader_object_alloc();
+  rro->xreader = xreader;
+  return rxml_reader_wrap(rro);
+}
 
 static xmlTextReaderPtr rxml_text_reader_get(VALUE obj)
 {
-  xmlTextReaderPtr xreader;
-  TypedData_Get_Struct(obj, xmlTextReader, &rxml_reader_data_type, xreader);
-  return xreader;
+  rxml_reader_object* rro;
+  TypedData_Get_Struct(obj, rxml_reader_object, &rxml_reader_data_type, rro);
+  return rro->xreader;
 }
 
 /*
@@ -115,7 +150,7 @@ VALUE rxml_reader_document(VALUE klass, VALUE doc)
   if (xreader == NULL)
     rxml_raise(xmlGetLastError());
 
-  return rxml_reader_wrap(xreader);
+  return rxml_reader_wrap_xreader(xreader);
 }
 
 /* call-seq:
@@ -163,7 +198,7 @@ static VALUE rxml_reader_file(int argc, VALUE *argv, VALUE klass)
   if (xreader == NULL)
     rb_syserr_fail(ENOENT, StringValueCStr(path));
 
-  return rxml_reader_wrap(xreader);
+  return rxml_reader_wrap_xreader(xreader);
 }
 
 /* call-seq:
@@ -214,17 +249,21 @@ static VALUE rxml_reader_io(int argc, VALUE *argv, VALUE klass)
     xoptions = NIL_P(parserOptions) ? 0 : NUM2INT(parserOptions);
   }
   
+  rxml_reader_object* rro = rxml_reader_object_alloc();
+  rxml_io_context_init(&rro->io_context, io);
+
   xreader = xmlReaderForIO((xmlInputReadCallback) rxml_read_callback, NULL,
-                           (void *) io, 
+                           &rro->io_context,
                            xbaseurl, xencoding, xoptions);
 
   if (xreader == NULL)
+  {
+    xfree(rro);
     rxml_raise(xmlGetLastError());
+  }
 
-  result = rxml_reader_wrap(xreader);
-
-  /* Attach io object to parser so it won't get freed.*/
-  rb_ivar_set(result, IO_ATTR, io);
+  rro->xreader = xreader;
+  result = rxml_reader_wrap(rro);
 
   return result;
 }
@@ -283,7 +322,7 @@ static VALUE rxml_reader_string(int argc, VALUE *argv, VALUE klass)
   if (xreader == NULL)
     rxml_raise(xmlGetLastError());
 
-  return rxml_reader_wrap(xreader);
+  return rxml_reader_wrap_xreader(xreader);
 }
 
 /*
@@ -1143,7 +1182,6 @@ void rxml_init_reader(void)
 {
   BASE_URI_SYMBOL = ID2SYM(rb_intern("base_uri"));
   ENCODING_SYMBOL = ID2SYM(rb_intern("encoding"));
-  IO_ATTR = rb_intern("@io");
   OPTIONS_SYMBOL = ID2SYM(rb_intern("options"));
 
   cXMLReader = rb_define_class_under(mXML, "Reader", rb_cObject);
