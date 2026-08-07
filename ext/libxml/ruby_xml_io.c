@@ -6,12 +6,36 @@
 static ID READ_METHOD;
 static ID WRITE_METHOD;
 
+rxml_io_context* rxml_io_context_new(VALUE io)
+{
+  rxml_io_context* context = ALLOC(rxml_io_context);
+  context->io = io;
+  return context;
+}
+
+void rxml_io_context_init(rxml_io_context* context, VALUE io)
+{
+  context->io = io;
+}
+
+void rxml_io_context_free(rxml_io_context* context)
+{
+  if (context)
+    xfree(context);
+}
+
+void rxml_io_context_mark(rxml_io_context* context)
+{
+  if (context && !NIL_P(context->io))
+    rb_gc_mark(context->io);
+}
+
 /* This method is called by libxml when it wants to read
  more data from a stream. We go with the duck typing
  solution to support StringIO objects. */
 int rxml_read_callback(void *context, char *buffer, int len)
 {
-  VALUE io = (VALUE) context;
+  VALUE io = ((rxml_io_context*) context)->io;
   VALUE string = rb_funcall(io, READ_METHOD, 1, INT2NUM(len));
   size_t size;
 

@@ -68,9 +68,19 @@ void rxml_document_free(void* data)
   xmlFreeDoc(xdoc);
 }
 
+/* GC compaction moves the Ruby wrapper but does not update the address that
+   the registry holds for this document.  The document pointer is the registry
+   key, so ask the registry to rewrite this entry with the new address. */
+static void rxml_document_compact(void* data)
+{
+  xmlDocPtr xdoc = (xmlDocPtr)data;
+  if (xdoc)
+    rxml_registry_update(xdoc);
+}
+
 const rb_data_type_t rxml_document_data_type = {
   .wrap_struct_name = "LibXML::XML::Document",
-  .function = { .dmark = NULL, .dfree = rxml_document_free },
+  .function = { .dmark = NULL, .dfree = rxml_document_free, .dcompact = rxml_document_compact },
   .flags = RUBY_TYPED_FREE_IMMEDIATELY,
 };
 

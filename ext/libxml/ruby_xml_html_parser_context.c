@@ -13,7 +13,6 @@
  */
 
 VALUE cXMLHtmlParserContext;
-static ID IO_ATTR;
 
 /* OS X 10.5 ships with libxml2 version 2.6.16 which does not expose the
    htmlNewParserCtxt (or htmlInitParserCtxt which it uses) method.  htmlNewParserCtxt
@@ -129,15 +128,27 @@ static htmlParserCtxtPtr htmlNewParserCtxt(void)
 }
 #endif
 
+/* XML::HTMLParser::Context.io stores the read context in the _private field
+   of the libxml parser context. libxml2 never touches that field. */
 static void rxml_html_parser_context_free(void* data)
 {
   htmlParserCtxtPtr ctxt = (htmlParserCtxtPtr)data;
+  if (!ctxt) return;
+  rxml_io_context_free((rxml_io_context*)ctxt->_private);
+  ctxt->_private = NULL;
   htmlFreeParserCtxt(ctxt);
+}
+
+static void rxml_html_parser_context_mark(void* data)
+{
+  htmlParserCtxtPtr ctxt = (htmlParserCtxtPtr)data;
+  if (!ctxt) return;
+  rxml_io_context_mark((rxml_io_context*)ctxt->_private);
 }
 
 const rb_data_type_t rxml_html_parser_context_type = {
   "LibXML::XML::HTMLParser::Context",
-  {NULL, rxml_html_parser_context_free, NULL},
+  {rxml_html_parser_context_mark, rxml_html_parser_context_free, NULL},
   &rxml_parser_context_type, NULL, 0
 };
 
@@ -197,13 +208,22 @@ static VALUE rxml_html_parser_context_io(int argc, VALUE* argv, VALUE klass)
   if (NIL_P(io))
     rb_raise(rb_eTypeError, "Must pass in an IO object");
 
-  input = xmlParserInputBufferCreateIO((xmlInputReadCallback) rxml_read_callback, NULL,
-                                     (void*)io, XML_CHAR_ENCODING_NONE);
-
   ctxt = htmlNewParserCtxt();
   if (!ctxt)
+    rxml_raise(xmlGetLastError());
+
+  /* libxml2 keeps the context pointer and calls the read callback much later.
+     So give libxml2 a stable address instead of the io object itself. The
+     mark function marks the io object, which keeps it alive and stops GC
+     compaction from moving it. */
+  ctxt->_private = rxml_io_context_new(io);
+
+  input = xmlParserInputBufferCreateIO((xmlInputReadCallback) rxml_read_callback, NULL,
+                                     ctxt->_private, XML_CHAR_ENCODING_NONE);
+
+  if (!input)
   {
-    xmlFreeParserInputBuffer(input);
+    rxml_html_parser_context_free(ctxt);
     rxml_raise(xmlGetLastError());
   }
 
@@ -218,14 +238,13 @@ static VALUE rxml_html_parser_context_io(int argc, VALUE* argv, VALUE klass)
   if (!stream)
   {
     xmlFreeParserInputBuffer(input);
-    xmlFreeParserCtxt(ctxt);
+    rxml_html_parser_context_free(ctxt);
     rxml_raise(xmlGetLastError());
   }
   inputPush(ctxt, stream);
   result = rxml_html_parser_context_wrap(ctxt);
 
-  /* Attach io object to parser so it won't get freed.*/
-  rb_ivar_set(result, IO_ATTR, io);
+  RB_GC_GUARD(io);
 
   return result;
 }
@@ -351,7 +370,6 @@ static VALUE rxml_html_parser_context_alloc(VALUE klass)
 
 void rxml_init_html_parser_context(void)
 {
-  IO_ATTR = ID2SYM(rb_intern("@io"));
   cXMLHtmlParserContext = rb_define_class_under(cXMLHtmlParser, "Context", cXMLParserContext);
   rb_define_alloc_func(cXMLHtmlParserContext, rxml_html_parser_context_alloc);
 

@@ -135,4 +135,20 @@ class TestDocument < Minitest::Test
     end
   end
 
+  # The bindings map an xmlDocPtr to its Ruby wrapper in a registry. GC
+  # compaction moves the wrapper. The registry must learn the new address.
+  # The document stays in a heap container so that compaction can move it.
+  def test_gc_compaction_updates_document_registry
+    holder = [LibXML::XML::Document.string('<root><child/></root>')]
+
+    compact_heap
+
+    assert_equal('root', holder[0].root.doc.root.name)
+
+    # A node wrapper marks its document through the registry. A stale entry
+    # sends a dead address to the garbage collector.
+    holder[0].root
+    GC.start(full_mark: true, immediate_sweep: true)
+  end
+
 end

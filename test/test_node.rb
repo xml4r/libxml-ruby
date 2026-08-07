@@ -242,6 +242,25 @@ class TestNode < Minitest::Test
     GC.stress = false
   end
 
+  # A standalone node owns its libxml tree, so the bindings map the xmlNodePtr
+  # to its Ruby wrapper in a registry. GC compaction moves the wrapper. The
+  # registry must learn the new address. The wrapper stays in a heap container
+  # so that compaction can move it.
+  def test_gc_compaction_updates_node_registry
+    holder = [LibXML::XML::Node.new('root')]
+    holder[0] << LibXML::XML::Node.new('child')
+
+    compact_heap
+
+    # A child node wrapper marks the root wrapper through the registry. A
+    # stale entry sends a dead address to the garbage collector.
+    child = holder[0].child
+    GC.start(full_mark: true, immediate_sweep: true)
+
+    assert_equal('child', child.name)
+    assert_equal('root', holder[0].name)
+  end
+
   private
 
   def create_document_child

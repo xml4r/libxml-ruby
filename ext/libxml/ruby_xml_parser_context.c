@@ -6,7 +6,6 @@
 #include <libxml/parserInternals.h>
 
 VALUE cXMLParserContext;
-static ID IO_ATTR;
 
 /*
  * Document-class: LibXML::XML::Parser::Context
@@ -15,15 +14,27 @@ static ID IO_ATTR;
  * a document is parsed.
  */
 
+/* XML::Parser::Context.io stores the read context in the _private field of
+   the libxml parser context. libxml2 never touches that field. */
 static void rxml_parser_context_free(void* data)
 {
   xmlParserCtxtPtr ctxt = (xmlParserCtxtPtr)data;
+  if (!ctxt) return;
+  rxml_io_context_free((rxml_io_context*)ctxt->_private);
+  ctxt->_private = NULL;
   xmlFreeParserCtxt(ctxt);
+}
+
+static void rxml_parser_context_mark(void* data)
+{
+  xmlParserCtxtPtr ctxt = (xmlParserCtxtPtr)data;
+  if (!ctxt) return;
+  rxml_io_context_mark((rxml_io_context*)ctxt->_private);
 }
 
 const rb_data_type_t rxml_parser_context_type = {
   "LibXML::XML::Parser::Context",
-  {NULL, rxml_parser_context_free, NULL},
+  {rxml_parser_context_mark, rxml_parser_context_free, NULL},
   NULL, NULL, 0
 };
 
@@ -158,14 +169,23 @@ static VALUE rxml_parser_context_io(int argc, VALUE* argv, VALUE klass)
   if (NIL_P(io))
     rb_raise(rb_eTypeError, "Must pass in an IO object");
 
-  xmlParserInputBufferPtr input = xmlParserInputBufferCreateIO((xmlInputReadCallback) rxml_read_callback, NULL,
-                                       (void*)io, XML_CHAR_ENCODING_NONE);
-
   xmlParserCtxtPtr ctxt = xmlNewParserCtxt();
 
   if (!ctxt)
+    rxml_raise(xmlGetLastError());
+
+  /* libxml2 keeps the context pointer and calls the read callback much later.
+     So give libxml2 a stable address instead of the io object itself. The
+     mark function marks the io object, which keeps it alive and stops GC
+     compaction from moving it. */
+  ctxt->_private = rxml_io_context_new(io);
+
+  xmlParserInputBufferPtr input = xmlParserInputBufferCreateIO((xmlInputReadCallback) rxml_read_callback, NULL,
+                                       ctxt->_private, XML_CHAR_ENCODING_NONE);
+
+  if (!input)
   {
-    xmlFreeParserInputBuffer(input);
+    rxml_parser_context_free(ctxt);
     rxml_raise(xmlGetLastError());
   }
 
@@ -180,14 +200,14 @@ static VALUE rxml_parser_context_io(int argc, VALUE* argv, VALUE klass)
   if (!stream)
   {
     xmlFreeParserInputBuffer(input);
-    xmlFreeParserCtxt(ctxt);
+    rxml_parser_context_free(ctxt);
     rxml_raise(xmlGetLastError());
   }
   inputPush(ctxt, stream);
+
   VALUE result = rxml_parser_context_wrap(ctxt);
 
-  /* Attach io object to parser so it won't get freed.*/
-  rb_ivar_set(result, IO_ATTR, io);
+  RB_GC_GUARD(io);
 
   return result;
 }
@@ -960,8 +980,6 @@ static VALUE rxml_parser_context_well_formed_q(VALUE self)
 
 void rxml_init_parser_context(void)
 {
-  IO_ATTR = ID2SYM(rb_intern("@io"));
-
   cXMLParserContext = rb_define_class_under(cXMLParser, "Context", rb_cObject);
   rb_define_alloc_func(cXMLParserContext, rxml_parser_context_alloc);
 

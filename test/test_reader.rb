@@ -88,6 +88,18 @@ class TestReader < Minitest::Test
     assert(reader.read)
   end
 
+  # libxml2 keeps the read context and calls the read callback on each read.
+  # GC compaction moves the io object, so the context must not be a raw
+  # address. The reader stays in a heap container, not in a local variable,
+  # so that compaction can move it.
+  def test_io_gc_compaction
+    holder = [LibXML::XML::Reader.io(StringIO.new(File.read(XML_FILE)))]
+
+    compact_heap
+
+    verify_simple(holder[0])
+  end
+
   def test_string_io
     data = File.read(XML_FILE)
     string_io = StringIO.new(data)
@@ -401,7 +413,33 @@ class TestReader < Minitest::Test
     GC.stress = false
   end
 
+  # xmlReaderForMemory does not copy the string, and libxml2 reads from the
+  # buffer of the string on each call to #read. So the reader must keep the
+  # string. A short literal string does not show the defect, because the
+  # literal stays in place. The test therefore builds a large string at run
+  # time and then makes the garbage collector reuse the memory.
+  def test_string_gc_compaction
+    holder = [LibXML::XML::Reader.string(build_large_xml)]
+
+    compact_heap
+    20_000.times { |i| +"churn #{i}" }
+
+    elements = 0
+    while holder[0].read
+      elements += 1 if holder[0].node_type == LibXML::XML::Reader::TYPE_ELEMENT
+    end
+
+    assert_equal(201, elements)
+  end
+
   private
+
+  def build_large_xml
+    xml = +'<root>'
+    200.times { xml << "<a>#{'x' * 50}</a>" }
+    xml << '</root>'
+    xml
+  end
 
   def expand_and_advance
     reader = LibXML::XML::Reader.string("<root><a/><b/></root>")
