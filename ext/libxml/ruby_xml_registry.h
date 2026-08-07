@@ -12,11 +12,18 @@
    of reading _private).
 
    Registered pointers MUST be unregistered before the underlying C struct is
-   freed, typically in the wrapper's dfree function. */
+   freed, typically in the wrapper's dfree function.
+
+   The stored VALUEs are plain machine addresses, so GC compaction invalidates
+   them when it moves a wrapper.  Each wrapper type that registers itself MUST
+   also install a dcompact function that calls rxml_registry_update with its
+   own data pointer.  The data pointer is the registry key, so the entry for
+   the object that moved is the entry that dcompact repairs. */
 
 void  rxml_init_registry(void);
 void  rxml_registry_register(void *ptr, VALUE obj);
 void  rxml_registry_unregister(void *ptr);
 VALUE rxml_registry_lookup(void *ptr);   /* Qnil on miss */
+void  rxml_registry_update(void *ptr);   /* rewrite entry after compaction */
 
 #endif

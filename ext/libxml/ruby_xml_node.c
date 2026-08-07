@@ -96,9 +96,20 @@ const rb_data_type_t rxml_node_unmanaged_data_type = {
   .flags = RUBY_TYPED_FREE_IMMEDIATELY,
 };
 
+/* GC compaction moves the Ruby wrapper but does not update the address that
+   the registry holds for this node.  The node pointer is the registry key, so
+   ask the registry to rewrite this entry with the new address.  Only managed
+   nodes are in the registry, so only this type needs the function. */
+static void rxml_node_compact(void* data)
+{
+  xmlNodePtr xnode = (xmlNodePtr)data;
+  if (xnode)
+    rxml_registry_update(xnode);
+}
+
 static const rb_data_type_t rxml_node_managed_data_type = {
   .wrap_struct_name = "LibXML::XML::Node (managed)",
-  .function = { .dmark = (RUBY_DATA_FUNC)rxml_node_mark, .dfree = rxml_node_free },
+  .function = { .dmark = (RUBY_DATA_FUNC)rxml_node_mark, .dfree = rxml_node_free, .dcompact = rxml_node_compact },
   .parent = &rxml_node_data_type,
   .flags = RUBY_TYPED_FREE_IMMEDIATELY,
 };

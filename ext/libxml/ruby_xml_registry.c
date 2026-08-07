@@ -29,3 +29,10 @@ VALUE rxml_registry_lookup(void *ptr)
     return (VALUE)val;
   return Qnil;
 }
+
+void rxml_registry_update(void *ptr)
+{
+  st_data_t val;
+  if (st_lookup(rxml_registry, (st_data_t)ptr, &val))
+    st_insert(rxml_registry, (st_data_t)ptr, (st_data_t)rb_gc_location((VALUE)val));
+}
