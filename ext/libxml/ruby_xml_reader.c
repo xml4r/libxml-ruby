@@ -65,17 +65,25 @@ static ID OPTIONS_SYMBOL;
    XML::Reader.io gives libxml2 the address of io_context. libxml2 keeps that
    address and calls the read callback much later. The mark function marks
    io_context.io, which keeps the io object alive and stops GC compaction
-   from moving it. */
+   from moving it.
+
+   XML::Reader.string gives libxml2 the address of the buffer of a String.
+   xmlReaderForMemory does not copy the buffer, and libxml2 reads from it on
+   each call to XML::Reader#read. So the reader keeps the String in the
+   string field. The mark function marks that String with rb_gc_mark, which
+   both keeps the String alive and stops GC compaction from moving it. */
 typedef struct
 {
   xmlTextReaderPtr xreader;
   rxml_io_context io_context;
+  VALUE string;
 } rxml_reader_object;
 
 static rxml_reader_object* rxml_reader_object_alloc(void)
 {
   rxml_reader_object* rro = ALLOC(rxml_reader_object);
   rro->xreader = NULL;
+  rro->string = Qnil;
   rxml_io_context_init(&rro->io_context, Qnil);
   return rro;
 }
@@ -93,6 +101,9 @@ static void rxml_reader_mark(void* data)
   rxml_reader_object* rro = (rxml_reader_object*)data;
 
   rxml_io_context_mark(&rro->io_context);
+
+  if (!NIL_P(rro->string))
+    rb_gc_mark(rro->string);
 
   if (rro->xreader)
   {
@@ -249,7 +260,10 @@ static VALUE rxml_reader_io(int argc, VALUE *argv, VALUE klass)
     xoptions = NIL_P(parserOptions) ? 0 : NUM2INT(parserOptions);
   }
   
+  /* Wrap the struct before it holds any VALUE. The garbage collector can
+     then see the io object through the mark function. */
   rxml_reader_object* rro = rxml_reader_object_alloc();
+  result = rxml_reader_wrap(rro);
   rxml_io_context_init(&rro->io_context, io);
 
   xreader = xmlReaderForIO((xmlInputReadCallback) rxml_read_callback, NULL,
@@ -257,13 +271,9 @@ static VALUE rxml_reader_io(int argc, VALUE *argv, VALUE klass)
                            xbaseurl, xencoding, xoptions);
 
   if (xreader == NULL)
-  {
-    xfree(rro);
     rxml_raise(xmlGetLastError());
-  }
 
   rro->xreader = xreader;
-  result = rxml_reader_wrap(rro);
 
   return result;
 }
@@ -316,13 +326,29 @@ static VALUE rxml_reader_string(int argc, VALUE *argv, VALUE klass)
     xoptions = NIL_P(parserOptions) ? 0 : NUM2INT(parserOptions);
   }
   
-  xreader = xmlReaderForMemory(StringValueCStr(string), (int)RSTRING_LEN(string),
+  /* Reject a string that contains a null character. */
+  StringValueCStr(string);
+
+  /* Wrap the struct before it holds any VALUE. The garbage collector can then
+     see the string through the mark function. */
+  rxml_reader_object* rro = rxml_reader_object_alloc();
+  VALUE result = rxml_reader_wrap(rro);
+
+  /* Take a frozen copy of the string. The copy shares the buffer of the
+     original string, so this does not copy the data of a large document. The
+     copy also protects the reader if the program changes the original
+     string. */
+  rro->string = rb_str_new_frozen(string);
+
+  xreader = xmlReaderForMemory(RSTRING_PTR(rro->string), (int)RSTRING_LEN(rro->string),
                                xbaseurl, xencoding, xoptions);
 
   if (xreader == NULL)
     rxml_raise(xmlGetLastError());
 
-  return rxml_reader_wrap_xreader(xreader);
+  rro->xreader = xreader;
+
+  return result;
 }
 
 /*

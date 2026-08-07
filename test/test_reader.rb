@@ -413,7 +413,33 @@ class TestReader < Minitest::Test
     GC.stress = false
   end
 
+  # xmlReaderForMemory does not copy the string, and libxml2 reads from the
+  # buffer of the string on each call to #read. So the reader must keep the
+  # string. A short literal string does not show the defect, because the
+  # literal stays in place. The test therefore builds a large string at run
+  # time and then makes the garbage collector reuse the memory.
+  def test_string_gc_compaction
+    holder = [LibXML::XML::Reader.string(build_large_xml)]
+
+    compact_heap
+    20_000.times { |i| +"churn #{i}" }
+
+    elements = 0
+    while holder[0].read
+      elements += 1 if holder[0].node_type == LibXML::XML::Reader::TYPE_ELEMENT
+    end
+
+    assert_equal(201, elements)
+  end
+
   private
+
+  def build_large_xml
+    xml = +'<root>'
+    200.times { xml << "<a>#{'x' * 50}</a>" }
+    xml << '</root>'
+    xml
+  end
 
   def expand_and_advance
     reader = LibXML::XML::Reader.string("<root><a/><b/></root>")
